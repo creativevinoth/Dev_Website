@@ -6,3 +6,11 @@ slug: my-first-post
 categories: []
 tags: []
 ---
+## Addition
+```{r}
+a<- sum(5, 7)
+```
+```{r}
+print(a)
+```
+
