@@ -792,7 +792,7 @@ summary(month_y)
 
 ```{r}
 bank %>%
-ggplot(aes(x= month, y= "subscribe or not", color =month))+geom_col()+geom_smooth(method ="glm", se =FALSE, method.args = list(family = "binomial", maxit =100))+labs(title ="Relationship between y and month")
+ggplot(aes(x= month, y= "subscribe or not", color =month))+geom_col()+geom_smooth(method ="glm", se =FALSE, method.args = list(family = "binomial",maxit =100))+labs(title ="Relationship between y and month")
 ```
 
 

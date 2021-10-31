@@ -1,0 +1,1591 @@
+---
+title: DIamonds
+author: ''
+date: '2021-10-31'
+slug: diamonds
+categories: []
+tags: []
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<pre class="r"><code>library(ggplot2)
+library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(data.table)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;data.table&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:dplyr&#39;:
+## 
+##     between, first, last</code></pre>
+<pre class="r"><code>library(tidyr)
+library(GGally)</code></pre>
+<pre><code>## Registered S3 method overwritten by &#39;GGally&#39;:
+##   method from   
+##   +.gg   ggplot2</code></pre>
+<pre class="r"><code>library(gapminder)
+library(tidyverse)</code></pre>
+<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
+<pre><code>## v tibble  3.1.4     v stringr 1.4.0
+## v readr   2.0.1     v forcats 0.5.1
+## v purrr   0.3.4</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x data.table::between() masks dplyr::between()
+## x dplyr::filter()       masks stats::filter()
+## x data.table::first()   masks dplyr::first()
+## x dplyr::lag()          masks stats::lag()
+## x data.table::last()    masks dplyr::last()
+## x purrr::transpose()    masks data.table::transpose()</code></pre>
+<pre class="r"><code>library(pastecs)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;pastecs&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:tidyr&#39;:
+## 
+##     extract</code></pre>
+<pre><code>## The following objects are masked from &#39;package:data.table&#39;:
+## 
+##     first, last</code></pre>
+<pre><code>## The following objects are masked from &#39;package:dplyr&#39;:
+## 
+##     first, last</code></pre>
+<pre class="r"><code>library(ggpubr)
+library(fastDummies)
+library(QuantPsyc)</code></pre>
+<pre><code>## Loading required package: boot</code></pre>
+<pre><code>## Loading required package: MASS</code></pre>
+<pre><code>## 
+## Attaching package: &#39;MASS&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
+## 
+##     select</code></pre>
+<pre><code>## 
+## Attaching package: &#39;QuantPsyc&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:base&#39;:
+## 
+##     norm</code></pre>
+<pre class="r"><code>library(MASS)
+library(caret)</code></pre>
+<pre><code>## Loading required package: lattice</code></pre>
+<pre><code>## 
+## Attaching package: &#39;lattice&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:boot&#39;:
+## 
+##     melanoma</code></pre>
+<pre><code>## 
+## Attaching package: &#39;caret&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     lift</code></pre>
+<pre class="r"><code>library(leaps)
+library(summarytools)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;summarytools&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:tibble&#39;:
+## 
+##     view</code></pre>
+<pre class="r"><code>library(epiDisplay)</code></pre>
+<pre><code>## Loading required package: foreign</code></pre>
+<pre><code>## Loading required package: survival</code></pre>
+<pre><code>## 
+## Attaching package: &#39;survival&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:caret&#39;:
+## 
+##     cluster</code></pre>
+<pre><code>## The following object is masked from &#39;package:boot&#39;:
+## 
+##     aml</code></pre>
+<pre><code>## Loading required package: nnet</code></pre>
+<pre><code>## 
+## Attaching package: &#39;epiDisplay&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:lattice&#39;:
+## 
+##     dotplot</code></pre>
+<pre><code>## The following object is masked from &#39;package:ggplot2&#39;:
+## 
+##     alpha</code></pre>
+<pre class="r"><code>library(tidymodels)</code></pre>
+<pre><code>## Registered S3 method overwritten by &#39;tune&#39;:
+##   method                   from   
+##   required_pkgs.model_spec parsnip</code></pre>
+<pre><code>## -- Attaching packages -------------------------------------- tidymodels 0.1.4 --</code></pre>
+<pre><code>## v broom        0.7.9      v rsample      0.1.0 
+## v dials        0.0.10     v tune         0.1.6 
+## v infer        1.0.0      v workflows    0.2.3 
+## v modeldata    0.1.1      v workflowsets 0.1.0 
+## v parsnip      0.1.7      v yardstick    0.0.8 
+## v recipes      0.1.17</code></pre>
+<pre><code>## -- Conflicts ----------------------------------------- tidymodels_conflicts() --
+## x scales::alpha()          masks epiDisplay::alpha(), ggplot2::alpha()
+## x data.table::between()    masks dplyr::between()
+## x scales::discard()        masks purrr::discard()
+## x pastecs::extract()       masks tidyr::extract()
+## x dplyr::filter()          masks stats::filter()
+## x pastecs::first()         masks data.table::first(), dplyr::first()
+## x recipes::fixed()         masks stringr::fixed()
+## x yardstick::kap()         masks epiDisplay::kap()
+## x dplyr::lag()             masks stats::lag()
+## x pastecs::last()          masks data.table::last(), dplyr::last()
+## x caret::lift()            masks purrr::lift()
+## x yardstick::precision()   masks caret::precision()
+## x yardstick::recall()      masks caret::recall()
+## x MASS::select()           masks dplyr::select()
+## x yardstick::sensitivity() masks caret::sensitivity()
+## x yardstick::spec()        masks readr::spec()
+## x yardstick::specificity() masks caret::specificity()
+## x recipes::step()          masks stats::step()
+## x purrr::transpose()       masks data.table::transpose()
+## x summarytools::view()     masks tibble::view()
+## * Use suppressPackageStartupMessages() to eliminate package startup messages</code></pre>
+<pre class="r"><code>library(Rmisc)</code></pre>
+<pre><code>## Loading required package: plyr</code></pre>
+<pre><code>## ------------------------------------------------------------------------------</code></pre>
+<pre><code>## You have loaded plyr after dplyr - this is likely to cause problems.
+## If you need functions from both plyr and dplyr, please load plyr first, then dplyr:
+## library(plyr); library(dplyr)</code></pre>
+<pre><code>## ------------------------------------------------------------------------------</code></pre>
+<pre><code>## 
+## Attaching package: &#39;plyr&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:ggpubr&#39;:
+## 
+##     mutate</code></pre>
+<pre><code>## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     compact</code></pre>
+<pre><code>## The following objects are masked from &#39;package:dplyr&#39;:
+## 
+##     arrange, count, desc, failwith, id, mutate, rename, summarise,
+##     summarize</code></pre>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data&lt;-read.csv(&quot;C:/Users/Vinoth Kanna/OneDrive/Documents/Data Analytics/Final/MBA6636_SM21_Professor_Proposes_Data.csv&quot;)</code></pre>
+<pre class="r"><code>for(i in 1:length(MBA6636_SM21_Professor_Proposes_Data$Colour))
+  {
+  
+  if (MBA6636_SM21_Professor_Proposes_Data$Colour[i]==&quot;D&quot; || MBA6636_SM21_Professor_Proposes_Data$Colour[i]==&quot;E&quot; || MBA6636_SM21_Professor_Proposes_Data$Colour[i]==&quot;F&quot;) {
+    MBA6636_SM21_Professor_Proposes_Data$Colour[i]=&quot;Colorless&quot;
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Colour[i]==&quot;G&quot; || MBA6636_SM21_Professor_Proposes_Data$Colour[i]==&quot;H&quot;|| MBA6636_SM21_Professor_Proposes_Data$Colour[i]==&quot;I&quot;) {
+    MBA6636_SM21_Professor_Proposes_Data$Colour[i]=&quot;Near Colorless&quot;
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Colour[i]==&quot;J&quot; || MBA6636_SM21_Professor_Proposes_Data$Colour[i]==&quot;K&quot;) {
+    MBA6636_SM21_Professor_Proposes_Data$Colour[i]=&quot;Faint Yellow&quot;
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Colour[i]==&quot;L&quot; || MBA6636_SM21_Professor_Proposes_Data$Colour[i]==&quot;M&quot; || MBA6636_SM21_Professor_Proposes_Data$Colour[i]==&quot;N&quot;) {
+    MBA6636_SM21_Professor_Proposes_Data$Colour[i]=&quot;Very Light Yellow&quot;
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Colour[i]==&quot;O&quot; || MBA6636_SM21_Professor_Proposes_Data$Colour[i]==&quot;P&quot;|| MBA6636_SM21_Professor_Proposes_Data$Colour[i]==&quot;Q&quot;|| MBA6636_SM21_Professor_Proposes_Data$Colour[i]==&quot;R&quot;|| MBA6636_SM21_Professor_Proposes_Data$Colour[i]==&quot;S&quot;) {
+    MBA6636_SM21_Professor_Proposes_Data$Colour[i]=&quot;Light Yellow&quot;
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Colour[i]==&quot;T&quot; || MBA6636_SM21_Professor_Proposes_Data$Colour[i]==&quot;U&quot;|| MBA6636_SM21_Professor_Proposes_Data$Colour[i]==&quot;V&quot;|| MBA6636_SM21_Professor_Proposes_Data$Colour[i]==&quot;W&quot;|| MBA6636_SM21_Professor_Proposes_Data$Colour[i]==&quot;X&quot;|| MBA6636_SM21_Professor_Proposes_Data$Colour[i]==&quot;Y&quot;|| MBA6636_SM21_Professor_Proposes_Data$Colour[i]==&quot;Z&quot;) {
+    MBA6636_SM21_Professor_Proposes_Data$Colour[i]=&quot;Yellow&quot;
+  }
+  
+}
+for(i in 1:length(MBA6636_SM21_Professor_Proposes_Data$Clarity)) 
+  {
+  
+  if (MBA6636_SM21_Professor_Proposes_Data$Clarity[i]==&quot;I1&quot;) {
+    MBA6636_SM21_Professor_Proposes_Data$Clarity[i]=&quot;very few inclusions visible to naked eye&quot;
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Clarity[i]==&quot;I2&quot;) {
+    MBA6636_SM21_Professor_Proposes_Data$Clarity[i]=&quot;few inclusions visible to naked eye&quot;
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Clarity[i]==&quot;SI1&quot;) {
+    MBA6636_SM21_Professor_Proposes_Data$Clarity[i]=&quot;very very few inclusions at 10X&quot;
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Clarity[i]==&quot;SI2&quot;) {
+    MBA6636_SM21_Professor_Proposes_Data$Clarity[i]=&quot;very few inclusions at 10X&quot;
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Clarity[i]==&quot;SI3&quot;) {
+    MBA6636_SM21_Professor_Proposes_Data$Clarity[i]=&quot;several inclusions at 10X&quot;
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Clarity[i]==&quot;VS1&quot;) {
+    MBA6636_SM21_Professor_Proposes_Data$Clarity[i]=&quot;few inclusions at 30X&quot;
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Clarity[i]==&quot;VS2&quot;) {
+    MBA6636_SM21_Professor_Proposes_Data$Clarity[i]=&quot;several inclusions at 30X&quot;
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Clarity[i]==&quot;VVS1&quot;) {
+    MBA6636_SM21_Professor_Proposes_Data$Clarity[i]=&quot;very very few inclusions at 30X&quot;
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Clarity[i]==&quot;VVS2&quot;) {
+    MBA6636_SM21_Professor_Proposes_Data$Clarity[i]=&quot;very few inclusions at 30X&quot;
+  }
+  
+}
+for(i in 1:length(MBA6636_SM21_Professor_Proposes_Data$Cut)) 
+  {
+  
+  if (MBA6636_SM21_Professor_Proposes_Data$Cut[i]==&quot;F&quot;) {
+    MBA6636_SM21_Professor_Proposes_Data$Cut[i]=&quot;Fair&quot;
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Cut[i]==&quot;G&quot;) {
+    MBA6636_SM21_Professor_Proposes_Data$Cut[i]=&quot;Good&quot;
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Cut[i]==&quot;I&quot;) {
+    MBA6636_SM21_Professor_Proposes_Data$Cut[i]=&quot;Ideal&quot;
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Cut[i]==&quot;V&quot;) {
+    MBA6636_SM21_Professor_Proposes_Data$Cut[i]=&quot;Very Good&quot;
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Cut[i]==&quot;X&quot;) {
+    MBA6636_SM21_Professor_Proposes_Data$Cut[i]=&quot;Excellent&quot;
+  }
+  
+}
+for(i in 1:length(MBA6636_SM21_Professor_Proposes_Data$Polish))
+  {
+ 
+  if (MBA6636_SM21_Professor_Proposes_Data$Polish[i]==&quot;F&quot;) {
+    MBA6636_SM21_Professor_Proposes_Data$Polish[i]=&quot;Fair&quot;
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Polish[i]==&quot;G&quot;) {
+    MBA6636_SM21_Professor_Proposes_Data$Polish[i]=&quot;Good&quot;
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Polish[i]==&quot;I&quot;) {
+    MBA6636_SM21_Professor_Proposes_Data$Polish[i]=&quot;Ideal&quot;
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Polish[i]==&quot;V&quot;) {
+    MBA6636_SM21_Professor_Proposes_Data$Polish[i]=&quot;Very Good&quot;
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Polish[i]==&quot;X&quot;) {
+    MBA6636_SM21_Professor_Proposes_Data$Polish[i]=&quot;Excellent&quot;
+  }
+  
+}
+for(i in 1:length(MBA6636_SM21_Professor_Proposes_Data$Symmetry)) 
+  {
+  
+  if (MBA6636_SM21_Professor_Proposes_Data$Symmetry[i]==&quot;F&quot;) {
+    MBA6636_SM21_Professor_Proposes_Data$Symmetry[i]=&quot;Fair&quot;
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Symmetry[i]==&quot;G&quot;) {
+    MBA6636_SM21_Professor_Proposes_Data$Symmetry[i]=&quot;Good&quot;
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Symmetry[i]==&quot;I&quot;) {
+    MBA6636_SM21_Professor_Proposes_Data$Symmetry[i]=&quot;Ideal&quot;
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Symmetry[i]==&quot;V&quot;) {
+    MBA6636_SM21_Professor_Proposes_Data$Symmetry[i]=&quot;Very Good&quot;
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Symmetry[i]==&quot;X&quot;) {
+    MBA6636_SM21_Professor_Proposes_Data$Symmetry[i]=&quot;Excellent&quot;
+  }
+  
+}</code></pre>
+<div id="the-report-of-the-predicted-price-of-a-diamond-for-the-professor" class="section level2">
+<h2>The report of the predicted price of a diamond for the professor</h2>
+</div>
+<div id="table-of-contents" class="section level2">
+<h2>Table of contents</h2>
+</div>
+<div id="executive-summary" class="section level2">
+<h2>Executive summary</h2>
+</div>
+<div id="issues-and-challanges" class="section level2">
+<h2>Issues and challanges</h2>
+</div>
+<div id="univariate-analysis-on-metric-and-non-metric-data" class="section level2">
+<h2>Univariate analysis on metric and non metric data</h2>
+</div>
+<div id="bivariate-analysis-on-metric-and-non-metric-data" class="section level2">
+<h2>Bivariate analysis on metric and non metric data</h2>
+</div>
+<div id="multiple-linear-regresion" class="section level2">
+<h2>Multiple linear regresion</h2>
+</div>
+<div id="observations-and-comments" class="section level2">
+<h2>Observations and comments</h2>
+</div>
+<div id="executive-summary-1" class="section level2">
+<h2>Executive summary</h2>
+</div>
+<div id="a-professor-is-looking-for-an-engagement-ring.-before-purchasing-a-diamond-he-wants-to-ensure-that-the-price-paid-for-is-fair-enough.-he-came-to-know-that-there-are-many-determinants-of-price-for-the-diamond.-they-are-carat-cut-clarity-colour-polish-symmetry-and-certification.-when-he-approached-a-wholesaler-he-got-a-list-of-440-data-of-all-its-determinants-or-quality-of-the-diamond.-he-wanted-to-double-ensure-the-price-so-he-got-a-aimilar-list-from-other-two-wholesaler-to-compare-the-price.-he-was-shocked-to-see-the-price-difference-offered-by-wholesaler-2-and-3-compared-to-wholesaler-1-because-wholesaler-1-offered-higher-price-than-other-two-wholesaler.-so-he-wanted-to-include-wholesaler-as-a-predictor-in-his-price-determinant-model.-he-has-identified-some-diamond-qualities-that-he-was-very-much-interested.-he-plans-to-run-the-regression-model-using-the-obtained-data-to-estimate-the-price-of-the-diamond-that-he-was-interested-upon." class="section level2">
+<h2>A professor is looking for an engagement ring. Before purchasing a diamond, he wants to ensure that the price paid for is fair enough. He came to know that there are many determinants of price for the diamond. They are carat, cut, clarity, colour, polish, symmetry and certification. When he approached a wholesaler he got a list of 440 data of all its determinants or quality of the diamond. He wanted to double ensure the price, so he got a aimilar list from other two wholesaler to compare the price. He was shocked to see the price difference offered by wholesaler 2 and 3 compared to wholesaler 1 because wholesaler 1 offered higher price than other two wholesaler. So, he wanted to include wholesaler as a predictor in his price determinant model. He has identified some diamond qualities that he was very much interested. He plans to run the regression model using the obtained data to estimate the price of the diamond that he was interested upon.</h2>
+</div>
+<div id="he-built-themultiple-regression-model-that-suggested-that-diamond-is-overpiced-for-the-qualities-he-was-interested-upon.-he-has-to-keep-in-mind-that-price-was-only-for-the-diamonds-and-the-cost-for-the-ring-is-not-included.-he-has-to-keep-that-in-mind-to-decide-about-the-diamond." class="section level2">
+<h2>He built themultiple regression model that suggested that diamond is overpiced for the qualities he was interested upon. He has to keep in mind that price was only for the diamonds and the cost for the ring is not included. He has to keep that in mind to decide about the diamond.</h2>
+</div>
+<div id="issues-and-challanges-1" class="section level2">
+<h2>Issues and challanges</h2>
+</div>
+<div id="the-greatest-challange-for-the-profesor-is-how-to-determine-the-price-as-there-are-some-metric-variable-such-as-carat-and-price-and-there-are-some-nonmetric-variables-such-as-clarity-cut-wholesaler-polish-symmetry-certification-colour.-he-cannot-run-regression-analysis-on-non-metric-variable.-he-has-to-assign-some-dummy-variable-or-assign-ordered-numered-for-ordinal-categorical-data." class="section level2">
+<h2>The greatest challange for the profesor is how to determine the price as there are some metric variable such as carat and price and there are some nonmetric variables such as clarity, cut, wholesaler, polish, symmetry, certification, colour. He cannot run regression analysis on non metric variable. He has to assign some dummy variable or assign ordered numered for ordinal categorical data.</h2>
+</div>
+<div id="structure-of-the-data" class="section level2">
+<h2>Structure of the data</h2>
+<pre class="r"><code>str(MBA6636_SM21_Professor_Proposes_Data)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    440 obs. of  9 variables:
+##  $ Carat        : num  0.92 0.92 0.82 0.81 0.9 0.87 0.8 0.84 0.8 0.8 ...
+##  $ Colour       : chr  &quot;Near Colorless&quot; &quot;Near Colorless&quot; &quot;Colorless&quot; &quot;Near Colorless&quot; ...
+##  $ Clarity      : chr  &quot;very few inclusions at 10X&quot; &quot;very few inclusions at 10X&quot; &quot;very few inclusions at 10X&quot; &quot;very very few inclusions at 10X&quot; ...
+##  $ Cut          : chr  &quot;Good&quot; &quot;Very Good&quot; &quot;Ideal&quot; &quot;Ideal&quot; ...
+##  $ Certification: chr  &quot;AGS&quot; &quot;AGS&quot; &quot;GIA&quot; &quot;GIA&quot; ...
+##  $ Polish       : chr  &quot;Very Good&quot; &quot;Good&quot; &quot;Excellent&quot; &quot;Excellent&quot; ...
+##  $ Symmetry     : chr  &quot;Very Good&quot; &quot;Good&quot; &quot;Excellent&quot; &quot;Very Good&quot; ...
+##  $ Price        : num  3000 3000 3004 3004 3006 ...
+##  $ Wholesaler   : int  1 1 1 1 1 1 1 1 1 1 ...</code></pre>
+</div>
+<div id="converted-character-to-factor-to-run-linear-regression" class="section level2">
+<h2>converted character to factor to run linear regression</h2>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data$Colour &lt;-as.factor(MBA6636_SM21_Professor_Proposes_Data$Colour)
+MBA6636_SM21_Professor_Proposes_Data$Clarity&lt;-as.factor(MBA6636_SM21_Professor_Proposes_Data$Clarity)
+MBA6636_SM21_Professor_Proposes_Data$Cut&lt;-as.factor(MBA6636_SM21_Professor_Proposes_Data$Cut)
+MBA6636_SM21_Professor_Proposes_Data$Certification&lt;-as.factor(MBA6636_SM21_Professor_Proposes_Data$Certification)
+MBA6636_SM21_Professor_Proposes_Data$Polish&lt;-as.factor(MBA6636_SM21_Professor_Proposes_Data$Polish)
+MBA6636_SM21_Professor_Proposes_Data$Symmetry&lt;-as.factor(MBA6636_SM21_Professor_Proposes_Data$Symmetry)
+MBA6636_SM21_Professor_Proposes_Data$Wholesaler&lt;-as.factor(MBA6636_SM21_Professor_Proposes_Data$Wholesaler)</code></pre>
+</div>
+<div id="structure-of-the-data-after-converting-some-of-the-data-as-factor" class="section level2">
+<h2>Structure of the data after converting some of the data as factor</h2>
+<pre class="r"><code>str(MBA6636_SM21_Professor_Proposes_Data)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    440 obs. of  9 variables:
+##  $ Carat        : num  0.92 0.92 0.82 0.81 0.9 0.87 0.8 0.84 0.8 0.8 ...
+##  $ Colour       : Factor w/ 4 levels &quot;Colorless&quot;,&quot;Faint Yellow&quot;,..: 3 3 1 3 2 1 1 1 1 1 ...
+##  $ Clarity      : Factor w/ 9 levels &quot;few inclusions at 30X&quot;,..: 5 5 5 8 4 5 5 8 5 5 ...
+##  $ Cut          : Factor w/ 5 levels &quot;Excellent&quot;,&quot;Fair&quot;,..: 3 5 4 4 5 4 4 3 5 5 ...
+##  $ Certification: Factor w/ 5 levels &quot;AGS&quot;,&quot;DOW&quot;,&quot;EGL&quot;,..: 1 1 4 4 4 1 4 4 4 4 ...
+##  $ Polish       : Factor w/ 6 levels &quot;Excellent&quot;,&quot;Fair&quot;,..: 6 3 1 1 6 3 6 6 6 6 ...
+##  $ Symmetry     : Factor w/ 5 levels &quot;Excellent&quot;,&quot;Fair&quot;,..: 5 3 1 5 5 5 5 5 5 1 ...
+##  $ Price        : num  3000 3000 3004 3004 3006 ...
+##  $ Wholesaler   : Factor w/ 3 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;: 1 1 1 1 1 1 1 1 1 1 ...</code></pre>
+</div>
+<div id="descriptive-statistics-on-univariate-analysis-of-metric-and-non-metric-data" class="section level2">
+<h2>Descriptive statistics on Univariate analysis of metric and non-metric data</h2>
+<pre class="r"><code>stat.desc(MBA6636_SM21_Professor_Proposes_Data)</code></pre>
+<pre><code>##                     Carat Colour Clarity Cut Certification Polish Symmetry
+## nbr.val      440.00000000     NA      NA  NA            NA     NA       NA
+## nbr.null       0.00000000     NA      NA  NA            NA     NA       NA
+## nbr.na         0.00000000     NA      NA  NA            NA     NA       NA
+## min            0.09000000     NA      NA  NA            NA     NA       NA
+## max            1.58000000     NA      NA  NA            NA     NA       NA
+## range          1.49000000     NA      NA  NA            NA     NA       NA
+## sum          294.47000000     NA      NA  NA            NA     NA       NA
+## median         0.81000000     NA      NA  NA            NA     NA       NA
+## mean           0.66925000     NA      NA  NA            NA     NA       NA
+## SE.mean        0.01810625     NA      NA  NA            NA     NA       NA
+## CI.mean.0.95   0.03558570     NA      NA  NA            NA     NA       NA
+## var            0.14424796     NA      NA  NA            NA     NA       NA
+## std.dev        0.37979989     NA      NA  NA            NA     NA       NA
+## coef.var       0.56750077     NA      NA  NA            NA     NA       NA
+##                     Price Wholesaler
+## nbr.val      4.400000e+02         NA
+## nbr.null     0.000000e+00         NA
+## nbr.na       0.000000e+00         NA
+## min          1.600000e+02         NA
+## max          3.145000e+03         NA
+## range        2.985000e+03         NA
+## sum          7.553650e+05         NA
+## median       2.169000e+03         NA
+## mean         1.716739e+03         NA
+## SE.mean      5.604878e+01         NA
+## CI.mean.0.95 1.101573e+02         NA
+## var          1.382245e+06         NA
+## std.dev      1.175689e+03         NA
+## coef.var     6.848387e-01         NA</code></pre>
+</div>
+<div id="the-descriptive-statistics-for-the-carat-and-price-are-displyed-above-and-the-others-variables-are-marked-as-na-because-of-categorical-values" class="section level2">
+<h2>The descriptive statistics for the carat and price are displyed above and the others variables are marked as NA because of categorical values</h2>
+</div>
+<div id="let-us-see-the-minimum-maximum-and-interquartile-range-for-all-the-variables" class="section level1">
+<h1>Let us see the minimum, maximum and interquartile range for all the variables</h1>
+<pre class="r"><code>summary(MBA6636_SM21_Professor_Proposes_Data)</code></pre>
+<pre><code>##      Carat                      Colour   
+##  Min.   :0.0900   Colorless        :132  
+##  1st Qu.:0.3000   Faint Yellow     :103  
+##  Median :0.8100   Near Colorless   :193  
+##  Mean   :0.6693   Very Light Yellow: 12  
+##  3rd Qu.:1.0100                          
+##  Max.   :1.5800                          
+##                                          
+##                                      Clarity           Cut      Certification
+##  very very few inclusions at 10X         :116   Excellent:149   AGS: 12      
+##  very few inclusions at 10X              :110   Fair     : 59   DOW:  1      
+##  very few inclusions visible to naked eye: 82   Good     : 49   EGL:119      
+##  several inclusions at 30X               : 41   Ideal    : 86   GIA:265      
+##  few inclusions at 30X                   : 30   Very Good: 97   IGI: 43      
+##  few inclusions visible to naked eye     : 28                                
+##  (Other)                                 : 33                                
+##        Polish         Symmetry       Price      Wholesaler
+##  Excellent: 61   Excellent: 51   Min.   : 160   1: 60     
+##  Fair     :  5   Fair     : 21   1st Qu.: 520   2:180     
+##  Good     :165   Good     :157   Median :2169   3:200     
+##  Ideal    :  5   Ideal    :  5   Mean   :1717             
+##  v        :  1   Very Good:206   3rd Qu.:3012             
+##  Very Good:203                   Max.   :3145             
+## </code></pre>
+<div id="data-table-of-dataset-mba6636_sm21_professor_proposes_data" class="section level2">
+<h2>Data table of dataset-MBA6636_SM21_Professor_Proposes_Data</h2>
+<pre class="r"><code>data.table(MBA6636_SM21_Professor_Proposes_Data)</code></pre>
+<pre><code>##      Carat         Colour                         Clarity       Cut
+##   1:  0.92 Near Colorless      very few inclusions at 10X      Good
+##   2:  0.92 Near Colorless      very few inclusions at 10X Very Good
+##   3:  0.82      Colorless      very few inclusions at 10X     Ideal
+##   4:  0.81 Near Colorless very very few inclusions at 10X     Ideal
+##   5:  0.90   Faint Yellow       several inclusions at 30X Very Good
+##  ---                                                               
+## 436:  0.30   Faint Yellow very very few inclusions at 30X Very Good
+## 437:  0.30 Near Colorless very very few inclusions at 10X      Good
+## 438:  0.30 Near Colorless very very few inclusions at 10X Excellent
+## 439:  0.30 Near Colorless very very few inclusions at 10X Very Good
+## 440:  0.30 Near Colorless very very few inclusions at 10X Excellent
+##      Certification    Polish  Symmetry Price Wholesaler
+##   1:           AGS Very Good Very Good  3000          1
+##   2:           AGS      Good      Good  3000          1
+##   3:           GIA Excellent Excellent  3004          1
+##   4:           GIA Excellent Very Good  3004          1
+##   5:           GIA Very Good Very Good  3006          1
+##  ---                                                   
+## 436:           GIA Excellent Very Good   547          3
+## 437:           GIA Very Good Very Good   559          3
+## 438:           GIA Very Good Very Good   559          3
+## 439:           GIA Excellent Excellent   559          3
+## 440:           GIA Very Good Excellent   559          3</code></pre>
+</div>
+<div id="univariate-analysis-on-price" class="section level2">
+<h2>univariate analysis on Price</h2>
+</div>
+<div id="this-is-a-metric-data" class="section level2">
+<h2>This is a metric data</h2>
+<pre class="r"><code>descr(MBA6636_SM21_Professor_Proposes_Data$Price)</code></pre>
+<pre><code>## Descriptive Statistics  
+## MBA6636_SM21_Professor_Proposes_Data$Price  
+## N: 440  
+## 
+##                       Price
+## ----------------- ---------
+##              Mean   1716.74
+##           Std.Dev   1175.69
+##               Min    160.00
+##                Q1    520.00
+##            Median   2169.00
+##                Q3   3013.00
+##               Max   3145.00
+##               MAD   1422.55
+##               IQR   2492.50
+##                CV      0.68
+##          Skewness     -0.05
+##       SE.Skewness      0.12
+##          Kurtosis     -1.83
+##           N.Valid    440.00
+##         Pct.Valid    100.00</code></pre>
+</div>
+<div id="the-price-range-from-160-to-3145.-the-average-price-is-1716.74.-there-is-a-high-standard-deviation-i.e.-1175.69.-let-us-see-why-there-is-a-huge-standard-deviation-in-histogram." class="section level2">
+<h2>The price range from $160 to $3145. The average price is $1716.74. There is a high standard deviation, i.e., $1175.69. Let us see why there is a huge standard deviation in histogram.</h2>
+<pre class="r"><code>hist(MBA6636_SM21_Professor_Proposes_Data$Price, main=&quot;Histogram of price&quot;, xlab = &quot;price&quot;, col = &quot;lightblue&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<pre class="r"><code>x = MBA6636_SM21_Professor_Proposes_Data$Price
+h&lt;-hist(x, main=&quot;Histogram of price on full data&quot;, xlab = &quot;price&quot;, col = &quot;lightblue&quot;)
+xfit&lt;- seq(min(x), max(x), length = 10)
+yfit&lt;- dnorm(xfit, mean =mean (x), sd = sd(x))
+yfit&lt;- yfit*diff(h$mids[1:2])*length(x)
+lines(xfit, yfit, col = &quot;black&quot;, lwd = 2)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-2.png" width="672" /></p>
+</div>
+<div id="the-histogram-has-bimodal-distribution.-one-price-range-is-less-than-1000-and-other-price-range-is-between-1500-to-3145" class="section level2">
+<h2>The histogram has bimodal distribution. One price range is less than 1000 and other price range is between 1500 to 3145</h2>
+</div>
+<div id="filtering-the-price-greater-than-575-because-there-are-outliers-that-we-want-to-remove-to-improve-predictions" class="section level2">
+<h2>Filtering the price greater than 575 because there are outliers that we want to remove to improve predictions</h2>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data&lt;- subset(MBA6636_SM21_Professor_Proposes_Data, Price &gt; 575)</code></pre>
+</div>
+<div id="descriptive-statistics-on-price" class="section level2">
+<h2>Descriptive statistics on Price</h2>
+<pre class="r"><code>descr(MBA6636_SM21_Professor_Proposes_Data$Price)</code></pre>
+<pre><code>## Descriptive Statistics  
+## MBA6636_SM21_Professor_Proposes_Data$Price  
+## N: 244  
+## 
+##                       Price
+## ----------------- ---------
+##              Mean   2722.63
+##           Std.Dev    452.86
+##               Min    594.00
+##                Q1   2432.00
+##            Median   2779.50
+##                Q3   3082.50
+##               Max   3145.00
+##               MAD    456.64
+##               IQR    647.75
+##                CV      0.17
+##          Skewness     -1.76
+##       SE.Skewness      0.16
+##          Kurtosis      5.09
+##           N.Valid    244.00
+##         Pct.Valid    100.00</code></pre>
+<pre class="r"><code>hist(MBA6636_SM21_Professor_Proposes_Data$Price, main=&quot;Histogram of price&quot;, xlab = &quot;price&quot;, col = &quot;lightblue&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<pre class="r"><code>x = MBA6636_SM21_Professor_Proposes_Data$Price
+h&lt;-hist(x, main=&quot;Histogram of price above $600&quot;, xlab = &quot;price&quot;, col = &quot;blue&quot;)
+xfit&lt;- seq(min(x), max(x), length = 10)
+yfit&lt;- dnorm(xfit, mean =mean (x), sd = sd(x))
+yfit&lt;- yfit*diff(h$mids[1:2])*length(x)
+lines(xfit, yfit, col = &quot;black&quot;, lwd = 2)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-2.png" width="672" /></p>
+</div>
+<div id="now-we-can-see-that-standard-deviation-has-been-reduced-to-452.86-and-outliers-are-removed-to-the-extend-possible" class="section level2">
+<h2>Now we can see that standard deviation has been reduced to $452.86 and outliers are removed to the extend possible</h2>
+</div>
+<div id="univariate-analysis-on-carat" class="section level2">
+<h2>Univariate analysis on carat</h2>
+<pre class="r"><code>descr(MBA6636_SM21_Professor_Proposes_Data$Carat)</code></pre>
+<pre><code>## Descriptive Statistics  
+## MBA6636_SM21_Professor_Proposes_Data$Carat  
+## N: 244  
+## 
+##                      Carat
+## ----------------- --------
+##              Mean     0.99
+##           Std.Dev     0.15
+##               Min     0.23
+##                Q1     0.92
+##            Median     1.01
+##                Q3     1.04
+##               Max     1.58
+##               MAD     0.04
+##               IQR     0.12
+##                CV     0.16
+##          Skewness    -1.28
+##       SE.Skewness     0.16
+##          Kurtosis     7.37
+##           N.Valid   244.00
+##         Pct.Valid   100.00</code></pre>
+</div>
+<div id="the-minium-carat-is-0.23-and-maximum-carat-is-1.58.-the-average-carat-is-0.99.-the-standard-deviation-is-0.15" class="section level2">
+<h2>The minium carat is 0.23 and maximum carat is 1.58. The average carat is 0.99. The standard deviation is 0.15</h2>
+</div>
+<div id="histogram-on-carat" class="section level2">
+<h2>Histogram on carat</h2>
+<pre class="r"><code>ggplot(MBA6636_SM21_Professor_Proposes_Data, aes(Carat, fill = I(&quot;lightblue&quot;)))+geom_histogram(aes(y = ..density..))+stat_function (fun = dnorm, args = with(MBA6636_SM21_Professor_Proposes_Data, c(mean = mean(Carat), sd= sd(Carat))))+labs(title = &quot;Histogram of carat&quot;, x= &quot;carat&quot;)</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-16-1.png" width="672" />
+## We can see small cluster range from 0.23 to 0.28. The main distribution is the second cluster ranging from 0.8 to 1.58. When i try to remove those small clusters, it impact the model by getting negative correlation betweeen price and carat, which is wrong. That is the reason i did not remove this outliers in the model</p>
+</div>
+<div id="univariate-analysis-on-colour" class="section level2">
+<h2>Univariate analysis on colour</h2>
+</div>
+<div id="this-is-non-metric-data-and-we-can-consider-it-as-an-ordinal-categorical-data-since-it-has-some-order-in-it." class="section level2">
+<h2>This is non metric data and we can consider it as an ordinal categorical data since it has some order in it.</h2>
+<pre class="r"><code>freq(MBA6636_SM21_Professor_Proposes_Data$Colour)</code></pre>
+<pre><code>## Frequencies  
+## MBA6636_SM21_Professor_Proposes_Data$Colour  
+## Type: Factor  
+## 
+##                           Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+## ----------------------- ------ --------- -------------- --------- --------------
+##               Colorless     69     28.28          28.28     28.28          28.28
+##            Faint Yellow     67     27.46          55.74     27.46          55.74
+##          Near Colorless     96     39.34          95.08     39.34          95.08
+##       Very Light Yellow     12      4.92         100.00      4.92         100.00
+##                    &lt;NA&gt;      0                               0.00         100.00
+##                   Total    244    100.00         100.00    100.00         100.00</code></pre>
+</div>
+<div id="we-have-converted-it-as-a-character-variable-to-change-the-values-since-factor-variables-have-fixed-factor-levels" class="section level2">
+<h2>We have converted it as a character variable to change the values since factor variables have fixed factor levels</h2>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data$Colour&lt;-as.character(MBA6636_SM21_Professor_Proposes_Data$Colour)</code></pre>
+</div>
+<div id="we-can-have-just-2-items-to-have-a-better-prediction.-that-is-we-can-have-colourless-and-yellow" class="section level2">
+<h2>We can have just 2 items to have a better prediction. That is we can have colourless and yellow</h2>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data$Colour[MBA6636_SM21_Professor_Proposes_Data$Colour %in% c(&quot;Colorless&quot;, &quot;Near Colorless&quot;)]&lt;- &quot;Colorless&quot;</code></pre>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data$Colour[MBA6636_SM21_Professor_Proposes_Data$Colour %in% c(&quot;Faint Yellow&quot;, &quot;Very Light Yellow&quot;)]&lt;- &quot;yellow&quot;</code></pre>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data$Colour&lt;-as.factor(MBA6636_SM21_Professor_Proposes_Data$Colour)</code></pre>
+</div>
+<div id="frequency-distribution-of-colour" class="section level2">
+<h2>Frequency distribution of colour</h2>
+<pre class="r"><code>freq(MBA6636_SM21_Professor_Proposes_Data$Colour)</code></pre>
+<pre><code>## Frequencies  
+## MBA6636_SM21_Professor_Proposes_Data$Colour  
+## Type: Factor  
+## 
+##                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+## --------------- ------ --------- -------------- --------- --------------
+##       Colorless    165     67.62          67.62     67.62          67.62
+##          yellow     79     32.38         100.00     32.38         100.00
+##            &lt;NA&gt;      0                               0.00         100.00
+##           Total    244    100.00         100.00    100.00         100.00</code></pre>
+</div>
+<div id="i-have-made-colourless-and-near-coloutless-as-one-category-as-colourless-to-reduce-the-variable-to-better-preditability" class="section level2">
+<h2>I have made colourless and near coloutless as one category as colourless to reduce the variable to better preditability</h2>
+<pre class="r"><code>tab1(MBA6636_SM21_Professor_Proposes_Data$Colour, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of colour&quot;, xlab = &quot;colour&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<pre><code>## MBA6636_SM21_Professor_Proposes_Data$Colour : 
+##           Frequency Percent Cum. percent
+## yellow           79    32.4         32.4
+## Colorless       165    67.6        100.0
+##   Total         244   100.0        100.0</code></pre>
+</div>
+<div id="univariate-analysis-on-clarity" class="section level2">
+<h2>Univariate analysis on clarity</h2>
+</div>
+<div id="this-is-a-non-metric-and-categorical-data" class="section level2">
+<h2>This is a non metric and categorical data</h2>
+<pre class="r"><code>freq(MBA6636_SM21_Professor_Proposes_Data$Clarity)</code></pre>
+<pre><code>## Frequencies  
+## MBA6636_SM21_Professor_Proposes_Data$Clarity  
+## Type: Factor  
+## 
+##                                                  Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+## ---------------------------------------------- ------ --------- -------------- --------- --------------
+##                          few inclusions at 30X      8      3.28           3.28      3.28           3.28
+##            few inclusions visible to naked eye     28     11.48          14.75     11.48          14.75
+##                      several inclusions at 10X     26     10.66          25.41     10.66          25.41
+##                      several inclusions at 30X      8      3.28          28.69      3.28          28.69
+##                     very few inclusions at 10X     65     26.64          55.33     26.64          55.33
+##                     very few inclusions at 30X      3      1.23          56.56      1.23          56.56
+##       very few inclusions visible to naked eye     79     32.38          88.93     32.38          88.93
+##                very very few inclusions at 10X     27     11.07         100.00     11.07         100.00
+##                very very few inclusions at 30X      0      0.00         100.00      0.00         100.00
+##                                           &lt;NA&gt;      0                               0.00         100.00
+##                                          Total    244    100.00         100.00    100.00         100.00</code></pre>
+</div>
+<div id="we-can-convert-them-as-three-values-as-visible-to-naked-eye-inclusion-at-10x-since-it-does-not-have-good-frequency-individually" class="section level2">
+<h2>We can convert them as three values as visible to naked eye, Inclusion at 10X since it does not have good frequency individually</h2>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data$Clarity&lt;-as.character(MBA6636_SM21_Professor_Proposes_Data$Clarity)</code></pre>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data$Clarity[MBA6636_SM21_Professor_Proposes_Data$Clarity %in% c(&quot;few inclusions visible to naked eye&quot;, &quot;very few inclusions visible to naked eye&quot;)]&lt;- &quot;Visible to naked eye&quot;</code></pre>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data$Clarity[MBA6636_SM21_Professor_Proposes_Data$Clarity %in% c(&quot;several inclusions at 10X&quot;, &quot;very few inclusions at 10X&quot;, &quot;very very few inclusions at 10X&quot;)]&lt;- &quot;Inclusions at 10X and 30X&quot;</code></pre>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data$Clarity[MBA6636_SM21_Professor_Proposes_Data$Clarity %in% c(&quot;few inclusions at 30X&quot;, &quot;several inclusions at 30X&quot;, &quot;very few inclusions at 30X&quot;, &quot;very very few inclusions at 30X&quot;)]&lt;- &quot;Inclusions at 10X and 30X&quot;</code></pre>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data$Clarity&lt;-as.factor(MBA6636_SM21_Professor_Proposes_Data$Clarity)</code></pre>
+</div>
+<div id="frequency-distribution-of-clarity" class="section level2">
+<h2>Frequency distribution of clarity</h2>
+<pre class="r"><code>freq(MBA6636_SM21_Professor_Proposes_Data$Clarity)</code></pre>
+<pre><code>## Frequencies  
+## MBA6636_SM21_Professor_Proposes_Data$Clarity  
+## Type: Factor  
+## 
+##                                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+## ------------------------------- ------ --------- -------------- --------- --------------
+##       Inclusions at 10X and 30X    137     56.15          56.15     56.15          56.15
+##            Visible to naked eye    107     43.85         100.00     43.85         100.00
+##                            &lt;NA&gt;      0                               0.00         100.00
+##                           Total    244    100.00         100.00    100.00         100.00</code></pre>
+</div>
+<div id="x-and-30x-are-clubbed-together-here-for-better-predictability" class="section level2">
+<h2>10x and 30x are clubbed together here for better predictability</h2>
+<pre class="r"><code>tab1(MBA6636_SM21_Professor_Proposes_Data$Clarity, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of clarity&quot;, xlab = &quot;clarity&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
+<pre><code>## MBA6636_SM21_Professor_Proposes_Data$Clarity : 
+##                           Frequency Percent Cum. percent
+## Visible to naked eye            107    43.9         43.9
+## Inclusions at 10X and 30X       137    56.1        100.0
+##   Total                         244   100.0        100.0</code></pre>
+</div>
+<div id="univariate-analysis-on-cut" class="section level2">
+<h2>Univariate analysis on cut</h2>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data %&gt;%
+freq(Cut)</code></pre>
+<pre><code>## Frequencies  
+## MBA6636_SM21_Professor_Proposes_Data$Cut  
+## Type: Factor  
+## 
+##                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+## --------------- ------ --------- -------------- --------- --------------
+##       Excellent     81     33.20          33.20     33.20          33.20
+##            Fair     56     22.95          56.15     22.95          56.15
+##            Good     34     13.93          70.08     13.93          70.08
+##           Ideal     46     18.85          88.93     18.85          88.93
+##       Very Good     27     11.07         100.00     11.07         100.00
+##            &lt;NA&gt;      0                               0.00         100.00
+##           Total    244    100.00         100.00    100.00         100.00</code></pre>
+</div>
+<div id="though-all-the-categories-in-cut-had-distributed-their-frequency-sufficiently-to-influence-the-result-we-made-just-two-category-here-good-and-very-good-for-reducing-the-coefficient-in-regreggion-to-improve-the-predictability." class="section level2">
+<h2>Though all the categories in cut had distributed their frequency sufficiently to influence the result, we made just two category here good and very good for reducing the coefficient in regreggion to improve the predictability.</h2>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data$Cut&lt;-as.character(MBA6636_SM21_Professor_Proposes_Data$Cut)</code></pre>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data$Cut[MBA6636_SM21_Professor_Proposes_Data$Cut %in% c(&quot;Excellent&quot;, &quot;Ideal&quot;)]&lt;- &quot;Very Good&quot;</code></pre>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data$Cut[MBA6636_SM21_Professor_Proposes_Data$Cut == &quot;Fair&quot; ]&lt;- &quot;Good&quot;</code></pre>
+</div>
+<div id="frequency-distribution-of-cut" class="section level2">
+<h2>Frequency distribution of Cut</h2>
+<pre class="r"><code>tab1(MBA6636_SM21_Professor_Proposes_Data$Cut, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of cut&quot;, xlab = &quot;Cut&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-36-1.png" width="672" /></p>
+<pre><code>## MBA6636_SM21_Professor_Proposes_Data$Cut : 
+##           Frequency Percent Cum. percent
+## Good             90    36.9         36.9
+## Very Good       154    63.1        100.0
+##   Total         244   100.0        100.0</code></pre>
+</div>
+<div id="the-fair-has-been-merged-with-good-and-other-categories-has-been-merged-with-very-good" class="section level2">
+<h2>The fair has been merged with good and other categories has been merged with very good</h2>
+</div>
+<div id="univariate-analysis-on-certification" class="section level2">
+<h2>Univariate analysis on certification</h2>
+</div>
+<div id="this-is-a-non-metric-and-nominal-categorical-value" class="section level2">
+<h2>This is a non metric and nominal categorical value</h2>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data %&gt;%
+freq(Certification)</code></pre>
+<pre><code>## Frequencies  
+## MBA6636_SM21_Professor_Proposes_Data$Certification  
+## Type: Factor  
+## 
+##               Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+## ----------- ------ --------- -------------- --------- --------------
+##         AGS     12      4.92           4.92      4.92           4.92
+##         DOW      1      0.41           5.33      0.41           5.33
+##         EGL    119     48.77          54.10     48.77          54.10
+##         GIA    111     45.49          99.59     45.49          99.59
+##         IGI      1      0.41         100.00      0.41         100.00
+##        &lt;NA&gt;      0                               0.00         100.00
+##       Total    244    100.00         100.00    100.00         100.00</code></pre>
+</div>
+<div id="other-then-egl-and-gia-certification-all-frequency-are-very-less-in-percentage.-only-ags-egl-and-gia-has-the-price-range-higher-than-3000.-in-order-to-have-a-fair-distribution-among-certifications-we-can-merge-ags-with-gia-and-all-other-certifications-can-be-categorized-as-othercertifications" class="section level2">
+<h2>Other then EGL and GIA certification, all frequency are very less in percentage. Only AGS, EGL and GIA has the price range higher than 3000. In order to have a fair distribution among certifications, we can merge AGS with GIA and all other certifications can be categorized as othercertifications</h2>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data$Certification&lt;-as.character(MBA6636_SM21_Professor_Proposes_Data$Certification)</code></pre>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data$Certification[MBA6636_SM21_Professor_Proposes_Data$Certification %in% c(&quot;EGL&quot;, &quot;DOW&quot;, &quot;IGI&quot;)]&lt;- &quot;Other Certifications&quot;</code></pre>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data$Certification[MBA6636_SM21_Professor_Proposes_Data$Certification == &quot;AGS&quot;]&lt;- &quot;GIA&quot;</code></pre>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data$Certification&lt;-as.factor(MBA6636_SM21_Professor_Proposes_Data$Certification)</code></pre>
+</div>
+<div id="frequency-distribution-of-certification" class="section level2">
+<h2>Frequency distribution of certification</h2>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data %&gt;%
+freq(Certification)</code></pre>
+<pre><code>## Frequencies  
+## MBA6636_SM21_Professor_Proposes_Data$Certification  
+## Type: Factor  
+## 
+##                              Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+## -------------------------- ------ --------- -------------- --------- --------------
+##                        GIA    123     50.41          50.41     50.41          50.41
+##       Other Certifications    121     49.59         100.00     49.59         100.00
+##                       &lt;NA&gt;      0                               0.00         100.00
+##                      Total    244    100.00         100.00    100.00         100.00</code></pre>
+<pre class="r"><code>tab1(MBA6636_SM21_Professor_Proposes_Data$Certification, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of Certification&quot;, xlab = &quot;Certification&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-43-1.png" width="672" /></p>
+<pre><code>## MBA6636_SM21_Professor_Proposes_Data$Certification : 
+##                      Frequency Percent Cum. percent
+## Other Certifications       121    49.6         49.6
+## GIA                        123    50.4        100.0
+##   Total                    244   100.0        100.0</code></pre>
+</div>
+<div id="univariate-analysis-of-polish" class="section level2">
+<h2>Univariate analysis of Polish</h2>
+</div>
+<div id="this-is-a-non-metric-and-can-be-considered-as-a-ordinal-categorical-value" class="section level2">
+<h2>This is a non metric and can be considered as a ordinal categorical value</h2>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data %&gt;%
+freq(Polish)</code></pre>
+<pre><code>## Frequencies  
+## MBA6636_SM21_Professor_Proposes_Data$Polish  
+## Type: Factor  
+## 
+##                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+## --------------- ------ --------- -------------- --------- --------------
+##       Excellent     21      8.61           8.61      8.61           8.61
+##            Fair      5      2.05          10.66      2.05          10.66
+##            Good    112     45.90          56.56     45.90          56.56
+##           Ideal      5      2.05          58.61      2.05          58.61
+##               v      1      0.41          59.02      0.41          59.02
+##       Very Good    100     40.98         100.00     40.98         100.00
+##            &lt;NA&gt;      0                               0.00         100.00
+##           Total    244    100.00         100.00    100.00         100.00</code></pre>
+</div>
+<div id="we-can-convert-this-into-two-data-as-good-and-very-good-as-other-data-have-very-less-frequencies.-we-merge-fair-with-goood-and-all-other-into-very-good" class="section level2">
+<h2>We can convert this into two data as good and very good as other data have very less frequencies. We merge fair with goood and all other into very good</h2>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data$Polish &lt;-as.character(MBA6636_SM21_Professor_Proposes_Data$Polish)</code></pre>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data$Polish[MBA6636_SM21_Professor_Proposes_Data$Polish %in% c(&quot;Excellent&quot;, &quot;Ideal&quot;, &quot;v&quot;)]&lt;- &quot;Very Good&quot;</code></pre>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data$Polish[MBA6636_SM21_Professor_Proposes_Data$Polish == &quot;Fair&quot; ]&lt;- &quot;Good&quot;</code></pre>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data$Polish &lt;-as.factor(MBA6636_SM21_Professor_Proposes_Data$Polish)</code></pre>
+</div>
+<div id="frequency-distribution-of-polish" class="section level2">
+<h2>Frequency distribution of polish</h2>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data %&gt;%
+freq(Polish)</code></pre>
+<pre><code>## Frequencies  
+## MBA6636_SM21_Professor_Proposes_Data$Polish  
+## Type: Factor  
+## 
+##                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+## --------------- ------ --------- -------------- --------- --------------
+##            Good    117     47.95          47.95     47.95          47.95
+##       Very Good    127     52.05         100.00     52.05         100.00
+##            &lt;NA&gt;      0                               0.00         100.00
+##           Total    244    100.00         100.00    100.00         100.00</code></pre>
+<pre class="r"><code>tab1(MBA6636_SM21_Professor_Proposes_Data$Polish, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of Polish&quot;, xlab = &quot;Polish&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-50-1.png" width="672" /></p>
+<pre><code>## MBA6636_SM21_Professor_Proposes_Data$Polish : 
+##           Frequency Percent Cum. percent
+## Good            117      48           48
+## Very Good       127      52          100
+##   Total         244     100          100</code></pre>
+</div>
+<div id="univariate-analysis-on-symmetry" class="section level2">
+<h2>Univariate analysis on symmetry</h2>
+</div>
+<div id="this-is-a-nonmetric-data-and-we-can-consider-this-as-a-ordinal-categorical-data-since-it-is-of-such-nature" class="section level2">
+<h2>This is a nonmetric data and we can consider this as a ordinal categorical data since it is of such nature</h2>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data %&gt;%
+freq(Symmetry)</code></pre>
+<pre><code>## Frequencies  
+## MBA6636_SM21_Professor_Proposes_Data$Symmetry  
+## Type: Factor  
+## 
+##                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+## --------------- ------ --------- -------------- --------- --------------
+##       Excellent     28     11.48          11.48     11.48          11.48
+##            Fair     21      8.61          20.08      8.61          20.08
+##            Good    104     42.62          62.70     42.62          62.70
+##           Ideal      5      2.05          64.75      2.05          64.75
+##       Very Good     86     35.25         100.00     35.25         100.00
+##            &lt;NA&gt;      0                               0.00         100.00
+##           Total    244    100.00         100.00    100.00         100.00</code></pre>
+</div>
+<div id="just-like-the-case-of-polish-we-can-make-two-values-such-as-fair-can-be-clubbed-with-good-and-other-items-can-be-merged-with-very-good" class="section level2">
+<h2>Just like the case of polish, we can make two values such as fair can be clubbed with good and other items can be merged with very good</h2>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data$Symmetry &lt;-as.character(MBA6636_SM21_Professor_Proposes_Data$Symmetry)</code></pre>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data$Symmetry[MBA6636_SM21_Professor_Proposes_Data$Symmetry %in% c(&quot;Excellent&quot;, &quot;Ideal&quot;)]&lt;- &quot;Very Good&quot;</code></pre>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data$Symmetry[MBA6636_SM21_Professor_Proposes_Data$Symmetry == &quot;Fair&quot; ]&lt;- &quot;Good&quot;</code></pre>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data$Symmetry &lt;-as.factor(MBA6636_SM21_Professor_Proposes_Data$Symmetry)</code></pre>
+</div>
+<div id="frequency-distribution-of-symmetry" class="section level2">
+<h2>Frequency distribution of symmetry</h2>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data %&gt;%
+freq(Symmetry)</code></pre>
+<pre><code>## Frequencies  
+## MBA6636_SM21_Professor_Proposes_Data$Symmetry  
+## Type: Factor  
+## 
+##                   Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+## --------------- ------ --------- -------------- --------- --------------
+##            Good    125     51.23          51.23     51.23          51.23
+##       Very Good    119     48.77         100.00     48.77         100.00
+##            &lt;NA&gt;      0                               0.00         100.00
+##           Total    244    100.00         100.00    100.00         100.00</code></pre>
+<pre class="r"><code>tab1(MBA6636_SM21_Professor_Proposes_Data$Symmetry, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of Symmetry&quot;, xlab = &quot;Symmetry&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-57-1.png" width="672" /></p>
+<pre><code>## MBA6636_SM21_Professor_Proposes_Data$Symmetry : 
+##           Frequency Percent Cum. percent
+## Very Good       119    48.8         48.8
+## Good            125    51.2        100.0
+##   Total         244   100.0        100.0</code></pre>
+</div>
+<div id="univariate-analysis-of-wholesaler" class="section level2">
+<h2>univariate analysis of wholesaler</h2>
+</div>
+<div id="this-is-nonmetric-and-categorical-data-repesented-in-numbers." class="section level2">
+<h2>This is nonmetric and categorical data repesented in numbers.</h2>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data %&gt;%
+freq(Wholesaler)</code></pre>
+<pre><code>## Frequencies  
+## MBA6636_SM21_Professor_Proposes_Data$Wholesaler  
+## Type: Factor  
+## 
+##               Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+## ----------- ------ --------- -------------- --------- --------------
+##           1     60     24.59          24.59     24.59          24.59
+##           2    180     73.77          98.36     73.77          98.36
+##           3      4      1.64         100.00      1.64         100.00
+##        &lt;NA&gt;      0                               0.00         100.00
+##       Total    244    100.00         100.00    100.00         100.00</code></pre>
+</div>
+<div id="since-the-wholesaler-3-sells-low-priced-diamonds-and-there-are-only-4-frequenies-we-can-group-them-with-wholesaler-2." class="section level2">
+<h2>since the wholesaler 3 sells low priced diamonds and there are only 4 frequenies, we can group them with wholesaler 2.</h2>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data$Wholesaler &lt;-as.character(MBA6636_SM21_Professor_Proposes_Data$Wholesaler)</code></pre>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data$Wholesaler[MBA6636_SM21_Professor_Proposes_Data$Wholesaler == &quot;1&quot;]&lt;- &quot;High priced diamond wholesaler&quot;</code></pre>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data$Wholesaler[MBA6636_SM21_Professor_Proposes_Data$Wholesaler %in% c( &quot;2&quot;, &quot;3&quot;)]&lt;- &quot;Low and Medium priced diamond wholesaler&quot;</code></pre>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data$Wholesaler &lt;-as.factor(MBA6636_SM21_Professor_Proposes_Data$Wholesaler)</code></pre>
+</div>
+<div id="frequency-distribution-of-wholesaler" class="section level2">
+<h2>Frequency distribution of wholesaler</h2>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data %&gt;%
+freq(Wholesaler)</code></pre>
+<pre><code>## Frequencies  
+## MBA6636_SM21_Professor_Proposes_Data$Wholesaler  
+## Type: Factor  
+## 
+##                                                  Freq   % Valid   % Valid Cum.   % Total   % Total Cum.
+## ---------------------------------------------- ------ --------- -------------- --------- --------------
+##                 High priced diamond wholesaler     60     24.59          24.59     24.59          24.59
+##       Low and Medium priced diamond wholesaler    184     75.41         100.00     75.41         100.00
+##                                           &lt;NA&gt;      0                               0.00         100.00
+##                                          Total    244    100.00         100.00    100.00         100.00</code></pre>
+<pre class="r"><code>tab1(MBA6636_SM21_Professor_Proposes_Data$Wholesaler, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of Wholesaler&quot;, xlab = &quot;Wholesaler&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-64-1.png" width="672" /></p>
+<pre><code>## MBA6636_SM21_Professor_Proposes_Data$Wholesaler : 
+##                                          Frequency Percent Cum. percent
+## High priced diamond wholesaler                  60    24.6         24.6
+## Low and Medium priced diamond wholesaler       184    75.4        100.0
+##   Total                                        244   100.0        100.0</code></pre>
+</div>
+<div id="correlation-and-covariance-on-metric-data" class="section level2">
+<h2>Correlation and covariance on metric data</h2>
+<pre class="r"><code>cor.test(MBA6636_SM21_Professor_Proposes_Data$Price, MBA6636_SM21_Professor_Proposes_Data$Carat, alternative = &quot;greater&quot;)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  MBA6636_SM21_Professor_Proposes_Data$Price and MBA6636_SM21_Professor_Proposes_Data$Carat
+## t = 2.4321, df = 242, p-value = 0.007869
+## alternative hypothesis: true correlation is greater than 0
+## 95 percent confidence interval:
+##  0.04971706 1.00000000
+## sample estimates:
+##      cor 
+## 0.154466</code></pre>
+</div>
+<div id="there-is-a-positive-correlation-between-price-and-carat-as-it-is-evident-from-r-value-of-0.154.-moreover-p-value-is-less-than-alpha-0.05.-we-have-done-a-right-tail-analysis-here.-our-alternative-hypothesis-is-true-which-means-our-alternative-hypothesis-is-greater-than-0.-in-other-words-there-is-a-positive-correlation.-this-relationship-is-significant." class="section level2">
+<h2>There is a positive correlation between price and carat as it is evident from r value of 0.154. Moreover, p value is less than alpha 0.05. We have done a right-tail analysis here. Our alternative hypothesis is true, which means our alternative hypothesis is greater than 0. In other words, there is a positive correlation. This relationship is significant.</h2>
+<pre class="r"><code>cov(MBA6636_SM21_Professor_Proposes_Data$Price,MBA6636_SM21_Professor_Proposes_Data$Carat)</code></pre>
+<pre><code>## [1] 10.75143</code></pre>
+</div>
+<div id="the-covariance-value-of-positive-10.76-implies-that-price-and-carat-are-positively-related-and-they-move-in-the-same-direction.-this-means-that-higher-is-the-carat-higher-is-the-price." class="section level2">
+<h2>The covariance value of positive 10.76 implies that price and carat are positively related and they move in the same direction. This means that higher is the carat, higher is the price.</h2>
+</div>
+<div id="chart-and-linear-regression-on-bivariate-analysis" class="section level2">
+<h2>Chart and linear regression on bivariate analysis</h2>
+</div>
+<div id="relationship-between-price-and-carat" class="section level2">
+<h2>Relationship between price and carat</h2>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data %&gt;%
+  ggplot(aes(x=Carat, y=Price, color = Carat))+geom_point()+expand_limits(y=0)+geom_smooth(method = &quot;lm&quot;, se = FALSE)+labs(title =&quot;Relationship between price and carat&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-67-1.png" width="672" />
+## There is a positive correlation because r, correlation, value is 0.15.We can see here three outliers. The cluster of carat range between 0.8 to 1.58 and the price range between $1856 and $3145.</p>
+<pre class="r"><code>lm_carat=lm(Price ~ Carat, data = MBA6636_SM21_Professor_Proposes_Data)
+summary(lm_carat)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Carat, data = MBA6636_SM21_Professor_Proposes_Data)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1800.45  -346.69    52.81   382.92   450.33 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   2271.6      187.7  12.104   &lt;2e-16 ***
+## Carat          455.1      187.1   2.432   0.0157 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 448.4 on 242 degrees of freedom
+## Multiple R-squared:  0.02386,    Adjusted R-squared:  0.01983 
+## F-statistic: 5.915 on 1 and 242 DF,  p-value: 0.01574</code></pre>
+</div>
+<div id="r-squared-is-0.023-which-means-the-predicting-equation-is-not-very-good.-the-equation-is-price-2271.6455.1carat.-since-p-value-is-less-than-alpha-we-reject-null-hypothesis-that-is-there-is-a-correlation-between-these.-our-null-hypothesis-is-both-are-equal-and-alternative-hyopthesis-is-they-are-not-equal.this-relationship-is-significant" class="section level2">
+<h2>r-squared is 0.023, which means the predicting equation is not very good. The equation is Price= 2271.6+455.1*Carat. Since p value is less than alpha, we reject null hypothesis, that is there is a correlation between these. Our null hypothesis is both are equal and alternative hyopthesis is they are not equal.This relationship is significant</h2>
+</div>
+<div id="relationship-between-price-and-wholesaler" class="section level2">
+<h2>relationship between price and wholesaler</h2>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data %&gt;%
+  ggplot(aes(x=Wholesaler, y=Price, color = Wholesaler))+geom_point()+expand_limits(y=0)+geom_smooth(method = &quot;lm&quot;, se = FALSE)+labs(title =&quot;Relationship between price and wholesaler&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-69-1.png" width="672" /></p>
+<pre class="r"><code>lm_Wholesaler=lm(Price ~ Wholesaler, data = MBA6636_SM21_Professor_Proposes_Data)
+summary(lm_Wholesaler)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Wholesaler, data = MBA6636_SM21_Professor_Proposes_Data)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -2024.10  -183.60     3.86   161.90   526.90 
+## 
+## Coefficients:
+##                                                    Estimate Std. Error t value
+## (Intercept)                                         3043.18      53.56  56.813
+## WholesalerLow and Medium priced diamond wholesaler  -425.09      61.68  -6.891
+##                                                    Pr(&gt;|t|)    
+## (Intercept)                                         &lt; 2e-16 ***
+## WholesalerLow and Medium priced diamond wholesaler 4.75e-11 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 414.9 on 242 degrees of freedom
+## Multiple R-squared:  0.1641, Adjusted R-squared:  0.1606 
+## F-statistic: 47.49 on 1 and 242 DF,  p-value: 4.753e-11</code></pre>
+</div>
+<div id="the-equation-is-price-3043.18-425.09-low-and-medium-priced-diamond-wholesaler.-since-the-p-value-is-less-than-alpha-we-reject-null-hypothesis.-that-is-there-is-a-correlation-between-price-and-wholesaler.-the-r-squared-0.16-indicates-that-equation-is-not-that-strong-to-predict-the-price-by-itself" class="section level2">
+<h2>The equation is price =3043.18-425.09 *low and medium priced diamond wholesaler. Since the p value is less than alpha, we reject null hypothesis. That is there is a correlation between price and wholesaler. The R squared 0.16 indicates that equation is not that strong to predict the price by itself</h2>
+</div>
+<div id="relationship-between-price-and-colour" class="section level2">
+<h2>Relationship between price and colour</h2>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data %&gt;%
+  
+   
+  ggplot(aes(x=Colour, y=Price, fill = Colour))+geom_boxplot()+expand_limits(y=0)+theme_minimal()+geom_smooth(method = &quot;lm&quot;, se = FALSE)+labs(title =&quot;Relationship between price and colour&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-71-1.png" width="672" />
+## We can see outliers on colourless</p>
+<pre class="r"><code>lm_Colour=lm(Price ~ Colour, data = MBA6636_SM21_Professor_Proposes_Data)
+summary(lm_Colour)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Colour, data = MBA6636_SM21_Professor_Proposes_Data)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -2149.09  -285.19    96.11   341.91   465.11 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   2743.09      35.25   77.81   &lt;2e-16 ***
+## Colouryellow   -63.20      61.95   -1.02    0.309    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 452.8 on 242 degrees of freedom
+## Multiple R-squared:  0.004282,   Adjusted R-squared:  0.0001678 
+## F-statistic: 1.041 on 1 and 242 DF,  p-value: 0.3087</code></pre>
+</div>
+<div id="the-equation-is-price-2743.09-63.20colour-yellow.-all-of-the-p-value-is-not-less-han-alpha-0.05.-we-do-not-reject-null-hypothesis.-there-is-a-no-correlation-between-price-and-colour.moreover-the-equation-is-not-that-strong-since-r-squared-is-0.004-and-equation-is-not-significant" class="section level2">
+<h2>The equation is price =2743.09-63.20*colour yellow. All of the p value is not less han alpha 0.05. We do not reject null hypothesis. There is a no correlation between price and colour.MOreover, the equation is not that strong since r squared is 0.004 and equation is not significant</h2>
+</div>
+<div id="relationship-between-price-and-clarity" class="section level2">
+<h2>Relationship between price and clarity</h2>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data %&gt;%
+  ggplot(aes(x=Clarity, y=Price, fill = Clarity))+geom_boxplot()+expand_limits(y=0)+theme_minimal()+geom_smooth(method = &quot;lm&quot;, se = FALSE)+labs(title =&quot;Relationship between price and clarity&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-73-1.png" width="672" />
+## We can see more outliers on inclusions at 10x and 30x</p>
+<pre class="r"><code>lm_Clarity=lm(Price ~ Clarity, data = MBA6636_SM21_Professor_Proposes_Data)
+summary(lm_Clarity)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Clarity, data = MBA6636_SM21_Professor_Proposes_Data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -2263.9  -199.5   151.1   228.4   591.6 
+## 
+## Coefficients:
+##                             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                  2857.93      36.48  78.347  &lt; 2e-16 ***
+## ClarityVisible to naked eye  -308.55      55.09  -5.601 5.76e-08 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 427 on 242 degrees of freedom
+## Multiple R-squared:  0.1148, Adjusted R-squared:  0.1111 
+## F-statistic: 31.38 on 1 and 242 DF,  p-value: 5.764e-08</code></pre>
+</div>
+<div id="the-equation-is-price-2857.93-308.55clarityvisible-to-naked-eye.-the-equation-is-not-too-good-because-of-low-r-squared-0.11-and-adjusted-r-squared-of-0.11-to-predict-price-by-itself.-since-p-value-is-less-than-alpha-we-reject-null-hypothesis.-that-is-there-is-some-correlation-between-price-and-clarity.-there-is-a-significance-in-this-eqration-though-r-squared-is-low." class="section level2">
+<h2>The equation is price = 2857.93-308.55*ClarityVisible to naked eye. The equation is not too good because of low r squared, 0.11 and adjusted r squared of 0.11 to predict price by itself. Since p value is less than alpha, we reject null hypothesis. That is there is some correlation between price and clarity. There is a significance in this eqration though r squared is low.</h2>
+</div>
+<div id="relationship-between-price-and-cut" class="section level2">
+<h2>Relationship between price and cut</h2>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data %&gt;%
+  ggplot(aes(x=Cut, y=Price, fill = Cut))+geom_boxplot()+expand_limits(y=0)+theme_minimal()+geom_smooth(method = &quot;lm&quot;, se = FALSE)+labs(title =&quot;Relationship between price and cut&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-75-1.png" width="672" />
+## There are some outliers on very good</p>
+<pre class="r"><code>lm_Cut=lm(Price ~ Cut, data = MBA6636_SM21_Professor_Proposes_Data)
+summary(lm_Cut)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Cut, data = MBA6636_SM21_Professor_Proposes_Data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -2181.6  -268.2   140.5   332.4   513.0 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   2631.97      47.27  55.681   &lt;2e-16 ***
+## CutVery Good   143.64      59.50   2.414   0.0165 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 448.4 on 242 degrees of freedom
+## Multiple R-squared:  0.02352,    Adjusted R-squared:  0.01948 
+## F-statistic: 5.828 on 1 and 242 DF,  p-value: 0.01651</code></pre>
+</div>
+<div id="the-equation-is-2631.97-143.64cut-very-good.-the-r-squared-is-0.023-and-adjusted-r-squared-is-0.019-which-indicates-that-equation-is-not-strong-to-predict-the-price-by-itself.-the-equation-is-significant-though-the-r-squared-value-is-low." class="section level2">
+<h2>The equation is 2631.97 + 143.64*cut very good. The r squared is 0.023 and adjusted r squared is 0.019, which indicates that equation is not strong to predict the price by itself. The equation is significant though the r squared value is low.</h2>
+</div>
+<div id="relationship-between-price-and-certification" class="section level2">
+<h2>Relationship between price and certification</h2>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data %&gt;%
+  ggplot(aes(x=Certification, y=Price, fill = Certification))+geom_boxplot()+expand_limits(y=0)+theme_minimal()+geom_smooth(method = &quot;lm&quot;, se = FALSE)+labs(title =&quot;Relationship between price and certification&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-77-1.png" width="672" />
+## AGS is added to GIA category of certification and the others categories are clubbed and named as other certifications</p>
+</div>
+<div id="we-can-see-some-outliers-on-both-categories-of-certification." class="section level2">
+<h2>We can see some outliers on both categories of certification.</h2>
+<pre class="r"><code>lm_Certification=lm(Price ~ Certification, data = MBA6636_SM21_Professor_Proposes_Data)
+summary(lm_Certification)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Certification, data = MBA6636_SM21_Professor_Proposes_Data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -2194.3  -275.9   120.2   294.9   489.1 
+## 
+## Coefficients:
+##                                   Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                        2788.32      40.48  68.888   &lt;2e-16 ***
+## CertificationOther Certifications  -132.47      57.48  -2.305    0.022 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 448.9 on 242 degrees of freedom
+## Multiple R-squared:  0.02148,    Adjusted R-squared:  0.01743 
+## F-statistic: 5.311 on 1 and 242 DF,  p-value: 0.02203</code></pre>
+</div>
+<div id="the-eqution-is-price-2788.32-132.47other-certifications.-this-equation-is-not-that-strong-since-r-squared-is-only-0.021-and-adjusted-r-squared-is-0.017.-we-reject-null-hypothesis-because-p-value-is-less-than-alpha.-thus-there-is-a-correlation-between-price-and-certification-and-it-is-significant-as-well." class="section level2">
+<h2>The eqution is price =2788.32-132.47*other certifications. This equation is not that strong since r squared is only 0.021 and adjusted r squared is 0.017. We reject null hypothesis because p value is less than alpha. Thus, there is a correlation between price and certification and it is significant as well.</h2>
+</div>
+<div id="relationship-between-price-and-polish" class="section level2">
+<h2>Relationship between price and polish</h2>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data %&gt;%
+  ggplot(aes(x=Polish, y=Price, fill = Polish))+geom_boxplot()+expand_limits(y=0)+theme_minimal()+geom_smooth(method = &quot;lm&quot;, se = FALSE)+labs(title =&quot;Relationship between price and polish&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-79-1.png" width="672" />
+## The category fair is clubbed with good and all other categories are put together as very good
+## We can see some outliers in very good category</p>
+<pre class="r"><code>lm_Polish=lm(Price ~ Polish, data = MBA6636_SM21_Professor_Proposes_Data)
+summary(lm_Polish)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Polish, data = MBA6636_SM21_Professor_Proposes_Data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -2214.1  -244.9   143.6   299.2   515.1 
+## 
+## Coefficients:
+##                 Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)      2629.90      41.13  63.938   &lt;2e-16 ***
+## PolishVery Good   178.16      57.01   3.125    0.002 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 444.9 on 242 degrees of freedom
+## Multiple R-squared:  0.03879,    Adjusted R-squared:  0.03481 
+## F-statistic: 9.765 on 1 and 242 DF,  p-value: 0.001996</code></pre>
+</div>
+<div id="the-equation-is-price-2629.90178.16-polish-very-good.-we-reject-null-hypothesis-since-p-value-is-less-than-alpha-and-there-is-a-correlation-between-price-and-polish.-though-the-r-squared-is-0.039-and-adjusted-r-squared-is-0.035-indication-poor-predicting-equation-of-price-by-itself-the-equation-is-significant.-so-we-can-take-this-in-to-our-model-of-regression" class="section level2">
+<h2>The equation is price =2629.90+178.16 * polish very good. We reject null hypothesis since p value is less than alpha and there is a correlation between price and polish. Though the r squared is 0.039 and adjusted r squared is 0.035 indication poor predicting equation of price by itself, the equation is significant. So, we can take this in to our model of regression</h2>
+</div>
+<div id="relationship-between-price-and-symmetry" class="section level2">
+<h2>Relationship between price and symmetry</h2>
+<pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data %&gt;%
+  ggplot(aes(x=Symmetry, y=Price, fill = Symmetry))+geom_boxplot()+expand_limits(y=0)+theme_minimal()+geom_smooth(method = &quot;lm&quot;, se = FALSE)+labs(title =&quot;Relationship between price and symmetry&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-81-1.png" width="672" />
+## We can see some outliers in very good category. Here also, fair is clubbed with good and all other categories are clubbed togeter as very good</p>
+<pre class="r"><code>lm_Symmetry=lm(Price ~ Symmetry, data = MBA6636_SM21_Professor_Proposes_Data)
+summary(lm_Symmetry)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Symmetry, data = MBA6636_SM21_Professor_Proposes_Data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -2205.7  -264.8   128.2   326.6   491.7 
+## 
+## Coefficients:
+##                   Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)        2649.26      40.02  66.193  &lt; 2e-16 ***
+## SymmetryVery Good   150.43      57.31   2.625  0.00922 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 447.5 on 242 degrees of freedom
+## Multiple R-squared:  0.02768,    Adjusted R-squared:  0.02366 
+## F-statistic: 6.889 on 1 and 242 DF,  p-value: 0.009224</code></pre>
+</div>
+<div id="the-equation-is-price-2649.26150.43-symetry-very-good.-we-reject-null-hypothesis-since-p-value-is-less-than-alpha-0.05.-thus-there-is-some-correlation-between-price-and-symmetry.this-equation-is-significant.-the-r-squared-value-is-0.027-and-adjusted-r-squared-is-0.02366" class="section level2">
+<h2>The equation is price = 2649.26+150.43 * symetry very good. We reject null hypothesis since p value is less than alpha 0.05. Thus, there is some correlation between price and symmetry.This equation is significant. The r squared value is 0.027 and adjusted r squared is 0.02366</h2>
+</div>
+<div id="overall-comparision-in-graph-using-ggpairs" class="section level2">
+<h2>Overall comparision in graph using ggpairs</h2>
+<pre class="r"><code>ggpairs(MBA6636_SM21_Professor_Proposes_Data)</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-83-1.png" width="672" /></p>
+</div>
+<div id="best-subset-regression" class="section level2">
+<h2>Best subset regression</h2>
+<pre class="r"><code>best&lt;-regsubsets(Price~ Carat+Colour+Clarity+Cut+Certification+Polish+Symmetry+Wholesaler, data= MBA6636_SM21_Professor_Proposes_Data, nvmax= 8)
+summary(best)</code></pre>
+<pre><code>## Subset selection object
+## Call: regsubsets.formula(Price ~ Carat + Colour + Clarity + Cut + Certification + 
+##     Polish + Symmetry + Wholesaler, data = MBA6636_SM21_Professor_Proposes_Data, 
+##     nvmax = 8)
+## 8 Variables  (and intercept)
+##                                                    Forced in Forced out
+## Carat                                                  FALSE      FALSE
+## Colouryellow                                           FALSE      FALSE
+## ClarityVisible to naked eye                            FALSE      FALSE
+## CutVery Good                                           FALSE      FALSE
+## CertificationOther Certifications                      FALSE      FALSE
+## PolishVery Good                                        FALSE      FALSE
+## SymmetryVery Good                                      FALSE      FALSE
+## WholesalerLow and Medium priced diamond wholesaler     FALSE      FALSE
+## 1 subsets of each size up to 8
+## Selection Algorithm: exhaustive
+##          Carat Colouryellow ClarityVisible to naked eye CutVery Good
+## 1  ( 1 ) &quot; &quot;   &quot; &quot;          &quot; &quot;                         &quot; &quot;         
+## 2  ( 1 ) &quot;*&quot;   &quot; &quot;          &quot; &quot;                         &quot; &quot;         
+## 3  ( 1 ) &quot;*&quot;   &quot; &quot;          &quot;*&quot;                         &quot; &quot;         
+## 4  ( 1 ) &quot;*&quot;   &quot;*&quot;          &quot;*&quot;                         &quot; &quot;         
+## 5  ( 1 ) &quot;*&quot;   &quot;*&quot;          &quot;*&quot;                         &quot; &quot;         
+## 6  ( 1 ) &quot;*&quot;   &quot;*&quot;          &quot;*&quot;                         &quot;*&quot;         
+## 7  ( 1 ) &quot;*&quot;   &quot;*&quot;          &quot;*&quot;                         &quot;*&quot;         
+## 8  ( 1 ) &quot;*&quot;   &quot;*&quot;          &quot;*&quot;                         &quot;*&quot;         
+##          CertificationOther Certifications PolishVery Good SymmetryVery Good
+## 1  ( 1 ) &quot; &quot;                               &quot; &quot;             &quot; &quot;              
+## 2  ( 1 ) &quot; &quot;                               &quot; &quot;             &quot; &quot;              
+## 3  ( 1 ) &quot; &quot;                               &quot; &quot;             &quot; &quot;              
+## 4  ( 1 ) &quot; &quot;                               &quot; &quot;             &quot; &quot;              
+## 5  ( 1 ) &quot; &quot;                               &quot;*&quot;             &quot; &quot;              
+## 6  ( 1 ) &quot; &quot;                               &quot;*&quot;             &quot; &quot;              
+## 7  ( 1 ) &quot;*&quot;                               &quot;*&quot;             &quot; &quot;              
+## 8  ( 1 ) &quot;*&quot;                               &quot;*&quot;             &quot;*&quot;              
+##          WholesalerLow and Medium priced diamond wholesaler
+## 1  ( 1 ) &quot;*&quot;                                               
+## 2  ( 1 ) &quot;*&quot;                                               
+## 3  ( 1 ) &quot;*&quot;                                               
+## 4  ( 1 ) &quot;*&quot;                                               
+## 5  ( 1 ) &quot;*&quot;                                               
+## 6  ( 1 ) &quot;*&quot;                                               
+## 7  ( 1 ) &quot;*&quot;                                               
+## 8  ( 1 ) &quot;*&quot;</code></pre>
+</div>
+<div id="we-can-see-here-that-carat.-claritycut-wholesaler-and-polish-are-in-the-top-five-best-models.-we-will-run-regression-anlaysis-on-different-categories" class="section level2">
+<h2>We can see here that carat. clarity,cut, wholesaler and polish are in the top five best models. We will run regression anlaysis on different categories</h2>
+</div>
+<div id="linear-regresion-on-whole-model" class="section level2">
+<h2>Linear regresion on whole model</h2>
+<pre class="r"><code>lm_wholemodel=lm(Price ~ ., data = MBA6636_SM21_Professor_Proposes_Data)
+summary(lm_wholemodel)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ ., data = MBA6636_SM21_Professor_Proposes_Data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -840.05 -175.71    2.35  195.46  781.72 
+## 
+## Coefficients:
+##                                                    Estimate Std. Error t value
+## (Intercept)                                          911.71     168.12   5.423
+## Carat                                               2324.86     178.82  13.001
+## Colouryellow                                        -253.87      54.52  -4.657
+## ClarityVisible to naked eye                         -433.57      61.93  -7.001
+## CutVery Good                                         102.04      46.68   2.186
+## CertificationOther Certifications                     50.95      54.17   0.940
+## PolishVery Good                                      104.02      49.09   2.119
+## SymmetryVery Good                                     40.37      50.33   0.802
+## WholesalerLow and Medium priced diamond wholesaler  -509.67      80.38  -6.341
+##                                                    Pr(&gt;|t|)    
+## (Intercept)                                        1.45e-07 ***
+## Carat                                               &lt; 2e-16 ***
+## Colouryellow                                       5.37e-06 ***
+## ClarityVisible to naked eye                        2.65e-11 ***
+## CutVery Good                                         0.0298 *  
+## CertificationOther Certifications                    0.3479    
+## PolishVery Good                                      0.0351 *  
+## SymmetryVery Good                                    0.4233    
+## WholesalerLow and Medium priced diamond wholesaler 1.16e-09 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 313.8 on 235 degrees of freedom
+## Multiple R-squared:  0.5356, Adjusted R-squared:  0.5198 
+## F-statistic: 33.87 on 8 and 235 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div id="though-it-has-comparitively-good-r-squeared-of-0.53-some-of-the-coefficient-are-not-significant." class="section level2">
+<h2>Though it has comparitively good r squeared of 0.53, some of the coefficient are not significant.</h2>
+</div>
+<div id="regression-model-without-wholesaler" class="section level2">
+<h2>Regression model without wholesaler</h2>
+<pre class="r"><code>lm_exceptwholesaler=lm(Price ~ .-Wholesaler, data = MBA6636_SM21_Professor_Proposes_Data)
+summary(lm_exceptwholesaler)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ . - Wholesaler, data = MBA6636_SM21_Professor_Proposes_Data)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1153.34  -189.12    67.33   211.50   840.57 
+## 
+## Coefficients:
+##                                   Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                         900.78     181.54   4.962 1.34e-06 ***
+## Carat                              2185.45     191.64  11.404  &lt; 2e-16 ***
+## Colouryellow                       -382.87      54.62  -7.010 2.48e-11 ***
+## ClarityVisible to naked eye        -647.46      56.09 -11.544  &lt; 2e-16 ***
+## CutVery Good                         74.33      50.19   1.481  0.13997    
+## CertificationOther Certifications  -153.34      47.03  -3.261  0.00128 ** 
+## PolishVery Good                     125.11      52.89   2.365  0.01882 *  
+## SymmetryVery Good                    57.06      54.28   1.051  0.29421    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 338.9 on 236 degrees of freedom
+## Multiple R-squared:  0.4561, Adjusted R-squared:   0.44 
+## F-statistic: 28.27 on 7 and 236 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div id="here-cut-and-symmetry-are-not-significant-though-r-squared-is-good.-this-model-is-not-good-to-predict-price" class="section level2">
+<h2>Here cut and symmetry are not significant though r squared is good. This model is not good to predict price</h2>
+</div>
+<div id="regression-model-without-colour" class="section level2">
+<h2>Regression model without colour</h2>
+<pre class="r"><code>lm_exceptcolour=lm(Price ~ .-Colour, data = MBA6636_SM21_Professor_Proposes_Data)
+summary(lm_exceptcolour)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ . - Colour, data = MBA6636_SM21_Professor_Proposes_Data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -845.93 -189.68    7.31  196.47  792.53 
+## 
+## Coefficients:
+##                                                    Estimate Std. Error t value
+## (Intercept)                                         1155.99     166.58   6.940
+## Carat                                               2029.50     174.36  11.639
+## ClarityVisible to naked eye                         -282.69      55.05  -5.135
+## CutVery Good                                          95.27      48.66   1.958
+## CertificationOther Certifications                     80.04      56.12   1.426
+## PolishVery Good                                       87.39      51.06   1.712
+## SymmetryVery Good                                     48.42      52.46   0.923
+## WholesalerLow and Medium priced diamond wholesaler  -649.36      77.77  -8.350
+##                                                    Pr(&gt;|t|)    
+## (Intercept)                                        3.76e-11 ***
+## Carat                                               &lt; 2e-16 ***
+## ClarityVisible to naked eye                        5.89e-07 ***
+## CutVery Good                                         0.0514 .  
+## CertificationOther Certifications                    0.1551    
+## PolishVery Good                                      0.0883 .  
+## SymmetryVery Good                                    0.3570    
+## WholesalerLow and Medium priced diamond wholesaler 5.83e-15 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 327.3 on 236 degrees of freedom
+## Multiple R-squared:  0.4927, Adjusted R-squared:  0.4777 
+## F-statistic: 32.75 on 7 and 236 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div id="the-above-model-is-not-significant" class="section level2">
+<h2>The above model is not significant</h2>
+</div>
+<div id="regression-model-without-colour-and-symmetry" class="section level2">
+<h2>Regression model without colour and symmetry</h2>
+<pre class="r"><code>lm_exceptcoloursymmetry=lm(Price ~ .-Colour-Symmetry, data = MBA6636_SM21_Professor_Proposes_Data)
+summary(lm_exceptcoloursymmetry)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ . - Colour - Symmetry, data = MBA6636_SM21_Professor_Proposes_Data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -853.32 -182.87    5.04  186.18  786.41 
+## 
+## Coefficients:
+##                                                    Estimate Std. Error t value
+## (Intercept)                                         1184.09     163.72   7.232
+## Carat                                               2010.04     173.03  11.617
+## ClarityVisible to naked eye                         -285.13      54.97  -5.187
+## CutVery Good                                         106.73      47.04   2.269
+## CertificationOther Certifications                     84.99      55.84   1.522
+## PolishVery Good                                      106.56      46.63   2.285
+## WholesalerLow and Medium priced diamond wholesaler  -654.40      77.55  -8.438
+##                                                    Pr(&gt;|t|)    
+## (Intercept)                                        6.52e-12 ***
+## Carat                                               &lt; 2e-16 ***
+## ClarityVisible to naked eye                        4.58e-07 ***
+## CutVery Good                                         0.0242 *  
+## CertificationOther Certifications                    0.1293    
+## PolishVery Good                                      0.0232 *  
+## WholesalerLow and Medium priced diamond wholesaler 3.22e-15 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 327.2 on 237 degrees of freedom
+## Multiple R-squared:  0.4909, Adjusted R-squared:  0.478 
+## F-statistic: 38.08 on 6 and 237 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div id="some-of-the-coefficient-are-not-significant.-so-we-cannot-go-with-the-above-model" class="section level2">
+<h2>Some of the coefficient are not significant. So, we cannot go with the above model</h2>
+</div>
+<div id="regression-model-with-cut-clarity-carat-symmetry" class="section level2">
+<h2>Regression model with cut, clarity, carat, symmetry</h2>
+<pre class="r"><code>lm_3cwithsymmetry=lm(Price ~ Carat+Clarity+Cut+Symmetry, data = MBA6636_SM21_Professor_Proposes_Data)
+summary(lm_3cwithsymmetry)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Carat + Clarity + Cut + Symmetry, data = MBA6636_SM21_Professor_Proposes_Data)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1443.18  -214.75    82.09   267.87   780.77 
+## 
+## Coefficients:
+##                             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                  1437.15     191.36   7.510 1.17e-12 ***
+## Carat                        1375.32     189.51   7.257 5.50e-12 ***
+## ClarityVisible to naked eye  -467.24      57.60  -8.111 2.62e-14 ***
+## CutVery Good                  110.20      55.24   1.995   0.0472 *  
+## SymmetryVery Good             118.49      56.23   2.107   0.0361 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 385.9 on 239 degrees of freedom
+## Multiple R-squared:  0.2857, Adjusted R-squared:  0.2738 
+## F-statistic:  23.9 on 4 and 239 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div id="the-above-model-is-significant-but-compared-to-the-bottom-model-r-squared-value-is-less-and-residual-standard-error-is-more.-so-it-is-better-to-select-either-of-the-below-models" class="section level2">
+<h2>The above model is significant but compared to the bottom model, r squared value is less and residual standard error is more. So, it is better to select either of the below models</h2>
+</div>
+<div id="regression-with-4-c-and-symmetry" class="section level2">
+<h2>Regression with 4 C and symmetry</h2>
+<pre class="r"><code>lm_4cwithsymmetry=lm(Price ~ Carat+Clarity+Cut+Symmetry+Colour, data = MBA6636_SM21_Professor_Proposes_Data)
+summary(lm_4cwithsymmetry)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Carat + Clarity + Cut + Symmetry + Colour, 
+##     data = MBA6636_SM21_Professor_Proposes_Data)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1179.22  -205.66    46.83   236.03   749.07 
+## 
+## Coefficients:
+##                             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                   992.05     184.31   5.382 1.76e-07 ***
+## Carat                        2030.15     194.46  10.440  &lt; 2e-16 ***
+## ClarityVisible to naked eye  -645.27      57.81 -11.162  &lt; 2e-16 ***
+## CutVery Good                  128.15      50.20   2.553   0.0113 *  
+## SymmetryVery Good             104.88      51.07   2.054   0.0411 *  
+## Colouryellow                 -403.06      55.84  -7.219 7.02e-12 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 350.3 on 238 degrees of freedom
+## Multiple R-squared:  0.414,  Adjusted R-squared:  0.4017 
+## F-statistic: 33.63 on 5 and 238 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div id="the-above-model-is-significant-but-its-r-squared-is-low-and-its-error-is-more-compared-to-below-model." class="section level2">
+<h2>The above model is significant but its r squared is low and its error is more compared to below model.</h2>
+</div>
+<div id="selected-best-regression-model-with-carat-clarity-cut-wholesaler-colour-and-polish" class="section level2">
+<h2>Selected best Regression model with carat, clarity, cut, wholesaler, colour and polish</h2>
+<pre class="r"><code>lm_selectedmodel=lm(Price ~ Carat+Clarity+Cut+Wholesaler+Polish+Colour, data = MBA6636_SM21_Professor_Proposes_Data)
+summary(lm_selectedmodel)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Price ~ Carat + Clarity + Cut + Wholesaler + Polish + 
+##     Colour, data = MBA6636_SM21_Professor_Proposes_Data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -874.23 -170.72    9.31  191.41  796.83 
+## 
+## Coefficients:
+##                                                    Estimate Std. Error t value
+## (Intercept)                                          935.77     165.75   5.646
+## Carat                                               2317.67     177.64  13.047
+## ClarityVisible to naked eye                         -459.69      57.43  -8.004
+## CutVery Good                                         102.26      44.15   2.316
+## WholesalerLow and Medium priced diamond wholesaler  -464.58      64.57  -7.195
+## PolishVery Good                                      119.31      44.78   2.664
+## Colouryellow                                        -261.97      54.06  -4.846
+##                                                    Pr(&gt;|t|)    
+## (Intercept)                                        4.68e-08 ***
+## Carat                                               &lt; 2e-16 ***
+## ClarityVisible to naked eye                        5.37e-14 ***
+## CutVery Good                                        0.02140 *  
+## WholesalerLow and Medium priced diamond wholesaler 8.19e-12 ***
+## PolishVery Good                                     0.00825 ** 
+## Colouryellow                                       2.28e-06 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 313.6 on 237 degrees of freedom
+## Multiple R-squared:  0.5323, Adjusted R-squared:  0.5204 
+## F-statistic: 44.95 on 6 and 237 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div id="the-above-is-the-best-selected-model-to-predict-the-price-of-the-professor-because-the-model-is-significant-and-it-has-good-r-squared-of-0.532-and-adjusted-r-squared-of-0.52-and-less-standard-error-of-313.6-compared-to-other-models." class="section level2">
+<h2>The above is the best selected model to predict the price of the professor because the model is significant and it has good r squared of 0.532 and adjusted r squared of 0.52 and less standard error of 313.6 compared to other models.</h2>
+</div>
+<div id="the-best-equation-to-predict-price-935.772317.67carat-459.69clarityvisible-to-naked-eye-102.26cutvery-good-464.58wholesalerlow-and-medium-priced-diamond-wholesaler119.31-polishvery-good---261.97colouryellow" class="section level2">
+<h2>The best equation to predict price = 935.77+2317.67<em>Carat-459.69</em>ClarityVisible to naked eye +102.26<em>CutVery Good-464.58</em>WholesalerLow and Medium priced diamond wholesaler+119.31 <em>PolishVery Good - 261.97</em>Colouryellow</h2>
+</div>
+<div id="confidence-interval-of-price" class="section level2">
+<h2>Confidence interval of price</h2>
+<pre class="r"><code>CI(MBA6636_SM21_Professor_Proposes_Data$Price, ci = 0.95)</code></pre>
+<pre><code>##    upper     mean    lower 
+## 2779.734 2722.627 2665.520</code></pre>
+</div>
+<div id="the-confidenct-interval-of-the-price-is-between-2665.520-and-2779.73" class="section level2">
+<h2>The confidenct interval of the price is between $2665.520 and $2779.73</h2>
+</div>
+<div id="price-935.772317.67carat-459.69clarityvisible-to-naked-eye-102.26cutvery-good-464.58wholesalerlow-and-medium-priced-diamond-wholesaler119.31-polishvery-good---261.97colouryellow" class="section level2">
+<h2>price = 935.77+2317.67<em>Carat-459.69</em>ClarityVisible to naked eye +102.26<em>CutVery Good-464.58</em>WholesalerLow and Medium priced diamond wholesaler+119.31 <em>PolishVery Good - 261.97</em>Colouryellow</h2>
+</div>
+<div id="calculation-of-professor-diamonds" class="section level2">
+<h2>Calculation of professor Diamonds</h2>
+</div>
+<div id="intercept-935.77" class="section level2">
+<h2>Intercept = $935.77</h2>
+</div>
+<div id="carat---0.9-2317.67-2085.90" class="section level2">
+<h2>carat - 0.9* 2317.67 = $2085.90</h2>
+</div>
+<div id="clarity---0-459.69-0-there-is-a-discount-of-459.69-for-visible-to-naked-eye-but-prof-wants-s12-which-has-no-discount" class="section level2">
+<h2>clarity - 0*(-459.69) = $0 ( There is a discount of $ 459.69 for visible to naked eye but prof wants s12, which has no discount)</h2>
+</div>
+<div id="cut---1-102.26-102.26" class="section level2">
+<h2>cut - 1 * 102.26 = $102.26</h2>
+</div>
+<div id="colour--1-459.69--459.69-there-is-a-discount-if-colour-is-yellow-based-and-since-the-prof-plans-to-buy-faint-yellow-he-is-entitled-to-get-a-discounted-price" class="section level2">
+<h2>colour- 1*(-459.69) = $-459.69 (There is a discount if colour is yellow based and since the prof plans to buy faint yellow, he is entitled to get a discounted price)</h2>
+</div>
+<div id="polish---1-119.31-119.31" class="section level2">
+<h2>polish - 1* 119.31 = $119.31</h2>
+</div>
+<div id="wholesaler--1-464.58--464.58-this-is-the-price-discount-prof-will-get-if-he-buys-from-low-price-diamond-wholesaler-that-is-wholesaler-1-and-2" class="section level2">
+<h2>WHolesaler -1*(-464.58) = -464.58 (This is the price discount prof will get if he buys from low price diamond wholesaler, that is wholesaler 1 and 2)</h2>
+</div>
+<div id="total-price-with-discount-2318.97-this-is-the-price-after-wholesaler-discount-if-he-buys-from-either-wholesaler-2-and-3" class="section level2">
+<h2>Total price with discount = $2318.97 (This is the price after wholesaler discount, if he buys from either wholesaler 2 and 3)</h2>
+</div>
+<div id="total-price-without-dis-2783.55-if-prof-buys-from-wholesaler-1" class="section level2">
+<h2>Total price without dis = $2783.55 (If prof buys from wholesaler 1)</h2>
+</div>
+<div id="the-proferssors-price-for-the-diamond-is-3100.-the-price-seems-to-be-not-too-much-difference-between-the-predicted-price-without-discount.-moreover-the-confidence-interval-of-the-price-range-between-2665.520-and-2779.73.-there-is-a-less-difference-of-321-approximately.-a-diamond-being-a-symbol-of-status-and-a-one-time-buy-will-not-impact-the-professor-by-its-price-difference.the-diamond-buyer-will-not-be-botherd-about-the-price-discount-offered-by-wholesaler-2-and-3-as-long-as-the-wholesaler-1-service-and-quality-of-the-diamond-is-good-and-reputed." class="section level2">
+<h2>The proferssor`s price for the diamond is $ 3100. The price seems to be not too much difference between the predicted price without discount. Moreover, the confidence interval of the price range between $2665.520 and $2779.73. There is a less difference of $321 approximately. A diamond being a symbol of status and a one time buy will not impact the professor by its price difference.The diamond buyer will not be botherd about the price discount offered by wholesaler 2 and 3 as long as the wholesaler 1 service and quality of the diamond is good and reputed.</h2>
+</div>
+<div id="observations-and-comments-1" class="section level2">
+<h2>Observations and comments</h2>
+</div>
+<div id="the-important-determinants-of-the-price-are-carat-polish-and-cut-followed-by-colour-clarity-and-wholesaler." class="section level2">
+<h2>1.The important determinants of the price are carat, polish and cut followed by colour, clarity and wholesaler.</h2>
+</div>
+<div id="though-the-certification-has-significant-model-when-we-did-simple-linear-regression-wih-price-it-failed-to-influence-the-price-as-a-whole-model-when-i-did-multiple-linear-regression" class="section level2">
+<h2>2. Though the certification has significant model when we did simple linear regression wih price, it failed to influence the price as a whole model when i did multiple linear regression</h2>
+</div>
+<div id="the-quoted-price-of-the-diamond-is-only-for-the-diamond-and-it-is-to-be-noted-that-ring-cost-is-additional" class="section level2">
+<h2>3.The quoted price of the diamond is only for the diamond and it is to be noted that ring cost is additional</h2>
+</div>
+<div id="all-the-predictor-variables-have-been-assigned-factor-and-done-regresion-on-this" class="section level2">
+<h2>4.All the predictor variables have been assigned factor and done regresion on this</h2>
+</div>
+<div id="i-included-wholesaler-as-a-predictor-because-i-recognised-that-there-is-a-difference-between-the-diamond-offered-between-wholesaler-1-referred-as-a-high-priced-diamond-wholesaler-and-wholesaler-2-and-3referred-as-low-priced-diamond-wholesaler" class="section level2">
+<h2>5.I included wholesaler as a predictor because i recognised that there is a difference between the diamond offered between wholesaler 1 (referred as a high priced diamond wholesaler) and wholesaler 2 and 3(referred as low priced diamond wholesaler)</h2>
+</div>
+<div id="being-a-one-time-purchase-and-coveted-gem-professor-can-buy-the-diamond-at-the-offered-price-of-3100-or-if-any-offered-less-that-quoted-price." class="section level2">
+<h2>6. Being a one time purchase and coveted gem, professor can buy the diamond at the offered price of $3100 or if any offered less that quoted price.</h2>
+</div>
+</div>

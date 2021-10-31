@@ -1,0 +1,747 @@
+---
+title: DIamonds
+author: ''
+date: '2021-10-31'
+slug: diamonds
+categories: []
+tags: []
+---
+```{r}
+
+library(ggplot2)
+library(dplyr)
+library(data.table)
+library(tidyr)
+library(GGally)
+library(gapminder)
+library(tidyverse)
+library(pastecs)
+library(ggpubr)
+library(fastDummies)
+library(QuantPsyc)
+library(MASS)
+library(caret)
+library(leaps)
+library(summarytools)
+library(epiDisplay)
+library(tidymodels)
+library(Rmisc)
+```
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data<-read.csv("C:/Users/Vinoth Kanna/OneDrive/Documents/Data Analytics/Final/MBA6636_SM21_Professor_Proposes_Data.csv")
+```
+
+```{r}
+for(i in 1:length(MBA6636_SM21_Professor_Proposes_Data$Colour))
+  {
+  
+  if (MBA6636_SM21_Professor_Proposes_Data$Colour[i]=="D" || MBA6636_SM21_Professor_Proposes_Data$Colour[i]=="E" || MBA6636_SM21_Professor_Proposes_Data$Colour[i]=="F") {
+    MBA6636_SM21_Professor_Proposes_Data$Colour[i]="Colorless"
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Colour[i]=="G" || MBA6636_SM21_Professor_Proposes_Data$Colour[i]=="H"|| MBA6636_SM21_Professor_Proposes_Data$Colour[i]=="I") {
+    MBA6636_SM21_Professor_Proposes_Data$Colour[i]="Near Colorless"
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Colour[i]=="J" || MBA6636_SM21_Professor_Proposes_Data$Colour[i]=="K") {
+    MBA6636_SM21_Professor_Proposes_Data$Colour[i]="Faint Yellow"
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Colour[i]=="L" || MBA6636_SM21_Professor_Proposes_Data$Colour[i]=="M" || MBA6636_SM21_Professor_Proposes_Data$Colour[i]=="N") {
+    MBA6636_SM21_Professor_Proposes_Data$Colour[i]="Very Light Yellow"
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Colour[i]=="O" || MBA6636_SM21_Professor_Proposes_Data$Colour[i]=="P"|| MBA6636_SM21_Professor_Proposes_Data$Colour[i]=="Q"|| MBA6636_SM21_Professor_Proposes_Data$Colour[i]=="R"|| MBA6636_SM21_Professor_Proposes_Data$Colour[i]=="S") {
+    MBA6636_SM21_Professor_Proposes_Data$Colour[i]="Light Yellow"
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Colour[i]=="T" || MBA6636_SM21_Professor_Proposes_Data$Colour[i]=="U"|| MBA6636_SM21_Professor_Proposes_Data$Colour[i]=="V"|| MBA6636_SM21_Professor_Proposes_Data$Colour[i]=="W"|| MBA6636_SM21_Professor_Proposes_Data$Colour[i]=="X"|| MBA6636_SM21_Professor_Proposes_Data$Colour[i]=="Y"|| MBA6636_SM21_Professor_Proposes_Data$Colour[i]=="Z") {
+    MBA6636_SM21_Professor_Proposes_Data$Colour[i]="Yellow"
+  }
+  
+}
+for(i in 1:length(MBA6636_SM21_Professor_Proposes_Data$Clarity)) 
+  {
+  
+  if (MBA6636_SM21_Professor_Proposes_Data$Clarity[i]=="I1") {
+    MBA6636_SM21_Professor_Proposes_Data$Clarity[i]="very few inclusions visible to naked eye"
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Clarity[i]=="I2") {
+    MBA6636_SM21_Professor_Proposes_Data$Clarity[i]="few inclusions visible to naked eye"
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Clarity[i]=="SI1") {
+    MBA6636_SM21_Professor_Proposes_Data$Clarity[i]="very very few inclusions at 10X"
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Clarity[i]=="SI2") {
+    MBA6636_SM21_Professor_Proposes_Data$Clarity[i]="very few inclusions at 10X"
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Clarity[i]=="SI3") {
+    MBA6636_SM21_Professor_Proposes_Data$Clarity[i]="several inclusions at 10X"
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Clarity[i]=="VS1") {
+    MBA6636_SM21_Professor_Proposes_Data$Clarity[i]="few inclusions at 30X"
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Clarity[i]=="VS2") {
+    MBA6636_SM21_Professor_Proposes_Data$Clarity[i]="several inclusions at 30X"
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Clarity[i]=="VVS1") {
+    MBA6636_SM21_Professor_Proposes_Data$Clarity[i]="very very few inclusions at 30X"
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Clarity[i]=="VVS2") {
+    MBA6636_SM21_Professor_Proposes_Data$Clarity[i]="very few inclusions at 30X"
+  }
+  
+}
+for(i in 1:length(MBA6636_SM21_Professor_Proposes_Data$Cut)) 
+  {
+  
+  if (MBA6636_SM21_Professor_Proposes_Data$Cut[i]=="F") {
+    MBA6636_SM21_Professor_Proposes_Data$Cut[i]="Fair"
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Cut[i]=="G") {
+    MBA6636_SM21_Professor_Proposes_Data$Cut[i]="Good"
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Cut[i]=="I") {
+    MBA6636_SM21_Professor_Proposes_Data$Cut[i]="Ideal"
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Cut[i]=="V") {
+    MBA6636_SM21_Professor_Proposes_Data$Cut[i]="Very Good"
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Cut[i]=="X") {
+    MBA6636_SM21_Professor_Proposes_Data$Cut[i]="Excellent"
+  }
+  
+}
+for(i in 1:length(MBA6636_SM21_Professor_Proposes_Data$Polish))
+  {
+ 
+  if (MBA6636_SM21_Professor_Proposes_Data$Polish[i]=="F") {
+    MBA6636_SM21_Professor_Proposes_Data$Polish[i]="Fair"
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Polish[i]=="G") {
+    MBA6636_SM21_Professor_Proposes_Data$Polish[i]="Good"
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Polish[i]=="I") {
+    MBA6636_SM21_Professor_Proposes_Data$Polish[i]="Ideal"
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Polish[i]=="V") {
+    MBA6636_SM21_Professor_Proposes_Data$Polish[i]="Very Good"
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Polish[i]=="X") {
+    MBA6636_SM21_Professor_Proposes_Data$Polish[i]="Excellent"
+  }
+  
+}
+for(i in 1:length(MBA6636_SM21_Professor_Proposes_Data$Symmetry)) 
+  {
+  
+  if (MBA6636_SM21_Professor_Proposes_Data$Symmetry[i]=="F") {
+    MBA6636_SM21_Professor_Proposes_Data$Symmetry[i]="Fair"
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Symmetry[i]=="G") {
+    MBA6636_SM21_Professor_Proposes_Data$Symmetry[i]="Good"
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Symmetry[i]=="I") {
+    MBA6636_SM21_Professor_Proposes_Data$Symmetry[i]="Ideal"
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Symmetry[i]=="V") {
+    MBA6636_SM21_Professor_Proposes_Data$Symmetry[i]="Very Good"
+  }
+  else if (MBA6636_SM21_Professor_Proposes_Data$Symmetry[i]=="X") {
+    MBA6636_SM21_Professor_Proposes_Data$Symmetry[i]="Excellent"
+  }
+  
+}
+```
+
+## The report of the predicted price of a diamond for the professor
+## Table of contents
+## Executive summary
+## Issues and challanges
+## Univariate analysis on metric and non metric data
+## Bivariate analysis on metric and non metric data
+## Multiple linear regresion 
+## Observations and comments
+
+
+## Executive summary
+## A professor is looking for an engagement ring. Before purchasing a diamond, he wants to ensure that the price paid for is fair enough. He came to know that there are many determinants of price for the diamond. They are carat, cut, clarity, colour, polish, symmetry and certification. When he approached a wholesaler he got a list of 440 data of all its determinants or quality of the diamond. He wanted to double ensure the price, so he got a aimilar list from other two wholesaler to compare the price. He was shocked to see the price difference offered by wholesaler 2 and 3 compared to wholesaler 1 because wholesaler 1 offered higher price than other two wholesaler. So, he wanted to include wholesaler as a predictor in his price determinant model. He has identified some diamond qualities that he was very much interested. He plans to run the regression model using the obtained data to estimate the price of the diamond that he was interested upon.
+## He built themultiple regression model that suggested that diamond is overpiced for the qualities he was interested upon. He has to keep in mind that price was only for the diamonds and the cost for the ring is not included. He has to keep that in mind to decide about the diamond.
+
+## Issues and challanges
+## The greatest challange for the profesor is how to determine the price as there are some metric variable such as carat and price and there are some nonmetric variables such as clarity, cut, wholesaler, polish, symmetry, certification, colour. He cannot run regression analysis on non metric variable. He has to assign some dummy variable or assign ordered numered for ordinal categorical data.
+
+
+## Structure of the data
+```{r}
+str(MBA6636_SM21_Professor_Proposes_Data)
+```
+
+## converted character to factor to run linear regression
+```{r}
+MBA6636_SM21_Professor_Proposes_Data$Colour <-as.factor(MBA6636_SM21_Professor_Proposes_Data$Colour)
+MBA6636_SM21_Professor_Proposes_Data$Clarity<-as.factor(MBA6636_SM21_Professor_Proposes_Data$Clarity)
+MBA6636_SM21_Professor_Proposes_Data$Cut<-as.factor(MBA6636_SM21_Professor_Proposes_Data$Cut)
+MBA6636_SM21_Professor_Proposes_Data$Certification<-as.factor(MBA6636_SM21_Professor_Proposes_Data$Certification)
+MBA6636_SM21_Professor_Proposes_Data$Polish<-as.factor(MBA6636_SM21_Professor_Proposes_Data$Polish)
+MBA6636_SM21_Professor_Proposes_Data$Symmetry<-as.factor(MBA6636_SM21_Professor_Proposes_Data$Symmetry)
+MBA6636_SM21_Professor_Proposes_Data$Wholesaler<-as.factor(MBA6636_SM21_Professor_Proposes_Data$Wholesaler)
+```
+## Structure of the data after converting some of the data as factor
+```{r}
+str(MBA6636_SM21_Professor_Proposes_Data)
+```
+## Descriptive statistics on Univariate analysis of metric and non-metric data
+
+```{r}
+stat.desc(MBA6636_SM21_Professor_Proposes_Data)
+```
+## The descriptive statistics for the carat and price are displyed above and the others variables are marked as NA because of categorical values
+
+# Let us see the minimum, maximum and interquartile range for all the variables
+```{r}
+summary(MBA6636_SM21_Professor_Proposes_Data)
+```
+
+## Data table of dataset-MBA6636_SM21_Professor_Proposes_Data
+
+```{r}
+
+data.table(MBA6636_SM21_Professor_Proposes_Data)
+
+
+
+```
+
+## univariate analysis on Price
+## This is a metric data
+```{r}
+descr(MBA6636_SM21_Professor_Proposes_Data$Price)
+```
+## The price range from $160 to $3145. The average price is $1716.74. There is a high standard deviation, i.e., $1175.69. Let us see why there is a huge standard deviation in histogram.
+```{r}
+hist(MBA6636_SM21_Professor_Proposes_Data$Price, main="Histogram of price", xlab = "price", col = "lightblue")
+x = MBA6636_SM21_Professor_Proposes_Data$Price
+h<-hist(x, main="Histogram of price on full data", xlab = "price", col = "lightblue")
+xfit<- seq(min(x), max(x), length = 10)
+yfit<- dnorm(xfit, mean =mean (x), sd = sd(x))
+yfit<- yfit*diff(h$mids[1:2])*length(x)
+lines(xfit, yfit, col = "black", lwd = 2)
+```
+
+## The histogram has bimodal distribution. One price range is less than 1000 and other price range is between 1500 to 3145
+
+## Filtering the price greater than 575 because there are outliers that we want to remove to improve predictions
+```{r}
+MBA6636_SM21_Professor_Proposes_Data<- subset(MBA6636_SM21_Professor_Proposes_Data, Price > 575)
+```
+## Descriptive statistics on Price
+```{r}
+descr(MBA6636_SM21_Professor_Proposes_Data$Price)
+```
+```{r}
+hist(MBA6636_SM21_Professor_Proposes_Data$Price, main="Histogram of price", xlab = "price", col = "lightblue")
+x = MBA6636_SM21_Professor_Proposes_Data$Price
+h<-hist(x, main="Histogram of price above $600", xlab = "price", col = "blue")
+xfit<- seq(min(x), max(x), length = 10)
+yfit<- dnorm(xfit, mean =mean (x), sd = sd(x))
+yfit<- yfit*diff(h$mids[1:2])*length(x)
+lines(xfit, yfit, col = "black", lwd = 2)
+```
+
+## Now we can see that standard deviation has been reduced to $452.86 and outliers are removed to the extend possible
+## Univariate analysis on carat
+
+```{r}
+descr(MBA6636_SM21_Professor_Proposes_Data$Carat)
+```
+## The minium carat is 0.23 and maximum carat is 1.58. The average carat is 0.99. The standard deviation is 0.15
+
+## Histogram on carat
+
+```{r}
+
+ggplot(MBA6636_SM21_Professor_Proposes_Data, aes(Carat, fill = I("lightblue")))+geom_histogram(aes(y = ..density..))+stat_function (fun = dnorm, args = with(MBA6636_SM21_Professor_Proposes_Data, c(mean = mean(Carat), sd= sd(Carat))))+labs(title = "Histogram of carat", x= "carat")
+```
+## We can see small cluster range from 0.23 to 0.28. The main distribution is the second cluster ranging from 0.8 to 1.58. When i try to remove those small clusters, it impact the model by getting negative correlation betweeen price and carat, which is wrong. That is the reason i did not remove this outliers in the model
+
+
+## Univariate analysis on colour
+## This is non metric data and we can consider it as an ordinal categorical data since it has some order in it.
+
+```{r}
+freq(MBA6636_SM21_Professor_Proposes_Data$Colour)
+```
+## We have converted it as a character variable to change the values since factor variables have fixed factor levels
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data$Colour<-as.character(MBA6636_SM21_Professor_Proposes_Data$Colour)
+```
+## We can have just 2 items to have a better prediction. That is we can have colourless and yellow
+```{r}
+MBA6636_SM21_Professor_Proposes_Data$Colour[MBA6636_SM21_Professor_Proposes_Data$Colour %in% c("Colorless", "Near Colorless")]<- "Colorless"
+```
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data$Colour[MBA6636_SM21_Professor_Proposes_Data$Colour %in% c("Faint Yellow", "Very Light Yellow")]<- "yellow"
+```
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data$Colour<-as.factor(MBA6636_SM21_Professor_Proposes_Data$Colour)
+```
+
+## Frequency distribution of colour
+
+```{r}
+freq(MBA6636_SM21_Professor_Proposes_Data$Colour)
+```
+## I have made colourless and near coloutless as one category as colourless to reduce the variable to better preditability
+
+```{r}
+tab1(MBA6636_SM21_Professor_Proposes_Data$Colour, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of colour", xlab = "colour")
+```
+## Univariate analysis on clarity
+## This is a non metric and categorical data
+
+```{r}
+freq(MBA6636_SM21_Professor_Proposes_Data$Clarity)
+```
+## We can convert them as three values as visible to naked eye, Inclusion at 10X  since it does not have good frequency individually
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data$Clarity<-as.character(MBA6636_SM21_Professor_Proposes_Data$Clarity)
+```
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data$Clarity[MBA6636_SM21_Professor_Proposes_Data$Clarity %in% c("few inclusions visible to naked eye", "very few inclusions visible to naked eye")]<- "Visible to naked eye"
+```
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data$Clarity[MBA6636_SM21_Professor_Proposes_Data$Clarity %in% c("several inclusions at 10X", "very few inclusions at 10X", "very very few inclusions at 10X")]<- "Inclusions at 10X and 30X"
+```
+```{r}
+MBA6636_SM21_Professor_Proposes_Data$Clarity[MBA6636_SM21_Professor_Proposes_Data$Clarity %in% c("few inclusions at 30X", "several inclusions at 30X", "very few inclusions at 30X", "very very few inclusions at 30X")]<- "Inclusions at 10X and 30X"
+```
+
+
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data$Clarity<-as.factor(MBA6636_SM21_Professor_Proposes_Data$Clarity)
+```
+
+## Frequency distribution of clarity
+
+```{r}
+freq(MBA6636_SM21_Professor_Proposes_Data$Clarity)
+```
+## 10x and 30x are clubbed together here for better predictability
+```{r}
+tab1(MBA6636_SM21_Professor_Proposes_Data$Clarity, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of clarity", xlab = "clarity")
+```
+## Univariate analysis on cut
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data %>%
+freq(Cut)
+```
+## Though all the categories in cut had distributed their frequency sufficiently to influence the result, we made just two category here good and very good for reducing the coefficient in regreggion to improve the predictability. 
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data$Cut<-as.character(MBA6636_SM21_Professor_Proposes_Data$Cut)
+```
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data$Cut[MBA6636_SM21_Professor_Proposes_Data$Cut %in% c("Excellent", "Ideal")]<- "Very Good"
+```
+```{r}
+MBA6636_SM21_Professor_Proposes_Data$Cut[MBA6636_SM21_Professor_Proposes_Data$Cut == "Fair" ]<- "Good"
+```
+
+## Frequency distribution of Cut
+```{r}
+tab1(MBA6636_SM21_Professor_Proposes_Data$Cut, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of cut", xlab = "Cut")
+```
+## The fair has been merged with good and other categories has been merged with very good
+
+## Univariate analysis on certification
+## This is a non metric and nominal categorical value
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data %>%
+freq(Certification)
+```
+## Other then EGL and GIA certification, all frequency are very less in percentage. Only AGS, EGL and GIA has the price range higher than 3000. In order to have a fair distribution among certifications, we can merge AGS with GIA and all other certifications can be categorized as othercertifications
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data$Certification<-as.character(MBA6636_SM21_Professor_Proposes_Data$Certification)
+```
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data$Certification[MBA6636_SM21_Professor_Proposes_Data$Certification %in% c("EGL", "DOW", "IGI")]<- "Other Certifications"
+```
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data$Certification[MBA6636_SM21_Professor_Proposes_Data$Certification == "AGS"]<- "GIA"
+```
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data$Certification<-as.factor(MBA6636_SM21_Professor_Proposes_Data$Certification)
+```
+
+## Frequency distribution of certification
+```{r}
+MBA6636_SM21_Professor_Proposes_Data %>%
+freq(Certification)
+```
+
+```{r}
+tab1(MBA6636_SM21_Professor_Proposes_Data$Certification, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of Certification", xlab = "Certification")
+```
+
+## Univariate analysis of Polish
+## This is a non metric and can be considered as a ordinal categorical value
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data %>%
+freq(Polish)
+```
+## We can convert this into two data as good and very good as other data have very less frequencies. We merge fair with goood and all other into very good
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data$Polish <-as.character(MBA6636_SM21_Professor_Proposes_Data$Polish)
+```
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data$Polish[MBA6636_SM21_Professor_Proposes_Data$Polish %in% c("Excellent", "Ideal", "v")]<- "Very Good"
+```
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data$Polish[MBA6636_SM21_Professor_Proposes_Data$Polish == "Fair" ]<- "Good"
+```
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data$Polish <-as.factor(MBA6636_SM21_Professor_Proposes_Data$Polish)
+```
+
+## Frequency distribution of polish
+```{r}
+MBA6636_SM21_Professor_Proposes_Data %>%
+freq(Polish)
+```
+
+
+```{r}
+tab1(MBA6636_SM21_Professor_Proposes_Data$Polish, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of Polish", xlab = "Polish")
+```
+## Univariate analysis on symmetry
+## This is a nonmetric data and we can consider this as a ordinal categorical data since it is of such nature
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data %>%
+freq(Symmetry)
+```
+
+## Just like the case of polish, we can make two values such as fair can be clubbed with good and other items can be merged with very good
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data$Symmetry <-as.character(MBA6636_SM21_Professor_Proposes_Data$Symmetry)
+```
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data$Symmetry[MBA6636_SM21_Professor_Proposes_Data$Symmetry %in% c("Excellent", "Ideal")]<- "Very Good"
+```
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data$Symmetry[MBA6636_SM21_Professor_Proposes_Data$Symmetry == "Fair" ]<- "Good"
+```
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data$Symmetry <-as.factor(MBA6636_SM21_Professor_Proposes_Data$Symmetry)
+```
+
+## Frequency distribution of symmetry
+```{r}
+MBA6636_SM21_Professor_Proposes_Data %>%
+freq(Symmetry)
+```
+
+```{r}
+tab1(MBA6636_SM21_Professor_Proposes_Data$Symmetry, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of Symmetry", xlab = "Symmetry")
+```
+## univariate analysis of wholesaler
+## This is nonmetric and categorical data repesented in numbers.
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data %>%
+freq(Wholesaler)
+```
+## since the wholesaler 3 sells low priced diamonds and there are only 4 frequenies, we can group them with wholesaler 2.
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data$Wholesaler <-as.character(MBA6636_SM21_Professor_Proposes_Data$Wholesaler)
+```
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data$Wholesaler[MBA6636_SM21_Professor_Proposes_Data$Wholesaler == "1"]<- "High priced diamond wholesaler"
+```
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data$Wholesaler[MBA6636_SM21_Professor_Proposes_Data$Wholesaler %in% c( "2", "3")]<- "Low and Medium priced diamond wholesaler"
+```
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data$Wholesaler <-as.factor(MBA6636_SM21_Professor_Proposes_Data$Wholesaler)
+```
+
+## Frequency distribution of wholesaler
+```{r}
+MBA6636_SM21_Professor_Proposes_Data %>%
+freq(Wholesaler)
+```
+
+
+```{r}
+tab1(MBA6636_SM21_Professor_Proposes_Data$Wholesaler, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of Wholesaler", xlab = "Wholesaler")
+```
+
+
+## Correlation and covariance on metric data
+
+```{r}
+cor.test(MBA6636_SM21_Professor_Proposes_Data$Price, MBA6636_SM21_Professor_Proposes_Data$Carat, alternative = "greater")
+
+```
+## There is a positive correlation between price and carat as it is evident from r value of 0.154. Moreover, p value is less than alpha 0.05. We have done a right-tail analysis here. Our alternative hypothesis is true, which means our alternative hypothesis is greater than 0. In other words, there is a positive correlation. This relationship is significant.
+
+```{r}
+cov(MBA6636_SM21_Professor_Proposes_Data$Price,MBA6636_SM21_Professor_Proposes_Data$Carat)
+```
+## The covariance value of positive 10.76 implies that price and carat are positively related and they move in the same direction. This means that higher is the carat, higher is the price.
+
+
+## Chart and linear regression on bivariate analysis
+## Relationship between price and carat
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data %>%
+  ggplot(aes(x=Carat, y=Price, color = Carat))+geom_point()+expand_limits(y=0)+geom_smooth(method = "lm", se = FALSE)+labs(title ="Relationship between price and carat")
+
+```
+## There is a  positive correlation because r, correlation, value is 0.15.We can see here three outliers. The cluster of carat range between 0.8 to 1.58 and the price range between $1856 and $3145.
+
+```{r}
+lm_carat=lm(Price ~ Carat, data = MBA6636_SM21_Professor_Proposes_Data)
+summary(lm_carat)
+```
+## r-squared is 0.023, which means the predicting equation is not very good. The equation is Price= 2271.6+455.1*Carat. Since p value is less than alpha, we reject null hypothesis, that is there is a correlation between these. Our null hypothesis is both are equal and alternative hyopthesis is they are not equal.This relationship is significant
+
+## relationship between price and wholesaler
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data %>%
+  ggplot(aes(x=Wholesaler, y=Price, color = Wholesaler))+geom_point()+expand_limits(y=0)+geom_smooth(method = "lm", se = FALSE)+labs(title ="Relationship between price and wholesaler")
+```
+
+ 
+```{r}
+lm_Wholesaler=lm(Price ~ Wholesaler, data = MBA6636_SM21_Professor_Proposes_Data)
+summary(lm_Wholesaler)
+```
+## The equation is price =3043.18-425.09 *low and medium priced diamond wholesaler. Since the p value is less than alpha, we reject null hypothesis. That is there is a correlation between price and wholesaler. The R squared 0.16 indicates that equation is not that strong to predict the price by itself
+
+## Relationship between price and colour
+```{r}
+MBA6636_SM21_Professor_Proposes_Data %>%
+  
+   
+  ggplot(aes(x=Colour, y=Price, fill = Colour))+geom_boxplot()+expand_limits(y=0)+theme_minimal()+geom_smooth(method = "lm", se = FALSE)+labs(title ="Relationship between price and colour")
+```
+## We can see outliers on colourless
+
+```{r}
+lm_Colour=lm(Price ~ Colour, data = MBA6636_SM21_Professor_Proposes_Data)
+summary(lm_Colour)
+```
+## The equation is price =2743.09-63.20*colour yellow. All of the p value is not less han alpha 0.05. We do not reject null hypothesis. There is a no correlation between price and colour.MOreover, the equation is not that strong since r squared is 0.004 and equation is not significant
+
+## Relationship between price and clarity
+```{r}
+MBA6636_SM21_Professor_Proposes_Data %>%
+  ggplot(aes(x=Clarity, y=Price, fill = Clarity))+geom_boxplot()+expand_limits(y=0)+theme_minimal()+geom_smooth(method = "lm", se = FALSE)+labs(title ="Relationship between price and clarity")
+```
+## We can see more outliers on inclusions at 10x and 30x
+
+```{r}
+lm_Clarity=lm(Price ~ Clarity, data = MBA6636_SM21_Professor_Proposes_Data)
+summary(lm_Clarity)
+```
+## The equation is price = 2857.93-308.55*ClarityVisible to naked eye. The equation is not too good because of low r squared, 0.11 and adjusted r squared of 0.11 to predict price by itself. Since p value is less than alpha, we reject null hypothesis. That is there is some correlation between price and clarity. There is a significance in this eqration though r squared is low.
+
+## Relationship between price and cut
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data %>%
+  ggplot(aes(x=Cut, y=Price, fill = Cut))+geom_boxplot()+expand_limits(y=0)+theme_minimal()+geom_smooth(method = "lm", se = FALSE)+labs(title ="Relationship between price and cut")
+```
+## There are some outliers on very good
+
+```{r}
+lm_Cut=lm(Price ~ Cut, data = MBA6636_SM21_Professor_Proposes_Data)
+summary(lm_Cut)
+```
+## The equation is 2631.97 + 143.64*cut very good. The r squared is 0.023 and adjusted r squared is 0.019, which indicates that equation is not strong to predict the price by itself. The equation is significant though the r squared value is low.
+
+## Relationship between price and certification
+```{r}
+MBA6636_SM21_Professor_Proposes_Data %>%
+  ggplot(aes(x=Certification, y=Price, fill = Certification))+geom_boxplot()+expand_limits(y=0)+theme_minimal()+geom_smooth(method = "lm", se = FALSE)+labs(title ="Relationship between price and certification")
+```
+## AGS is added to GIA category of certification and the others categories are clubbed and named as other certifications
+
+## We can see some outliers on both categories of certification. 
+
+```{r}
+lm_Certification=lm(Price ~ Certification, data = MBA6636_SM21_Professor_Proposes_Data)
+summary(lm_Certification)
+```
+## The eqution is price =2788.32-132.47*other certifications. This equation is not that strong since r squared is only 0.021 and adjusted r squared is 0.017. We reject null hypothesis because p value is less than alpha. Thus, there is a correlation between price and certification and it is significant as well.
+
+## Relationship between price and polish
+
+```{r}
+MBA6636_SM21_Professor_Proposes_Data %>%
+  ggplot(aes(x=Polish, y=Price, fill = Polish))+geom_boxplot()+expand_limits(y=0)+theme_minimal()+geom_smooth(method = "lm", se = FALSE)+labs(title ="Relationship between price and polish")
+```
+## The category fair is clubbed with good and all other categories are put together as very good
+## We can see some outliers in very good category
+
+```{r}
+lm_Polish=lm(Price ~ Polish, data = MBA6636_SM21_Professor_Proposes_Data)
+summary(lm_Polish)
+```
+## The equation is price =2629.90+178.16 * polish very good. We reject null hypothesis since p value is less than alpha and there is a correlation between price and polish. Though the r squared is 0.039 and adjusted r squared is 0.035 indication poor predicting equation of price by itself, the equation is significant. So, we can take this in to our model of regression
+
+## Relationship between price and symmetry
+```{r}
+MBA6636_SM21_Professor_Proposes_Data %>%
+  ggplot(aes(x=Symmetry, y=Price, fill = Symmetry))+geom_boxplot()+expand_limits(y=0)+theme_minimal()+geom_smooth(method = "lm", se = FALSE)+labs(title ="Relationship between price and symmetry")
+```
+## We can see some outliers in very good category. Here also, fair is clubbed with good and all other categories are clubbed togeter as very good
+
+```{r}
+lm_Symmetry=lm(Price ~ Symmetry, data = MBA6636_SM21_Professor_Proposes_Data)
+summary(lm_Symmetry)
+```
+## The equation is price = 2649.26+150.43 * symetry very good. We reject null hypothesis since p value is less than alpha 0.05. Thus, there is some correlation between price and symmetry.This equation is significant. The r squared value is 0.027 and adjusted r squared is 0.02366
+
+## Overall comparision in graph using ggpairs
+```{r}
+ggpairs(MBA6636_SM21_Professor_Proposes_Data)
+```
+
+
+
+
+
+## Best subset regression
+
+```{r}
+
+best<-regsubsets(Price~ Carat+Colour+Clarity+Cut+Certification+Polish+Symmetry+Wholesaler, data= MBA6636_SM21_Professor_Proposes_Data, nvmax= 8)
+summary(best)
+```
+## We can see here that carat. clarity,cut, wholesaler and polish are in the top five best models. We will run regression anlaysis on different categories
+
+## Linear regresion on whole model
+
+
+```{r}
+lm_wholemodel=lm(Price ~ ., data = MBA6636_SM21_Professor_Proposes_Data)
+summary(lm_wholemodel)
+```
+## Though it has comparitively good r squeared of 0.53, some of the coefficient are not significant.
+
+
+## Regression model without wholesaler
+```{r}
+lm_exceptwholesaler=lm(Price ~ .-Wholesaler, data = MBA6636_SM21_Professor_Proposes_Data)
+summary(lm_exceptwholesaler)
+```
+## Here cut and symmetry are not significant though r squared is good. This model is not good to predict price
+
+## Regression model without colour
+```{r}
+lm_exceptcolour=lm(Price ~ .-Colour, data = MBA6636_SM21_Professor_Proposes_Data)
+summary(lm_exceptcolour)
+```
+## The above model is not significant
+
+## Regression model without colour and symmetry
+
+```{r}
+lm_exceptcoloursymmetry=lm(Price ~ .-Colour-Symmetry, data = MBA6636_SM21_Professor_Proposes_Data)
+summary(lm_exceptcoloursymmetry)
+```
+## Some of the coefficient are not significant. So, we cannot go with the above model
+
+## Regression model with cut, clarity, carat, symmetry
+```{r}
+lm_3cwithsymmetry=lm(Price ~ Carat+Clarity+Cut+Symmetry, data = MBA6636_SM21_Professor_Proposes_Data)
+summary(lm_3cwithsymmetry)
+```
+## The above model is significant but compared to the bottom model, r squared value is less and residual standard error is more. So, it is better to select either of the below models
+
+## Regression with 4 C and symmetry
+
+```{r}
+lm_4cwithsymmetry=lm(Price ~ Carat+Clarity+Cut+Symmetry+Colour, data = MBA6636_SM21_Professor_Proposes_Data)
+summary(lm_4cwithsymmetry)
+```
+## The above model is significant but its r squared is low  and its error is more compared to below model.
+
+## Selected best Regression model with carat, clarity, cut, wholesaler, colour and polish
+```{r}
+lm_selectedmodel=lm(Price ~ Carat+Clarity+Cut+Wholesaler+Polish+Colour, data = MBA6636_SM21_Professor_Proposes_Data)
+summary(lm_selectedmodel)
+```
+## The above is the best selected model to predict the price of the professor because the model is significant and it has good r squared of 0.532 and adjusted r squared of 0.52 and less standard error of 313.6 compared to other models.
+
+## The best equation to predict price = 935.77+2317.67*Carat-459.69*ClarityVisible to naked eye +102.26*CutVery Good-464.58*WholesalerLow and Medium priced diamond wholesaler+119.31 *PolishVery Good - 261.97*Colouryellow 
+
+
+## Confidence interval of price
+```{r}
+CI(MBA6636_SM21_Professor_Proposes_Data$Price, ci = 0.95)
+```
+## The confidenct interval of the price is between $2665.520 and $2779.73
+
+## price = 935.77+2317.67*Carat-459.69*ClarityVisible to naked eye +102.26*CutVery Good-464.58*WholesalerLow and Medium priced diamond wholesaler+119.31 *PolishVery Good - 261.97*Colouryellow 
+
+## Calculation of professor Diamonds
+
+## Intercept                   = $935.77
+## carat - 0.9* 2317.67        = $2085.90
+## clarity - 0*(-459.69)       = $0 ( There is a discount of $ 459.69 for visible to naked eye but prof wants s12, which has no discount)
+## cut - 1 * 102.26            = $102.26
+## colour- 1*(-459.69)         = $-459.69 (There is a discount if colour is yellow based and since the prof plans to buy faint yellow, he is entitled to get a discounted price)
+## polish - 1* 119.31          = $119.31
+## WHolesaler -1*(-464.58)     = -464.58 (This is the price discount prof will get if he buys from low price diamond wholesaler, that is wholesaler 1 and 2)
+
+
+
+## Total price with discount    = $2318.97 (This is the price after wholesaler discount, if he buys from either wholesaler 2 and 3)
+
+
+## Total price without dis     = $2783.55 (If prof buys from wholesaler 1)
+
+
+## The proferssor`s price for the diamond is $ 3100. The price seems to be not too much difference between the predicted price without discount. Moreover, the confidence interval of the price range between $2665.520 and $2779.73. There is a less difference of $321 approximately. A diamond being a symbol of status and a one time buy will not impact the professor by its price difference.The diamond buyer will not be botherd about the price discount offered by wholesaler 2 and 3 as long as the wholesaler 1 service and quality of the diamond is good and reputed. 
+
+
+## Observations and comments
+
+
+## 1.The important determinants of the price are carat, polish and cut followed by colour, clarity and wholesaler.
+## 2. Though the certification has significant model when we did simple linear regression wih price, it failed to influence the price as a whole model when i did multiple linear regression
+## 3.The quoted price of the diamond is only for the diamond and it is to be noted that ring cost is additional
+## 4.All the predictor variables have been assigned factor and done regresion on this
+## 5.I included wholesaler as a predictor because i recognised that there is a difference between the diamond offered between wholesaler 1 (referred as a high priced diamond wholesaler) and wholesaler 2 and 3(referred as low priced diamond wholesaler) 
+## 6. Being a one time purchase and coveted gem, professor can buy the diamond at the offered price of $3100 or if any offered less that quoted price.
+
+
