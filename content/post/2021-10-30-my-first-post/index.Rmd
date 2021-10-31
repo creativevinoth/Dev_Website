@@ -656,7 +656,7 @@ summary(default_y)
 
 ```{r}
 bank %>%
-ggplot(aes(x= default, y= "subscribe or not", colour= default))+geom_col()+expand_limits(y=0)+geom_smooth(method ="glm", se =FALSE, method.args = list(family = "binomial"))+labs(title ="Relationship between y and default")
+ggplot(aes(x= default, y= "subscribe or not", colour= default))+geom_col()+expand_limits(y=0)+geom_smooth(method ="glm", se =FALSE, method.args = list(family = "binomial", maxit =100))+labs(title ="Relationship between y and default")
 ```
 
 ## Relationship between y and balance
@@ -703,7 +703,7 @@ summary(housing_y)
 
 ```{r}
 bank %>%
-ggplot(aes(x= housing, y= "subscribe or not", colour = housing))+geom_col()+geom_smooth(method ="glm", se =FALSE, method.args = list(family = "binomial"))+labs(title ="Relationship between y and housing")
+ggplot(aes(x= housing, y= "subscribe or not", colour = housing))+geom_col()+geom_smooth(method ="glm", se =FALSE, method.args = list(family = "binomial", maxit =100))+labs(title ="Relationship between y and housing")
 ```
 ## In the above chart, o represents no housing loan and 1 represents customer having housing loan. 
 
@@ -729,7 +729,7 @@ summary(loan_y)
 ## Bar chart of y and loan
 ```{r}
 bank %>%
-ggplot(aes(x= loan, y= "subscribe or not", colour =loan))+geom_col()+geom_smooth(method ="glm", se =FALSE, method.args = list(family = "binomial"))+labs(title ="Relationship between y and loan")
+ggplot(aes(x= loan, y= "subscribe or not", colour =loan))+geom_col()+geom_smooth(method ="glm", se =FALSE, method.args = list(family = "binomial", maxit =100))+labs(title ="Relationship between y and loan")
 ```
 
 ## Relationship between y and contact
@@ -792,7 +792,7 @@ summary(month_y)
 
 ```{r}
 bank %>%
-ggplot(aes(x= month, y= "subscribe or not", color =month))+geom_col()+geom_smooth(method ="glm", se =FALSE, method.args = list(family = "binomial"))+labs(title ="Relationship between y and month")
+ggplot(aes(x= month, y= "subscribe or not", color =month))+geom_col()+geom_smooth(method ="glm", se =FALSE, method.args = list(family = "binomial", maxit =100))+labs(title ="Relationship between y and month")
 ```
 
 
