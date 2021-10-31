@@ -733,6 +733,215 @@ CI(MBA6636_SM21_Professor_Proposes_Data$Price, ci = 0.95)
 
 ## The proferssor`s price for the diamond is $ 3100. The price seems to be not too much difference between the predicted price without discount. Moreover, the confidence interval of the price range between $2665.520 and $2779.73. There is a less difference of $321 approximately. A diamond being a symbol of status and a one time buy will not impact the professor by its price difference.The diamond buyer will not be botherd about the price discount offered by wholesaler 2 and 3 as long as the wholesaler 1 service and quality of the diamond is good and reputed. 
 
+## Split the data into training and testing
+```{r}
+diamond_split<- initial_split(MBA6636_SM21_Professor_Proposes_Data, prop = 0.75, strata= Price)
+diamond_training <- diamond_split %>%
+  training()
+diamond_test<- diamond_split %>%
+  testing()
+```
+
+## Checking numer of rows in training and test data
+```{r}
+nrow(diamond_training)
+nrow(diamond_test)
+```
+## Model specification
+```{r}
+lm_model <- linear_reg() %>%
+  set_engine('lm') %>%
+  set_mode('regression')
+```
+
+##Feature engineering
+```{r}
+diamond_recipe <- recipe(Price ~., data = diamond_training) %>%
+  step_corr(all_numeric(), threshold =0.8) %>%
+  step_normalize(all_numeric()) %>%
+  step_dummy(all_nominal())
+diamond_recipe
+```
+## Recipe training
+```{r}
+diamond_recipe_prep<- diamond_recipe %>%
+  prep(training = diamond_training)
+diamond_recipe_prep
+```
+## Preprocess training data
+## Applying trained recipe to trained data
+```{r}
+diamond_training_prep <- diamond_recipe_prep %>%
+  bake (new_data = NULL)
+diamond_training_prep
+```
+## Preprocess test data
+## Applying trained recipe to test data
+```{r}
+diamond_test_prep <- diamond_recipe_prep %>%
+  bake (new_data = diamond_test)
+diamond_test_prep
+```
+
+## Passing lm model to fit function
+
+```{r}
+lm_fit <- lm_model %>%
+  fit(Price ~., data = diamond_training_prep)
+lm_fit
+```
+## Obtaining the estimated parameters
+```{r}
+tidy(lm_fit)
+```
+
+## Making predictions
+```{r}
+diamond_predictions <- lm_fit %>%
+  predict(new_data = diamond_test_prep)
+diamond_predictions
+```
+## Adding predictions to test data
+```{r}
+diamond_test_prep_results<- diamond_test_prep %>%
+  bind_cols(diamond_predictions)
+diamond_test_prep_results
+```
+
+
+## Evaluating model performance
+## Root mean squared error
+```{r}
+diamond_test_prep_results %>%
+  rmse(truth = Price, estimate = .pred)
+
+```
+
+## r squared metric
+```{r}
+diamond_test_prep_results %>%
+  rsq(truth = Price, estimate = .pred)
+
+```
+## r squared plots
+```{r}
+ggplot(diamond_test_prep_results, aes(x= Price, y =.pred))+geom_point()+geom_abline(color ='blue', linetype =2)+coord_obs_pred()+ labs(title= 'r squared plot', y = 'predicted price', x = 'Actual price' )
+```
+## Streamlining model fitting
+```{r}
+lm_last_fit <- lm_model %>%
+  last_fit(Price ~., split = diamond_split)
+
+```
+
+## Collecting metrics
+```{r}
+lm_last_fit %>%
+  collect_metrics()
+```
+## COllecting predictions
+```{r}
+lm_last_fit %>%
+  collect_predictions()
+```
+
+
+## creating workflow
+
+```{r}
+diamond_wkfl<- workflow() %>%
+add_model(lm_model) %>%
+add_recipe(diamond_recipe)
+diamond_wkfl
+```
+
+## Model fitting with workflows
+```{r}
+diamond_wkfl_fit <- diamond_wkfl %>%
+  last_fit( split = diamond_split)
+diamond_wkfl_fit
+```
+
+## Collect metrics
+```{r}
+diamond_wkfl_fit %>%
+  collect_metrics()
+```
+
+## Collecting predictions
+```{r}
+diamond_wkfl_preds<- diamond_wkfl_fit%>%
+  collect_predictions()
+diamond_wkfl_preds
+```
+## Exploring custome metrics
+```{r}
+diamond_metrics <- metric_set(rmse, mae, rsq)
+diamond_wkfl_preds %>%
+  diamond_metrics (truth = Price, estimate = .pred)
+```
+## Creating cross validation folds
+```{r}
+diamond_folds <- vfold_cv(diamond_training, v =10, strata = Price)
+diamond_folds
+```
+## Model training with cross validation
+```{r}
+diamond_rs_fit <- diamond_wkfl %>%
+  fit_resamples(resamples = diamond_folds, metrics = diamond_metrics)
+diamond_rs_fit %>%
+  collect_metrics()
+```
+## Detailed cross validation results
+```{r}
+diamond_rs_metrics <- diamond_rs_fit %>%
+  collect_metrics(summarize = FALSE)
+diamond_rs_metrics
+```
+## Summarizing cross validation results
+```{r}
+diamond_rs_metrics %>%
+  group_by(.metric) %>%
+  summarize(min = min(.estimate),
+            median = median(.estimate),
+            max = max(.estimate),
+            mean = mean(.estimate),
+            sd = sd(.estimate))
+```
+
+## Viewing the best performing model
+```{r}
+diamond_rs_fit %>%
+  show_best(metric = 'rmse')
+```
+
+
+## Best diamond model
+```{r}
+best_diamond_model <- diamond_rs_fit %>%
+  select_best(metric = 'rmse')
+best_diamond_model 
+```
+## Finalizing the workflow model
+```{r}
+final_diamond_wkfl <- diamond_wkfl %>%
+finalize_workflow(best_diamond_model)
+final_diamond_wkfl
+```
+## Model fitting
+```{r}
+diamond_final_fit <- final_diamond_wkfl %>%
+  last_fit(split = diamond_split)
+diamond_final_fit %>%
+  collect_metrics()
+```
+
+
+
+
+
+
+
 
 ## Observations and comments
 

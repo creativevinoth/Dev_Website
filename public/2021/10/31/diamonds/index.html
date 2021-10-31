@@ -1,13 +1,79 @@
----
-title: DIamonds
-author: ''
-date: '2021-10-31'
-slug: diamonds
-categories: []
-tags: []
----
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.88.1" />
 
-<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+<title>DIamonds - My website</title>
+<meta property="og:title" content="DIamonds - My website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/creativevinoth">GitHub</a></li>
+    
+    <li><a href="https://twitter.com/rstudio">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">41 min read</span>
+    
+
+    <h1 class="article-title">DIamonds</h1>
+
+    
+    <span class="article-date">2021-10-31</span>
+    
+
+    <div class="article-content">
+      
+<script src="/2021/10/31/diamonds/index_files/header-attrs/header-attrs.js"></script>
 
 
 <pre class="r"><code>library(ggplot2)
@@ -143,7 +209,7 @@ library(summarytools)</code></pre>
 ## x recipes::step()          masks stats::step()
 ## x purrr::transpose()       masks data.table::transpose()
 ## x summarytools::view()     masks tibble::view()
-## * Search for functions across packages at https://www.tidymodels.org/find/</code></pre>
+## * Use suppressPackageStartupMessages() to eliminate package startup messages</code></pre>
 <pre class="r"><code>library(Rmisc)</code></pre>
 <pre><code>## Loading required package: plyr</code></pre>
 <pre><code>## ------------------------------------------------------------------------------</code></pre>
@@ -479,14 +545,14 @@ MBA6636_SM21_Professor_Proposes_Data$Wholesaler&lt;-as.factor(MBA6636_SM21_Profe
 <div id="the-price-range-from-160-to-3145.-the-average-price-is-1716.74.-there-is-a-high-standard-deviation-i.e.-1175.69.-let-us-see-why-there-is-a-huge-standard-deviation-in-histogram." class="section level2">
 <h2>The price range from $160 to $3145. The average price is $1716.74. There is a high standard deviation, i.e., $1175.69. Let us see why there is a huge standard deviation in histogram.</h2>
 <pre class="r"><code>hist(MBA6636_SM21_Professor_Proposes_Data$Price, main=&quot;Histogram of price&quot;, xlab = &quot;price&quot;, col = &quot;lightblue&quot;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p><img src="/2021/10/31/diamonds/index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <pre class="r"><code>x = MBA6636_SM21_Professor_Proposes_Data$Price
 h&lt;-hist(x, main=&quot;Histogram of price on full data&quot;, xlab = &quot;price&quot;, col = &quot;lightblue&quot;)
 xfit&lt;- seq(min(x), max(x), length = 10)
 yfit&lt;- dnorm(xfit, mean =mean (x), sd = sd(x))
 yfit&lt;- yfit*diff(h$mids[1:2])*length(x)
 lines(xfit, yfit, col = &quot;black&quot;, lwd = 2)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-2.png" width="672" /></p>
+<p><img src="/2021/10/31/diamonds/index_files/figure-html/unnamed-chunk-11-2.png" width="672" /></p>
 </div>
 <div id="the-histogram-has-bimodal-distribution.-one-price-range-is-less-than-1000-and-other-price-range-is-between-1500-to-3145" class="section level2">
 <h2>The histogram has bimodal distribution. One price range is less than 1000 and other price range is between 1500 to 3145</h2>
@@ -520,14 +586,14 @@ lines(xfit, yfit, col = &quot;black&quot;, lwd = 2)</code></pre>
 ##           N.Valid    244.00
 ##         Pct.Valid    100.00</code></pre>
 <pre class="r"><code>hist(MBA6636_SM21_Professor_Proposes_Data$Price, main=&quot;Histogram of price&quot;, xlab = &quot;price&quot;, col = &quot;lightblue&quot;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p><img src="/2021/10/31/diamonds/index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 <pre class="r"><code>x = MBA6636_SM21_Professor_Proposes_Data$Price
 h&lt;-hist(x, main=&quot;Histogram of price above $600&quot;, xlab = &quot;price&quot;, col = &quot;blue&quot;)
 xfit&lt;- seq(min(x), max(x), length = 10)
 yfit&lt;- dnorm(xfit, mean =mean (x), sd = sd(x))
 yfit&lt;- yfit*diff(h$mids[1:2])*length(x)
 lines(xfit, yfit, col = &quot;black&quot;, lwd = 2)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-2.png" width="672" /></p>
+<p><img src="/2021/10/31/diamonds/index_files/figure-html/unnamed-chunk-14-2.png" width="672" /></p>
 </div>
 <div id="now-we-can-see-that-standard-deviation-has-been-reduced-to-452.86-and-outliers-are-removed-to-the-extend-possible" class="section level2">
 <h2>Now we can see that standard deviation has been reduced to $452.86 and outliers are removed to the extend possible</h2>
@@ -564,7 +630,7 @@ lines(xfit, yfit, col = &quot;black&quot;, lwd = 2)</code></pre>
 <h2>Histogram on carat</h2>
 <pre class="r"><code>ggplot(MBA6636_SM21_Professor_Proposes_Data, aes(Carat, fill = I(&quot;lightblue&quot;)))+geom_histogram(aes(y = ..density..))+stat_function (fun = dnorm, args = with(MBA6636_SM21_Professor_Proposes_Data, c(mean = mean(Carat), sd= sd(Carat))))+labs(title = &quot;Histogram of carat&quot;, x= &quot;carat&quot;)</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-16-1.png" width="672" />
+<p><img src="/2021/10/31/diamonds/index_files/figure-html/unnamed-chunk-16-1.png" width="672" />
 ## We can see small cluster range from 0.23 to 0.28. The main distribution is the second cluster ranging from 0.8 to 1.58. When i try to remove those small clusters, it impact the model by getting negative correlation betweeen price and carat, which is wrong. That is the reason i did not remove this outliers in the model</p>
 </div>
 <div id="univariate-analysis-on-colour" class="section level2">
@@ -613,7 +679,7 @@ lines(xfit, yfit, col = &quot;black&quot;, lwd = 2)</code></pre>
 <div id="i-have-made-colourless-and-near-coloutless-as-one-category-as-colourless-to-reduce-the-variable-to-better-preditability" class="section level2">
 <h2>I have made colourless and near coloutless as one category as colourless to reduce the variable to better preditability</h2>
 <pre class="r"><code>tab1(MBA6636_SM21_Professor_Proposes_Data$Colour, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of colour&quot;, xlab = &quot;colour&quot;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<p><img src="/2021/10/31/diamonds/index_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
 <pre><code>## MBA6636_SM21_Professor_Proposes_Data$Colour : 
 ##           Frequency Percent Cum. percent
 ## yellow           79    32.4         32.4
@@ -669,7 +735,7 @@ lines(xfit, yfit, col = &quot;black&quot;, lwd = 2)</code></pre>
 <div id="x-and-30x-are-clubbed-together-here-for-better-predictability" class="section level2">
 <h2>10x and 30x are clubbed together here for better predictability</h2>
 <pre class="r"><code>tab1(MBA6636_SM21_Professor_Proposes_Data$Clarity, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of clarity&quot;, xlab = &quot;clarity&quot;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
+<p><img src="/2021/10/31/diamonds/index_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
 <pre><code>## MBA6636_SM21_Professor_Proposes_Data$Clarity : 
 ##                           Frequency Percent Cum. percent
 ## Visible to naked eye            107    43.9         43.9
@@ -703,7 +769,7 @@ freq(Cut)</code></pre>
 <div id="frequency-distribution-of-cut" class="section level2">
 <h2>Frequency distribution of Cut</h2>
 <pre class="r"><code>tab1(MBA6636_SM21_Professor_Proposes_Data$Cut, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of cut&quot;, xlab = &quot;Cut&quot;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-36-1.png" width="672" /></p>
+<p><img src="/2021/10/31/diamonds/index_files/figure-html/unnamed-chunk-36-1.png" width="672" /></p>
 <pre><code>## MBA6636_SM21_Professor_Proposes_Data$Cut : 
 ##           Frequency Percent Cum. percent
 ## Good             90    36.9         36.9
@@ -756,7 +822,7 @@ freq(Certification)</code></pre>
 ##                       &lt;NA&gt;      0                               0.00         100.00
 ##                      Total    244    100.00         100.00    100.00         100.00</code></pre>
 <pre class="r"><code>tab1(MBA6636_SM21_Professor_Proposes_Data$Certification, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of Certification&quot;, xlab = &quot;Certification&quot;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-43-1.png" width="672" /></p>
+<p><img src="/2021/10/31/diamonds/index_files/figure-html/unnamed-chunk-43-1.png" width="672" /></p>
 <pre><code>## MBA6636_SM21_Professor_Proposes_Data$Certification : 
 ##                      Frequency Percent Cum. percent
 ## Other Certifications       121    49.6         49.6
@@ -807,7 +873,7 @@ freq(Polish)</code></pre>
 ##            &lt;NA&gt;      0                               0.00         100.00
 ##           Total    244    100.00         100.00    100.00         100.00</code></pre>
 <pre class="r"><code>tab1(MBA6636_SM21_Professor_Proposes_Data$Polish, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of Polish&quot;, xlab = &quot;Polish&quot;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-50-1.png" width="672" /></p>
+<p><img src="/2021/10/31/diamonds/index_files/figure-html/unnamed-chunk-50-1.png" width="672" /></p>
 <pre><code>## MBA6636_SM21_Professor_Proposes_Data$Polish : 
 ##           Frequency Percent Cum. percent
 ## Good            117      48           48
@@ -857,7 +923,7 @@ freq(Symmetry)</code></pre>
 ##            &lt;NA&gt;      0                               0.00         100.00
 ##           Total    244    100.00         100.00    100.00         100.00</code></pre>
 <pre class="r"><code>tab1(MBA6636_SM21_Professor_Proposes_Data$Symmetry, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of Symmetry&quot;, xlab = &quot;Symmetry&quot;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-57-1.png" width="672" /></p>
+<p><img src="/2021/10/31/diamonds/index_files/figure-html/unnamed-chunk-57-1.png" width="672" /></p>
 <pre><code>## MBA6636_SM21_Professor_Proposes_Data$Symmetry : 
 ##           Frequency Percent Cum. percent
 ## Very Good       119    48.8         48.8
@@ -905,7 +971,7 @@ freq(Wholesaler)</code></pre>
 ##                                           &lt;NA&gt;      0                               0.00         100.00
 ##                                          Total    244    100.00         100.00    100.00         100.00</code></pre>
 <pre class="r"><code>tab1(MBA6636_SM21_Professor_Proposes_Data$Wholesaler, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of Wholesaler&quot;, xlab = &quot;Wholesaler&quot;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-64-1.png" width="672" /></p>
+<p><img src="/2021/10/31/diamonds/index_files/figure-html/unnamed-chunk-64-1.png" width="672" /></p>
 <pre><code>## MBA6636_SM21_Professor_Proposes_Data$Wholesaler : 
 ##                                          Frequency Percent Cum. percent
 ## High priced diamond wholesaler                  60    24.6         24.6
@@ -943,7 +1009,7 @@ freq(Wholesaler)</code></pre>
 <pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data %&gt;%
   ggplot(aes(x=Carat, y=Price, color = Carat))+geom_point()+expand_limits(y=0)+geom_smooth(method = &quot;lm&quot;, se = FALSE)+labs(title =&quot;Relationship between price and carat&quot;)</code></pre>
 <pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-67-1.png" width="672" />
+<p><img src="/2021/10/31/diamonds/index_files/figure-html/unnamed-chunk-67-1.png" width="672" />
 ## There is a positive correlation because r, correlation, value is 0.15.We can see here three outliers. The cluster of carat range between 0.8 to 1.58 and the price range between $1856 and $3145.</p>
 <pre class="r"><code>lm_carat=lm(Price ~ Carat, data = MBA6636_SM21_Professor_Proposes_Data)
 summary(lm_carat)</code></pre>
@@ -974,7 +1040,7 @@ summary(lm_carat)</code></pre>
 <pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data %&gt;%
   ggplot(aes(x=Wholesaler, y=Price, color = Wholesaler))+geom_point()+expand_limits(y=0)+geom_smooth(method = &quot;lm&quot;, se = FALSE)+labs(title =&quot;Relationship between price and wholesaler&quot;)</code></pre>
 <pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-69-1.png" width="672" /></p>
+<p><img src="/2021/10/31/diamonds/index_files/figure-html/unnamed-chunk-69-1.png" width="672" /></p>
 <pre class="r"><code>lm_Wholesaler=lm(Price ~ Wholesaler, data = MBA6636_SM21_Professor_Proposes_Data)
 summary(lm_Wholesaler)</code></pre>
 <pre><code>## 
@@ -1009,7 +1075,7 @@ summary(lm_Wholesaler)</code></pre>
    
   ggplot(aes(x=Colour, y=Price, fill = Colour))+geom_boxplot()+expand_limits(y=0)+theme_minimal()+geom_smooth(method = &quot;lm&quot;, se = FALSE)+labs(title =&quot;Relationship between price and colour&quot;)</code></pre>
 <pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-71-1.png" width="672" />
+<p><img src="/2021/10/31/diamonds/index_files/figure-html/unnamed-chunk-71-1.png" width="672" />
 ## We can see outliers on colourless</p>
 <pre class="r"><code>lm_Colour=lm(Price ~ Colour, data = MBA6636_SM21_Professor_Proposes_Data)
 summary(lm_Colour)</code></pre>
@@ -1040,7 +1106,7 @@ summary(lm_Colour)</code></pre>
 <pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data %&gt;%
   ggplot(aes(x=Clarity, y=Price, fill = Clarity))+geom_boxplot()+expand_limits(y=0)+theme_minimal()+geom_smooth(method = &quot;lm&quot;, se = FALSE)+labs(title =&quot;Relationship between price and clarity&quot;)</code></pre>
 <pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-73-1.png" width="672" />
+<p><img src="/2021/10/31/diamonds/index_files/figure-html/unnamed-chunk-73-1.png" width="672" />
 ## We can see more outliers on inclusions at 10x and 30x</p>
 <pre class="r"><code>lm_Clarity=lm(Price ~ Clarity, data = MBA6636_SM21_Professor_Proposes_Data)
 summary(lm_Clarity)</code></pre>
@@ -1071,7 +1137,7 @@ summary(lm_Clarity)</code></pre>
 <pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data %&gt;%
   ggplot(aes(x=Cut, y=Price, fill = Cut))+geom_boxplot()+expand_limits(y=0)+theme_minimal()+geom_smooth(method = &quot;lm&quot;, se = FALSE)+labs(title =&quot;Relationship between price and cut&quot;)</code></pre>
 <pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-75-1.png" width="672" />
+<p><img src="/2021/10/31/diamonds/index_files/figure-html/unnamed-chunk-75-1.png" width="672" />
 ## There are some outliers on very good</p>
 <pre class="r"><code>lm_Cut=lm(Price ~ Cut, data = MBA6636_SM21_Professor_Proposes_Data)
 summary(lm_Cut)</code></pre>
@@ -1102,7 +1168,7 @@ summary(lm_Cut)</code></pre>
 <pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data %&gt;%
   ggplot(aes(x=Certification, y=Price, fill = Certification))+geom_boxplot()+expand_limits(y=0)+theme_minimal()+geom_smooth(method = &quot;lm&quot;, se = FALSE)+labs(title =&quot;Relationship between price and certification&quot;)</code></pre>
 <pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-77-1.png" width="672" />
+<p><img src="/2021/10/31/diamonds/index_files/figure-html/unnamed-chunk-77-1.png" width="672" />
 ## AGS is added to GIA category of certification and the others categories are clubbed and named as other certifications</p>
 </div>
 <div id="we-can-see-some-outliers-on-both-categories-of-certification." class="section level2">
@@ -1136,7 +1202,7 @@ summary(lm_Certification)</code></pre>
 <pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data %&gt;%
   ggplot(aes(x=Polish, y=Price, fill = Polish))+geom_boxplot()+expand_limits(y=0)+theme_minimal()+geom_smooth(method = &quot;lm&quot;, se = FALSE)+labs(title =&quot;Relationship between price and polish&quot;)</code></pre>
 <pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-79-1.png" width="672" />
+<p><img src="/2021/10/31/diamonds/index_files/figure-html/unnamed-chunk-79-1.png" width="672" />
 ## The category fair is clubbed with good and all other categories are put together as very good
 ## We can see some outliers in very good category</p>
 <pre class="r"><code>lm_Polish=lm(Price ~ Polish, data = MBA6636_SM21_Professor_Proposes_Data)
@@ -1168,7 +1234,7 @@ summary(lm_Polish)</code></pre>
 <pre class="r"><code>MBA6636_SM21_Professor_Proposes_Data %&gt;%
   ggplot(aes(x=Symmetry, y=Price, fill = Symmetry))+geom_boxplot()+expand_limits(y=0)+theme_minimal()+geom_smooth(method = &quot;lm&quot;, se = FALSE)+labs(title =&quot;Relationship between price and symmetry&quot;)</code></pre>
 <pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-81-1.png" width="672" />
+<p><img src="/2021/10/31/diamonds/index_files/figure-html/unnamed-chunk-81-1.png" width="672" />
 ## We can see some outliers in very good category. Here also, fair is clubbed with good and all other categories are clubbed togeter as very good</p>
 <pre class="r"><code>lm_Symmetry=lm(Price ~ Symmetry, data = MBA6636_SM21_Professor_Proposes_Data)
 summary(lm_Symmetry)</code></pre>
@@ -1211,7 +1277,7 @@ summary(lm_Symmetry)</code></pre>
 ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-83-1.png" width="672" /></p>
+<p><img src="/2021/10/31/diamonds/index_files/figure-html/unnamed-chunk-83-1.png" width="672" /></p>
 </div>
 <div id="best-subset-regression" class="section level2">
 <h2>Best subset regression</h2>
@@ -1567,457 +1633,6 @@ summary(lm_selectedmodel)</code></pre>
 <div id="the-proferssors-price-for-the-diamond-is-3100.-the-price-seems-to-be-not-too-much-difference-between-the-predicted-price-without-discount.-moreover-the-confidence-interval-of-the-price-range-between-2665.520-and-2779.73.-there-is-a-less-difference-of-321-approximately.-a-diamond-being-a-symbol-of-status-and-a-one-time-buy-will-not-impact-the-professor-by-its-price-difference.the-diamond-buyer-will-not-be-botherd-about-the-price-discount-offered-by-wholesaler-2-and-3-as-long-as-the-wholesaler-1-service-and-quality-of-the-diamond-is-good-and-reputed." class="section level2">
 <h2>The proferssor`s price for the diamond is $ 3100. The price seems to be not too much difference between the predicted price without discount. Moreover, the confidence interval of the price range between $2665.520 and $2779.73. There is a less difference of $321 approximately. A diamond being a symbol of status and a one time buy will not impact the professor by its price difference.The diamond buyer will not be botherd about the price discount offered by wholesaler 2 and 3 as long as the wholesaler 1 service and quality of the diamond is good and reputed.</h2>
 </div>
-<div id="split-the-data-into-training-and-testing" class="section level2">
-<h2>Split the data into training and testing</h2>
-<pre class="r"><code>diamond_split&lt;- initial_split(MBA6636_SM21_Professor_Proposes_Data, prop = 0.75, strata= Price)
-diamond_training &lt;- diamond_split %&gt;%
-  training()
-diamond_test&lt;- diamond_split %&gt;%
-  testing()</code></pre>
-</div>
-<div id="checking-numer-of-rows-in-training-and-test-data" class="section level2">
-<h2>Checking numer of rows in training and test data</h2>
-<pre class="r"><code>nrow(diamond_training)</code></pre>
-<pre><code>## [1] 180</code></pre>
-<pre class="r"><code>nrow(diamond_test)</code></pre>
-<pre><code>## [1] 64</code></pre>
-</div>
-<div id="model-specification" class="section level2">
-<h2>Model specification</h2>
-<pre class="r"><code>lm_model &lt;- linear_reg() %&gt;%
-  set_engine(&#39;lm&#39;) %&gt;%
-  set_mode(&#39;regression&#39;)</code></pre>
-<p>##Feature engineering</p>
-<pre class="r"><code>diamond_recipe &lt;- recipe(Price ~., data = diamond_training) %&gt;%
-  step_corr(all_numeric(), threshold =0.8) %&gt;%
-  step_normalize(all_numeric()) %&gt;%
-  step_dummy(all_nominal())
-diamond_recipe</code></pre>
-<pre><code>## Recipe
-## 
-## Inputs:
-## 
-##       role #variables
-##    outcome          1
-##  predictor          8
-## 
-## Operations:
-## 
-## Correlation filter on all_numeric()
-## Centering and scaling for all_numeric()
-## Dummy variables from all_nominal()</code></pre>
-</div>
-<div id="recipe-training" class="section level2">
-<h2>Recipe training</h2>
-<pre class="r"><code>diamond_recipe_prep&lt;- diamond_recipe %&gt;%
-  prep(training = diamond_training)
-diamond_recipe_prep</code></pre>
-<pre><code>## Recipe
-## 
-## Inputs:
-## 
-##       role #variables
-##    outcome          1
-##  predictor          8
-## 
-## Training data contained 180 data points and no missing data.
-## 
-## Operations:
-## 
-## Correlation filter removed no terms [trained]
-## Centering and scaling for Carat, Price [trained]
-## Dummy variables from Colour, Clarity, Cut, Certification, Polish, Symmetry, Wh... [trained]</code></pre>
-</div>
-<div id="preprocess-training-data" class="section level2">
-<h2>Preprocess training data</h2>
-</div>
-<div id="applying-trained-recipe-to-trained-data" class="section level2">
-<h2>Applying trained recipe to trained data</h2>
-<pre class="r"><code>diamond_training_prep &lt;- diamond_recipe_prep %&gt;%
-  bake (new_data = NULL)
-diamond_training_prep</code></pre>
-<pre><code>## # A tibble: 180 x 9
-##    Carat Price Colour_yellow Clarity_Visible.t~ Cut_Very.Good Certification_Oth~
-##    &lt;dbl&gt; &lt;dbl&gt;         &lt;dbl&gt;              &lt;dbl&gt;         &lt;dbl&gt;              &lt;dbl&gt;
-##  1 0.490 -1.72             1                  0             0                  1
-##  2 0.114 -1.66             1                  1             0                  0
-##  3 0.176 -1.64             0                  1             0                  0
-##  4 0.365 -1.56             1                  1             0                  1
-##  5 0.428 -1.52             1                  1             0                  1
-##  6 1.24  -1.43             0                  1             0                  1
-##  7 0.114 -1.40             0                  1             0                  0
-##  8 0.428 -1.36             0                  1             1                  0
-##  9 0.114 -1.35             0                  1             0                  1
-## 10 0.239 -1.28             1                  1             0                  1
-## # ... with 170 more rows, and 3 more variables: Polish_Very.Good &lt;dbl&gt;,
-## #   Symmetry_Very.Good &lt;dbl&gt;,
-## #   Wholesaler_Low.and.Medium.priced.diamond.wholesaler &lt;dbl&gt;</code></pre>
-</div>
-<div id="preprocess-test-data" class="section level2">
-<h2>Preprocess test data</h2>
-</div>
-<div id="applying-trained-recipe-to-test-data" class="section level2">
-<h2>Applying trained recipe to test data</h2>
-<pre class="r"><code>diamond_test_prep &lt;- diamond_recipe_prep %&gt;%
-  bake (new_data = diamond_test)
-diamond_test_prep</code></pre>
-<pre><code>## # A tibble: 64 x 9
-##     Carat Price Colour_yellow Clarity_Visible.t~ Cut_Very.Good Certification_Ot~
-##     &lt;dbl&gt; &lt;dbl&gt;         &lt;dbl&gt;              &lt;dbl&gt;         &lt;dbl&gt;             &lt;dbl&gt;
-##  1 -0.388 0.603             0                  0             0                 0
-##  2 -0.388 0.603             0                  0             1                 0
-##  3 -1.08  0.612             0                  0             1                 0
-##  4 -0.702 0.618             0                  0             1                 0
-##  5 -0.953 0.633             0                  0             1                 0
-##  6 -0.953 0.689             0                  0             0                 0
-##  7 -0.953 0.689             0                  0             1                 0
-##  8 -0.640 0.691             0                  0             1                 0
-##  9 -0.828 0.710             0                  0             1                 0
-## 10 -1.08  0.710             0                  0             1                 0
-## # ... with 54 more rows, and 3 more variables: Polish_Very.Good &lt;dbl&gt;,
-## #   Symmetry_Very.Good &lt;dbl&gt;,
-## #   Wholesaler_Low.and.Medium.priced.diamond.wholesaler &lt;dbl&gt;</code></pre>
-</div>
-<div id="passing-lm-model-to-fit-function" class="section level2">
-<h2>Passing lm model to fit function</h2>
-<pre class="r"><code>lm_fit &lt;- lm_model %&gt;%
-  fit(Price ~., data = diamond_training_prep)
-lm_fit</code></pre>
-<pre><code>## parsnip model object
-## 
-## Fit time:  0ms 
-## 
-## Call:
-## stats::lm(formula = Price ~ ., data = data)
-## 
-## Coefficients:
-##                                         (Intercept)  
-##                                             1.08189  
-##                                               Carat  
-##                                             0.89045  
-##                                       Colour_yellow  
-##                                            -0.50602  
-##                        Clarity_Visible.to.naked.eye  
-##                                            -0.87584  
-##                                       Cut_Very.Good  
-##                                             0.23094  
-##                  Certification_Other.Certifications  
-##                                             0.24013  
-##                                    Polish_Very.Good  
-##                                             0.27884  
-##                                  Symmetry_Very.Good  
-##                                             0.05571  
-## Wholesaler_Low.and.Medium.priced.diamond.wholesaler  
-##                                            -1.33472</code></pre>
-</div>
-<div id="obtaining-the-estimated-parameters" class="section level2">
-<h2>Obtaining the estimated parameters</h2>
-<pre class="r"><code>tidy(lm_fit)</code></pre>
-<pre><code>## # A tibble: 9 x 5
-##   term                                     estimate std.error statistic  p.value
-##   &lt;chr&gt;                                       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-## 1 (Intercept)                                1.08      0.143      7.58  2.09e-12
-## 2 Carat                                      0.890     0.0601    14.8   1.73e-32
-## 3 Colour_yellow                             -0.506     0.119     -4.24  3.69e- 5
-## 4 Clarity_Visible.to.naked.eye              -0.876     0.138     -6.35  1.85e- 9
-## 5 Cut_Very.Good                              0.231     0.106      2.17  3.13e- 2
-## 6 Certification_Other.Certifications         0.240     0.126      1.90  5.90e- 2
-## 7 Polish_Very.Good                           0.279     0.112      2.48  1.41e- 2
-## 8 Symmetry_Very.Good                         0.0557    0.116      0.479 6.33e- 1
-## 9 Wholesaler_Low.and.Medium.priced.diamon~  -1.33      0.178     -7.49  3.46e-12</code></pre>
-</div>
-<div id="making-predictions" class="section level2">
-<h2>Making predictions</h2>
-<pre class="r"><code>diamond_predictions &lt;- lm_fit %&gt;%
-  predict(new_data = diamond_test_prep)
-diamond_predictions</code></pre>
-<pre><code>## # A tibble: 64 x 1
-##    .pred
-##    &lt;dbl&gt;
-##  1 1.07 
-##  2 0.967
-##  3 0.687
-##  4 0.743
-##  5 0.798
-##  6 0.233
-##  7 0.464
-##  8 1.08 
-##  9 0.910
-## 10 0.631
-## # ... with 54 more rows</code></pre>
-</div>
-<div id="adding-predictions-to-test-data" class="section level2">
-<h2>Adding predictions to test data</h2>
-<pre class="r"><code>diamond_test_prep_results&lt;- diamond_test_prep %&gt;%
-  bind_cols(diamond_predictions)
-diamond_test_prep_results</code></pre>
-<pre><code>## # A tibble: 64 x 10
-##     Carat Price Colour_yellow Clarity_Visible.t~ Cut_Very.Good Certification_Ot~
-##     &lt;dbl&gt; &lt;dbl&gt;         &lt;dbl&gt;              &lt;dbl&gt;         &lt;dbl&gt;             &lt;dbl&gt;
-##  1 -0.388 0.603             0                  0             0                 0
-##  2 -0.388 0.603             0                  0             1                 0
-##  3 -1.08  0.612             0                  0             1                 0
-##  4 -0.702 0.618             0                  0             1                 0
-##  5 -0.953 0.633             0                  0             1                 0
-##  6 -0.953 0.689             0                  0             0                 0
-##  7 -0.953 0.689             0                  0             1                 0
-##  8 -0.640 0.691             0                  0             1                 0
-##  9 -0.828 0.710             0                  0             1                 0
-## 10 -1.08  0.710             0                  0             1                 0
-## # ... with 54 more rows, and 4 more variables: Polish_Very.Good &lt;dbl&gt;,
-## #   Symmetry_Very.Good &lt;dbl&gt;,
-## #   Wholesaler_Low.and.Medium.priced.diamond.wholesaler &lt;dbl&gt;, .pred &lt;dbl&gt;</code></pre>
-</div>
-<div id="evaluating-model-performance" class="section level2">
-<h2>Evaluating model performance</h2>
-</div>
-<div id="root-mean-squared-error" class="section level2">
-<h2>Root mean squared error</h2>
-<pre class="r"><code>diamond_test_prep_results %&gt;%
-  rmse(truth = Price, estimate = .pred)</code></pre>
-<pre><code>## # A tibble: 1 x 3
-##   .metric .estimator .estimate
-##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
-## 1 rmse    standard       0.816</code></pre>
-</div>
-<div id="r-squared-metric" class="section level2">
-<h2>r squared metric</h2>
-<pre class="r"><code>diamond_test_prep_results %&gt;%
-  rsq(truth = Price, estimate = .pred)</code></pre>
-<pre><code>## # A tibble: 1 x 3
-##   .metric .estimator .estimate
-##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
-## 1 rsq     standard       0.132</code></pre>
-</div>
-<div id="r-squared-plots" class="section level2">
-<h2>r squared plots</h2>
-<pre class="r"><code>ggplot(diamond_test_prep_results, aes(x= Price, y =.pred))+geom_point()+geom_abline(color =&#39;blue&#39;, linetype =2)+coord_obs_pred()+ labs(title= &#39;r squared plot&#39;, y = &#39;predicted price&#39;, x = &#39;Actual price&#39; )</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-106-1.png" width="672" />
-## Streamlining model fitting</p>
-<pre class="r"><code>lm_last_fit &lt;- lm_model %&gt;%
-  last_fit(Price ~., split = diamond_split)</code></pre>
-</div>
-<div id="collecting-metrics" class="section level2">
-<h2>Collecting metrics</h2>
-<pre class="r"><code>lm_last_fit %&gt;%
-  collect_metrics()</code></pre>
-<pre><code>## # A tibble: 2 x 4
-##   .metric .estimator .estimate .config             
-##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-## 1 rmse    standard     390.    Preprocessor1_Model1
-## 2 rsq     standard       0.132 Preprocessor1_Model1</code></pre>
-</div>
-<div id="collecting-predictions" class="section level2">
-<h2>COllecting predictions</h2>
-<pre class="r"><code>lm_last_fit %&gt;%
-  collect_predictions()</code></pre>
-<pre><code>## # A tibble: 64 x 5
-##    id               .pred  .row Price .config             
-##    &lt;chr&gt;            &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;chr&gt;               
-##  1 train/test split 3223.     1  3000 Preprocessor1_Model1
-##  2 train/test split 3173.     2  3000 Preprocessor1_Model1
-##  3 train/test split 3040.     4  3004 Preprocessor1_Model1
-##  4 train/test split 3067.     6  3007 Preprocessor1_Model1
-##  5 train/test split 3093.    12  3014 Preprocessor1_Model1
-##  6 train/test split 2823.    27  3041 Preprocessor1_Model1
-##  7 train/test split 2933.    28  3041 Preprocessor1_Model1
-##  8 train/test split 3226.    29  3042 Preprocessor1_Model1
-##  9 train/test split 3146.    36  3051 Preprocessor1_Model1
-## 10 train/test split 3013.    38  3051 Preprocessor1_Model1
-## # ... with 54 more rows</code></pre>
-</div>
-<div id="creating-workflow" class="section level2">
-<h2>creating workflow</h2>
-<pre class="r"><code>diamond_wkfl&lt;- workflow() %&gt;%
-add_model(lm_model) %&gt;%
-add_recipe(diamond_recipe)
-diamond_wkfl</code></pre>
-<pre><code>## == Workflow ====================================================================
-## Preprocessor: Recipe
-## Model: linear_reg()
-## 
-## -- Preprocessor ----------------------------------------------------------------
-## 3 Recipe Steps
-## 
-## * step_corr()
-## * step_normalize()
-## * step_dummy()
-## 
-## -- Model -----------------------------------------------------------------------
-## Linear Regression Model Specification (regression)
-## 
-## Computational engine: lm</code></pre>
-</div>
-<div id="model-fitting-with-workflows" class="section level2">
-<h2>Model fitting with workflows</h2>
-<pre class="r"><code>diamond_wkfl_fit &lt;- diamond_wkfl %&gt;%
-  last_fit( split = diamond_split)
-diamond_wkfl_fit</code></pre>
-<pre><code>## # Resampling results
-## # Manual resampling 
-## # A tibble: 1 x 6
-##   splits           id               .metrics   .notes    .predictions  .workflow
-##   &lt;list&gt;           &lt;chr&gt;            &lt;list&gt;     &lt;list&gt;    &lt;list&gt;        &lt;list&gt;   
-## 1 &lt;split [180/64]&gt; train/test split &lt;tibble [~ &lt;tibble ~ &lt;tibble [64 ~ &lt;workflo~</code></pre>
-</div>
-<div id="collect-metrics" class="section level2">
-<h2>Collect metrics</h2>
-<pre class="r"><code>diamond_wkfl_fit %&gt;%
-  collect_metrics()</code></pre>
-<pre><code>## # A tibble: 2 x 4
-##   .metric .estimator .estimate .config             
-##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-## 1 rmse    standard       0.816 Preprocessor1_Model1
-## 2 rsq     standard       0.132 Preprocessor1_Model1</code></pre>
-</div>
-<div id="collecting-predictions-1" class="section level2">
-<h2>Collecting predictions</h2>
-<pre class="r"><code>diamond_wkfl_preds&lt;- diamond_wkfl_fit%&gt;%
-  collect_predictions()
-diamond_wkfl_preds</code></pre>
-<pre><code>## # A tibble: 64 x 5
-##    id               .pred  .row Price .config             
-##    &lt;chr&gt;            &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;chr&gt;               
-##  1 train/test split 1.07      1 0.603 Preprocessor1_Model1
-##  2 train/test split 0.967     2 0.603 Preprocessor1_Model1
-##  3 train/test split 0.687     4 0.612 Preprocessor1_Model1
-##  4 train/test split 0.743     6 0.618 Preprocessor1_Model1
-##  5 train/test split 0.798    12 0.633 Preprocessor1_Model1
-##  6 train/test split 0.233    27 0.689 Preprocessor1_Model1
-##  7 train/test split 0.464    28 0.689 Preprocessor1_Model1
-##  8 train/test split 1.08     29 0.691 Preprocessor1_Model1
-##  9 train/test split 0.910    36 0.710 Preprocessor1_Model1
-## 10 train/test split 0.631    38 0.710 Preprocessor1_Model1
-## # ... with 54 more rows</code></pre>
-</div>
-<div id="exploring-custome-metrics" class="section level2">
-<h2>Exploring custome metrics</h2>
-<pre class="r"><code>diamond_metrics &lt;- metric_set(rmse, mae, rsq)
-diamond_wkfl_preds %&gt;%
-  diamond_metrics (truth = Price, estimate = .pred)</code></pre>
-<pre><code>## # A tibble: 3 x 3
-##   .metric .estimator .estimate
-##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
-## 1 rmse    standard       0.816
-## 2 mae     standard       0.627
-## 3 rsq     standard       0.132</code></pre>
-</div>
-<div id="creating-cross-validation-folds" class="section level2">
-<h2>Creating cross validation folds</h2>
-<pre class="r"><code>diamond_folds &lt;- vfold_cv(diamond_training, v =10, strata = Price)
-diamond_folds</code></pre>
-<pre><code>## #  10-fold cross-validation using stratification 
-## # A tibble: 10 x 2
-##    splits           id    
-##    &lt;list&gt;           &lt;chr&gt; 
-##  1 &lt;split [160/20]&gt; Fold01
-##  2 &lt;split [160/20]&gt; Fold02
-##  3 &lt;split [160/20]&gt; Fold03
-##  4 &lt;split [160/20]&gt; Fold04
-##  5 &lt;split [160/20]&gt; Fold05
-##  6 &lt;split [164/16]&gt; Fold06
-##  7 &lt;split [164/16]&gt; Fold07
-##  8 &lt;split [164/16]&gt; Fold08
-##  9 &lt;split [164/16]&gt; Fold09
-## 10 &lt;split [164/16]&gt; Fold10</code></pre>
-</div>
-<div id="model-training-with-cross-validation" class="section level2">
-<h2>Model training with cross validation</h2>
-<pre class="r"><code>diamond_rs_fit &lt;- diamond_wkfl %&gt;%
-  fit_resamples(resamples = diamond_folds, metrics = diamond_metrics)
-diamond_rs_fit %&gt;%
-  collect_metrics()</code></pre>
-<pre><code>## # A tibble: 3 x 6
-##   .metric .estimator  mean     n std_err .config             
-##   &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
-## 1 mae     standard   0.468    10  0.0171 Preprocessor1_Model1
-## 2 rmse    standard   0.611    10  0.0204 Preprocessor1_Model1
-## 3 rsq     standard   0.565    10  0.0642 Preprocessor1_Model1</code></pre>
-</div>
-<div id="detailed-cross-validation-results" class="section level2">
-<h2>Detailed cross validation results</h2>
-<pre class="r"><code>diamond_rs_metrics &lt;- diamond_rs_fit %&gt;%
-  collect_metrics(summarize = FALSE)
-diamond_rs_metrics</code></pre>
-<pre><code>## # A tibble: 30 x 5
-##    id     .metric .estimator .estimate .config             
-##    &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-##  1 Fold01 rmse    standard       0.613 Preprocessor1_Model1
-##  2 Fold01 mae     standard       0.468 Preprocessor1_Model1
-##  3 Fold01 rsq     standard       0.405 Preprocessor1_Model1
-##  4 Fold02 rmse    standard       0.675 Preprocessor1_Model1
-##  5 Fold02 mae     standard       0.518 Preprocessor1_Model1
-##  6 Fold02 rsq     standard       0.212 Preprocessor1_Model1
-##  7 Fold03 rmse    standard       0.584 Preprocessor1_Model1
-##  8 Fold03 mae     standard       0.478 Preprocessor1_Model1
-##  9 Fold03 rsq     standard       0.801 Preprocessor1_Model1
-## 10 Fold04 rmse    standard       0.583 Preprocessor1_Model1
-## # ... with 20 more rows</code></pre>
-</div>
-<div id="summarizing-cross-validation-results" class="section level2">
-<h2>Summarizing cross validation results</h2>
-<pre class="r"><code>diamond_rs_metrics %&gt;%
-  group_by(.metric) %&gt;%
-  summarize(min = min(.estimate),
-            median = median(.estimate),
-            max = max(.estimate),
-            mean = mean(.estimate),
-            sd = sd(.estimate))</code></pre>
-<pre><code>##         min    median       max      mean        sd
-## 1 0.2117906 0.5180158 0.8008101 0.5481061 0.1365813</code></pre>
-</div>
-<div id="viewing-the-best-performing-model" class="section level2">
-<h2>Viewing the best performing model</h2>
-<pre class="r"><code>diamond_rs_fit %&gt;%
-  show_best(metric = &#39;rmse&#39;)</code></pre>
-<pre><code>## # A tibble: 1 x 6
-##   .metric .estimator  mean     n std_err .config             
-##   &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
-## 1 rmse    standard   0.611    10  0.0204 Preprocessor1_Model1</code></pre>
-</div>
-<div id="best-diamond-model" class="section level2">
-<h2>Best diamond model</h2>
-<pre class="r"><code>best_diamond_model &lt;- diamond_rs_fit %&gt;%
-  select_best(metric = &#39;rmse&#39;)
-best_diamond_model </code></pre>
-<pre><code>## # A tibble: 1 x 1
-##   .config             
-##   &lt;chr&gt;               
-## 1 Preprocessor1_Model1</code></pre>
-</div>
-<div id="finalizing-the-workflow-model" class="section level2">
-<h2>Finalizing the workflow model</h2>
-<pre class="r"><code>final_diamond_wkfl &lt;- diamond_wkfl %&gt;%
-finalize_workflow(best_diamond_model)
-final_diamond_wkfl</code></pre>
-<pre><code>## == Workflow ====================================================================
-## Preprocessor: Recipe
-## Model: linear_reg()
-## 
-## -- Preprocessor ----------------------------------------------------------------
-## 3 Recipe Steps
-## 
-## * step_corr()
-## * step_normalize()
-## * step_dummy()
-## 
-## -- Model -----------------------------------------------------------------------
-## Linear Regression Model Specification (regression)
-## 
-## Computational engine: lm</code></pre>
-</div>
-<div id="model-fitting" class="section level2">
-<h2>Model fitting</h2>
-<pre class="r"><code>diamond_final_fit &lt;- final_diamond_wkfl %&gt;%
-  last_fit(split = diamond_split)
-diamond_final_fit %&gt;%
-  collect_metrics()</code></pre>
-<pre><code>## # A tibble: 2 x 4
-##   .metric .estimator .estimate .config             
-##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-## 1 rmse    standard       0.816 Preprocessor1_Model1
-## 2 rsq     standard       0.132 Preprocessor1_Model1</code></pre>
-</div>
 <div id="observations-and-comments-1" class="section level2">
 <h2>Observations and comments</h2>
 </div>
@@ -2040,3 +1655,47 @@ diamond_final_fit %&gt;%
 <h2>6. Being a one time purchase and coveted gem, professor can buy the diamond at the offered price of $3100 or if any offered less that quoted price.</h2>
 </div>
 </div>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

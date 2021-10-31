@@ -6,14 +6,23 @@
     <description>Recent content on My website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 30 Oct 2021 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 31 Oct 2021 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>DIamonds</title>
+      <link>/2021/10/31/diamonds/</link>
+      <pubDate>Sun, 31 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/2021/10/31/diamonds/</guid>
+      <description>library(ggplot2)library(dplyr)## ## Attaching package: &amp;#39;dplyr&amp;#39;## The following objects are masked from &amp;#39;package:stats&amp;#39;:## ## filter, lag## The following objects are masked from &amp;#39;package:base&amp;#39;:## ## intersect, setdiff, setequal, unionlibrary(data.table)## ## Attaching package: &amp;#39;data.table&amp;#39;## The following objects are masked from &amp;#39;package:dplyr&amp;#39;:## ## between, first, lastlibrary(tidyr)library(GGally)## Registered S3 method overwritten by &amp;#39;GGally&amp;#39;:## method from ## +.gg ggplot2library(gapminder)library(tidyverse)## -- Attaching packages --------------------------------------- tidyverse 1.</description>
+    </item>
+    
     <item>
       <title>My first post</title>
       <link>/2021/10/30/my-first-post/</link>
       <pubDate>Sat, 30 Oct 2021 00:00:00 +0000</pubDate>
       
       <guid>/2021/10/30/my-first-post/</guid>
-      <description>Additiona&amp;lt;- sum(5, 7)print(a)## [1] 12</description>
+      <description>library(ggplot2)library(dplyr)## ## Attaching package: &amp;#39;dplyr&amp;#39;## The following objects are masked from &amp;#39;package:stats&amp;#39;:## ## filter, lag## The following objects are masked from &amp;#39;package:base&amp;#39;:## ## intersect, setdiff, setequal, unionlibrary(data.table)## ## Attaching package: &amp;#39;data.table&amp;#39;## The following objects are masked from &amp;#39;package:dplyr&amp;#39;:## ## between, first, lastlibrary(tidyr)library(GGally)## Registered S3 method overwritten by &amp;#39;GGally&amp;#39;:## method from ## +.gg ggplot2library(gapminder)library(tidyverse)## -- Attaching packages --------------------------------------- tidyverse 1.</description>
     </item>
     
     <item>
