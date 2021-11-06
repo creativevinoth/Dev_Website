@@ -6,7 +6,8 @@ slug: my-first-post
 categories: []
 tags: []
 ---
-```{r}
+```{r message = FALSE, warning = FALSE, echo = FALSE}
+
 library(ggplot2)
 library(dplyr)
 library(data.table)
@@ -355,7 +356,7 @@ bank<- subset(bank, select = -previous)
 ```{r}
 tab1(bank$job, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of job", xlab ="Job")
 ```
-## The frequency distribution of unknown, student, unemployed, housemaid, retired, entrepreneur, self-employed, services, admin are less in numbers. Thus they are are clubbed together as others so as to reduce the number of variables and improve the prediction accuracy
+The frequency distribution of unknown, student, unemployed, housemaid, retired, entrepreneur, self-employed, services, admin are less in numbers. Thus they are are clubbed together as others so as to reduce the number of variables and improve the prediction accuracy
 
 ```{r}
 bank$job<-as.character(bank$job)
@@ -974,7 +975,7 @@ prob_preds
 The above prediction is the probability of outcome occurences.
 
 
-# In tidymodels, outcome variable needs to be a factor
+In tidymodels, outcome variable needs to be a factor
 ```{r}
 bank$y <- as.factor (bank$y)
 ```
@@ -989,7 +990,7 @@ results
 I was trying to select only y and show the .pred_class and .pred probability to show how much actual and prediction class and its probability but when i used select (y) %>%, I was getting error, so I show here the whole model with .pred class and its probability at the end of the table
 
 
-# Assessing the model fit usingConfusion matrix
+# Assessing the model fit using Confusion matrix
 
 
 ```{r}
@@ -1192,7 +1193,7 @@ The full model is not good as many of the coefficients are not significant
 After a many trials, the following is the best model
 
 
-Best model
+# Best model
 
 After many iterations, below are the best model to predict the classification models
 
