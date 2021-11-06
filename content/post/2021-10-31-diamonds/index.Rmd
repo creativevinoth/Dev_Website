@@ -366,7 +366,7 @@ This is a non metric and nominal categorical value
 MBA6636_SM21_Professor_Proposes_Data %>%
 freq(Certification)
 ```
-## Other then EGL and GIA certification, all frequency are very less in percentage. Only AGS, EGL and GIA has the price range higher than 3000. In order to have a fair distribution among certifications, we can merge AGS with GIA and all other certifications can be categorized as othercertifications
+Other then EGL and GIA certification, all frequency are very less in percentage. Only AGS, EGL and GIA has the price range higher than 3000. In order to have a fair distribution among certifications, we can merge AGS with GIA and all other certifications can be categorized as othercertifications
 
 ```{r}
 MBA6636_SM21_Professor_Proposes_Data$Certification<-as.character(MBA6636_SM21_Professor_Proposes_Data$Certification)
@@ -754,7 +754,7 @@ lm_model <- linear_reg() %>%
   set_mode('regression')
 ```
 
-#Feature engineering
+# Feature engineering
 ```{r}
 diamond_recipe <- recipe(Price ~., data = diamond_training) %>%
   step_corr(all_numeric(), threshold =0.8) %>%
