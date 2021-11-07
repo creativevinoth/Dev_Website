@@ -150,14 +150,14 @@ for(i in 1:length(MBA6636_SM21_Professor_Proposes_Data$Symmetry))
 }
 ```
 
-## The report of the predicted price of a diamond for the professor
-## Table of contents
-## Executive summary
-## Issues and challanges
-## Univariate analysis on metric and non metric data
-## Bivariate analysis on metric and non metric data
-## Multiple linear regresion 
-## Observations and comments
+The report of the predicted price of a diamond for the professor
+# Table of contents
+Executive summary
+Issues and challanges
+Univariate analysis on metric and non metric data
+Bivariate analysis on metric and non metric data
+Multiple linear regresion 
+Observations and comments
 
 
 ## Executive summary
