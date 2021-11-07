@@ -28,11 +28,11 @@ library(tidymodels)
 library(Rmisc)
 ```
 
-```{r}
+```{r message = FALSE, warning = FALSE, echo = FALSE}
 MBA6636_SM21_Professor_Proposes_Data<-read.csv("C:/Users/Vinoth Kanna/OneDrive/Documents/Data Analytics/Final/MBA6636_SM21_Professor_Proposes_Data.csv")
 ```
 
-```{r}
+```{r message = FALSE, warning = FALSE, echo = FALSE}
 for(i in 1:length(MBA6636_SM21_Professor_Proposes_Data$Colour))
   {
   
