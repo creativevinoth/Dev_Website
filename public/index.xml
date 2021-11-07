@@ -22,7 +22,16 @@
       <pubDate>Sat, 30 Oct 2021 00:00:00 +0000</pubDate>
       
       <guid>/2021/10/30/bank/</guid>
-      <description>The report of logistic regression on bank data set to answer if customer will subscribe term deposit or notTable of contentsExecutive summaryIssues and ChallangesUnivariate analysis on metric and nonmetric dataBivariate analysisLogistic regression using tidymodelsWorkflow and model creationManual logistic regressionObservation and commentsReferencesExecutive sumamryThe portuguese banking institution has a product term deposit.</description>
+      <description>The report of logistic regression on bank data set to answer if customer will subscribe term deposit or notTable of contentsExecutive summary
+Issues and Challanges
+Univariate analysis on metric and nonmetric data
+Bivariate analysis
+Logistic regression using tidymodels
+Workflow and model creation
+Manual logistic regression
+Observation and comments
+References
+Executive sumamryThe portuguese banking institution has a product term deposit. The data was collected in a direct marketing campaign based on phone calls.</description>
     </item>
     
     <item>

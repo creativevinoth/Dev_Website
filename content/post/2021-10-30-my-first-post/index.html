@@ -15,33 +15,15 @@ tags: []
 </div>
 <div id="table-of-contents" class="section level2">
 <h2>Table of contents</h2>
-</div>
-<div id="executive-summary" class="section level2">
-<h2>Executive summary</h2>
-</div>
-<div id="issues-and-challanges" class="section level2">
-<h2>Issues and Challanges</h2>
-</div>
-<div id="univariate-analysis-on-metric-and-nonmetric-data" class="section level2">
-<h2>Univariate analysis on metric and nonmetric data</h2>
-</div>
-<div id="bivariate-analysis" class="section level2">
-<h2>Bivariate analysis</h2>
-</div>
-<div id="logistic-regression-using-tidymodels" class="section level2">
-<h2>Logistic regression using tidymodels</h2>
-</div>
-<div id="workflow-and-model-creation" class="section level2">
-<h2>Workflow and model creation</h2>
-</div>
-<div id="manual-logistic-regression" class="section level2">
-<h2>Manual logistic regression</h2>
-</div>
-<div id="observation-and-comments" class="section level2">
-<h2>Observation and comments</h2>
-</div>
-<div id="references" class="section level2">
-<h2>References</h2>
+<p>Executive summary</p>
+<p>Issues and Challanges</p>
+<p>Univariate analysis on metric and nonmetric data</p>
+<p>Bivariate analysis</p>
+<p>Logistic regression using tidymodels</p>
+<p>Workflow and model creation</p>
+<p>Manual logistic regression</p>
+<p>Observation and comments</p>
+<p>References</p>
 </div>
 <div id="executive-sumamry" class="section level2">
 <h2>Executive sumamry</h2>
@@ -49,7 +31,7 @@ tags: []
 <p>Initially, univariate analysis was performed to remove the outliers. Boxplot was graphed to find out the outliers. Bivariate analysis was performed to find out if there is any correlation between dependant and independant variable and find out the equation is significant or not. Using tidymodels, feature engineering was used to preprocess data and then used logistic regressing to fit the model and cross validation was done and used confusion matrix to validate the results. Then I used workflow model to automate and use the model for new data set. I have also done manual logistic regression model.</p>
 <p>It was clear that customers will not subscribe for the term deposit. The bank has to take some steps whereby stimulate the customers such as increasing rate of interest or offering some better additional offers like providing a health insurance free for term deposit of some amount.</p>
 </div>
-<div id="issues-and-challanges-1" class="section level1">
+<div id="issues-and-challanges" class="section level1">
 <h1>Issues and challanges</h1>
 <p>The greatest challange for the bank is to find out which all variables to be considered to arrive at an outcome that if customers will subscribe to term deposit or not. There are some categorical variables, for twhich dummy values to be assigned. There are some binary categorical values and binary to be assigned and there is some ordianal categorical values, those can be considered as a numerical values by assigning a sequential values to it. After identifying the factors which influence most for sunscribing to the term deposit, marketing efforts should be directed towards the same to rope in more term deposit.</p>
 </div>
@@ -773,7 +755,7 @@ mtext(paste(&quot;Outliers: &quot;, paste(month_outliers, collapse =&quot;, &quo
 ## [26] 11 11 11 11 11  1  1 11  1  1  1  1 11  1 11 11  1 11  1  1  1 11 11 11 11
 ## [51] 11  1  1 11  1  1  1 11 11 11 11 11 11  1 11  1  1 11 11 11 11 11 11  1 11
 ## [76] 11 11 11  1 11  1 11 11  1  1 11 11 11 11  1  1  1 11  1  1 11</code></pre>
-<div id="bivariate-analysis-1" class="section level2">
+<div id="bivariate-analysis" class="section level2">
 <h2>Bivariate analysis</h2>
 <p>Let us see the relationship between indendent and dependent variable</p>
 </div>
@@ -1465,12 +1447,12 @@ bank_test&lt;- bank_split %&gt;%
 <pre class="r"><code>bank_training %&gt;%
   select_if(is.numeric) %&gt;%
   cor()</code></pre>
-<pre><code>##                  age      balance         day     duration     campaign
-## age       1.00000000  0.024381595 -0.02340996 -0.016265165  0.042921037
-## balance   0.02438159  1.000000000 -0.02149167 -0.008149679 -0.005263626
-## day      -0.02340996 -0.021491669  1.00000000 -0.035732469  0.128279967
-## duration -0.01626516 -0.008149679 -0.03573247  1.000000000 -0.094268541
-## campaign  0.04292104 -0.005263626  0.12827997 -0.094268541  1.000000000</code></pre>
+<pre><code>##                  age     balance         day    duration    campaign
+## age       1.00000000  0.02145953 -0.01255586 -0.01635924  0.02614109
+## balance   0.02145953  1.00000000 -0.06315205  0.04790609 -0.02453301
+## day      -0.01255586 -0.06315205  1.00000000 -0.01867102  0.09784312
+## duration -0.01635924  0.04790609 -0.01867102  1.00000000 -0.02515967
+## campaign  0.02614109 -0.02453301  0.09784312 -0.02515967  1.00000000</code></pre>
 <p>We can notice that there is no much corellation the independent variable</p>
 </div>
 <div id="model-specification" class="section level1">
@@ -1532,16 +1514,16 @@ bank_training_prep</code></pre>
 <pre><code>## # A tibble: 708 x 29
 ##        age balance    day duration campaign y     job_management job_Others
 ##      &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;fct&gt;          &lt;dbl&gt;      &lt;dbl&gt;
-##  1 -0.0735  0.416  -1.08  -0.298     -0.128 0                  0          0
-##  2  0.130   1.34   -0.118 -1.05      -0.128 0                  0          1
-##  3  0.0281  1.01    1.69   0.00404   -0.128 0                  1          0
-##  4 -0.887   0.228  -0.962 -0.322     -0.875 0                  0          1
-##  5  0.231  -1.23    0.485 -0.386      0.620 0                  1          0
-##  6  0.435  -0.0985 -0.359 -0.632     -0.128 0                  0          1
-##  7  1.35   -0.111   0.726 -0.910     -0.128 0                  0          1
-##  8 -0.887   0.717   1.45  -0.855      0.620 0                  0          0
-##  9  1.55    0.391  -1.57  -1.03       0.620 0                  0          0
-## 10 -0.175  -0.801   1.69  -0.719     -0.128 0                  0          0
+##  1 -0.0817   0.379 -1.09  -0.307    -0.0991 0                  0          0
+##  2  0.333    1.83   0.228 -0.611    -0.0991 0                  0          1
+##  3  0.0220   0.961  1.66  -0.00338  -0.0991 0                  1          0
+##  4 -0.911    0.193 -0.967 -0.331    -0.845  0                  0          1
+##  5  0.437   -0.129 -0.369 -0.643    -0.0991 0                  0          1
+##  6  0.437   -0.290 -0.967 -0.515    -0.0991 0                  0          1
+##  7  1.37    -0.141  0.706 -0.923    -0.0991 0                  0          1
+##  8  1.99    -0.921  0.706 -1.19     -0.845  0                  1          0
+##  9 -0.185   -0.822  1.66  -0.731    -0.0991 0                  0          0
+## 10  1.78    -0.426 -1.33  -0.395    -0.845  0                  1          0
 ## # ... with 698 more rows, and 21 more variables: job_technician &lt;dbl&gt;,
 ## #   marital_married &lt;dbl&gt;, marital_single &lt;dbl&gt;, education_secondary &lt;dbl&gt;,
 ## #   education_tertiary &lt;dbl&gt;, default_X1 &lt;dbl&gt;, housing_X1 &lt;dbl&gt;,
@@ -1557,18 +1539,18 @@ bank_training_prep</code></pre>
   bake (new_data = bank_test)
 bank_test_prep</code></pre>
 <pre><code>## # A tibble: 236 x 29
-##        age balance      day duration campaign y     job_management job_Others
-##      &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;fct&gt;          &lt;dbl&gt;      &lt;dbl&gt;
-##  1  0.333    1.88   0.244    -0.600    -0.128 0                  0          1
-##  2  0.435   -0.262 -0.962    -0.505    -0.128 0                  0          1
-##  3  1.96    -0.902  0.726    -1.18     -0.875 0                  1          0
-##  4 -0.378   -0.161  1.33      0.998    -0.875 0                  0          1
-##  5  0.0281   1.32   0.244     0.123    -0.128 0                  0          1
-##  6  2.06    -1.37   1.33     -0.998    -0.128 0                  0          1
-##  7 -0.785    1.29   0.00255   1.02      2.11  0                  0          1
-##  8 -0.683   -1.15   1.81     -0.894    -0.128 0                  0          0
-##  9  0.638    0.818  1.69      0.0438    1.37  0                  0          1
-## 10  0.130   -0.312 -1.08      1.15     -0.128 0                  0          1
+##        age balance     day duration campaign y     job_management job_Others
+##      &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;fct&gt;          &lt;dbl&gt;      &lt;dbl&gt;
+##  1  0.126   1.30   -0.130    -1.06   -0.0991 0                  0          1
+##  2  0.229  -1.24    0.467    -0.395   0.647  0                  1          0
+##  3 -0.911   0.676   1.42     -0.867   0.647  0                  0          0
+##  4  1.58    0.354  -1.56     -1.04    0.647  0                  0          0
+##  5 -0.807   1.25   -0.0108    1.02    2.14   0                  0          1
+##  6  0.644  -1.13    0.228     3.00   -0.0991 0                  1          0
+##  7 -1.64    0.0324 -0.0108   -1.11   -0.845  0                  0          1
+##  8 -0.807   1.38   -1.21     -0.107  -0.845  0                  0          0
+##  9 -0.496  -0.129  -0.489     3.19   -0.0991 0                  1          0
+## 10  0.0220 -1.37   -0.489    -0.395  -0.845  0                  0          1
 ## # ... with 226 more rows, and 21 more variables: job_technician &lt;dbl&gt;,
 ## #   marital_married &lt;dbl&gt;, marital_single &lt;dbl&gt;, education_secondary &lt;dbl&gt;,
 ## #   education_tertiary &lt;dbl&gt;, default_X1 &lt;dbl&gt;, housing_X1 &lt;dbl&gt;,
@@ -1585,45 +1567,45 @@ bank_test_prep</code></pre>
 logistic_fit</code></pre>
 <pre><code>## parsnip model object
 ## 
-## Fit time:  50ms 
+## Fit time:  31ms 
 ## 
 ## Call:  stats::glm(formula = y ~ ., family = stats::binomial, data = data)
 ## 
 ## Coefficients:
 ##                  (Intercept)                           age  
-##                    -20.14196                      -0.16647  
+##                    -20.25208                      -0.13851  
 ##                      balance                           day  
-##                      0.03123                       0.11329  
+##                      0.05283                       0.18544  
 ##                     duration                      campaign  
-##                      0.59358                      -0.38432  
+##                      0.83927                      -0.21787  
 ##               job_management                    job_Others  
-##                      0.33626                       1.11260  
+##                      0.54647                       1.21111  
 ##               job_technician               marital_married  
-##                      0.66987                       0.18467  
+##                      0.76222                       0.02177  
 ##               marital_single           education_secondary  
-##                      0.23860                      -0.21202  
+##                      0.56171                      -0.17395  
 ##           education_tertiary                    default_X1  
-##                      0.35203                       1.87057  
+##                      0.17194                       1.37092  
 ##                   housing_X1                       loan_X1  
-##                     -0.42017                      -1.12386  
+##                      0.03341                      -1.60951  
 ## contact_telephone.and.others                     month_X10  
-##                     -0.62461                      18.04037  
+##                     -1.32593                      17.98242  
 ##                    month_X11                      month_X2  
-##                     15.42610                      15.64288  
+##                     15.12466                      16.49046  
 ##                     month_X3                      month_X4  
-##                     19.90227                      17.71415  
+##                     19.72528                      17.13774  
 ##                     month_X5                      month_X6  
-##                     15.00265                      16.37210  
+##                     15.30026                      17.27610  
 ##                     month_X7                      month_X8  
-##                     15.11166                      15.98645  
+##                     15.07250                      16.26076  
 ##                     month_X9   poutcome_success.and.others  
-##                     16.65922                       2.30838  
+##                     17.11214                       2.16504  
 ##             poutcome_unknown  
-##                      0.39696  
+##                      0.34170  
 ## 
 ## Degrees of Freedom: 707 Total (i.e. Null);  679 Residual
-## Null Deviance:       345.8 
-## Residual Deviance: 215.1     AIC: 273.1</code></pre>
+## Null Deviance:       371.6 
+## Residual Deviance: 230.7     AIC: 288.7</code></pre>
 <p>The above is the significant equation to predict the outcome variable. The AIC is 289.2, which is quite good compared to our manual method</p>
 </div>
 <div id="predicting-outcome-categories" class="section level1">
@@ -1651,18 +1633,18 @@ class_preds</code></pre>
 <pre class="r"><code>prob_preds &lt;- predict (logistic_fit, new_data = bank_test_prep, type =&quot;prob&quot;)
 prob_preds</code></pre>
 <pre><code>## # A tibble: 236 x 2
-##    .pred_0       .pred_1
-##      &lt;dbl&gt;         &lt;dbl&gt;
-##  1   0.838 0.162        
-##  2   0.982 0.0182       
-##  3   0.990 0.00950      
-##  4   0.990 0.00961      
-##  5   0.979 0.0205       
-##  6   0.962 0.0377       
-##  7   0.994 0.00590      
-##  8   1.00  0.00000000151
-##  9   1.00  0.0000000237 
-## 10   0.980 0.0196       
+##    .pred_0 .pred_1
+##      &lt;dbl&gt;   &lt;dbl&gt;
+##  1   0.995 0.00478
+##  2   0.990 0.0104 
+##  3   0.970 0.0298 
+##  4   0.988 0.0120 
+##  5   0.992 0.00825
+##  6   0.693 0.307  
+##  7   0.955 0.0455 
+##  8   0.990 0.00952
+##  9   0.864 0.136  
+## 10   0.962 0.0378 
 ## # ... with 226 more rows</code></pre>
 <p>The above prediction is the probability of outcome occurences.</p>
 <p>In tidymodels, outcome variable needs to be a factor</p>
@@ -1674,18 +1656,18 @@ prob_preds</code></pre>
   bind_cols(class_preds, prob_preds)
 results</code></pre>
 <pre><code>## # A tibble: 236 x 32
-##        age balance      day duration campaign y     job_management job_Others
-##      &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;fct&gt;          &lt;dbl&gt;      &lt;dbl&gt;
-##  1  0.333    1.88   0.244    -0.600    -0.128 0                  0          1
-##  2  0.435   -0.262 -0.962    -0.505    -0.128 0                  0          1
-##  3  1.96    -0.902  0.726    -1.18     -0.875 0                  1          0
-##  4 -0.378   -0.161  1.33      0.998    -0.875 0                  0          1
-##  5  0.0281   1.32   0.244     0.123    -0.128 0                  0          1
-##  6  2.06    -1.37   1.33     -0.998    -0.128 0                  0          1
-##  7 -0.785    1.29   0.00255   1.02      2.11  0                  0          1
-##  8 -0.683   -1.15   1.81     -0.894    -0.128 0                  0          0
-##  9  0.638    0.818  1.69      0.0438    1.37  0                  0          1
-## 10  0.130   -0.312 -1.08      1.15     -0.128 0                  0          1
+##        age balance     day duration campaign y     job_management job_Others
+##      &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;fct&gt;          &lt;dbl&gt;      &lt;dbl&gt;
+##  1  0.126   1.30   -0.130    -1.06   -0.0991 0                  0          1
+##  2  0.229  -1.24    0.467    -0.395   0.647  0                  1          0
+##  3 -0.911   0.676   1.42     -0.867   0.647  0                  0          0
+##  4  1.58    0.354  -1.56     -1.04    0.647  0                  0          0
+##  5 -0.807   1.25   -0.0108    1.02    2.14   0                  0          1
+##  6  0.644  -1.13    0.228     3.00   -0.0991 0                  1          0
+##  7 -1.64    0.0324 -0.0108   -1.11   -0.845  0                  0          1
+##  8 -0.807   1.38   -1.21     -0.107  -0.845  0                  0          0
+##  9 -0.496  -0.129  -0.489     3.19   -0.0991 0                  1          0
+## 10  0.0220 -1.37   -0.489    -0.395  -0.845  0                  0          1
 ## # ... with 226 more rows, and 24 more variables: job_technician &lt;dbl&gt;,
 ## #   marital_married &lt;dbl&gt;, marital_single &lt;dbl&gt;, education_secondary &lt;dbl&gt;,
 ## #   education_tertiary &lt;dbl&gt;, default_X1 &lt;dbl&gt;, housing_X1 &lt;dbl&gt;,
@@ -1701,8 +1683,8 @@ results</code></pre>
   conf_mat(truth = y, estimate = .pred_class)</code></pre>
 <pre><code>##           Truth
 ## Prediction   0   1
-##          0 218  12
-##          1   2   4</code></pre>
+##          0 220   8
+##          1   5   3</code></pre>
 </div>
 <div id="correct-predictions" class="section level1">
 <h1>Correct predictions</h1>
@@ -1758,8 +1740,8 @@ bank_wkfl_fit</code></pre>
 <pre><code>## # A tibble: 2 x 4
 ##   .metric  .estimator .estimate .config             
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-## 1 accuracy binary         0.941 Preprocessor1_Model1
-## 2 roc_auc  binary         0.830 Preprocessor1_Model1</code></pre>
+## 1 accuracy binary         0.945 Preprocessor1_Model1
+## 2 roc_auc  binary         0.873 Preprocessor1_Model1</code></pre>
 </div>
 <div id="collecting-predictions" class="section level1">
 <h1>collecting predictions</h1>
@@ -1767,18 +1749,18 @@ bank_wkfl_fit</code></pre>
   collect_predictions()
 bank_wkfl_fit_results</code></pre>
 <pre><code>## # A tibble: 236 x 7
-##    id               .pred_0       .pred_1  .row .pred_class y     .config       
-##    &lt;chr&gt;              &lt;dbl&gt;         &lt;dbl&gt; &lt;int&gt; &lt;fct&gt;       &lt;fct&gt; &lt;chr&gt;         
-##  1 train/test split   0.838 0.162             3 0           0     Preprocessor1~
-##  2 train/test split   0.982 0.0182            8 0           0     Preprocessor1~
-##  3 train/test split   0.990 0.00950          11 0           0     Preprocessor1~
-##  4 train/test split   0.990 0.00961          15 0           0     Preprocessor1~
-##  5 train/test split   0.979 0.0205           19 0           0     Preprocessor1~
-##  6 train/test split   0.962 0.0377           20 0           0     Preprocessor1~
-##  7 train/test split   0.994 0.00590          24 0           0     Preprocessor1~
-##  8 train/test split   1.00  0.00000000151    25 0           0     Preprocessor1~
-##  9 train/test split   1.00  0.0000000237     32 0           0     Preprocessor1~
-## 10 train/test split   0.980 0.0196           33 0           0     Preprocessor1~
+##    id               .pred_0 .pred_1  .row .pred_class y     .config             
+##    &lt;chr&gt;              &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt; &lt;fct&gt;       &lt;fct&gt; &lt;chr&gt;               
+##  1 train/test split   0.995 0.00478     2 0           0     Preprocessor1_Model1
+##  2 train/test split   0.990 0.0104      6 0           0     Preprocessor1_Model1
+##  3 train/test split   0.970 0.0298     10 0           0     Preprocessor1_Model1
+##  4 train/test split   0.988 0.0120     12 0           0     Preprocessor1_Model1
+##  5 train/test split   0.992 0.00825    24 0           0     Preprocessor1_Model1
+##  6 train/test split   0.693 0.307      27 0           0     Preprocessor1_Model1
+##  7 train/test split   0.955 0.0455     28 0           0     Preprocessor1_Model1
+##  8 train/test split   0.990 0.00952    29 0           0     Preprocessor1_Model1
+##  9 train/test split   0.864 0.136      31 0           0     Preprocessor1_Model1
+## 10 train/test split   0.962 0.0378     39 0           0     Preprocessor1_Model1
 ## # ... with 226 more rows</code></pre>
 </div>
 <div id="creating-custom-metrics" class="section level1">
@@ -1796,9 +1778,9 @@ bank_metrics</code></pre>
 <pre><code>## # A tibble: 3 x 3
 ##   .metric .estimator .estimate
 ##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
-## 1 sens    binary         0.991
-## 2 spec    binary         0.25 
-## 3 roc_auc binary         0.170</code></pre>
+## 1 sens    binary         0.978
+## 2 spec    binary         0.273
+## 3 roc_auc binary         0.127</code></pre>
 </div>
 <div id="creating-cross-validation-folds" class="section level1">
 <h1>Creating cross validation folds</h1>
@@ -1825,9 +1807,9 @@ bank_rs %&gt;%
 <pre><code>## # A tibble: 3 x 6
 ##   .metric .estimator  mean     n std_err .config             
 ##   &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
-## 1 roc_auc binary     0.796     5 0.0385  Preprocessor1_Model1
-## 2 sens    binary     0.980     5 0.00520 Preprocessor1_Model1
-## 3 spec    binary     0.290     5 0.0632  Preprocessor1_Model1</code></pre>
+## 1 roc_auc binary     0.786     5 0.0328  Preprocessor1_Model1
+## 2 sens    binary     0.983     5 0.00445 Preprocessor1_Model1
+## 3 spec    binary     0.206     5 0.0473  Preprocessor1_Model1</code></pre>
 <p>The roc_auc is 0.76
 The sensitivity is 0.98, which is the proportion of positive cases that were correctly classified
 The secificity is 0.19, which is the proportion of negative cases that were correctly classified</p>
@@ -1840,21 +1822,21 @@ bank_detailed_results</code></pre>
 <pre><code>## # A tibble: 15 x 5
 ##    id    .metric .estimator .estimate .config             
 ##    &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-##  1 Fold1 sens    binary         0.976 Preprocessor1_Model1
-##  2 Fold1 spec    binary         0.2   Preprocessor1_Model1
-##  3 Fold1 roc_auc binary         0.785 Preprocessor1_Model1
-##  4 Fold2 sens    binary         0.985 Preprocessor1_Model1
-##  5 Fold2 spec    binary         0.429 Preprocessor1_Model1
-##  6 Fold2 roc_auc binary         0.855 Preprocessor1_Model1
-##  7 Fold3 sens    binary         0.993 Preprocessor1_Model1
+##  1 Fold1 sens    binary         0.985 Preprocessor1_Model1
+##  2 Fold1 spec    binary         0.111 Preprocessor1_Model1
+##  3 Fold1 roc_auc binary         0.769 Preprocessor1_Model1
+##  4 Fold2 sens    binary         1     Preprocessor1_Model1
+##  5 Fold2 spec    binary         0.308 Preprocessor1_Model1
+##  6 Fold2 roc_auc binary         0.898 Preprocessor1_Model1
+##  7 Fold3 sens    binary         0.978 Preprocessor1_Model1
 ##  8 Fold3 spec    binary         0.125 Preprocessor1_Model1
-##  9 Fold3 roc_auc binary         0.666 Preprocessor1_Model1
-## 10 Fold4 sens    binary         0.962 Preprocessor1_Model1
-## 11 Fold4 spec    binary         0.444 Preprocessor1_Model1
-## 12 Fold4 roc_auc binary         0.891 Preprocessor1_Model1
-## 13 Fold5 sens    binary         0.985 Preprocessor1_Model1
-## 14 Fold5 spec    binary         0.25  Preprocessor1_Model1
-## 15 Fold5 roc_auc binary         0.782 Preprocessor1_Model1</code></pre>
+##  9 Fold3 roc_auc binary         0.729 Preprocessor1_Model1
+## 10 Fold4 sens    binary         0.977 Preprocessor1_Model1
+## 11 Fold4 spec    binary         0.333 Preprocessor1_Model1
+## 12 Fold4 roc_auc binary         0.815 Preprocessor1_Model1
+## 13 Fold5 sens    binary         0.977 Preprocessor1_Model1
+## 14 Fold5 spec    binary         0.154 Preprocessor1_Model1
+## 15 Fold5 roc_auc binary         0.718 Preprocessor1_Model1</code></pre>
 </div>
 <div id="summarizing-cross-validation-results" class="section level1">
 <h1>Summarizing cross validation results</h1>
@@ -1867,7 +1849,7 @@ bank_detailed_results</code></pre>
             sd = sd(.estimate)
            )</code></pre>
 <pre><code>##         min    median       max      mean         sd
-## 1 0.6660448 0.7847769 0.8905724 0.7956751 0.08608007</code></pre>
+## 1 0.7175481 0.7685881 0.8980322 0.7856922 0.07342454</code></pre>
 </div>
 <div id="viewing-the-best-performing-models" class="section level1">
 <h1>Viewing the best performing models</h1>
@@ -1876,7 +1858,7 @@ bank_detailed_results</code></pre>
 <pre><code>## # A tibble: 1 x 6
 ##   .metric .estimator  mean     n std_err .config             
 ##   &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
-## 1 roc_auc binary     0.796     5  0.0385 Preprocessor1_Model1</code></pre>
+## 1 roc_auc binary     0.786     5  0.0328 Preprocessor1_Model1</code></pre>
 <pre class="r"><code>best_bank_model &lt;- bank_rs %&gt;%
   select_best(metric = &#39;roc_auc&#39;)
 best_bank_model </code></pre>
@@ -1916,8 +1898,8 @@ bank_final_fit %&gt;%
 <pre><code>## # A tibble: 2 x 4
 ##   .metric  .estimator .estimate .config             
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-## 1 accuracy binary         0.941 Preprocessor1_Model1
-## 2 roc_auc  binary         0.830 Preprocessor1_Model1</code></pre>
+## 1 accuracy binary         0.945 Preprocessor1_Model1
+## 2 roc_auc  binary         0.873 Preprocessor1_Model1</code></pre>
 <p>We can see here this model is good to predict and ready to use the same model to predic anynew data set. Its accuracy is 0.94 and roc_auc is 0.88</p>
 </div>
 <div id="model-evaluation" class="section level1">
@@ -1926,8 +1908,8 @@ bank_final_fit %&gt;%
   conf_mat(truth = y, estimate = .pred_class)</code></pre>
 <pre><code>##           Truth
 ## Prediction   0   1
-##          0 218  12
-##          1   2   4</code></pre>
+##          0 220   8
+##          1   5   3</code></pre>
 </div>
 <div id="correct-predictions-1" class="section level1">
 <h1>Correct predictions</h1>
@@ -2223,7 +2205,7 @@ summary(best)</code></pre>
 <li><p>Bank should keep doing marketing campaign as that will eventually gain a good business, if not immediately, at least in future.</p></li>
 </ol>
 </div>
-<div id="references-1" class="section level2">
+<div id="references" class="section level2">
 <h2>References</h2>
 <p>[Moro et al., 2014] S. Moro, P. Cortez and P. Rita. A Data-Driven Approach to Predict the Success of Bank Telemarketing. Decision Support Systems, Elsevier, 62:22-31, June 2014
 <a href="https://archive.ics.uci.edu/ml/datasets/Bank+Marketing" class="uri">https://archive.ics.uci.edu/ml/datasets/Bank+Marketing</a></p>
