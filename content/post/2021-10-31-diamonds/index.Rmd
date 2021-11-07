@@ -723,22 +723,27 @@ price = 935.77+2317.67*Carat-459.69*ClarityVisible to naked eye +102.26*CutVery 
 # Calculation of professor Diamonds
 
 Intercept                   = $935.77
-carat - 0.9* 2317.67        = $2085.90
-clarity - 0*(-459.69)       = $0 ( There is a discount of $ 459.69 for visible to naked eye but prof wants s12, which has no discount)
-cut - 1 * 102.26            = $102.26
-colour- 1*(-459.69)         = $-459.69 (There is a discount if colour is yellow based and since the prof plans to buy faint yellow, he is entitled to get a discounted price)
-polish - 1* 119.31          = $119.31
-WHolesaler -1*(-464.58)     = -464.58 (This is the price discount prof will get if he buys from low price diamond wholesaler, that is wholesaler 1 and 2)
 
+carat - 0.9* 2317.67        = $2085.90
+
+clarity - 0*(-459.69)       = $0 ( There is a discount of $ 459.69 for visible to naked eye but prof wants s12, which has no discount)
+
+cut - 1 * 102.26            = $102.26
+
+colour- 1*(-459.69)         = $-459.69 (There is a discount if colour is yellow based and since the prof plans to buy faint yellow, he is entitled to get a discounted price)
+
+polish - 1* 119.31          = $119.31
+
+WHolesaler -1*(-464.58)     = -464.58 (This is the price discount prof will get if he buys from low price diamond wholesaler, that is wholesaler 1 and 2)
 
 
 Total price with discount    = $2318.97 (This is the price after wholesaler discount, if he buys from either wholesaler 2 and 3)
 
 
-Total price without dis     = $2783.55 (If prof buys from wholesaler 1)
+Total price without discount  = $2783.55 (If prof buys from wholesaler 1)
 
 
-The proferssor`s price for the diamond is $ 3100. The price seems to be not too much difference between the predicted price without discount. Moreover, the confidence interval of the price range between $2665.520 and $2779.73. There is a less difference of $321 approximately. A diamond being a symbol of status and a one time buy will not impact the professor by its price difference.The diamond buyer will not be botherd about the price discount offered by wholesaler 2 and 3 as long as the wholesaler 1 service and quality of the diamond is good and reputed. 
+The professor`s price for the diamond is $ 3100. The price seems to be not too much difference between the predicted price without discount. Moreover, the confidence interval of the price range between $2665.520 and $2779.73. There is a less difference of $321 approximately. A diamond being a symbol of status and a one time buy will not impact the professor by its price difference.The diamond buyer will not be bothered about the price discount offered by wholesaler 2 and 3 as long as the wholesaler 1 service and quality of the diamond is good and reputed. 
 
 # Split the data into training and testing
 ```{r}
