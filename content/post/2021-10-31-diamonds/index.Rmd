@@ -962,15 +962,15 @@ diamond_final_fit %>%
 ## Observations and comments
 
 
-1.The important determinants of the price are carat, polish and cut followed by colour, clarity and wholesaler.
+1. The important determinants of the price are carat, polish and cut followed by colour, clarity and wholesaler.
 
-2. Though the certification has significant model when we did simple linear regression wih price, it failed to influence the price as a whole model when i did multiple linear regression
+2. Though the certification has significant model when we did simple linear regression wih price, it failed to influence the price as a whole model when i did multiple linear regression.
 
-3.The quoted price of the diamond is only for the diamond and it is to be noted that ring cost is additional
+3. The quoted price of the diamond is only for the diamond and it is to be noted that ring cost is additional.
 
-4.All the predictor variables have been assigned factor and done regresion on this
+4. All the predictor variables have been assigned factor and done regresion on this.
 
-5.I included wholesaler as a predictor because i recognised that there is a difference between the diamond offered between wholesaler 1 (referred as a high priced diamond wholesaler) and wholesaler 2 and 3(referred as low priced diamond wholesaler) 
+5. I included wholesaler as a predictor because i recognised that there is a difference between the diamond offered between wholesaler 1 (referred as a high priced diamond wholesaler) and wholesaler 2 and 3(referred as low priced diamond wholesaler). 
 
 6. Being a one time purchase and coveted gem, professor can buy the diamond at the offered price of $3100 or if any offered less that quoted price.
 
