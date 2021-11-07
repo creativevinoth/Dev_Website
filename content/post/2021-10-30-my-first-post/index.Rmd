@@ -2,7 +2,7 @@
 title: Bank
 author: ''
 date: '2021-10-30'
-slug: my-first-post
+slug: Bank
 categories: []
 tags: []
 ---
