@@ -155,10 +155,15 @@ The report of the predicted price of a diamond for the professor
 ## Table of contents
 
 Executive summary
+
 Issues and challanges
+
 Univariate analysis on metric and non metric data
+
 Bivariate analysis on metric and non metric data
+
 Multiple linear regresion 
+
 Observations and comments
 
 
