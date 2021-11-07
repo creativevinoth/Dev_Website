@@ -62,7 +62,7 @@
 
   <article class="article">
     
-    <span class="article-duration">67 min read</span>
+    <span class="article-duration">64 min read</span>
     
 
     <h1 class="article-title">My first post</h1>
@@ -76,214 +76,6 @@
 <script src="/2021/10/30/my-first-post/index_files/header-attrs/header-attrs.js"></script>
 
 
-<pre class="r"><code>library(ggplot2)
-library(dplyr)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;dplyr&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:stats&#39;:
-## 
-##     filter, lag</code></pre>
-<pre><code>## The following objects are masked from &#39;package:base&#39;:
-## 
-##     intersect, setdiff, setequal, union</code></pre>
-<pre class="r"><code>library(data.table)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;data.table&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:dplyr&#39;:
-## 
-##     between, first, last</code></pre>
-<pre class="r"><code>library(tidyr)
-library(GGally)</code></pre>
-<pre><code>## Registered S3 method overwritten by &#39;GGally&#39;:
-##   method from   
-##   +.gg   ggplot2</code></pre>
-<pre class="r"><code>library(gapminder)
-library(tidyverse)</code></pre>
-<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
-<pre><code>## v tibble  3.1.4     v stringr 1.4.0
-## v readr   2.0.1     v forcats 0.5.1
-## v purrr   0.3.4</code></pre>
-<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
-## x data.table::between() masks dplyr::between()
-## x dplyr::filter()       masks stats::filter()
-## x data.table::first()   masks dplyr::first()
-## x dplyr::lag()          masks stats::lag()
-## x data.table::last()    masks dplyr::last()
-## x purrr::transpose()    masks data.table::transpose()</code></pre>
-<pre class="r"><code>library(pastecs)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;pastecs&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:tidyr&#39;:
-## 
-##     extract</code></pre>
-<pre><code>## The following objects are masked from &#39;package:data.table&#39;:
-## 
-##     first, last</code></pre>
-<pre><code>## The following objects are masked from &#39;package:dplyr&#39;:
-## 
-##     first, last</code></pre>
-<pre class="r"><code>library(ggpubr)
-library(fastDummies)
-library(QuantPsyc)</code></pre>
-<pre><code>## Loading required package: boot</code></pre>
-<pre><code>## Loading required package: MASS</code></pre>
-<pre><code>## 
-## Attaching package: &#39;MASS&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
-## 
-##     select</code></pre>
-<pre><code>## 
-## Attaching package: &#39;QuantPsyc&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:base&#39;:
-## 
-##     norm</code></pre>
-<pre class="r"><code>library(MASS)
-library(caret)</code></pre>
-<pre><code>## Loading required package: lattice</code></pre>
-<pre><code>## 
-## Attaching package: &#39;lattice&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:boot&#39;:
-## 
-##     melanoma</code></pre>
-<pre><code>## 
-## Attaching package: &#39;caret&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:purrr&#39;:
-## 
-##     lift</code></pre>
-<pre class="r"><code>library(leaps)
-library(summarytools)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;summarytools&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:tibble&#39;:
-## 
-##     view</code></pre>
-<pre class="r"><code>library(epiDisplay)</code></pre>
-<pre><code>## Loading required package: foreign</code></pre>
-<pre><code>## Loading required package: survival</code></pre>
-<pre><code>## 
-## Attaching package: &#39;survival&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:caret&#39;:
-## 
-##     cluster</code></pre>
-<pre><code>## The following object is masked from &#39;package:boot&#39;:
-## 
-##     aml</code></pre>
-<pre><code>## Loading required package: nnet</code></pre>
-<pre><code>## 
-## Attaching package: &#39;epiDisplay&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:lattice&#39;:
-## 
-##     dotplot</code></pre>
-<pre><code>## The following object is masked from &#39;package:ggplot2&#39;:
-## 
-##     alpha</code></pre>
-<pre class="r"><code>library(tidymodels)</code></pre>
-<pre><code>## Registered S3 method overwritten by &#39;tune&#39;:
-##   method                   from   
-##   required_pkgs.model_spec parsnip</code></pre>
-<pre><code>## -- Attaching packages -------------------------------------- tidymodels 0.1.4 --</code></pre>
-<pre><code>## v broom        0.7.9      v rsample      0.1.0 
-## v dials        0.0.10     v tune         0.1.6 
-## v infer        1.0.0      v workflows    0.2.3 
-## v modeldata    0.1.1      v workflowsets 0.1.0 
-## v parsnip      0.1.7      v yardstick    0.0.8 
-## v recipes      0.1.17</code></pre>
-<pre><code>## -- Conflicts ----------------------------------------- tidymodels_conflicts() --
-## x scales::alpha()          masks epiDisplay::alpha(), ggplot2::alpha()
-## x data.table::between()    masks dplyr::between()
-## x scales::discard()        masks purrr::discard()
-## x pastecs::extract()       masks tidyr::extract()
-## x dplyr::filter()          masks stats::filter()
-## x pastecs::first()         masks data.table::first(), dplyr::first()
-## x recipes::fixed()         masks stringr::fixed()
-## x yardstick::kap()         masks epiDisplay::kap()
-## x dplyr::lag()             masks stats::lag()
-## x pastecs::last()          masks data.table::last(), dplyr::last()
-## x caret::lift()            masks purrr::lift()
-## x yardstick::precision()   masks caret::precision()
-## x yardstick::recall()      masks caret::recall()
-## x MASS::select()           masks dplyr::select()
-## x yardstick::sensitivity() masks caret::sensitivity()
-## x yardstick::spec()        masks readr::spec()
-## x yardstick::specificity() masks caret::specificity()
-## x recipes::step()          masks stats::step()
-## x purrr::transpose()       masks data.table::transpose()
-## x summarytools::view()     masks tibble::view()
-## * Use tidymodels_prefer() to resolve common conflicts.</code></pre>
-<pre class="r"><code>library(Rmisc)</code></pre>
-<pre><code>## Loading required package: plyr</code></pre>
-<pre><code>## ------------------------------------------------------------------------------</code></pre>
-<pre><code>## You have loaded plyr after dplyr - this is likely to cause problems.
-## If you need functions from both plyr and dplyr, please load plyr first, then dplyr:
-## library(plyr); library(dplyr)</code></pre>
-<pre><code>## ------------------------------------------------------------------------------</code></pre>
-<pre><code>## 
-## Attaching package: &#39;plyr&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:ggpubr&#39;:
-## 
-##     mutate</code></pre>
-<pre><code>## The following object is masked from &#39;package:purrr&#39;:
-## 
-##     compact</code></pre>
-<pre><code>## The following objects are masked from &#39;package:dplyr&#39;:
-## 
-##     arrange, count, desc, failwith, id, mutate, rename, summarise,
-##     summarize</code></pre>
-<pre class="r"><code>library(SIBER)</code></pre>
-<pre><code>## Loading required package: spatstat</code></pre>
-<pre><code>## Loading required package: spatstat.data</code></pre>
-<pre><code>## Loading required package: spatstat.geom</code></pre>
-<pre><code>## Registered S3 method overwritten by &#39;spatstat.geom&#39;:
-##   method     from
-##   print.boxx cli</code></pre>
-<pre><code>## spatstat.geom 2.2-2</code></pre>
-<pre><code>## 
-## Attaching package: &#39;spatstat.geom&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:scales&#39;:
-## 
-##     rescale</code></pre>
-<pre><code>## The following object is masked from &#39;package:MASS&#39;:
-## 
-##     area</code></pre>
-<pre><code>## The following objects are masked from &#39;package:ggpubr&#39;:
-## 
-##     border, rotate</code></pre>
-<pre><code>## The following object is masked from &#39;package:data.table&#39;:
-## 
-##     shift</code></pre>
-<pre><code>## Loading required package: spatstat.core</code></pre>
-<pre><code>## Loading required package: nlme</code></pre>
-<pre><code>## 
-## Attaching package: &#39;nlme&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
-## 
-##     collapse</code></pre>
-<pre><code>## Loading required package: rpart</code></pre>
-<pre><code>## 
-## Attaching package: &#39;rpart&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:dials&#39;:
-## 
-##     prune</code></pre>
-<pre><code>## spatstat.core 2.3-0</code></pre>
-<pre><code>## 
-## Attaching package: &#39;spatstat.core&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:tune&#39;:
-## 
-##     parameters</code></pre>
-<pre><code>## The following object is masked from &#39;package:dials&#39;:
-## 
-##     parameters</code></pre>
-<pre><code>## The following object is masked from &#39;package:lattice&#39;:
-## 
-##     panel.histogram</code></pre>
-<pre><code>## The following object is masked from &#39;package:boot&#39;:
-## 
-##     envelope</code></pre>
-<pre><code>## Loading required package: spatstat.linnet</code></pre>
-<pre><code>## spatstat.linnet 2.3-0</code></pre>
-<pre><code>## 
-## spatstat 2.2-0       (nickname: &#39;That&#39;s not important right now&#39;) 
-## For an introduction to spatstat, type &#39;beginner&#39;</code></pre>
 <pre class="r"><code>bank &lt;- read.csv(&quot;bank.csv&quot;)</code></pre>
 <div id="the-report-of-logistic-regression-on-bank-data-set-to-answer-if-customer-will-subscribe-term-deposit-or-not" class="section level2">
 <h2>The report of logistic regression on bank data set to answer if customer will subscribe term deposit or not</h2>
@@ -846,12 +638,10 @@ mtext(paste(&quot;Outliers: &quot;, paste(previous_outliers, collapse =&quot;, &
 ## technician          178    18.9         80.0
 ## blue-collar         189    20.0        100.0
 ##   Total             944   100.0        100.0</code></pre>
-<div id="the-frequency-distribution-of-unknown-student-unemployed-housemaid-retired-entrepreneur-self-employed-services-admin-are-less-in-numbers.-thus-they-are-are-clubbed-together-as-others-so-as-to-reduce-the-number-of-variables-and-improve-the-prediction-accuracy" class="section level2">
-<h2>The frequency distribution of unknown, student, unemployed, housemaid, retired, entrepreneur, self-employed, services, admin are less in numbers. Thus they are are clubbed together as others so as to reduce the number of variables and improve the prediction accuracy</h2>
+<p>The frequency distribution of unknown, student, unemployed, housemaid, retired, entrepreneur, self-employed, services, admin are less in numbers. Thus they are are clubbed together as others so as to reduce the number of variables and improve the prediction accuracy</p>
 <pre class="r"><code>bank$job&lt;-as.character(bank$job)
 bank$job[bank$job %in% c(&quot;unknown&quot;, &quot;student&quot;, &quot;housemaid&quot;, &quot;unemployed&quot;, &quot;entrepreneur&quot;, &quot;self-employed&quot;, &quot;retired&quot;, &quot;services&quot;, &quot;admin.&quot;)]&lt;- &quot;Others&quot;
 bank$job&lt;-as.factor(bank$job)</code></pre>
-</div>
 </div>
 <div id="the-frequency-distribution-after-clubing-together" class="section level1">
 <h1>The frequency distribution after clubing together</h1>
@@ -1742,12 +1532,12 @@ bank_test&lt;- bank_split %&gt;%
 <pre class="r"><code>bank_training %&gt;%
   select_if(is.numeric) %&gt;%
   cor()</code></pre>
-<pre><code>##                   age       balance          day      duration    campaign
-## age       1.000000000 -0.0109274619 -0.009428018 -0.0715401312  0.04421045
-## balance  -0.010927462  1.0000000000 -0.043643208 -0.0006452853 -0.01551069
-## day      -0.009428018 -0.0436432076  1.000000000 -0.0249048959  0.11487700
-## duration -0.071540131 -0.0006452853 -0.024904896  1.0000000000 -0.05257279
-## campaign  0.044210449 -0.0155106930  0.114876999 -0.0525727916  1.00000000</code></pre>
+<pre><code>##                  age     balance         day    duration    campaign
+## age       1.00000000  0.05328170 -0.02712563 -0.05490476  0.04511987
+## balance   0.05328170  1.00000000 -0.08325185 -0.01393575 -0.02227019
+## day      -0.02712563 -0.08325185  1.00000000 -0.02597800  0.10518568
+## duration -0.05490476 -0.01393575 -0.02597800  1.00000000 -0.05295053
+## campaign  0.04511987 -0.02227019  0.10518568 -0.05295053  1.00000000</code></pre>
 <p>We can notice that there is no much corellation the independent variable</p>
 </div>
 <div id="model-specification" class="section level1">
@@ -1809,16 +1599,16 @@ bank_training_prep</code></pre>
 <pre><code>## # A tibble: 708 x 29
 ##        age balance    day duration campaign y     job_management job_Others
 ##      &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;fct&gt;          &lt;dbl&gt;      &lt;dbl&gt;
-##  1 -0.0859   0.376 -1.10  -0.306    -0.0813 0                  0          0
-##  2  0.122    1.29  -0.157 -1.04     -0.0813 0                  0          1
-##  3  0.331    1.82   0.196 -0.602    -0.0813 0                  0          1
-##  4  0.0182   0.958  1.61  -0.00995  -0.0813 0                  1          0
-##  5 -0.919    0.190 -0.982 -0.329    -0.870  0                  0          1
-##  6  0.226   -1.25   0.432 -0.391     0.707  0                  1          0
-##  7  0.435   -0.132 -0.393 -0.633    -0.0813 0                  0          1
-##  8  0.435   -0.293 -0.982 -0.508    -0.0813 0                  0          1
-##  9  1.37    -0.145  0.667 -0.905    -0.0813 0                  0          1
-## 10 -0.919    0.673  1.37  -0.851     0.707  0                  0          0
+##  1 -0.0765   0.338 -1.10   -0.289    -0.117 0                  0          0
+##  2  0.131    1.23  -0.138  -1.04     -0.117 0                  0          1
+##  3  0.339    1.75   0.222  -0.592    -0.117 0                  0          1
+##  4  0.0273   0.905  1.66    0.0139   -0.117 0                  1          0
+##  5  0.235   -1.24   0.461  -0.377     0.644 0                  1          0
+##  6  0.443   -0.157 -0.377  -0.624    -0.117 0                  0          1
+##  7  1.38    -0.169  0.701  -0.903    -0.117 0                  0          1
+##  8 -0.907    0.628  1.42   -0.847     0.644 0                  0          0
+##  9 -0.180   -0.832  1.66   -0.711    -0.117 0                  0          0
+## 10  1.79    -0.446 -1.34   -0.377    -0.878 0                  1          0
 ## # ... with 698 more rows, and 21 more variables: job_technician &lt;dbl&gt;,
 ## #   marital_married &lt;dbl&gt;, marital_single &lt;dbl&gt;, education_secondary &lt;dbl&gt;,
 ## #   education_tertiary &lt;dbl&gt;, default_X1 &lt;dbl&gt;, housing_X1 &lt;dbl&gt;,
@@ -1834,18 +1624,18 @@ bank_training_prep</code></pre>
   bake (new_data = bank_test)
 bank_test_prep</code></pre>
 <pre><code>## # A tibble: 236 x 29
-##        age balance    day duration campaign y     job_management job_Others
-##      &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;fct&gt;          &lt;dbl&gt;      &lt;dbl&gt;
-##  1  1.58     0.351 -1.57   -1.02     0.707  0                  0          0
-##  2  0.226   -1.42  -1.22    1.48    -0.870  0                  0          1
-##  3  0.0182   1.27   0.196   0.107   -0.0813 0                  0          1
-##  4  2.10    -1.38   1.26   -0.991   -0.0813 0                  0          1
-##  5 -1.23     0.747 -1.10   -0.314   -0.870  0                  0          1
-##  6  0.122    0.636  0.314  -0.0255   0.707  0                  0          0
-##  7  0.643    0.772  1.61    0.0290   1.50   0                  0          1
-##  8 -1.23     0.685 -1.57    0.0290  -0.0813 0                  0          0
-##  9  0.0182  -1.37  -0.511  -0.391   -0.870  0                  0          1
-## 10 -1.23    -1.25  -0.393  -0.555    1.50   0                  0          1
+##       age balance    day duration campaign y     job_management job_Others
+##     &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;fct&gt;          &lt;dbl&gt;      &lt;dbl&gt;
+##  1 -0.907   0.157 -0.976  -0.313    -0.878 0                  0          1
+##  2  0.443  -0.313 -0.976  -0.496    -0.117 0                  0          1
+##  3  2.00   -0.929  0.701  -1.17     -0.878 0                  1          0
+##  4  1.58    0.314 -1.58   -1.02      0.644 0                  0          0
+##  5 -1.22    0.700 -1.10   -0.297    -0.878 0                  0          1
+##  6 -0.492  -0.157 -0.497   3.19     -0.117 0                  1          0
+##  7 -0.284  -1.18  -1.58   -0.727    -0.878 0                  0          1
+##  8  1.79   -0.965  1.78    1.33      0.644 0                  0          1
+##  9  0.443  -1.04  -0.257   0.0617    0.644 0                  0          0
+## 10 -1.22   -1.24  -0.377  -0.544     1.41  0                  0          1
 ## # ... with 226 more rows, and 21 more variables: job_technician &lt;dbl&gt;,
 ## #   marital_married &lt;dbl&gt;, marital_single &lt;dbl&gt;, education_secondary &lt;dbl&gt;,
 ## #   education_tertiary &lt;dbl&gt;, default_X1 &lt;dbl&gt;, housing_X1 &lt;dbl&gt;,
@@ -1862,45 +1652,45 @@ bank_test_prep</code></pre>
 logistic_fit</code></pre>
 <pre><code>## parsnip model object
 ## 
-## Fit time:  50ms 
+## Fit time:  40ms 
 ## 
 ## Call:  stats::glm(formula = y ~ ., family = stats::binomial, data = data)
 ## 
 ## Coefficients:
 ##                  (Intercept)                           age  
-##                    -20.16346                      -0.06042  
+##                    -22.64514                      -0.11851  
 ##                      balance                           day  
-##                     -0.04329                      -0.10055  
+##                     -0.04859                      -0.08492  
 ##                     duration                      campaign  
-##                      0.75137                      -0.37096  
+##                      0.80296                      -0.06474  
 ##               job_management                    job_Others  
-##                     -0.04238                       0.68412  
+##                      2.04023                       2.05576  
 ##               job_technician               marital_married  
-##                      0.95331                       0.20627  
+##                      1.97750                       0.76141  
 ##               marital_single           education_secondary  
-##                      0.40556                       0.54741  
+##                      1.08057                       0.36879  
 ##           education_tertiary                    default_X1  
-##                      1.13463                       0.88359  
+##                      0.33197                       0.85195  
 ##                   housing_X1                       loan_X1  
-##                     -0.20449                      -1.14753  
+##                     -0.23933                      -0.86608  
 ## contact_telephone.and.others                     month_X10  
-##                     -2.32183                      17.49932  
+##                     -1.95909                      18.69678  
 ##                    month_X11                      month_X2  
-##                     15.29888                      15.04677  
+##                     15.73189                      15.30361  
 ##                     month_X3                      month_X4  
-##                     19.72619                      17.11864  
+##                     18.74888                      17.59039  
 ##                     month_X5                      month_X6  
-##                     15.22564                      17.46510  
+##                     15.46387                      17.09086  
 ##                     month_X7                      month_X8  
-##                     14.95757                      15.60869  
+##                     14.30083                      15.54940  
 ##                     month_X9   poutcome_success.and.others  
-##                     19.50129                       1.89903  
+##                     16.85619                       2.70297  
 ##             poutcome_unknown  
-##                      0.24886  
+##                      1.30103  
 ## 
 ## Degrees of Freedom: 707 Total (i.e. Null);  679 Residual
-## Null Deviance:       356.2 
-## Residual Deviance: 218.7     AIC: 276.7</code></pre>
+## Null Deviance:       361.4 
+## Residual Deviance: 219.9     AIC: 277.9</code></pre>
 <p>The above is the significant equation to predict the outcome variable. The AIC is 289.2, which is quite good compared to our manual method</p>
 </div>
 <div id="predicting-outcome-categories" class="section level1">
@@ -1928,23 +1718,21 @@ class_preds</code></pre>
 <pre class="r"><code>prob_preds &lt;- predict (logistic_fit, new_data = bank_test_prep, type =&quot;prob&quot;)
 prob_preds</code></pre>
 <pre><code>## # A tibble: 236 x 2
-##    .pred_0      .pred_1
-##      &lt;dbl&gt;        &lt;dbl&gt;
-##  1   0.998 0.00180     
-##  2   0.948 0.0516      
-##  3   0.973 0.0267      
-##  4   0.987 0.0131      
-##  5   0.985 0.0153      
-##  6   0.993 0.00695     
-##  7   1.00  0.0000000186
-##  8   0.970 0.0301      
-##  9   0.968 0.0322      
-## 10   0.970 0.0301      
+##    .pred_0 .pred_1
+##      &lt;dbl&gt;   &lt;dbl&gt;
+##  1   0.922 0.0782 
+##  2   0.985 0.0147 
+##  3   0.973 0.0272 
+##  4   0.999 0.00115
+##  5   0.969 0.0305 
+##  6   0.700 0.300  
+##  7   0.842 0.158  
+##  8   0.984 0.0155 
+##  9   0.981 0.0186 
+## 10   0.930 0.0704 
 ## # ... with 226 more rows</code></pre>
 <p>The above prediction is the probability of outcome occurences.</p>
-</div>
-<div id="in-tidymodels-outcome-variable-needs-to-be-a-factor" class="section level1">
-<h1>In tidymodels, outcome variable needs to be a factor</h1>
+<p>In tidymodels, outcome variable needs to be a factor</p>
 <pre class="r"><code>bank$y &lt;- as.factor (bank$y)</code></pre>
 </div>
 <div id="combining-results" class="section level1">
@@ -1953,18 +1741,18 @@ prob_preds</code></pre>
   bind_cols(class_preds, prob_preds)
 results</code></pre>
 <pre><code>## # A tibble: 236 x 32
-##        age balance    day duration campaign y     job_management job_Others
-##      &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;fct&gt;          &lt;dbl&gt;      &lt;dbl&gt;
-##  1  1.58     0.351 -1.57   -1.02     0.707  0                  0          0
-##  2  0.226   -1.42  -1.22    1.48    -0.870  0                  0          1
-##  3  0.0182   1.27   0.196   0.107   -0.0813 0                  0          1
-##  4  2.10    -1.38   1.26   -0.991   -0.0813 0                  0          1
-##  5 -1.23     0.747 -1.10   -0.314   -0.870  0                  0          1
-##  6  0.122    0.636  0.314  -0.0255   0.707  0                  0          0
-##  7  0.643    0.772  1.61    0.0290   1.50   0                  0          1
-##  8 -1.23     0.685 -1.57    0.0290  -0.0813 0                  0          0
-##  9  0.0182  -1.37  -0.511  -0.391   -0.870  0                  0          1
-## 10 -1.23    -1.25  -0.393  -0.555    1.50   0                  0          1
+##       age balance    day duration campaign y     job_management job_Others
+##     &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;fct&gt;          &lt;dbl&gt;      &lt;dbl&gt;
+##  1 -0.907   0.157 -0.976  -0.313    -0.878 0                  0          1
+##  2  0.443  -0.313 -0.976  -0.496    -0.117 0                  0          1
+##  3  2.00   -0.929  0.701  -1.17     -0.878 0                  1          0
+##  4  1.58    0.314 -1.58   -1.02      0.644 0                  0          0
+##  5 -1.22    0.700 -1.10   -0.297    -0.878 0                  0          1
+##  6 -0.492  -0.157 -0.497   3.19     -0.117 0                  1          0
+##  7 -0.284  -1.18  -1.58   -0.727    -0.878 0                  0          1
+##  8  1.79   -0.965  1.78    1.33      0.644 0                  0          1
+##  9  0.443  -1.04  -0.257   0.0617    0.644 0                  0          0
+## 10 -1.22   -1.24  -0.377  -0.544     1.41  0                  0          1
 ## # ... with 226 more rows, and 24 more variables: job_technician &lt;dbl&gt;,
 ## #   marital_married &lt;dbl&gt;, marital_single &lt;dbl&gt;, education_secondary &lt;dbl&gt;,
 ## #   education_tertiary &lt;dbl&gt;, default_X1 &lt;dbl&gt;, housing_X1 &lt;dbl&gt;,
@@ -1974,14 +1762,14 @@ results</code></pre>
 ## #   month_X9 &lt;dbl&gt;, poutcome_success.and.others &lt;dbl&gt;, ...</code></pre>
 <p>I was trying to select only y and show the .pred_class and .pred probability to show how much actual and prediction class and its probability but when i used select (y) %&gt;%, I was getting error, so I show here the whole model with .pred class and its probability at the end of the table</p>
 </div>
-<div id="assessing-the-model-fit-usingconfusion-matrix" class="section level1">
-<h1>Assessing the model fit usingConfusion matrix</h1>
+<div id="assessing-the-model-fit-using-confusion-matrix" class="section level1">
+<h1>Assessing the model fit using Confusion matrix</h1>
 <pre class="r"><code>results %&gt;%
   conf_mat(truth = y, estimate = .pred_class)</code></pre>
 <pre><code>##           Truth
 ## Prediction   0   1
-##          0 217  10
-##          1   5   4</code></pre>
+##          0 220   9
+##          1   3   4</code></pre>
 </div>
 <div id="correct-predictions" class="section level1">
 <h1>Correct predictions</h1>
@@ -2037,8 +1825,8 @@ bank_wkfl_fit</code></pre>
 <pre><code>## # A tibble: 2 x 4
 ##   .metric  .estimator .estimate .config             
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-## 1 accuracy binary         0.936 Preprocessor1_Model1
-## 2 roc_auc  binary         0.853 Preprocessor1_Model1</code></pre>
+## 1 accuracy binary         0.949 Preprocessor1_Model1
+## 2 roc_auc  binary         0.789 Preprocessor1_Model1</code></pre>
 </div>
 <div id="collecting-predictions" class="section level1">
 <h1>collecting predictions</h1>
@@ -2046,18 +1834,18 @@ bank_wkfl_fit</code></pre>
   collect_predictions()
 bank_wkfl_fit_results</code></pre>
 <pre><code>## # A tibble: 236 x 7
-##    id               .pred_0      .pred_1  .row .pred_class y     .config        
-##    &lt;chr&gt;              &lt;dbl&gt;        &lt;dbl&gt; &lt;int&gt; &lt;fct&gt;       &lt;fct&gt; &lt;chr&gt;          
-##  1 train/test split   0.998 0.00180         12 0           0     Preprocessor1_~
-##  2 train/test split   0.948 0.0516          17 0           0     Preprocessor1_~
-##  3 train/test split   0.973 0.0267          19 0           0     Preprocessor1_~
-##  4 train/test split   0.987 0.0131          20 0           0     Preprocessor1_~
-##  5 train/test split   0.985 0.0153          21 0           0     Preprocessor1_~
-##  6 train/test split   0.993 0.00695         30 0           0     Preprocessor1_~
-##  7 train/test split   1.00  0.0000000186    32 0           0     Preprocessor1_~
-##  8 train/test split   0.970 0.0301          38 0           0     Preprocessor1_~
-##  9 train/test split   0.968 0.0322          39 0           0     Preprocessor1_~
-## 10 train/test split   0.970 0.0301          50 0           0     Preprocessor1_~
+##    id               .pred_0 .pred_1  .row .pred_class y     .config             
+##    &lt;chr&gt;              &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt; &lt;fct&gt;       &lt;fct&gt; &lt;chr&gt;               
+##  1 train/test split   0.922 0.0782      5 0           0     Preprocessor1_Model1
+##  2 train/test split   0.985 0.0147      8 0           0     Preprocessor1_Model1
+##  3 train/test split   0.973 0.0272     11 0           0     Preprocessor1_Model1
+##  4 train/test split   0.999 0.00115    12 0           0     Preprocessor1_Model1
+##  5 train/test split   0.969 0.0305     21 0           0     Preprocessor1_Model1
+##  6 train/test split   0.700 0.300      31 0           0     Preprocessor1_Model1
+##  7 train/test split   0.842 0.158      40 0           0     Preprocessor1_Model1
+##  8 train/test split   0.984 0.0155     42 0           0     Preprocessor1_Model1
+##  9 train/test split   0.981 0.0186     46 0           0     Preprocessor1_Model1
+## 10 train/test split   0.930 0.0704     50 0           0     Preprocessor1_Model1
 ## # ... with 226 more rows</code></pre>
 </div>
 <div id="creating-custom-metrics" class="section level1">
@@ -2075,9 +1863,9 @@ bank_metrics</code></pre>
 <pre><code>## # A tibble: 3 x 3
 ##   .metric .estimator .estimate
 ##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
-## 1 sens    binary         0.977
-## 2 spec    binary         0.286
-## 3 roc_auc binary         0.147</code></pre>
+## 1 sens    binary         0.987
+## 2 spec    binary         0.308
+## 3 roc_auc binary         0.211</code></pre>
 </div>
 <div id="creating-cross-validation-folds" class="section level1">
 <h1>Creating cross validation folds</h1>
@@ -2098,15 +1886,16 @@ bank_folds</code></pre>
 <div id="fit-resamples" class="section level1">
 <h1>Fit resamples</h1>
 <pre class="r"><code>bank_rs &lt;- bank_wkfl %&gt;%
-  fit_resamples(resamples = bank_folds, metrics = bank_metrics)
-bank_rs %&gt;%
+  fit_resamples(resamples = bank_folds, metrics = bank_metrics)</code></pre>
+<pre><code>## ! Fold5: preprocessor 1/1, model 1/1: glm.fit: fitted probabilities numerically 0...</code></pre>
+<pre class="r"><code>bank_rs %&gt;%
   collect_metrics()</code></pre>
 <pre><code>## # A tibble: 3 x 6
 ##   .metric .estimator  mean     n std_err .config             
 ##   &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
-## 1 roc_auc binary     0.839     5 0.0394  Preprocessor1_Model1
-## 2 sens    binary     0.980     5 0.00603 Preprocessor1_Model1
-## 3 spec    binary     0.345     5 0.0722  Preprocessor1_Model1</code></pre>
+## 1 roc_auc binary     0.823     5 0.0166  Preprocessor1_Model1
+## 2 sens    binary     0.976     5 0.00498 Preprocessor1_Model1
+## 3 spec    binary     0.291     5 0.0788  Preprocessor1_Model1</code></pre>
 <p>The roc_auc is 0.76
 The sensitivity is 0.98, which is the proportion of positive cases that were correctly classified
 The secificity is 0.19, which is the proportion of negative cases that were correctly classified</p>
@@ -2119,21 +1908,21 @@ bank_detailed_results</code></pre>
 <pre><code>## # A tibble: 15 x 5
 ##    id    .metric .estimator .estimate .config             
 ##    &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-##  1 Fold1 sens    binary         0.984 Preprocessor1_Model1
-##  2 Fold1 spec    binary         0.231 Preprocessor1_Model1
-##  3 Fold1 roc_auc binary         0.691 Preprocessor1_Model1
-##  4 Fold2 sens    binary         0.963 Preprocessor1_Model1
-##  5 Fold2 spec    binary         0.625 Preprocessor1_Model1
-##  6 Fold2 roc_auc binary         0.895 Preprocessor1_Model1
-##  7 Fold3 sens    binary         0.970 Preprocessor1_Model1
-##  8 Fold3 spec    binary         0.333 Preprocessor1_Model1
-##  9 Fold3 roc_auc binary         0.892 Preprocessor1_Model1
-## 10 Fold4 sens    binary         0.993 Preprocessor1_Model1
-## 11 Fold4 spec    binary         0.286 Preprocessor1_Model1
-## 12 Fold4 roc_auc binary         0.892 Preprocessor1_Model1
-## 13 Fold5 sens    binary         0.992 Preprocessor1_Model1
-## 14 Fold5 spec    binary         0.25  Preprocessor1_Model1
-## 15 Fold5 roc_auc binary         0.826 Preprocessor1_Model1</code></pre>
+##  1 Fold1 sens    binary         0.977 Preprocessor1_Model1
+##  2 Fold1 spec    binary         0.25  Preprocessor1_Model1
+##  3 Fold1 roc_auc binary         0.823 Preprocessor1_Model1
+##  4 Fold2 sens    binary         0.970 Preprocessor1_Model1
+##  5 Fold2 spec    binary         0.429 Preprocessor1_Model1
+##  6 Fold2 roc_auc binary         0.847 Preprocessor1_Model1
+##  7 Fold3 sens    binary         0.962 Preprocessor1_Model1
+##  8 Fold3 spec    binary         0.4   Preprocessor1_Model1
+##  9 Fold3 roc_auc binary         0.805 Preprocessor1_Model1
+## 10 Fold4 sens    binary         0.992 Preprocessor1_Model1
+## 11 Fold4 spec    binary         0.375 Preprocessor1_Model1
+## 12 Fold4 roc_auc binary         0.867 Preprocessor1_Model1
+## 13 Fold5 sens    binary         0.977 Preprocessor1_Model1
+## 14 Fold5 spec    binary         0     Preprocessor1_Model1
+## 15 Fold5 roc_auc binary         0.772 Preprocessor1_Model1</code></pre>
 </div>
 <div id="summarizing-cross-validation-results" class="section level1">
 <h1>Summarizing cross validation results</h1>
@@ -2146,7 +1935,7 @@ bank_detailed_results</code></pre>
             sd = sd(.estimate)
            )</code></pre>
 <pre><code>##         min    median       max      mean         sd
-## 1 0.6905188 0.8922306 0.8945896 0.8391781 0.08800114</code></pre>
+## 1 0.7716346 0.8230769 0.8674812 0.8228113 0.03703075</code></pre>
 </div>
 <div id="viewing-the-best-performing-models" class="section level1">
 <h1>Viewing the best performing models</h1>
@@ -2155,7 +1944,7 @@ bank_detailed_results</code></pre>
 <pre><code>## # A tibble: 1 x 6
 ##   .metric .estimator  mean     n std_err .config             
 ##   &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
-## 1 roc_auc binary     0.839     5  0.0394 Preprocessor1_Model1</code></pre>
+## 1 roc_auc binary     0.823     5  0.0166 Preprocessor1_Model1</code></pre>
 <pre class="r"><code>best_bank_model &lt;- bank_rs %&gt;%
   select_best(metric = &#39;roc_auc&#39;)
 best_bank_model </code></pre>
@@ -2195,8 +1984,8 @@ bank_final_fit %&gt;%
 <pre><code>## # A tibble: 2 x 4
 ##   .metric  .estimator .estimate .config             
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-## 1 accuracy binary         0.936 Preprocessor1_Model1
-## 2 roc_auc  binary         0.853 Preprocessor1_Model1</code></pre>
+## 1 accuracy binary         0.949 Preprocessor1_Model1
+## 2 roc_auc  binary         0.789 Preprocessor1_Model1</code></pre>
 <p>We can see here this model is good to predict and ready to use the same model to predic anynew data set. Its accuracy is 0.94 and roc_auc is 0.88</p>
 </div>
 <div id="model-evaluation" class="section level1">
@@ -2205,8 +1994,8 @@ bank_final_fit %&gt;%
   conf_mat(truth = y, estimate = .pred_class)</code></pre>
 <pre><code>##           Truth
 ## Prediction   0   1
-##          0 217  10
-##          1   5   4</code></pre>
+##          0 220   9
+##          1   3   4</code></pre>
 </div>
 <div id="correct-predictions-1" class="section level1">
 <h1>Correct predictions</h1>
@@ -2455,7 +2244,9 @@ summary(fullmodel)</code></pre>
 ## Number of Fisher Scoring iterations: 17</code></pre>
 <p>The full model is not good as many of the coefficients are not significant</p>
 <p>After a many trials, the following is the best model</p>
-<p>Best model</p>
+</div>
+<div id="best-model" class="section level1">
+<h1>Best model</h1>
 <p>After many iterations, below are the best model to predict the classification models</p>
 <pre class="r"><code>best = glm(y~ contact+duration+loan+campaign,  data = bank, family = &quot;binomial&quot;)
 summary(best)</code></pre>
