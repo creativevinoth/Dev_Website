@@ -40,23 +40,23 @@ bank <- read.csv("bank.csv")
 
 ## Table of contents
 
-## Executive summary
+Executive summary
 
-## Issues and Challanges
+Issues and Challanges
 
-## Univariate analysis on metric and nonmetric data
+Univariate analysis on metric and nonmetric data
 
-## Bivariate analysis
+Bivariate analysis
 
-## Logistic regression using tidymodels
+Logistic regression using tidymodels
 
-## Workflow and model creation
+Workflow and model creation
 
-## Manual logistic regression
+Manual logistic regression
 
-## Observation and comments
+Observation and comments
 
-## References
+References
 
 
 
