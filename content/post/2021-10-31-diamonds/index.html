@@ -1136,7 +1136,7 @@ summary(lm_selectedmodel)</code></pre>
 ## Multiple R-squared:  0.5323, Adjusted R-squared:  0.5204 
 ## F-statistic: 44.95 on 6 and 237 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p>The above is the best selected model to predict the price of the professor because the model is significant and it has good r squared of 0.532 and adjusted r squared of 0.52 and less standard error of 313.6 compared to other models.</p>
-<p>The best equation to predict price = 935.77+2317.67<em>Carat-459.69</em>ClarityVisible to naked eye +102.26<em>CutVery Good-464.58</em>WholesalerLow and Medium priced diamond wholesaler+119.31 <em>PolishVery Good - 261.97</em>Colouryellow</p>
+<p>The best equation to predict price = 935.77 + 2317.67 * Carat- 459.69 * ClarityVisible to naked eye + 102.26 * CutVery Good -464.58 * WholesalerLow and Medium priced diamond wholesaler + 119.31 * PolishVery Good - 261.97 * Colouryellow</p>
 </div>
 <div id="confidence-interval-of-price" class="section level1">
 <h1>Confidence interval of price</h1>
@@ -1144,7 +1144,7 @@ summary(lm_selectedmodel)</code></pre>
 <pre><code>##    upper     mean    lower 
 ## 2779.734 2722.627 2665.520</code></pre>
 <p>The confidenct interval of the price is between $2665.520 and $2779.73</p>
-<p>price = 935.77+2317.67<em>Carat-459.69</em>ClarityVisible to naked eye +102.26<em>CutVery Good-464.58</em>WholesalerLow and Medium priced diamond wholesaler+119.31 <em>PolishVery Good - 261.97</em>Colouryellow</p>
+<p>price = 935.77 + 2317.67 * Carat-459.69 * ClarityVisible to naked eye + 102.26 * CutVery Good-464.58 * WholesalerLow and Medium priced diamond wholesaler + 119.31 * PolishVery Good - 261.97 * Colouryellow</p>
 </div>
 <div id="calculation-of-professor-diamonds" class="section level1">
 <h1>Calculation of professor Diamonds</h1>
@@ -1231,16 +1231,16 @@ diamond_training_prep</code></pre>
 <pre><code>## # A tibble: 180 x 9
 ##     Carat Price Colour_yellow Clarity_Visible.t~ Cut_Very.Good Certification_Ot~
 ##     &lt;dbl&gt; &lt;dbl&gt;         &lt;dbl&gt;              &lt;dbl&gt;         &lt;dbl&gt;             &lt;dbl&gt;
-##  1 0.401  -1.84             1                  0             0                 1
-##  2 0.0885 -1.75             0                  1             0                 0
-##  3 0.276  -1.67             1                  1             0                 1
-##  4 0.339  -1.63             1                  1             0                 1
-##  5 1.46   -1.62             0                  1             0                 0
-##  6 0.151  -1.52             0                  1             1                 0
-##  7 0.0260 -1.50             0                  1             0                 0
-##  8 0.0260 -1.49             1                  1             1                 0
-##  9 0.339  -1.45             0                  1             1                 0
-## 10 0.0260 -1.44             0                  1             0                 1
+##  1 0.445  -1.85             1                  0             0                 1
+##  2 0.0498 -1.79             1                  1             0                 0
+##  3 0.116  -1.77             0                  1             0                 0
+##  4 0.313  -1.68             1                  1             0                 1
+##  5 0.379  -1.64             1                  1             0                 1
+##  6 0.182  -1.53             0                  1             1                 0
+##  7 0.0498 -1.51             0                  1             0                 0
+##  8 0.0498 -1.50             1                  1             1                 0
+##  9 0.379  -1.46             0                  1             1                 0
+## 10 0.182  -1.39             1                  1             0                 1
 ## # ... with 170 more rows, and 3 more variables: Polish_Very.Good &lt;dbl&gt;,
 ## #   Symmetry_Very.Good &lt;dbl&gt;,
 ## #   Wholesaler_Low.and.Medium.priced.diamond.wholesaler &lt;dbl&gt;</code></pre>
@@ -1254,16 +1254,16 @@ diamond_test_prep</code></pre>
 <pre><code>## # A tibble: 64 x 9
 ##     Carat Price Colour_yellow Clarity_Visible.t~ Cut_Very.Good Certification_Ot~
 ##     &lt;dbl&gt; &lt;dbl&gt;         &lt;dbl&gt;              &lt;dbl&gt;         &lt;dbl&gt;             &lt;dbl&gt;
-##  1 -0.474 0.611             0                  0             1                 0
-##  2 -1.16  0.620             0                  0             1                 0
-##  3 -1.22  0.629             0                  0             1                 0
-##  4 -1.22  0.638             0                  0             1                 0
-##  5 -1.10  0.644             0                  0             1                 0
-##  6 -0.536 0.662             1                  0             1                 0
-##  7 -0.724 0.704             0                  0             1                 0
-##  8 -0.599 0.706             0                  0             0                 0
-##  9 -0.911 0.724             0                  0             1                 0
-## 10 -1.22  0.741             0                  0             1                 0
+##  1 -0.477 0.606             0                  0             0                 0
+##  2 -0.807 0.621             0                  0             1                 0
+##  3 -1.27  0.623             0                  0             1                 0
+##  4 -0.939 0.637             0                  0             1                 0
+##  5 -0.609 0.668             0                  0             1                 0
+##  6 -1.27  0.674             0                  0             1                 0
+##  7 -1.27  0.683             0                  0             1                 0
+##  8 -1.20  0.714             0                  0             1                 0
+##  9 -0.939 0.719             0                  0             1                 0
+## 10 -1.20  0.719             0                  0             1                 0
 ## # ... with 54 more rows, and 3 more variables: Polish_Very.Good &lt;dbl&gt;,
 ## #   Symmetry_Very.Good &lt;dbl&gt;,
 ## #   Wholesaler_Low.and.Medium.priced.diamond.wholesaler &lt;dbl&gt;</code></pre>
@@ -1275,30 +1275,30 @@ diamond_test_prep</code></pre>
 lm_fit</code></pre>
 <pre><code>## parsnip model object
 ## 
-## Fit time:  0ms 
+## Fit time:  21ms 
 ## 
 ## Call:
 ## stats::lm(formula = Price ~ ., data = data)
 ## 
 ## Coefficients:
 ##                                         (Intercept)  
-##                                              1.1982  
+##                                             1.24262  
 ##                                               Carat  
-##                                              0.8626  
+##                                             0.80581  
 ##                                       Colour_yellow  
-##                                             -0.5525  
+##                                            -0.57396  
 ##                        Clarity_Visible.to.naked.eye  
-##                                             -1.0091  
+##                                            -0.98658  
 ##                                       Cut_Very.Good  
-##                                              0.1444  
+##                                             0.16093  
 ##                  Certification_Other.Certifications  
-##                                              0.2386  
+##                                             0.16368  
 ##                                    Polish_Very.Good  
-##                                              0.1670  
+##                                             0.09326  
 ##                                  Symmetry_Very.Good  
-##                                              0.1765  
+##                                             0.13490  
 ## Wholesaler_Low.and.Medium.priced.diamond.wholesaler  
-##                                             -1.2584</code></pre>
+##                                            -1.18694</code></pre>
 </div>
 <div id="obtaining-the-estimated-parameters" class="section level1">
 <h1>Obtaining the estimated parameters</h1>
@@ -1306,15 +1306,15 @@ lm_fit</code></pre>
 <pre><code>## # A tibble: 9 x 5
 ##   term                                     estimate std.error statistic  p.value
 ##   &lt;chr&gt;                                       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-## 1 (Intercept)                                 1.20     0.151       7.92 2.97e-13
-## 2 Carat                                       0.863    0.0675     12.8  1.06e-26
-## 3 Colour_yellow                              -0.553    0.129      -4.29 2.97e- 5
-## 4 Clarity_Visible.to.naked.eye               -1.01     0.148      -6.83 1.43e-10
-## 5 Cut_Very.Good                               0.144    0.111       1.30 1.96e- 1
-## 6 Certification_Other.Certifications          0.239    0.130       1.83 6.86e- 2
-## 7 Polish_Very.Good                            0.167    0.118       1.42 1.57e- 1
-## 8 Symmetry_Very.Good                          0.176    0.121       1.46 1.45e- 1
-## 9 Wholesaler_Low.and.Medium.priced.diamon~   -1.26     0.195      -6.45 1.09e- 9</code></pre>
+## 1 (Intercept)                                1.24      0.158      7.86  4.18e-13
+## 2 Carat                                      0.806     0.0693    11.6   2.03e-23
+## 3 Colour_yellow                             -0.574     0.133     -4.31  2.72e- 5
+## 4 Clarity_Visible.to.naked.eye              -0.987     0.155     -6.36  1.74e- 9
+## 5 Cut_Very.Good                              0.161     0.115      1.40  1.63e- 1
+## 6 Certification_Other.Certifications         0.164     0.138      1.19  2.37e- 1
+## 7 Polish_Very.Good                           0.0933    0.121      0.768 4.44e- 1
+## 8 Symmetry_Very.Good                         0.135     0.122      1.10  2.72e- 1
+## 9 Wholesaler_Low.and.Medium.priced.diamon~  -1.19      0.204     -5.81  3.04e- 8</code></pre>
 </div>
 <div id="making-predictions" class="section level1">
 <h1>Making predictions</h1>
@@ -1324,16 +1324,16 @@ diamond_predictions</code></pre>
 <pre><code>## # A tibble: 64 x 1
 ##    .pred
 ##    &lt;dbl&gt;
-##  1 0.934
-##  2 0.684
-##  3 0.630
-##  4 0.630
-##  5 0.738
-##  6 0.671
-##  7 1.06 
-##  8 0.858
-##  9 0.556
-## 10 0.630
+##  1 1.09 
+##  2 0.888
+##  3 0.610
+##  4 0.875
+##  5 1.14 
+##  6 0.610
+##  7 0.610
+##  8 0.663
+##  9 0.875
+## 10 0.528
 ## # ... with 54 more rows</code></pre>
 </div>
 <div id="adding-predictions-to-test-data" class="section level1">
@@ -1344,16 +1344,16 @@ diamond_test_prep_results</code></pre>
 <pre><code>## # A tibble: 64 x 10
 ##     Carat Price Colour_yellow Clarity_Visible.t~ Cut_Very.Good Certification_Ot~
 ##     &lt;dbl&gt; &lt;dbl&gt;         &lt;dbl&gt;              &lt;dbl&gt;         &lt;dbl&gt;             &lt;dbl&gt;
-##  1 -0.474 0.611             0                  0             1                 0
-##  2 -1.16  0.620             0                  0             1                 0
-##  3 -1.22  0.629             0                  0             1                 0
-##  4 -1.22  0.638             0                  0             1                 0
-##  5 -1.10  0.644             0                  0             1                 0
-##  6 -0.536 0.662             1                  0             1                 0
-##  7 -0.724 0.704             0                  0             1                 0
-##  8 -0.599 0.706             0                  0             0                 0
-##  9 -0.911 0.724             0                  0             1                 0
-## 10 -1.22  0.741             0                  0             1                 0
+##  1 -0.477 0.606             0                  0             0                 0
+##  2 -0.807 0.621             0                  0             1                 0
+##  3 -1.27  0.623             0                  0             1                 0
+##  4 -0.939 0.637             0                  0             1                 0
+##  5 -0.609 0.668             0                  0             1                 0
+##  6 -1.27  0.674             0                  0             1                 0
+##  7 -1.27  0.683             0                  0             1                 0
+##  8 -1.20  0.714             0                  0             1                 0
+##  9 -0.939 0.719             0                  0             1                 0
+## 10 -1.20  0.719             0                  0             1                 0
 ## # ... with 54 more rows, and 4 more variables: Polish_Very.Good &lt;dbl&gt;,
 ## #   Symmetry_Very.Good &lt;dbl&gt;,
 ## #   Wholesaler_Low.and.Medium.priced.diamond.wholesaler &lt;dbl&gt;, .pred &lt;dbl&gt;</code></pre>
@@ -1368,7 +1368,7 @@ diamond_test_prep_results</code></pre>
 <pre><code>## # A tibble: 1 x 3
 ##   .metric .estimator .estimate
 ##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
-## 1 rmse    standard       0.809</code></pre>
+## 1 rmse    standard       0.743</code></pre>
 </div>
 <div id="r-squared-metric" class="section level1">
 <h1>r squared metric</h1>
@@ -1377,7 +1377,7 @@ diamond_test_prep_results</code></pre>
 <pre><code>## # A tibble: 1 x 3
 ##   .metric .estimator .estimate
 ##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
-## 1 rsq     standard       0.371</code></pre>
+## 1 rsq     standard       0.470</code></pre>
 </div>
 <div id="r-squared-plots" class="section level1">
 <h1>r squared plots</h1>
@@ -1394,8 +1394,8 @@ diamond_test_prep_results</code></pre>
 <pre><code>## # A tibble: 2 x 4
 ##   .metric .estimator .estimate .config             
 ##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-## 1 rmse    standard     367.    Preprocessor1_Model1
-## 2 rsq     standard       0.371 Preprocessor1_Model1</code></pre>
+## 1 rmse    standard     336.    Preprocessor1_Model1
+## 2 rsq     standard       0.470 Preprocessor1_Model1</code></pre>
 </div>
 <div id="collecting-predictions" class="section level1">
 <h1>COllecting predictions</h1>
@@ -1404,16 +1404,16 @@ diamond_test_prep_results</code></pre>
 <pre><code>## # A tibble: 64 x 5
 ##    id               .pred  .row Price .config             
 ##    &lt;chr&gt;            &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;chr&gt;               
-##  1 train/test split 3146.     2  3000 Preprocessor1_Model1
-##  2 train/test split 3033.     4  3004 Preprocessor1_Model1
-##  3 train/test split 3009.     7  3008 Preprocessor1_Model1
-##  4 train/test split 3009.    10  3012 Preprocessor1_Model1
-##  5 train/test split 3057.    14  3015 Preprocessor1_Model1
-##  6 train/test split 3027.    16  3023 Preprocessor1_Model1
-##  7 train/test split 3204.    29  3042 Preprocessor1_Model1
-##  8 train/test split 3112.    32  3043 Preprocessor1_Model1
-##  9 train/test split 2975.    37  3051 Preprocessor1_Model1
-## 10 train/test split 3009.    43  3059 Preprocessor1_Model1
+##  1 train/test split 3217.     1  3000 Preprocessor1_Model1
+##  2 train/test split 3128.     6  3007 Preprocessor1_Model1
+##  3 train/test split 3002.     7  3008 Preprocessor1_Model1
+##  4 train/test split 3122.    11  3014 Preprocessor1_Model1
+##  5 train/test split 3242.    18  3028 Preprocessor1_Model1
+##  6 train/test split 3002.    23  3031 Preprocessor1_Model1
+##  7 train/test split 3002.    24  3035 Preprocessor1_Model1
+##  8 train/test split 3026.    35  3049 Preprocessor1_Model1
+##  9 train/test split 3122.    36  3051 Preprocessor1_Model1
+## 10 train/test split 2965.    38  3051 Preprocessor1_Model1
 ## # ... with 54 more rows</code></pre>
 </div>
 <div id="creating-workflow" class="section level1">
@@ -1458,8 +1458,8 @@ diamond_wkfl_fit</code></pre>
 <pre><code>## # A tibble: 2 x 4
 ##   .metric .estimator .estimate .config             
 ##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-## 1 rmse    standard       0.809 Preprocessor1_Model1
-## 2 rsq     standard       0.371 Preprocessor1_Model1</code></pre>
+## 1 rmse    standard       0.743 Preprocessor1_Model1
+## 2 rsq     standard       0.470 Preprocessor1_Model1</code></pre>
 </div>
 <div id="collecting-predictions-1" class="section level1">
 <h1>Collecting predictions</h1>
@@ -1469,16 +1469,16 @@ diamond_wkfl_preds</code></pre>
 <pre><code>## # A tibble: 64 x 5
 ##    id               .pred  .row Price .config             
 ##    &lt;chr&gt;            &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;chr&gt;               
-##  1 train/test split 0.934     2 0.611 Preprocessor1_Model1
-##  2 train/test split 0.684     4 0.620 Preprocessor1_Model1
-##  3 train/test split 0.630     7 0.629 Preprocessor1_Model1
-##  4 train/test split 0.630    10 0.638 Preprocessor1_Model1
-##  5 train/test split 0.738    14 0.644 Preprocessor1_Model1
-##  6 train/test split 0.671    16 0.662 Preprocessor1_Model1
-##  7 train/test split 1.06     29 0.704 Preprocessor1_Model1
-##  8 train/test split 0.858    32 0.706 Preprocessor1_Model1
-##  9 train/test split 0.556    37 0.724 Preprocessor1_Model1
-## 10 train/test split 0.630    43 0.741 Preprocessor1_Model1
+##  1 train/test split 1.09      1 0.606 Preprocessor1_Model1
+##  2 train/test split 0.888     6 0.621 Preprocessor1_Model1
+##  3 train/test split 0.610     7 0.623 Preprocessor1_Model1
+##  4 train/test split 0.875    11 0.637 Preprocessor1_Model1
+##  5 train/test split 1.14     18 0.668 Preprocessor1_Model1
+##  6 train/test split 0.610    23 0.674 Preprocessor1_Model1
+##  7 train/test split 0.610    24 0.683 Preprocessor1_Model1
+##  8 train/test split 0.663    35 0.714 Preprocessor1_Model1
+##  9 train/test split 0.875    36 0.719 Preprocessor1_Model1
+## 10 train/test split 0.528    38 0.719 Preprocessor1_Model1
 ## # ... with 54 more rows</code></pre>
 </div>
 <div id="exploring-custom-metrics" class="section level1">
@@ -1489,9 +1489,9 @@ diamond_wkfl_preds %&gt;%
 <pre><code>## # A tibble: 3 x 3
 ##   .metric .estimator .estimate
 ##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
-## 1 rmse    standard       0.809
-## 2 mae     standard       0.621
-## 3 rsq     standard       0.371</code></pre>
+## 1 rmse    standard       0.743
+## 2 mae     standard       0.558
+## 3 rsq     standard       0.470</code></pre>
 </div>
 <div id="creating-cross-validation-folds" class="section level1">
 <h1>Creating cross validation folds</h1>
@@ -1523,9 +1523,9 @@ diamond_rs_fit %&gt;%
 <pre><code>## # A tibble: 3 x 6
 ##   .metric .estimator  mean     n std_err .config             
 ##   &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
-## 1 mae     standard   0.506    10  0.0201 Preprocessor1_Model1
-## 2 rmse    standard   0.681    10  0.0319 Preprocessor1_Model1
-## 3 rsq     standard   0.480    10  0.0756 Preprocessor1_Model1</code></pre>
+## 1 mae     standard   0.534    10  0.0355 Preprocessor1_Model1
+## 2 rmse    standard   0.694    10  0.0532 Preprocessor1_Model1
+## 3 rsq     standard   0.487    10  0.0720 Preprocessor1_Model1</code></pre>
 <p>Models are trained with cross validation and its metrics are given.</p>
 </div>
 <div id="detailed-cross-validation-results" class="section level1">
@@ -1536,16 +1536,16 @@ diamond_rs_metrics</code></pre>
 <pre><code>## # A tibble: 30 x 5
 ##    id     .metric .estimator .estimate .config             
 ##    &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-##  1 Fold01 rmse    standard       0.780 Preprocessor1_Model1
-##  2 Fold01 mae     standard       0.530 Preprocessor1_Model1
-##  3 Fold01 rsq     standard       0.693 Preprocessor1_Model1
-##  4 Fold02 rmse    standard       0.626 Preprocessor1_Model1
-##  5 Fold02 mae     standard       0.492 Preprocessor1_Model1
-##  6 Fold02 rsq     standard       0.238 Preprocessor1_Model1
-##  7 Fold03 rmse    standard       0.596 Preprocessor1_Model1
-##  8 Fold03 mae     standard       0.398 Preprocessor1_Model1
-##  9 Fold03 rsq     standard       0.492 Preprocessor1_Model1
-## 10 Fold04 rmse    standard       0.594 Preprocessor1_Model1
+##  1 Fold01 rmse    standard       0.678 Preprocessor1_Model1
+##  2 Fold01 mae     standard       0.489 Preprocessor1_Model1
+##  3 Fold01 rsq     standard       0.819 Preprocessor1_Model1
+##  4 Fold02 rmse    standard       0.481 Preprocessor1_Model1
+##  5 Fold02 mae     standard       0.443 Preprocessor1_Model1
+##  6 Fold02 rsq     standard       0.521 Preprocessor1_Model1
+##  7 Fold03 rmse    standard       0.730 Preprocessor1_Model1
+##  8 Fold03 mae     standard       0.563 Preprocessor1_Model1
+##  9 Fold03 rsq     standard       0.257 Preprocessor1_Model1
+## 10 Fold04 rmse    standard       0.827 Preprocessor1_Model1
 ## # ... with 20 more rows</code></pre>
 <p>The details cross validation results are given above</p>
 </div>
@@ -1559,8 +1559,8 @@ diamond_rs_metrics</code></pre>
             max = max(.estimate),
             mean = mean(.estimate),
             sd = sd(.estimate))</code></pre>
-<pre><code>##         min    median       max      mean        sd
-## 1 0.5498217 0.6618715 0.8220558 0.6809602 0.1009607</code></pre>
+<pre><code>##         min    median      max      mean       sd
+## 1 0.4808174 0.6805802 1.004403 0.6936171 0.168203</code></pre>
 </div>
 <div id="viewing-the-best-performing-model" class="section level1">
 <h1>Viewing the best performing model</h1>
@@ -1569,7 +1569,7 @@ diamond_rs_metrics</code></pre>
 <pre><code>## # A tibble: 1 x 6
 ##   .metric .estimator  mean     n std_err .config             
 ##   &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
-## 1 rmse    standard   0.681    10  0.0319 Preprocessor1_Model1</code></pre>
+## 1 rmse    standard   0.694    10  0.0532 Preprocessor1_Model1</code></pre>
 </div>
 <div id="best-diamond-model" class="section level1">
 <h1>Best diamond model</h1>
@@ -1611,8 +1611,8 @@ diamond_final_fit %&gt;%
 <pre><code>## # A tibble: 2 x 4
 ##   .metric .estimator .estimate .config             
 ##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-## 1 rmse    standard       0.809 Preprocessor1_Model1
-## 2 rsq     standard       0.371 Preprocessor1_Model1</code></pre>
+## 1 rmse    standard       0.743 Preprocessor1_Model1
+## 2 rsq     standard       0.470 Preprocessor1_Model1</code></pre>
 </div>
 <div id="bootstrap-method" class="section level1">
 <h1>Bootstrap method</h1>

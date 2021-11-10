@@ -709,7 +709,7 @@ summary(lm_selectedmodel)
 ```
 The above is the best selected model to predict the price of the professor because the model is significant and it has good r squared of 0.532 and adjusted r squared of 0.52 and less standard error of 313.6 compared to other models.
 
-The best equation to predict price = 935.77+2317.67*Carat-459.69*ClarityVisible to naked eye +102.26*CutVery Good-464.58*WholesalerLow and Medium priced diamond wholesaler+119.31 *PolishVery Good - 261.97*Colouryellow 
+The best equation to predict price = 935.77 + 2317.67 * Carat- 459.69 * ClarityVisible to naked eye + 102.26 * CutVery Good -464.58 * WholesalerLow and Medium priced diamond wholesaler + 119.31 * PolishVery Good - 261.97 * Colouryellow 
 
 
 # Confidence interval of price
@@ -718,7 +718,7 @@ CI(MBA6636_SM21_Professor_Proposes_Data$Price, ci = 0.95)
 ```
 The confidenct interval of the price is between $2665.520 and $2779.73
 
-price = 935.77+2317.67*Carat-459.69*ClarityVisible to naked eye +102.26*CutVery Good-464.58*WholesalerLow and Medium priced diamond wholesaler+119.31 *PolishVery Good - 261.97*Colouryellow 
+price = 935.77 + 2317.67 * Carat-459.69 * ClarityVisible to naked eye + 102.26 * CutVery Good-464.58 * WholesalerLow and Medium priced diamond wholesaler + 119.31 * PolishVery Good - 261.97 * Colouryellow 
 
 # Calculation of professor Diamonds
 
@@ -851,7 +851,7 @@ lm_last_fit <- lm_model %>%
 lm_last_fit %>%
   collect_metrics()
 ```
-# COllecting predictions
+# Collecting predictions
 ```{r}
 lm_last_fit %>%
   collect_predictions()
