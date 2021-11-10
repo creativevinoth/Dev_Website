@@ -866,6 +866,7 @@ add_model(lm_model) %>%
 add_recipe(diamond_recipe)
 diamond_wkfl
 ```
+I have created the workflow to automate the regression model to be tested on new data
 
 # Model fitting with workflows
 ```{r}
@@ -886,7 +887,7 @@ diamond_wkfl_preds<- diamond_wkfl_fit%>%
   collect_predictions()
 diamond_wkfl_preds
 ```
-# Exploring custome metrics
+# Exploring custom metrics
 ```{r}
 diamond_metrics <- metric_set(rmse, mae, rsq)
 diamond_wkfl_preds %>%
@@ -898,6 +899,8 @@ set.seed(42)
 diamond_folds <- vfold_cv(diamond_training, v =10, strata = Price)
 diamond_folds
 ```
+I have created cross validation of 10 folds of training data.
+
 # Model training with cross validation
 ```{r}
 diamond_rs_fit <- diamond_wkfl %>%
@@ -905,7 +908,7 @@ diamond_rs_fit <- diamond_wkfl %>%
 diamond_rs_fit %>%
   collect_metrics()
 ```
-
+Models are trained with cross validation and its metrics are given.
 
 # Detailed cross validation results
 ```{r}
@@ -913,7 +916,7 @@ diamond_rs_metrics <- diamond_rs_fit %>%
   collect_metrics(summarize = FALSE)
 diamond_rs_metrics
 ```
-
+The details cross validation results are given above
 
 
 # Summarizing cross validation results
@@ -959,24 +962,101 @@ diamond_final_fit %>%
 
 # Bootstrap method
 
+```{r}
+bootstrap_diamond<- MBA6636_SM21_Professor_Proposes_Data %>%
+  specify(response = Price) %>%
+  generate(reps = 15000, type = "bootstrap") %>%
+  calculate(stat = "median")
+str(bootstrap_diamond)
+```
+I have made 15000 times bootstrap samples
 
+# Visualising the distribution
+```{r}
+ggplot(bootstrap_diamond, aes(x = stat))+geom_histogram()
+```
 
+# Bootstrap confidence interval of lower and upper quantile
+```{r}
+bootstrap_diamond %>%
+  summarize ( l = quantile(stat,0.025),
+              u = quantile(stat, 0.975))
 
+```
+The confidence interval for the bootstrap sample price are $2698.5 and $3015
 
+# Calculate median price and degree of freedom
+```{r}
+median_diamond <- MBA6636_SM21_Professor_Proposes_Data %>%
+  summarize(median_diamond = median(Price)) %>%
+  pull()
+degrees_of_freedom <- nrow(MBA6636_SM21_Professor_Proposes_Data)-1
+t_diamond <-qt(0.975, df = degrees_of_freedom)
+median_diamond
+```
+The median price of our data is $2779.5
+
+# Calculate CI using standard error method
+```{r}
+bootstrap_diamond %>%
+  summarize(boot_se = sd(stat)) %>%
+  summarize(
+    l = median_diamond - t_diamond * boot_se,
+    u = median_diamond + t_diamond * boot_se
+  )
+  
+```
+
+When we use the standard error method, we get median price for the bootstrap as $2544 and 3014
+
+# Hypothesis testing
+```{r}
+n_replicates<- 15000
+bootstrap_testing_diamond<- MBA6636_SM21_Professor_Proposes_Data %>%
+  specify(response = Price) %>%
+  hypothesize(null = "point", mu = 3000) %>%
+  generate(reps = n_replicates, type = "bootstrap") %>%
+  calculate(stat = "mean")
+bootstrap_testing_diamond
+```
+I have created the bootstrap sasmple of 15000 and got a mean values of those sample. Our hypothesis for the mean price is $3000
+
+# Calculate mean
+```{r}
+mean_diamond <- MBA6636_SM21_Professor_Proposes_Data %>%
+  summarize(mean_diamond = mean(Price)) %>%
+  pull()
+mean_diamond 
+```
+The mean price of the actual data is $2722.62
+
+# Checking bootstrap mean is greater than observed mean
+```{r}
+bootstrap_testing_diamond %>%
+  filter(stat >= mean_diamond) %>%
+  dplyr::summarize(p_val = n() / n_replicates)
+```
+
+Since the p value is greater than alpha, we don reject null hypotheses. Hence, the price of diamond is not greater than $3000.
 
 ## Observations and comments
 
 
 1. The important determinants of the price are carat, polish and cut followed by colour, clarity and wholesaler.
 
-2. Though the certification has significant model when we did simple linear regression wih price, it failed to influence the price as a whole model when i did multiple linear regression.
+2. Though the certification has significant model when we did simple linear regression with price, it failed to influence the price as a whole model when i did multiple linear regression.
 
 3. The quoted price of the diamond is only for the diamond and it is to be noted that ring cost is additional.
 
 4. All the predictor variables have been assigned factor and done regresion on this.
 
-5. I included wholesaler as a predictor because i recognised that there is a difference between the diamond offered between wholesaler 1 (referred as a high priced diamond wholesaler) and wholesaler 2 and 3(referred as low priced diamond wholesaler). 
+5. I included wholesaler as a predictor because i recognized that there is a difference between the diamond offered between wholesaler 1 (referred as a high priced diamond wholesaler) and wholesaler 2 and 3(referred as low priced diamond wholesaler). 
 
-6. Being a one time purchase and coveted gem, professor can buy the diamond at the offered price of $3100 or if any offered less that quoted price.
+6. Cross-validation is used to test the ability of a machine learning model to predict the new data.
+
+7. Boot-strap re sampling method is used to estimate the statistics such as mean and median of the price by sampling a data set with replacement. The bootstrap price of diamond is lower than normal data set.
+
+8. Being a one time purchase and coveted gem, professor can buy the diamond at the offered price of $3100 or if any offered less that quoted price.
+
 
 
