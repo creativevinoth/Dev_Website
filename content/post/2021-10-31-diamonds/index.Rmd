@@ -164,6 +164,10 @@ Bivariate analysis on metric and non metric data
 
 Multiple linear regresion 
 
+Linear model workflow with cross validation
+
+Bootstrap Method
+
 Observations and comments
 
 
