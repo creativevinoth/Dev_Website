@@ -62,7 +62,7 @@
 
   <article class="article">
     
-    <span class="article-duration">64 min read</span>
+    <span class="article-duration">99 min read</span>
     
 
     <h1 class="article-title">Bank</h1>
@@ -1511,12 +1511,12 @@ bank_test&lt;- bank_split %&gt;%
 <pre class="r"><code>bank_training %&gt;%
   select_if(is.numeric) %&gt;%
   cor()</code></pre>
-<pre><code>##                  age     balance         day    duration    campaign
-## age       1.00000000  0.01461238 -0.02898534 -0.03399720  0.04338674
-## balance   0.01461238  1.00000000 -0.04436578  0.03301325 -0.05604360
-## day      -0.02898534 -0.04436578  1.00000000  0.00124027  0.06355224
-## duration -0.03399720  0.03301325  0.00124027  1.00000000 -0.03214299
-## campaign  0.04338674 -0.05604360  0.06355224 -0.03214299  1.00000000</code></pre>
+<pre><code>##                  age      balance         day     duration    campaign
+## age       1.00000000  0.012857415 -0.01073389 -0.021887620  0.01174524
+## balance   0.01285742  1.000000000 -0.03302164 -0.006349588 -0.03771367
+## day      -0.01073389 -0.033021644  1.00000000 -0.058281543  0.14027949
+## duration -0.02188762 -0.006349588 -0.05828154  1.000000000 -0.05383075
+## campaign  0.01174524 -0.037713670  0.14027949 -0.053830748  1.00000000</code></pre>
 <p>We can notice that there is no much corellation the independent variable</p>
 </div>
 <div id="model-specification" class="section level1">
@@ -1578,16 +1578,16 @@ bank_training_prep</code></pre>
 <pre><code>## # A tibble: 708 x 29
 ##        age balance    day duration campaign y     job_management job_Others
 ##      &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;fct&gt;          &lt;dbl&gt;      &lt;dbl&gt;
-##  1 -0.0779   0.380 -1.12  -0.301    -0.0946 0                  0          0
-##  2  0.326    1.82   0.175 -0.595    -0.0946 0                  0          1
-##  3  0.0231   0.958  1.59  -0.00588  -0.0946 0                  1          0
-##  4  0.225   -1.23   0.410 -0.386     0.666  0                  1          0
-##  5  0.427   -0.125 -0.413 -0.626    -0.0946 0                  0          1
-##  6  0.427   -0.285 -1.00  -0.502    -0.0946 0                  0          1
-##  7  1.34    -0.137  0.646 -0.898    -0.0946 0                  0          1
-##  8 -0.886    0.675  1.35  -0.844     0.666  0                  0          0
-##  9  1.54     0.355 -1.59  -1.01      0.666  0                  0          0
-## 10  1.74    -0.420 -1.35  -0.386    -0.856  0                  1          0
+##  1 -0.0836   0.349 -1.09   -0.317    -0.116 0                  0          0
+##  2  0.118    1.27  -0.151  -1.06     -0.116 0                  0          1
+##  3  0.0172   0.933  1.61   -0.0172   -0.116 0                  1          0
+##  4  0.420   -0.160 -0.386  -0.648    -0.116 0                  0          1
+##  5  0.420   -0.321 -0.974  -0.522    -0.116 0                  0          1
+##  6  1.33    -0.172  0.672  -0.924    -0.116 0                  0          1
+##  7 -0.890    0.647  1.38   -0.869     0.628 0                  0          0
+##  8  1.93    -0.955  0.672  -1.19     -0.859 0                  1          0
+##  9  1.53     0.324 -1.56   -1.04      0.628 0                  0          0
+## 10  1.73    -0.458 -1.33   -0.403    -0.859 0                  1          0
 ## # ... with 698 more rows, and 21 more variables: job_technician &lt;dbl&gt;,
 ## #   marital_married &lt;dbl&gt;, marital_single &lt;dbl&gt;, education_secondary &lt;dbl&gt;,
 ## #   education_tertiary &lt;dbl&gt;, default_X1 &lt;dbl&gt;, housing_X1 &lt;dbl&gt;,
@@ -1605,16 +1605,16 @@ bank_test_prep</code></pre>
 <pre><code>## # A tibble: 236 x 29
 ##        age balance    day duration campaign y     job_management job_Others
 ##      &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;fct&gt;          &lt;dbl&gt;      &lt;dbl&gt;
-##  1  0.124    1.29  -0.178  -1.03    -0.0946 0                  0          1
-##  2 -0.886    0.195 -1.00   -0.324   -0.856  0                  0          1
-##  3  1.94    -0.912  0.646  -1.16    -0.856  0                  1          0
-##  4 -0.179   -0.814  1.59   -0.712   -0.0946 0                  0          0
-##  5  1.13     1.07  -0.883  -0.433   -0.856  0                  0          0
-##  6  2.04    -1.37   1.23   -0.983   -0.0946 0                  0          1
-##  7 -0.0779  -0.789 -0.295  -0.937   -0.856  0                  0          0
-##  8 -0.785    1.38  -1.24   -0.107   -0.856  0                  0          0
-##  9 -0.280   -0.974  1.47    0.491   -0.0946 0                  1          0
-## 10  0.427   -1.02  -0.295   0.0407   0.666  0                  0          0
+##  1  0.320    1.80   0.201   -0.616   -0.116 0                  0          1
+##  2 -0.890    0.163 -0.974   -0.340   -0.859 0                  0          1
+##  3  0.219   -1.28   0.437   -0.403    0.628 0                  1          0
+##  4 -0.184   -0.855  1.61    -0.735   -0.116 0                  0          0
+##  5  1.13     1.04  -0.857   -0.451   -0.859 0                  0          0
+##  6  2.03    -1.41   1.26    -1.01    -0.116 0                  0          1
+##  7 -0.0836  -0.831 -0.269   -0.963   -0.859 0                  0          0
+##  8  0.0172  -1.40  -0.504   -0.403   -0.859 0                  0          1
+##  9 -0.184   -1.46   0.672   -0.309   -0.116 0                  0          1
+## 10  1.23     0.287  1.14    -0.624    2.86  0                  0          1
 ## # ... with 226 more rows, and 21 more variables: job_technician &lt;dbl&gt;,
 ## #   marital_married &lt;dbl&gt;, marital_single &lt;dbl&gt;, education_secondary &lt;dbl&gt;,
 ## #   education_tertiary &lt;dbl&gt;, default_X1 &lt;dbl&gt;, housing_X1 &lt;dbl&gt;,
@@ -1631,45 +1631,45 @@ bank_test_prep</code></pre>
 logistic_fit</code></pre>
 <pre><code>## parsnip model object
 ## 
-## Fit time:  40ms 
+## Fit time:  41ms 
 ## 
 ## Call:  stats::glm(formula = y ~ ., family = stats::binomial, data = data)
 ## 
 ## Coefficients:
 ##                  (Intercept)                           age  
-##                   -21.471748                     -0.006121  
+##                    -22.06829                      -0.10409  
 ##                      balance                           day  
-##                     0.015488                     -0.030802  
+##                      0.12162                       0.05095  
 ##                     duration                      campaign  
-##                     0.748807                     -0.189923  
+##                      0.86324                      -0.27434  
 ##               job_management                    job_Others  
-##                     0.686725                      1.054886  
+##                      2.18546                       2.46086  
 ##               job_technician               marital_married  
-##                     1.050036                      0.575177  
+##                      2.66700                       0.45332  
 ##               marital_single           education_secondary  
-##                     1.103273                      0.393408  
+##                      0.12696                       1.39227  
 ##           education_tertiary                    default_X1  
-##                     0.780340                      0.811304  
+##                      1.03408                       0.53660  
 ##                   housing_X1                       loan_X1  
-##                    -0.177300                     -1.099333  
+##                     -0.96943                      -1.96696  
 ## contact_telephone.and.others                     month_X10  
-##                    -1.485712                     17.626781  
+##                     -2.82830                      17.31343  
 ##                    month_X11                      month_X2  
-##                    14.363492                     15.752333  
+##                     15.66391                      15.23064  
 ##                     month_X3                      month_X4  
-##                    18.590449                     17.271312  
+##                     18.22438                      16.80402  
 ##                     month_X5                      month_X6  
-##                    15.670472                     16.319813  
+##                     15.38931                      17.32399  
 ##                     month_X7                      month_X8  
-##                    14.764644                     15.723140  
+##                     13.77084                      14.82835  
 ##                     month_X9   poutcome_success.and.others  
-##                    17.198684                      2.207071  
+##                      0.58498                       1.87809  
 ##             poutcome_unknown  
-##                     1.162214  
+##                      0.26321  
 ## 
 ## Degrees of Freedom: 707 Total (i.e. Null);  679 Residual
-## Null Deviance:       366.6 
-## Residual Deviance: 244.4     AIC: 302.4</code></pre>
+## Null Deviance:       301.9 
+## Residual Deviance: 170.3     AIC: 228.3</code></pre>
 <p>The above is the significant equation to predict the outcome variable. The AIC is 289.2, which is quite good compared to our manual method</p>
 </div>
 <div id="predicting-outcome-categories" class="section level1">
@@ -1697,18 +1697,18 @@ class_preds</code></pre>
 <pre class="r"><code>prob_preds &lt;- predict (logistic_fit, new_data = bank_test_prep, type =&quot;prob&quot;)
 prob_preds</code></pre>
 <pre><code>## # A tibble: 236 x 2
-##    .pred_0      .pred_1
-##      &lt;dbl&gt;        &lt;dbl&gt;
-##  1   0.990 0.00975     
-##  2   0.925 0.0746      
-##  3   0.994 0.00641     
-##  4   0.932 0.0682      
-##  5   0.997 0.00330     
-##  6   0.977 0.0231      
-##  7   0.990 0.0104      
-##  8   0.996 0.00383     
-##  9   1.00  0.0000000274
-## 10   0.972 0.0283      
+##    .pred_0  .pred_1
+##      &lt;dbl&gt;    &lt;dbl&gt;
+##  1   0.877 0.123   
+##  2   0.892 0.108   
+##  3   0.973 0.0266  
+##  4   0.968 0.0324  
+##  5   0.998 0.00159 
+##  6   0.995 0.00536 
+##  7   0.999 0.000727
+##  8   0.977 0.0226  
+##  9   0.985 0.0153  
+## 10   0.983 0.0175  
 ## # ... with 226 more rows</code></pre>
 <p>The above prediction is the probability of outcome occurences.</p>
 <p>In tidymodels, outcome variable needs to be a factor</p>
@@ -1722,16 +1722,16 @@ results</code></pre>
 <pre><code>## # A tibble: 236 x 32
 ##        age balance    day duration campaign y     job_management job_Others
 ##      &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;fct&gt;          &lt;dbl&gt;      &lt;dbl&gt;
-##  1  0.124    1.29  -0.178  -1.03    -0.0946 0                  0          1
-##  2 -0.886    0.195 -1.00   -0.324   -0.856  0                  0          1
-##  3  1.94    -0.912  0.646  -1.16    -0.856  0                  1          0
-##  4 -0.179   -0.814  1.59   -0.712   -0.0946 0                  0          0
-##  5  1.13     1.07  -0.883  -0.433   -0.856  0                  0          0
-##  6  2.04    -1.37   1.23   -0.983   -0.0946 0                  0          1
-##  7 -0.0779  -0.789 -0.295  -0.937   -0.856  0                  0          0
-##  8 -0.785    1.38  -1.24   -0.107   -0.856  0                  0          0
-##  9 -0.280   -0.974  1.47    0.491   -0.0946 0                  1          0
-## 10  0.427   -1.02  -0.295   0.0407   0.666  0                  0          0
+##  1  0.320    1.80   0.201   -0.616   -0.116 0                  0          1
+##  2 -0.890    0.163 -0.974   -0.340   -0.859 0                  0          1
+##  3  0.219   -1.28   0.437   -0.403    0.628 0                  1          0
+##  4 -0.184   -0.855  1.61    -0.735   -0.116 0                  0          0
+##  5  1.13     1.04  -0.857   -0.451   -0.859 0                  0          0
+##  6  2.03    -1.41   1.26    -1.01    -0.116 0                  0          1
+##  7 -0.0836  -0.831 -0.269   -0.963   -0.859 0                  0          0
+##  8  0.0172  -1.40  -0.504   -0.403   -0.859 0                  0          1
+##  9 -0.184   -1.46   0.672   -0.309   -0.116 0                  0          1
+## 10  1.23     0.287  1.14    -0.624    2.86  0                  0          1
 ## # ... with 226 more rows, and 24 more variables: job_technician &lt;dbl&gt;,
 ## #   marital_married &lt;dbl&gt;, marital_single &lt;dbl&gt;, education_secondary &lt;dbl&gt;,
 ## #   education_tertiary &lt;dbl&gt;, default_X1 &lt;dbl&gt;, housing_X1 &lt;dbl&gt;,
@@ -1747,8 +1747,8 @@ results</code></pre>
   conf_mat(truth = y, estimate = .pred_class)</code></pre>
 <pre><code>##           Truth
 ## Prediction   0   1
-##          0 221   9
-##          1   3   3</code></pre>
+##          0 210  20
+##          1   2   4</code></pre>
 </div>
 <div id="correct-predictions" class="section level1">
 <h1>Correct predictions</h1>
@@ -1804,8 +1804,8 @@ bank_wkfl_fit</code></pre>
 <pre><code>## # A tibble: 2 x 4
 ##   .metric  .estimator .estimate .config             
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-## 1 accuracy binary         0.949 Preprocessor1_Model1
-## 2 roc_auc  binary         0.893 Preprocessor1_Model1</code></pre>
+## 1 accuracy binary         0.907 Preprocessor1_Model1
+## 2 roc_auc  binary         0.730 Preprocessor1_Model1</code></pre>
 </div>
 <div id="collecting-predictions" class="section level1">
 <h1>collecting predictions</h1>
@@ -1813,18 +1813,18 @@ bank_wkfl_fit</code></pre>
   collect_predictions()
 bank_wkfl_fit_results</code></pre>
 <pre><code>## # A tibble: 236 x 7
-##    id               .pred_0      .pred_1  .row .pred_class y     .config        
-##    &lt;chr&gt;              &lt;dbl&gt;        &lt;dbl&gt; &lt;int&gt; &lt;fct&gt;       &lt;fct&gt; &lt;chr&gt;          
-##  1 train/test split   0.990 0.00975          2 0           0     Preprocessor1_~
-##  2 train/test split   0.925 0.0746           5 0           0     Preprocessor1_~
-##  3 train/test split   0.994 0.00641         11 0           0     Preprocessor1_~
-##  4 train/test split   0.932 0.0682          13 0           0     Preprocessor1_~
-##  5 train/test split   0.997 0.00330         16 0           0     Preprocessor1_~
-##  6 train/test split   0.977 0.0231          20 0           0     Preprocessor1_~
-##  7 train/test split   0.990 0.0104          26 0           0     Preprocessor1_~
-##  8 train/test split   0.996 0.00383         29 0           0     Preprocessor1_~
-##  9 train/test split   1.00  0.0000000274    36 0           0     Preprocessor1_~
-## 10 train/test split   0.972 0.0283          46 0           0     Preprocessor1_~
+##    id               .pred_0  .pred_1  .row .pred_class y     .config            
+##    &lt;chr&gt;              &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt; &lt;fct&gt;       &lt;fct&gt; &lt;chr&gt;              
+##  1 train/test split   0.877 0.123        3 0           0     Preprocessor1_Mode~
+##  2 train/test split   0.892 0.108        5 0           0     Preprocessor1_Mode~
+##  3 train/test split   0.973 0.0266       6 0           0     Preprocessor1_Mode~
+##  4 train/test split   0.968 0.0324      13 0           0     Preprocessor1_Mode~
+##  5 train/test split   0.998 0.00159     16 0           0     Preprocessor1_Mode~
+##  6 train/test split   0.995 0.00536     20 0           0     Preprocessor1_Mode~
+##  7 train/test split   0.999 0.000727    26 0           0     Preprocessor1_Mode~
+##  8 train/test split   0.977 0.0226      39 0           0     Preprocessor1_Mode~
+##  9 train/test split   0.985 0.0153      43 0           0     Preprocessor1_Mode~
+## 10 train/test split   0.983 0.0175      45 0           0     Preprocessor1_Mode~
 ## # ... with 226 more rows</code></pre>
 </div>
 <div id="creating-custom-metrics" class="section level1">
@@ -1842,9 +1842,9 @@ bank_metrics</code></pre>
 <pre><code>## # A tibble: 3 x 3
 ##   .metric .estimator .estimate
 ##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
-## 1 sens    binary         0.987
-## 2 spec    binary         0.25 
-## 3 roc_auc binary         0.107</code></pre>
+## 1 sens    binary         0.991
+## 2 spec    binary         0.167
+## 3 roc_auc binary         0.270</code></pre>
 </div>
 <div id="creating-cross-validation-folds" class="section level1">
 <h1>Creating cross validation folds</h1>
@@ -1865,15 +1865,18 @@ bank_folds</code></pre>
 <div id="fit-resamples" class="section level1">
 <h1>Fit resamples</h1>
 <pre class="r"><code>bank_rs &lt;- bank_wkfl %&gt;%
-  fit_resamples(resamples = bank_folds, metrics = bank_metrics)
-bank_rs %&gt;%
+  fit_resamples(resamples = bank_folds, metrics = bank_metrics)</code></pre>
+<pre><code>## ! Fold1: preprocessor 1/1, model 1/1: glm.fit: fitted probabilities numerically 0...</code></pre>
+<pre><code>## ! Fold2: preprocessor 1/1, model 1/1: glm.fit: fitted probabilities numerically 0...</code></pre>
+<pre><code>## ! Fold3: preprocessor 1/1, model 1/1: glm.fit: fitted probabilities numerically 0...</code></pre>
+<pre class="r"><code>bank_rs %&gt;%
   collect_metrics()</code></pre>
 <pre><code>## # A tibble: 3 x 6
 ##   .metric .estimator  mean     n std_err .config             
 ##   &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
-## 1 roc_auc binary     0.728     5 0.0740  Preprocessor1_Model1
-## 2 sens    binary     0.986     5 0.00434 Preprocessor1_Model1
-## 3 spec    binary     0.189     5 0.0295  Preprocessor1_Model1</code></pre>
+## 1 roc_auc binary     0.822     5 0.0317  Preprocessor1_Model1
+## 2 sens    binary     0.970     5 0.00393 Preprocessor1_Model1
+## 3 spec    binary     0.264     5 0.0598  Preprocessor1_Model1</code></pre>
 <p>The roc_auc is 0.76
 The sensitivity is 0.98, which is the proportion of positive cases that were correctly classified
 The secificity is 0.19, which is the proportion of negative cases that were correctly classified</p>
@@ -1886,21 +1889,21 @@ bank_detailed_results</code></pre>
 <pre><code>## # A tibble: 15 x 5
 ##    id    .metric .estimator .estimate .config             
 ##    &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-##  1 Fold1 sens    binary        0.985  Preprocessor1_Model1
-##  2 Fold1 spec    binary        0.2    Preprocessor1_Model1
-##  3 Fold1 roc_auc binary        0.912  Preprocessor1_Model1
-##  4 Fold2 sens    binary        0.977  Preprocessor1_Model1
-##  5 Fold2 spec    binary        0.222  Preprocessor1_Model1
-##  6 Fold2 roc_auc binary        0.736  Preprocessor1_Model1
-##  7 Fold3 sens    binary        1      Preprocessor1_Model1
-##  8 Fold3 spec    binary        0.267  Preprocessor1_Model1
-##  9 Fold3 roc_auc binary        0.861  Preprocessor1_Model1
-## 10 Fold4 sens    binary        0.992  Preprocessor1_Model1
-## 11 Fold4 spec    binary        0.0909 Preprocessor1_Model1
-## 12 Fold4 roc_auc binary        0.515  Preprocessor1_Model1
-## 13 Fold5 sens    binary        0.978  Preprocessor1_Model1
-## 14 Fold5 spec    binary        0.167  Preprocessor1_Model1
-## 15 Fold5 roc_auc binary        0.617  Preprocessor1_Model1</code></pre>
+##  1 Fold1 sens    binary        0.963  Preprocessor1_Model1
+##  2 Fold1 spec    binary        0.333  Preprocessor1_Model1
+##  3 Fold1 roc_auc binary        0.808  Preprocessor1_Model1
+##  4 Fold2 sens    binary        0.970  Preprocessor1_Model1
+##  5 Fold2 spec    binary        0.444  Preprocessor1_Model1
+##  6 Fold2 roc_auc binary        0.747  Preprocessor1_Model1
+##  7 Fold3 sens    binary        0.985  Preprocessor1_Model1
+##  8 Fold3 spec    binary        0.0909 Preprocessor1_Model1
+##  9 Fold3 roc_auc binary        0.766  Preprocessor1_Model1
+## 10 Fold4 sens    binary        0.963  Preprocessor1_Model1
+## 11 Fold4 spec    binary        0.2    Preprocessor1_Model1
+## 12 Fold4 roc_auc binary        0.875  Preprocessor1_Model1
+## 13 Fold5 sens    binary        0.970  Preprocessor1_Model1
+## 14 Fold5 spec    binary        0.25   Preprocessor1_Model1
+## 15 Fold5 roc_auc binary        0.914  Preprocessor1_Model1</code></pre>
 </div>
 <div id="summarizing-cross-validation-results" class="section level1">
 <h1>Summarizing cross validation results</h1>
@@ -1912,8 +1915,8 @@ bank_detailed_results</code></pre>
             max = max(.estimate), mean = mean (.estimate),
             sd = sd(.estimate)
            )</code></pre>
-<pre><code>##         min    median       max      mean        sd
-## 1 0.5146853 0.7360067 0.9121212 0.7283029 0.1654733</code></pre>
+<pre><code>##         min   median       max      mean       sd
+## 1 0.7468672 0.807598 0.9135338 0.8218267 0.070994</code></pre>
 </div>
 <div id="viewing-the-best-performing-models" class="section level1">
 <h1>Viewing the best performing models</h1>
@@ -1922,7 +1925,7 @@ bank_detailed_results</code></pre>
 <pre><code>## # A tibble: 1 x 6
 ##   .metric .estimator  mean     n std_err .config             
 ##   &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
-## 1 roc_auc binary     0.728     5  0.0740 Preprocessor1_Model1</code></pre>
+## 1 roc_auc binary     0.822     5  0.0317 Preprocessor1_Model1</code></pre>
 <pre class="r"><code>best_bank_model &lt;- bank_rs %&gt;%
   select_best(metric = &#39;roc_auc&#39;)
 best_bank_model </code></pre>
@@ -1962,8 +1965,8 @@ bank_final_fit %&gt;%
 <pre><code>## # A tibble: 2 x 4
 ##   .metric  .estimator .estimate .config             
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-## 1 accuracy binary         0.949 Preprocessor1_Model1
-## 2 roc_auc  binary         0.893 Preprocessor1_Model1</code></pre>
+## 1 accuracy binary         0.907 Preprocessor1_Model1
+## 2 roc_auc  binary         0.730 Preprocessor1_Model1</code></pre>
 <p>We can see here this model is good to predict and ready to use the same model to predic anynew data set. Its accuracy is 0.94 and roc_auc is 0.88</p>
 </div>
 <div id="model-evaluation" class="section level1">
@@ -1972,8 +1975,8 @@ bank_final_fit %&gt;%
   conf_mat(truth = y, estimate = .pred_class)</code></pre>
 <pre><code>##           Truth
 ## Prediction   0   1
-##          0 221   9
-##          1   3   3</code></pre>
+##          0 210  20
+##          1   2   4</code></pre>
 </div>
 <div id="correct-predictions-1" class="section level1">
 <h1>Correct predictions</h1>
@@ -2223,10 +2226,881 @@ summary(fullmodel)</code></pre>
 <p>The full model is not good as many of the coefficients are not significant</p>
 <p>After a many trials, the following is the best model</p>
 </div>
+<div id="backward-regression" class="section level1">
+<h1>Backward regression</h1>
+<p>The following is the best model by backward regression</p>
+<pre class="r"><code>mod_step&lt;- stepAIC(fullmodel, direction = &#39;backward&#39;, trace = FALSE)
+mod_step</code></pre>
+<pre><code>## 
+## Call:  glm(formula = y ~ default + loan + contact + month + duration + 
+##     campaign + poutcome, family = &quot;binomial&quot;, data = bank)
+## 
+## Coefficients:
+##                 (Intercept)                     default1  
+##                  -19.610827                     1.271180  
+##                       loan1  contacttelephone and others  
+##                   -1.202972                    -1.961554  
+##                     month10                      month11  
+##                   18.046599                    15.121627  
+##                      month2                       month3  
+##                   15.574634                    18.660513  
+##                      month4                       month5  
+##                   17.025514                    15.127680  
+##                      month6                       month7  
+##                   16.971346                    14.538569  
+##                      month8                       month9  
+##                   15.682285                    17.041161  
+##                    duration                     campaign  
+##                    0.005898                    -0.249001  
+##  poutcomesuccess and others              poutcomeunknown  
+##                    1.897647                     0.620638  
+## 
+## Degrees of Freedom: 943 Total (i.e. Null);  926 Residual
+## Null Deviance:       462.8 
+## Residual Deviance: 307.3     AIC: 343.3</code></pre>
+</div>
+<div id="bootstrap" class="section level1">
+<h1>Bootstrap</h1>
+<p>Using bootstrap resampling with relacement method to access the consistency predictors selected with stepwise</p>
+<pre class="r"><code>mod_boot&lt;- boot.stepAIC(fullmodel, bank, B =50)</code></pre>
+<pre><code>## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</code></pre>
+<pre class="r"><code>print(mod_boot)</code></pre>
+<pre><code>## 
+## Summary of Bootstrapping the &#39;stepAIC()&#39; procedure for
+## 
+## Call:
+## glm(formula = y ~ ., family = &quot;binomial&quot;, data = bank)
+## 
+## Bootstrap samples: 50 
+## Direction: backward 
+## Penalty: 2 * df
+## 
+## Covariates selected
+##           (%)
+## duration  100
+## month     100
+## poutcome   98
+## contact    94
+## loan       84
+## job        54
+## campaign   46
+## housing    46
+## age        40
+## default    36
+## marital    32
+## day        30
+## balance    22
+## education  14
+## 
+## Coefficients Sign
+##                              + (%)  - (%)
+## default1                    100.00   0.00
+## duration                    100.00   0.00
+## jobOthers                   100.00   0.00
+## jobtechnician               100.00   0.00
+## month10                     100.00   0.00
+## month11                     100.00   0.00
+## month2                      100.00   0.00
+## month3                      100.00   0.00
+## month4                      100.00   0.00
+## month5                      100.00   0.00
+## month6                      100.00   0.00
+## month7                      100.00   0.00
+## month8                      100.00   0.00
+## poutcomesuccess and others  100.00   0.00
+## maritalsingle                93.75   6.25
+## day                          93.33   6.67
+## jobmanagement                92.59   7.41
+## month9                       92.00   8.00
+## maritalmarried               87.50  12.50
+## poutcomeunknown              81.63  18.37
+## educationtertiary            57.14  42.86
+## balance                      45.45  54.55
+## educationsecondary           42.86  57.14
+## housing1                     17.39  82.61
+## age                          10.00  90.00
+## campaign                      0.00 100.00
+## contacttelephone and others   0.00 100.00
+## loan1                         0.00 100.00
+## 
+## Stat Significance
+##                                (%)
+## duration                    100.00
+## poutcomesuccess and others   91.84
+## contacttelephone and others  89.36
+## default1                     72.22
+## jobOthers                    70.37
+## jobtechnician                70.37
+## loan1                        69.05
+## age                          65.00
+## day                          60.00
+## educationsecondary           57.14
+## maritalsingle                56.25
+## campaign                     47.83
+## housing1                     43.48
+## jobmanagement                37.04
+## educationtertiary            28.57
+## maritalmarried               18.75
+## poutcomeunknown              16.33
+## balance                       9.09
+## month10                       0.00
+## month11                       0.00
+## month2                        0.00
+## month3                        0.00
+## month4                        0.00
+## month5                        0.00
+## month6                        0.00
+## month7                        0.00
+## month8                        0.00
+## month9                        0.00
+## 
+## 
+## The stepAIC() for the original data-set gave
+## 
+## Call:  glm(formula = y ~ default + loan + contact + month + duration + 
+##     campaign + poutcome, family = &quot;binomial&quot;, data = bank)
+## 
+## Coefficients:
+##                 (Intercept)                     default1  
+##                  -19.610827                     1.271180  
+##                       loan1  contacttelephone and others  
+##                   -1.202972                    -1.961554  
+##                     month10                      month11  
+##                   18.046599                    15.121627  
+##                      month2                       month3  
+##                   15.574634                    18.660513  
+##                      month4                       month5  
+##                   17.025514                    15.127680  
+##                      month6                       month7  
+##                   16.971346                    14.538569  
+##                      month8                       month9  
+##                   15.682285                    17.041161  
+##                    duration                     campaign  
+##                    0.005898                    -0.249001  
+##  poutcomesuccess and others              poutcomeunknown  
+##                    1.897647                     0.620638  
+## 
+## Degrees of Freedom: 943 Total (i.e. Null);  926 Residual
+## Null Deviance:       462.8 
+## Residual Deviance: 307.3     AIC: 343.3
+## 
+## Stepwise Model Path 
+## Analysis of Deviance Table
+## 
+## Initial Model:
+## y ~ age + job + marital + education + default + balance + housing + 
+##     loan + contact + day + month + duration + campaign + poutcome
+## 
+## Final Model:
+## y ~ default + loan + contact + month + duration + campaign + 
+##     poutcome
+## 
+## 
+##          Step Df  Deviance Resid. Df Resid. Dev      AIC
+## 1                                915   299.1494 357.1494
+## 2 - education  2 0.2662136       917   299.4156 353.4156
+## 3   - marital  2 0.9848868       919   300.4005 350.4005
+## 4   - balance  1 0.0127710       920   300.4132 348.4132
+## 5   - housing  1 0.3485095       921   300.7617 346.7617
+## 6       - job  3 4.4161489       924   305.1779 345.1779
+## 7       - day  1 0.6648733       925   305.8428 343.8428
+## 8       - age  1 1.4999372       926   307.3427 343.3427</code></pre>
+<pre class="r"><code>best_bootmodel &lt;- glm(y ~ default + loan + contact + month + duration + campaign + poutcome, data = bank, family = &quot;binomial&quot;)
+summary(best_bootmodel)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ default + loan + contact + month + duration + 
+##     campaign + poutcome, family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##      Min        1Q    Median        3Q       Max  
+## -2.08779  -0.28936  -0.18286  -0.09143   3.04509  
+## 
+## Coefficients:
+##                               Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)                 -19.610827 992.438640  -0.020  0.98423    
+## default1                      1.271180   0.796819   1.595  0.11064    
+## loan1                        -1.202972   0.630718  -1.907  0.05648 .  
+## contacttelephone and others  -1.961554   0.599162  -3.274  0.00106 ** 
+## month10                      18.046599 992.438716   0.018  0.98549    
+## month11                      15.121627 992.438662   0.015  0.98784    
+## month2                       15.574634 992.438606   0.016  0.98748    
+## month3                       18.660513 992.438811   0.019  0.98500    
+## month4                       17.025514 992.438538   0.017  0.98631    
+## month5                       15.127680 992.438533   0.015  0.98784    
+## month6                       16.971346 992.438602   0.017  0.98636    
+## month7                       14.538569 992.438648   0.015  0.98831    
+## month8                       15.682285 992.438528   0.016  0.98739    
+## month9                       17.041161 992.438920   0.017  0.98630    
+## duration                      0.005898   0.001061   5.556 2.76e-08 ***
+## campaign                     -0.249001   0.159972  -1.557  0.11958    
+## poutcomesuccess and others    1.897647   0.634094   2.993  0.00277 ** 
+## poutcomeunknown               0.620638   0.557923   1.112  0.26596    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 307.34  on 926  degrees of freedom
+## AIC: 343.34
+## 
+## Number of Fisher Scoring iterations: 17</code></pre>
+</div>
+<div id="odds-ratio" class="section level1">
+<h1>Odds ratio</h1>
+<pre class="r"><code>bank_or &lt;- data.frame(exp(best_bootmodel$coefficients))
+bank_or</code></pre>
+<pre><code>##                             exp.best_bootmodel.coefficients.
+## (Intercept)                                     3.041766e-09
+## default1                                        3.565058e+00
+## loan1                                           3.003004e-01
+## contacttelephone and others                     1.406396e-01
+## month10                                         6.879206e+07
+## month11                                         3.691809e+06
+## month2                                          5.807343e+06
+## month3                                          1.271035e+08
+## month4                                          2.477917e+07
+## month5                                          3.714224e+06
+## month6                                          2.347264e+07
+## month7                                          2.060726e+06
+## month8                                          6.467400e+06
+## month9                                          2.516995e+07
+## duration                                        1.005915e+00
+## campaign                                        7.795791e-01
+## poutcomesuccess and others                      6.670183e+00
+## poutcomeunknown                                 1.860114e+00</code></pre>
+</div>
+<div id="produce-percentage-odds" class="section level1">
+<h1>produce percentage odds</h1>
+<pre class="r"><code>bank_or_perc&lt;- (bank_or-1)*100
+bank_or_perc</code></pre>
+<pre><code>##                             exp.best_bootmodel.coefficients.
+## (Intercept)                                    -1.000000e+02
+## default1                                        2.565058e+02
+## loan1                                          -6.996996e+01
+## contacttelephone and others                    -8.593604e+01
+## month10                                         6.879206e+09
+## month11                                         3.691808e+08
+## month2                                          5.807342e+08
+## month3                                          1.271035e+10
+## month4                                          2.477917e+09
+## month5                                          3.714223e+08
+## month6                                          2.347264e+09
+## month7                                          2.060725e+08
+## month8                                          6.467399e+08
+## month9                                          2.516994e+09
+## duration                                        5.915226e-01
+## campaign                                       -2.204209e+01
+## poutcomesuccess and others                      5.670183e+02
+## poutcomeunknown                                 8.601140e+01</code></pre>
+<pre class="r"><code>predict(best_bootmodel, bank, type =&quot;response&quot;)</code></pre>
+<pre><code>##            8            9           12           16           20           22 
+## 3.017962e-02 2.507667e-03 1.423110e-01 1.995351e-02 7.237690e-02 2.209905e-02 
+##           23           24           30           32           33           47 
+## 2.113341e-02 1.459465e-02 1.022703e-02 2.719405e-02 2.020028e-02 1.099636e-02 
+##           53           57           59           66           72           77 
+## 3.812835e-02 2.464272e-03 4.389556e-03 1.904274e-02 7.170954e-02 2.851597e-01 
+##           80           82           83           91           98          113 
+## 2.222523e-02 3.123915e-02 1.177639e-02 3.988293e-02 3.919692e-01 6.496358e-03 
+##          114          119          120          127          129          131 
+## 2.894085e-09 4.109294e-02 2.401164e-01 2.065764e-02 5.438836e-03 2.895367e-02 
+##          146          149          151          159          161          172 
+## 1.763939e-01 2.352948e-08 1.264087e-02 1.188058e-08 4.330700e-02 1.529028e-08 
+##          178          181          184          188          189          196 
+## 1.607676e-02 1.848102e-02 3.217980e-02 1.392709e-01 1.654995e-02 4.266382e-02 
+##          198          229          231          233          236          238 
+## 9.257038e-03 1.698272e-02 1.565235e-02 1.662505e-02 1.269115e-01 4.980943e-03 
+##          255          258          261          272          280          284 
+## 3.269906e-02 2.654342e-02 4.813492e-03 8.000684e-02 1.090617e-01 1.113576e-03 
+##          285          289          290          306          314          317 
+## 1.322232e-02 2.070388e-02 3.650441e-02 2.803768e-02 9.751748e-02 3.441372e-02 
+##          323          325          331          333          346          352 
+## 2.056541e-03 1.164068e-02 2.971015e-03 5.956200e-03 1.003376e-02 1.437140e-01 
+##          354          356          357          372          385          386 
+## 3.158458e-02 2.139306e-03 2.400288e-03 2.598015e-01 1.737041e-02 1.712613e-01 
+##          395          399          403          408          412          419 
+## 4.639402e-02 1.466066e-03 2.921653e-02 2.279250e-02 1.614458e-01 1.875577e-02 
+##          432          433          434          435          437          440 
+## 1.616191e-01 4.049741e-02 2.162397e-02 4.325204e-03 2.115879e-02 9.595583e-02 
+##          442          449          450          454          456          460 
+## 1.924133e-02 1.513167e-02 4.496088e-02 7.818130e-02 5.453179e-03 1.735772e-02 
+##          473          477          482          485          494          499 
+## 6.204698e-02 3.490126e-03 2.430320e-03 1.351358e-01 7.491265e-02 9.802503e-02 
+##          503          504          507          511          513          514 
+## 1.975971e-02 1.291646e-02 2.447289e-03 1.101592e-02 4.798561e-02 3.026969e-03 
+##          524          528          531          532          535          538 
+## 8.892329e-02 1.959091e-02 3.710011e-02 1.498805e-03 1.875904e-01 6.696890e-03 
+##          544          547          551          566          567          571 
+## 3.531391e-03 2.226141e-01 3.561099e-02 2.235888e-09 7.220348e-09 1.256747e-02 
+##          575          579          582          583          585          586 
+## 3.812060e-02 5.877357e-02 3.602939e-01 1.457457e-03 1.005223e-02 8.295096e-03 
+##          588          597          598          601          602          606 
+## 2.259598e-03 1.655339e-02 3.133950e-02 3.499098e-02 1.260965e-03 1.995351e-02 
+##          611          612          613          614          617          618 
+## 4.108925e-03 3.838765e-02 2.524887e-02 1.506027e-01 5.718141e-02 3.967166e-02 
+##          626          629          638          647          649          650 
+## 2.871449e-03 5.111366e-02 3.453047e-02 3.922470e-02 2.942277e-02 2.762935e-02 
+##          652          653          655          658          659          663 
+## 4.215518e-02 2.659607e-03 1.658749e-02 8.003325e-01 2.071226e-01 2.407529e-01 
+##          669          673          676          677          678          679 
+## 2.955295e-02 2.174580e-02 1.022996e-01 3.757500e-03 2.077705e-02 2.677865e-02 
+##          681          682          685          690          694          696 
+## 2.473428e-01 1.648273e-02 6.359199e-01 1.550982e-03 1.393140e-02 2.664242e-03 
+##          701          707          711          712          713          717 
+## 2.605044e-02 1.192148e-01 1.512272e-02 1.677660e-02 2.283439e-08 4.430805e-02 
+##          723          730          735          737          746          750 
+## 3.133352e-02 3.789928e-02 4.645462e-02 4.672598e-02 8.810113e-04 4.138458e-03 
+##          754          758          760          774          775          776 
+## 2.754247e-02 1.165887e-01 2.622826e-01 1.941483e-02 4.197914e-04 5.262026e-02 
+##          780          784          785          796          798          809 
+## 1.677222e-02 1.933114e-03 4.669521e-03 3.258977e-03 7.964637e-02 6.839060e-02 
+##          812          813          817          820          822          829 
+## 1.897409e-02 1.120015e-08 2.228654e-02 1.026565e-01 2.668917e-02 3.283089e-09 
+##          833          837          845          852          854          859 
+## 1.230302e-01 2.079680e-02 1.076059e-02 2.567657e-02 3.403717e-03 8.295712e-02 
+##          860          869          870          879          880          881 
+## 1.841115e-02 1.148160e-01 1.387934e-03 1.369919e-02 7.769367e-04 8.530376e-01 
+##          882          883          884          894          897          902 
+## 8.851666e-02 1.258692e-02 1.516448e-03 5.504297e-09 4.634864e-01 8.873714e-03 
+##          904          906          907          908          915          917 
+## 2.034294e-01 1.485130e-02 4.881539e-01 1.143039e-02 3.664280e-02 7.212982e-02 
+##          919          921          922          938          941          943 
+## 3.313024e-02 2.688374e-02 2.152407e-01 1.933591e-02 2.272448e-01 5.403641e-02 
+##          950          954          958          961          965          972 
+## 4.640670e-02 9.094379e-02 4.018684e-03 8.130074e-03 3.310387e-02 1.386829e-02 
+##          976          978          979          984         1001         1005 
+## 7.286036e-01 2.195204e-02 1.268082e-01 2.727469e-02 1.893906e-01 7.148792e-02 
+##         1007         1010         1012         1014         1028         1030 
+## 3.475872e-02 4.667995e-03 1.446923e-02 3.532565e-02 1.097184e-02 5.651487e-02 
+##         1039         1043         1045         1050         1053         1080 
+## 8.856264e-04 5.671828e-02 4.466873e-02 4.105999e-02 3.971291e-02 1.157047e-02 
+##         1082         1083         1085         1090         1097         1107 
+## 2.335947e-02 2.847047e-02 1.238143e-03 1.392558e-03 1.188976e-01 7.045701e-03 
+##         1109         1110         1124         1125         1129         1130 
+## 7.271832e-02 1.047463e-01 1.072507e-01 8.157920e-01 5.676087e-02 1.733567e-02 
+##         1134         1135         1147         1152         1156         1158 
+## 2.731189e-03 1.419465e-02 3.561594e-02 8.217923e-02 4.533760e-02 4.391975e-02 
+##         1160         1161         1163         1179         1183         1188 
+## 2.412623e-02 3.041413e-02 2.858296e-03 1.083071e-02 4.703063e-03 4.536467e-02 
+##         1190         1192         1196         1208         1211         1218 
+## 3.125298e-02 1.110552e-08 5.517048e-02 1.232462e-03 3.520326e-02 1.203107e-03 
+##         1223         1225         1226         1227         1228         1234 
+## 7.693292e-03 3.035470e-02 1.926433e-02 5.837742e-02 4.736846e-03 4.013510e-03 
+##         1235         1237         1238         1239         1241         1247 
+## 1.507657e-03 9.483658e-03 2.788949e-02 5.256391e-03 1.536677e-02 4.228929e-02 
+##         1249         1257         1262         1271         1281         1291 
+## 3.234232e-02 5.809085e-03 4.794815e-04 4.312136e-03 7.309830e-03 1.228186e-01 
+##         1292         1295         1296         1314         1318         1321 
+## 1.003661e-02 3.966633e-03 1.041055e-02 4.599834e-03 1.172609e-08 8.791572e-03 
+##         1322         1324         1325         1328         1329         1332 
+## 1.409022e-01 1.034235e-02 2.915441e-02 1.228301e-03 4.414619e-03 1.322072e-02 
+##         1333         1340         1341         1345         1346         1349 
+## 2.322341e-01 9.709324e-09 6.504401e-02 4.924548e-01 1.176831e-01 8.761789e-02 
+##         1352         1362         1368         1372         1381         1382 
+## 3.088298e-09 1.838146e-08 1.711892e-02 6.839356e-01 1.825053e-02 3.686779e-02 
+##         1387         1390         1406         1409         1411         1444 
+## 3.225911e-01 6.665611e-02 5.011812e-02 7.045649e-03 3.327923e-03 9.959742e-02 
+##         1445         1449         1456         1464         1466         1467 
+## 4.410140e-02 3.356185e-03 6.735709e-09 3.943399e-03 5.384109e-03 6.003727e-03 
+##         1470         1473         1477         1486         1488         1498 
+## 8.110353e-01 1.088539e-02 4.460456e-02 3.313534e-01 1.807468e-02 1.220346e-02 
+##         1506         1515         1516         1517         1518         1521 
+## 2.850228e-02 8.227970e-03 3.492451e-03 6.580214e-03 9.318986e-10 1.283376e-01 
+##         1523         1528         1529         1533         1539         1544 
+## 1.066326e-02 9.510549e-03 8.179732e-02 5.594633e-02 3.771722e-02 8.230237e-03 
+##         1550         1552         1557         1565         1570         1571 
+## 2.140448e-02 1.312090e-02 7.404330e-03 2.289920e-03 7.900416e-10 1.899981e-02 
+##         1572         1578         1587         1596         1597         1603 
+## 1.524888e-01 3.339915e-03 3.141813e-02 5.285748e-02 1.755366e-02 3.601435e-03 
+##         1605         1609         1617         1620         1622         1625 
+## 9.693703e-03 7.410747e-03 1.115124e-02 6.133364e-03 3.207727e-03 2.130433e-01 
+##         1630         1631         1632         1633         1641         1642 
+## 1.222234e-02 1.135310e-02 9.197186e-03 3.868626e-02 4.935512e-03 3.932058e-01 
+##         1660         1665         1677         1678         1696         1697 
+## 1.326041e-02 1.286361e-02 2.895591e-02 2.511942e-02 7.512781e-01 2.140448e-02 
+##         1698         1708         1709         1710         1718         1721 
+## 5.567197e-02 2.027577e-03 1.724808e-02 6.278295e-01 4.646414e-02 8.126447e-03 
+##         1722         1728         1732         1737         1743         1744 
+## 1.206728e-01 2.672987e-02 2.220673e-02 2.735902e-01 1.853665e-02 3.068387e-02 
+##         1749         1758         1762         1763         1766         1789 
+## 1.795933e-01 1.115016e-03 4.961022e-04 6.588776e-01 4.181966e-03 2.970524e-02 
+##         1793         1798         1799         1800         1815         1816 
+## 3.668102e-02 3.403038e-02 8.920874e-03 3.344887e-02 2.673121e-01 2.272479e-02 
+##         1820         1830         1838         1840         1844         1846 
+## 1.694942e-02 3.872902e-02 5.094479e-01 5.414065e-02 2.643239e-01 9.489532e-03 
+##         1861         1873         1876         1884         1886         1893 
+## 1.722155e-02 7.157394e-01 1.592195e-02 4.777849e-02 7.087885e-02 9.820165e-03 
+##         1894         1896         1898         1902         1910         1912 
+## 2.079188e-02 1.437732e-08 1.167222e-08 1.251046e-02 1.414045e-02 1.018017e-03 
+##         1931         1939         1941         1944         1961         1965 
+## 8.949680e-04 5.258748e-03 8.389843e-01 1.751606e-09 1.651021e-02 5.167844e-02 
+##         1967         1970         1974         1984         1986         1998 
+## 2.806806e-02 9.194013e-02 3.465525e-02 1.598374e-02 5.032408e-02 7.173335e-03 
+##         2001         2013         2020         2024         2025         2029 
+## 2.225673e-02 2.001484e-02 9.190411e-03 3.567575e-03 2.274884e-02 2.935480e-03 
+##         2031         2032         2042         2044         2051         2058 
+## 1.940338e-02 1.771006e-02 3.577557e-01 1.483501e-02 2.159662e-02 6.641866e-03 
+##         2059         2068         2070         2075         2078         2081 
+## 3.776166e-02 1.262114e-01 1.285032e-01 1.276343e-02 7.482132e-01 2.837507e-02 
+##         2083         2094         2095         2098         2099         2113 
+## 6.634506e-02 1.173382e-02 4.331975e-02 1.431560e-02 3.702884e-01 1.344445e-01 
+##         2116         2128         2134         2136         2154         2162 
+## 8.950763e-02 3.367996e-02 4.288660e-02 4.887313e-02 2.560527e-02 4.752044e-02 
+##         2172         2181         2182         2184         2193         2196 
+## 1.098058e-02 1.805449e-02 1.807610e-02 4.619714e-03 4.004591e-03 1.812031e-02 
+##         2198         2200         2205         2207         2224         2226 
+## 2.180614e-03 8.749837e-03 7.089814e-03 2.298823e-02 1.586801e-03 4.349885e-01 
+##         2227         2232         2235         2236         2243         2245 
+## 2.163971e-02 3.585110e-02 2.986925e-02 4.196290e-03 6.788392e-03 4.506684e-03 
+##         2246         2247         2248         2251         2252         2263 
+## 3.004515e-02 1.626872e-02 8.707373e-04 4.391147e-02 2.147623e-01 2.269017e-02 
+##         2268         2272         2291         2294         2295         2298 
+## 1.529941e-02 2.645063e-02 4.542134e-02 7.768147e-03 2.759001e-02 1.551856e-01 
+##         2301         2302         2305         2306         2307         2313 
+## 3.727252e-02 2.852390e-02 4.372682e-02 1.480952e-02 4.276852e-09 3.026969e-03 
+##         2319         2322         2323         2324         2331         2341 
+## 2.608831e-01 4.230755e-02 3.897170e-02 3.257654e-02 2.102412e-02 3.282383e-01 
+##         2344         2353         2358         2369         2370         2374 
+## 6.395767e-09 1.894175e-02 2.140249e-01 2.657246e-01 1.020092e-02 4.947524e-02 
+##         2377         2378         2383         2385         2396         2400 
+## 2.872172e-01 5.243430e-02 6.964462e-03 4.178736e-02 3.860346e-02 1.761545e-01 
+##         2401         2408         2414         2416         2419         2429 
+## 9.352541e-02 2.111546e-03 2.076911e-02 2.026011e-01 3.418206e-02 1.515769e-02 
+##         2430         2433         2437         2440         2443         2444 
+## 1.590905e-02 2.130077e-02 5.561064e-01 3.584950e-03 6.088031e-03 2.284739e-01 
+##         2446         2449         2458         2461         2484         2491 
+## 3.157799e-02 2.003460e-01 1.050128e-01 1.319314e-08 3.007779e-02 4.058026e-02 
+##         2494         2495         2514         2516         2518         2519 
+## 4.391975e-02 4.107814e-03 4.648170e-03 1.675528e-02 6.975295e-03 3.492588e-02 
+##         2526         2535         2537         2540         2542         2543 
+## 3.676219e-08 2.775526e-02 2.512107e-09 1.352142e-01 3.647318e-02 2.471719e-02 
+##         2550         2551         2560         2574         2581         2583 
+## 1.405847e-02 4.368052e-03 8.678888e-03 1.904527e-03 1.988284e-03 3.792311e-01 
+##         2589         2596         2597         2606         2609         2628 
+## 4.672598e-02 2.166711e-02 2.462608e-02 1.624619e-03 1.229809e-01 1.426317e-03 
+##         2642         2643         2644         2645         2651         2660 
+## 2.034962e-01 1.180241e-02 4.499573e-04 1.163602e-01 7.352752e-03 1.534721e-02 
+##         2661         2668         2684         2703         2704         2714 
+## 2.052706e-02 7.016266e-03 3.179314e-02 1.962372e-03 4.481513e-03 1.386159e-01 
+##         2720         2723         2731         2748         2751         2754 
+## 1.066600e-01 3.336174e-01 5.636341e-03 3.191455e-03 1.540364e-01 3.369190e-03 
+##         2755         2759         2764         2767         2769         2783 
+## 7.970737e-04 8.300274e-02 5.102633e-03 3.556478e-02 7.016266e-03 1.857805e-03 
+##         2788         2799         2804         2810         2811         2812 
+## 2.173150e-02 2.609717e-03 1.812031e-02 4.269800e-02 1.446923e-02 1.321430e-01 
+##         2815         2816         2823         2826         2834         2835 
+## 6.858355e-02 3.236189e-02 1.817281e-01 3.321715e-02 4.838062e-02 4.293972e-02 
+##         2839         2850         2855         2868         2871         2874 
+## 4.358380e-03 1.164736e-02 1.042573e-02 2.846502e-02 3.403038e-02 9.538686e-03 
+##         2877         2878         2879         2885         2886         2887 
+## 2.833758e-02 1.589242e-02 3.794647e-02 2.564883e-02 6.570957e-02 7.215460e-03 
+##         2896         2900         2902         2906         2911         2919 
+## 1.732166e-02 1.408986e-01 2.663041e-03 2.105076e-02 7.348191e-03 9.066363e-02 
+##         2924         2928         2931         2935         2942         2945 
+## 1.220417e-01 7.257832e-03 2.805167e-02 1.609724e-02 9.709359e-04 7.770109e-01 
+##         2946         2950         2952         2960         2965         2967 
+## 3.074033e-02 1.342654e-02 8.517883e-03 8.675102e-02 5.167479e-03 2.236026e-02 
+##         2971         2977         2979         2987         2988         2994 
+## 3.622868e-02 3.389052e-03 1.368140e-02 3.351364e-01 3.524978e-02 3.084812e-03 
+##         2995         3004         3010         3017         3019         3022 
+## 1.281749e-02 5.836048e-02 3.333536e-02 3.565544e-02 9.355916e-03 4.473771e-01 
+##         3027         3029         3038         3042         3045         3047 
+## 3.257200e-02 3.745127e-03 2.670103e-02 1.657101e-02 2.374126e-02 6.374331e-03 
+##         3048         3051         3058         3062         3069         3071 
+## 7.028696e-09 1.487024e-02 2.675298e-03 3.422479e-02 4.221262e-02 1.669096e-02 
+##         3078         3086         3088         3094         3098         3104 
+## 1.893472e-02 2.738494e-02 2.684477e-02 2.199684e-09 1.878459e-02 7.825396e-04 
+##         3107         3115         3117         3120         3121         3127 
+## 1.690350e-01 3.907080e-01 4.975652e-02 1.088833e-09 6.060234e-03 1.319603e-02 
+##         3129         3132         3137         3152         3163         3174 
+## 1.926968e-03 6.361331e-02 4.363078e-03 2.309603e-02 5.958693e-02 2.220673e-02 
+##         3175         3176         3184         3189         3191         3192 
+## 3.121300e-03 1.796090e-01 4.061663e-03 8.265668e-03 5.842076e-01 3.764599e-02 
+##         3195         3197         3198         3213         3218         3236 
+## 6.883357e-03 2.943588e-03 1.953674e-02 1.983048e-03 3.137879e-02 4.267994e-02 
+##         3241         3242         3243         3254         3262         3264 
+## 1.514521e-03 6.113960e-03 8.134512e-03 1.188127e-03 6.425398e-02 1.373370e-01 
+##         3267         3270         3271         3281         3287         3288 
+## 5.106483e-02 3.920301e-03 4.284301e-02 2.616459e-03 1.360503e-03 1.825053e-02 
+##         3294         3296         3304         3314         3316         3329 
+## 2.972257e-02 1.474128e-01 9.631791e-02 1.411946e-01 3.557912e-01 3.181238e-02 
+##         3335         3337         3338         3341         3358         3360 
+## 1.101980e-01 2.043952e-02 1.133432e-03 3.485630e-03 6.677892e-03 2.469065e-03 
+##         3367         3371         3374         3375         3381         3384 
+## 1.255481e-02 5.758407e-01 2.530545e-01 6.416144e-01 1.082182e-01 3.882294e-02 
+##         3389         3391         3392         3393         3395         3403 
+## 3.270396e-03 5.860436e-02 3.956425e-03 2.336726e-03 6.556442e-01 4.098545e-02 
+##         3413         3415         3424         3429         3434         3435 
+## 9.575766e-03 3.169957e-02 4.058026e-02 1.457606e-02 1.511365e-01 7.782327e-03 
+##         3436         3438         3448         3455         3460         3461 
+## 4.355883e-02 4.443713e-02 5.549982e-03 7.615583e-03 9.604974e-02 9.540301e-03 
+##         3465         3474         3488         3502         3504         3507 
+## 3.691102e-03 7.451239e-04 7.060964e-03 2.145121e-02 1.060987e-02 3.588578e-02 
+##         3508         3512         3514         3515         3517         3519 
+## 1.865250e-02 4.104200e-02 4.755642e-03 2.805167e-02 4.669521e-03 9.685078e-03 
+##         3523         3526         3529         3531         3534         3536 
+## 1.245706e-02 7.107579e-01 1.612383e-01 3.156255e-02 1.003937e-02 3.697384e-03 
+##         3537         3538         3540         3544         3548         3555 
+## 2.507667e-03 5.533009e-02 1.047148e-02 1.087215e-02 1.032283e-01 3.329813e-03 
+##         3564         3567         3570         3571         3584         3595 
+## 5.167914e-02 5.657299e-03 3.477166e-08 1.230803e-03 3.989144e-02 4.338306e-03 
+##         3606         3617         3619         3620         3625         3627 
+## 3.668102e-02 9.935528e-03 2.414375e-02 1.671909e-03 9.945901e-02 2.156085e-01 
+##         3629         3635         3638         3642         3646         3651 
+## 1.749017e-03 1.069387e-03 2.719414e-03 1.654657e-01 6.417625e-02 9.922613e-02 
+##         3655         3660         3661         3663         3664         3668 
+## 9.221313e-02 3.506914e-03 6.251660e-02 1.026743e-02 1.289233e-02 4.371552e-02 
+##         3669         3670         3671         3672         3678         3682 
+## 6.490890e-03 2.395783e-02 4.849374e-03 1.458600e-02 1.350034e-03 8.533358e-02 
+##         3684         3693         3697         3698         3700         3705 
+## 2.788528e-02 1.405014e-02 1.024933e-02 1.290698e-02 5.941089e-02 2.605044e-02 
+##         3711         3714         3724         3730         3733         3736 
+## 1.628399e-01 6.762622e-03 3.141170e-02 3.727252e-02 8.949532e-03 1.585223e-02 
+##         3742         3743         3746         3748         3752         3757 
+## 4.807811e-02 3.347693e-02 5.720546e-02 8.131889e-02 1.127482e-01 2.132177e-02 
+##         3760         3768         3774         3779         3781         3791 
+## 3.647555e-02 9.144893e-02 1.757750e-02 1.031057e-01 1.813796e-01 1.163065e-02 
+##         3793         3794         3797         3803         3804         3806 
+## 7.740533e-03 1.879244e-01 3.016378e-01 3.232185e-02 1.258606e-08 4.090127e-03 
+##         3810         3815         3818         3822         3835         3836 
+## 8.959250e-03 8.918462e-03 4.408005e-01 1.810160e-02 1.915030e-02 1.204908e-01 
+##         3853         3857         3861         3863         3872         3884 
+## 8.328997e-02 2.473035e-02 2.152836e-02 6.975261e-03 8.527977e-03 4.245452e-02 
+##         3888         3889         3894         3905         3909         3913 
+## 1.287977e-01 1.089566e-01 2.703465e-03 5.446168e-03 6.173399e-09 6.115955e-03 
+##         3918         3919         3926         3939         3940         3945 
+## 7.165234e-01 1.028973e-02 7.823153e-03 1.024751e-02 7.799763e-02 1.247627e-02 
+##         3951         3952         3954         3960         3962         3967 
+## 2.738986e-03 4.125727e-02 5.527005e-02 7.839163e-03 2.142763e-01 9.392875e-02 
+##         3970         3975         3982         3986         3988         4000 
+## 3.948483e-03 1.026064e-02 1.298234e-02 7.479526e-03 7.065372e-02 2.225136e-01 
+##         4001         4002         4005         4008         4010         4019 
+## 1.210603e-02 4.109294e-02 8.940227e-02 7.740533e-03 7.484484e-01 1.576639e-02 
+##         4028         4032         4035         4041         4046         4051 
+## 1.848135e-02 6.647420e-03 2.366596e-01 3.553373e-02 1.006602e-01 7.435606e-02 
+##         4053         4058         4063         4065         4068         4072 
+## 1.710767e-09 1.173573e-03 2.038281e-03 4.594881e-03 1.353561e-02 1.478513e-08 
+##         4074         4077         4085         4089         4097         4100 
+## 2.458293e-03 1.669259e-01 7.769367e-04 2.789602e-03 8.886676e-03 1.520443e-02 
+##         4104         4111         4113         4115         4116         4118 
+## 3.286655e-03 8.491656e-02 6.796385e-03 2.066572e-03 4.127475e-02 1.380462e-01 
+##         4119         4123         4125         4148         4150         4158 
+## 2.077047e-02 3.413938e-02 1.461098e-01 4.983029e-03 6.569982e-03 6.791571e-02 
+##         4160         4164         4170         4174         4181         4186 
+## 6.519720e-01 3.293089e-03 2.088785e-02 2.388196e-02 2.258983e-03 2.678770e-02 
+##         4191         4195         4203         4207         4223         4230 
+## 8.121001e-02 2.305598e-01 1.259183e-02 1.175658e-02 1.152667e-02 7.954902e-01 
+##         4239         4245         4251         4252         4260         4265 
+## 3.362057e-01 3.916317e-03 1.350238e-01 2.343805e-02 6.510112e-02 6.388493e-03 
+##         4268         4270         4273         4274         4277         4284 
+## 5.741357e-03 1.164207e-08 6.349414e-03 1.023054e-02 9.068984e-10 6.239692e-09 
+##         4291         4303         4308         4313         4325         4327 
+## 1.487974e-02 3.322686e-01 3.990003e-03 1.549086e-01 6.632191e-03 2.786089e-01 
+##         4331         4332         4336         4344         4346         4349 
+## 5.733977e-03 1.395538e-02 9.509145e-03 1.384046e-02 5.003815e-03 2.967213e-02 
+##         4352         4362         4366         4376         4379         4392 
+## 3.251303e-02 1.592731e-02 5.140047e-02 6.320751e-02 1.531526e-02 2.277761e-02 
+##         4394         4399         4403         4409         4410         4412 
+## 4.973193e-03 9.342801e-02 2.444061e-01 2.021094e-03 1.156305e-02 4.042359e-03 
+##         4415         4420         4423         4430         4432         4435 
+## 2.264670e-02 5.454151e-03 5.418371e-01 2.293974e-02 2.167818e-03 8.628368e-09 
+##         4437         4439         4446         4447         4455         4460 
+## 1.259120e-01 1.035889e-02 8.217461e-03 2.663041e-03 3.878258e-02 8.868955e-01 
+##         4462         4469         4473         4480         4484         4486 
+## 7.980580e-03 6.682292e-04 1.185623e-02 6.463290e-09 1.941302e-01 2.718646e-02 
+##         4488         4498 
+## 5.167914e-02 3.642231e-02</code></pre>
+<pre class="r"><code>vif(best_bootmodel)</code></pre>
+<pre><code>##              GVIF Df GVIF^(1/(2*Df))
+## default  1.071967  1        1.035359
+## loan     1.019627  1        1.009766
+## contact  1.470646  1        1.212702
+## month    2.044676 10        1.036409
+## duration 1.054404  1        1.026842
+## campaign 1.139525  1        1.067486
+## poutcome 1.251915  2        1.057776</code></pre>
+</div>
 <div id="best-model" class="section level1">
 <h1>Best model</h1>
 <p>After many iterations, below are the best model to predict the classification models</p>
-<pre class="r"><code>best = glm(y~ contact+duration+loan+campaign,  data = bank, family = &quot;binomial&quot;)
+<pre class="r"><code>best &lt;- glm(y~ contact+duration+loan+campaign,  data = bank, family = &quot;binomial&quot;)
 summary(best)</code></pre>
 <pre><code>## 
 ## Call:
@@ -2254,10 +3128,451 @@ summary(best)</code></pre>
 ## AIC: 388.51
 ## 
 ## Number of Fisher Scoring iterations: 7</code></pre>
+<pre class="r"><code>predict(best, bank, type =&quot;response&quot;)</code></pre>
+<pre><code>##            8            9           12           16           20           22 
+## 0.0637666480 0.0061075115 0.0510513380 0.0162210233 0.0852640184 0.0436344907 
+##           23           24           30           32           33           47 
+## 0.0084147829 0.0547831429 0.0080104456 0.0306634588 0.0455074905 0.0044425745 
+##           53           57           59           66           72           77 
+## 0.0467244319 0.0027350893 0.0080123116 0.0787256230 0.0598227060 0.2065587505 
+##           80           82           83           91           98          113 
+## 0.0864610421 0.0379461441 0.0177263987 0.0850013956 0.1364330238 0.0132863295 
+##          114          119          120          127          129          131 
+## 0.0410045283 0.0539987653 0.1251148423 0.0081870500 0.0176184710 0.0575659093 
+##          146          149          151          159          161          172 
+## 0.1640683180 0.0437529778 0.0329641714 0.0954589737 0.0063590801 0.1137032251 
+##          178          181          184          188          189          196 
+## 0.0623002230 0.0167238336 0.0141400206 0.0632288866 0.0641382492 0.1469322206 
+##          198          229          231          233          236          238 
+## 0.0129353200 0.0378427602 0.0139499978 0.0603200543 0.0449482241 0.0116875256 
+##          255          258          261          272          280          284 
+## 0.0398012565 0.0279218685 0.0128203628 0.1275433727 0.2359852643 0.0019672068 
+##          285          289          290          306          314          317 
+## 0.0038626027 0.0639040612 0.0076468044 0.0734697877 0.0871974401 0.0500217401 
+##          323          325          331          333          346          352 
+## 0.0042665383 0.0032526094 0.0080267933 0.0190565438 0.0265380760 0.1020877142 
+##          354          356          357          372          385          386 
+## 0.1292829617 0.0051699206 0.0050723104 0.1185080457 0.0652651874 0.0677872706 
+##          395          399          403          408          412          419 
+## 0.1732079475 0.0022009686 0.1159386399 0.0854854436 0.2371063033 0.0522798432 
+##          432          433          434          435          437          440 
+## 0.3325147348 0.1316564707 0.0892178826 0.0106951795 0.0474326631 0.1214287873 
+##          442          449          450          454          456          460 
+## 0.0375979757 0.0607034417 0.1020877142 0.1636463512 0.0147587257 0.0718168001 
+##          473          477          482          485          494          499 
+## 0.0730681203 0.0092592572 0.0095114753 0.0507514473 0.0727676718 0.0305775881 
+##          503          504          507          511          513          514 
+## 0.0191096243 0.0484116857 0.0044527978 0.0197805323 0.1272010500 0.0074396302 
+##          524          528          531          532          535          538 
+## 0.1055021931 0.0689391696 0.0838227259 0.0030931079 0.0796307927 0.0215213725 
+##          544          547          551          566          567          571 
+## 0.0093738449 0.1034942036 0.0147097750 0.0231648726 0.0514912223 0.0327668613 
+##          575          579          582          583          585          586 
+## 0.0807557133 0.0210741057 0.1728022368 0.0021873780 0.0374955033 0.0234173448 
+##          588          597          598          601          602          606 
+## 0.0047099573 0.0368291734 0.0332461217 0.0859490418 0.0021750347 0.0162210233 
+##          611          612          613          614          617          618 
+## 0.0102449567 0.0170892305 0.0886714061 0.1917144309 0.1477427525 0.0486984600 
+##          626          629          638          647          649          650 
+## 0.0047856635 0.0633970540 0.0368101554 0.0481265147 0.0544349796 0.0108273432 
+##          652          653          655          658          659          663 
+## 0.1121753547 0.0064961147 0.0148301499 0.0714041056 0.1517313593 0.1012129410 
+##          669          673          676          677          678          679 
+## 0.1172172376 0.0902318745 0.0570483979 0.0087021818 0.0169292204 0.0082013791 
+##          681          682          685          690          694          696 
+## 0.1043864037 0.0132562185 0.1415687961 0.0020295910 0.0522677450 0.0055990544 
+##          701          707          711          712          713          717 
+## 0.1038074802 0.1607305724 0.0063199765 0.0630294579 0.1636463512 0.0478185161 
+##          723          730          735          737          746          750 
+## 0.0396725910 0.0807557133 0.0984241942 0.0577491165 0.0027520735 0.0110653582 
+##          754          758          760          774          775          776 
+## 0.0332633619 0.2387459970 0.3721461951 0.0778298722 0.0005503975 0.0240225917 
+##          780          784          785          796          798          809 
+## 0.0065582332 0.0043340942 0.0109245254 0.0069912585 0.0061453086 0.0419921419 
+##          812          813          817          820          822          829 
+## 0.0528984045 0.0902318745 0.0500217401 0.0697751337 0.0667964304 0.0089788237 
+##          833          837          845          852          854          859 
+## 0.3986043020 0.0088690217 0.0205679013 0.0288711565 0.0089238386 0.0133821093 
+##          860          869          870          879          880          881 
+## 0.0029703845 0.1458023257 0.0025359424 0.0208933443 0.0012106109 0.3882350798 
+##          882          883          884          894          897          902 
+## 0.0697555686 0.0412281244 0.0064345806 0.0775882052 0.2836324752 0.0340711500 
+##          904          906          907          908          915          917 
+## 0.0562619832 0.0557555004 0.0812177300 0.0033092012 0.0448266520 0.0338751293 
+##          919          921          922          938          941          943 
+## 0.1306869690 0.0302965821 0.0892178826 0.0544746806 0.1003932477 0.2101867810 
+##          950          954          958          961          965          972 
+## 0.0536553040 0.1349768701 0.0107308162 0.0144021199 0.0751983524 0.0556063996 
+##          976          978          979          984         1001         1005 
+## 0.1438471094 0.0228681493 0.2711906773 0.1085192286 0.0497137813 0.0149325938 
+##         1007         1010         1012         1014         1028         1030 
+## 0.0693386813 0.0012827118 0.0405282255 0.0377007170 0.0410045283 0.0703643890 
+##         1039         1043         1045         1050         1053         1080 
+## 0.0014904340 0.0147397283 0.0551054739 0.1505024986 0.0897235873 0.0175115127 
+##         1082         1083         1085         1090         1097         1107 
+## 0.0227929240 0.0321744422 0.0021992553 0.0026407889 0.0819354410 0.0011849403 
+##         1109         1110         1124         1125         1129         1130 
+## 0.0482812195 0.0667964304 0.1360362334 0.1401313229 0.0662017666 0.0671844207 
+##         1134         1135         1147         1152         1156         1158 
+## 0.0061627095 0.0569248300 0.0435163100 0.1827818827 0.1465100756 0.0541438026 
+##         1160         1161         1163         1179         1183         1188 
+## 0.0992775269 0.0100807541 0.0051076984 0.0378232393 0.0117986971 0.0901878623 
+##         1190         1192         1196         1208         1211         1218 
+## 0.1162296034 0.0786867378 0.0286826745 0.0023476572 0.1423903397 0.0020570943 
+##         1223         1225         1226         1227         1228         1234 
+## 0.0208933443 0.0123919777 0.0796307927 0.0060496927 0.0127419182 0.0099962145 
+##         1235         1237         1238         1239         1241         1247 
+## 0.0031123084 0.0242357532 0.0628622001 0.0140538772 0.0635975668 0.1641083777 
+##         1249         1257         1262         1271         1281         1291 
+## 0.1201105008 0.0147097750 0.0013535336 0.0115511060 0.0200225095 0.2490475414 
+##         1292         1295         1296         1314         1318         1321 
+## 0.0073240240 0.0098740948 0.0388630801 0.0123573216 0.0884425265 0.0426195478 
+##         1322         1324         1325         1328         1329         1332 
+## 0.0569248300 0.0426318506 0.1198111392 0.0055332512 0.0118380769 0.0495684828 
+##         1333         1340         1341         1345         1346         1349 
+## 0.0967839810 0.0736829822 0.0464120411 0.0621347721 0.3771736328 0.0778089131 
+##         1352         1362         1368         1372         1381         1382 
+## 0.0217240273 0.1431500659 0.0176051306 0.1335338547 0.0077356001 0.1360362334 
+##         1387         1390         1406         1409         1411         1444 
+## 0.2387459970 0.0167793725 0.0300320286 0.0115038984 0.0062149739 0.1261413155 
+##         1445         1449         1456         1464         1466         1467 
+## 0.1653526740 0.0072100665 0.0513529048 0.0098135899 0.0160117872 0.0081597914 
+##         1470         1473         1477         1486         1488         1498 
+## 0.3283944048 0.0034149912 0.0886714061 0.1696808674 0.0379461441 0.0336728628 
+##         1506         1515         1516         1517         1518         1521 
+## 0.0115835276 0.0059387360 0.0170892305 0.0211326850 0.0091460574 0.0835641369 
+##         1523         1528         1529         1533         1539         1544 
+## 0.0160773415 0.0263052107 0.2912608088 0.1258290723 0.0302202650 0.0285250930 
+##         1550         1552         1557         1565         1570         1571 
+## 0.0479967782 0.0172900718 0.0017500921 0.0048277545 0.0076980774 0.0196454928 
+##         1572         1578         1587         1596         1597         1603 
+## 0.1012129410 0.0081597914 0.0381734110 0.0656449091 0.0427357872 0.0077633336 
+##         1605         1609         1617         1620         1622         1625 
+## 0.0337572884 0.0165120329 0.0389691386 0.0196454928 0.0016801394 0.1017514807 
+##         1630         1631         1632         1633         1641         1642 
+## 0.0340788778 0.0257342375 0.0319817028 0.0414742003 0.0133002738 0.5096234016 
+##         1660         1665         1677         1678         1696         1697 
+## 0.0370583858 0.0335630106 0.1112248494 0.0528861711 0.5674736791 0.0479967782 
+##         1698         1708         1709         1710         1718         1721 
+## 0.0145310515 0.0017294616 0.0606728720 0.0995313846 0.0106652176 0.0051845255 
+##         1722         1728         1732         1737         1743         1744 
+## 0.1359732186 0.0301147419 0.0231472185 0.1278918191 0.0743394969 0.0240228125 
+##         1749         1758         1762         1763         1766         1789 
+## 0.1292829617 0.0021130322 0.0013078107 0.1545139410 0.0104355242 0.0129783229 
+##         1793         1798         1799         1800         1815         1816 
+## 0.0828741967 0.0414955242 0.0289507681 0.0137522178 0.1084673599 0.0237153665 
+##         1820         1830         1838         1840         1844         1846 
+## 0.0052786985 0.0150240413 0.4347979807 0.2050805636 0.1081934492 0.0141401518 
+##         1861         1873         1876         1884         1886         1893 
+## 0.0484225031 0.2432880567 0.1159386399 0.1012129410 0.0889442656 0.0366096049 
+##         1894         1896         1898         1902         1910         1912 
+## 0.0513382203 0.0945890780 0.0938630306 0.0349057553 0.0464249687 0.0040995608 
+##         1931         1939         1941         1944         1961         1965 
+## 0.0014048251 0.0090316145 0.2798638987 0.0176184710 0.0052461542 0.1093972009 
+##         1967         1970         1974         1984         1986         1998 
+## 0.1115586147 0.1162296034 0.0153102131 0.0619385661 0.0666198872 0.0183257798 
+##         2001         2013         2020         2024         2025         2029 
+## 0.0917723304 0.0207508685 0.0353184130 0.0093739323 0.0446824968 0.0067184272 
+##         2031         2032         2042         2044         2051         2058 
+## 0.0082376100 0.0545811210 0.0658520316 0.0359483071 0.0835641369 0.0126862478 
+##         2059         2068         2070         2075         2078         2081 
+## 0.1477795307 0.0773472257 0.0892178826 0.0101199235 0.1670732343 0.0123573216 
+##         2083         2094         2095         2098         2099         2113 
+## 0.0981728526 0.0326771090 0.0467005519 0.0051845255 0.2686384709 0.1520275500 
+##         2116         2128         2134         2136         2154         2162 
+## 0.1130791548 0.0760663149 0.0494098675 0.0605114639 0.1020877142 0.0587708445 
+##         2172         2181         2182         2184         2193         2196 
+## 0.0164748860 0.0352037079 0.0747677911 0.0122819034 0.0053320815 0.0477002324 
+##         2198         2200         2205         2207         2224         2226 
+## 0.0038438298 0.0238777002 0.0181037619 0.0240045207 0.0027520735 0.5720387210 
+##         2227         2232         2235         2236         2243         2245 
+## 0.0812177300 0.0814697036 0.0677872706 0.0115512135 0.0190711388 0.0111648606 
+##         2246         2247         2248         2251         2252         2263 
+## 0.0677872706 0.0146202120 0.0011056305 0.0643409453 0.1049681776 0.0907427541 
+##         2268         2272         2291         2294         2295         2298 
+## 0.0063984241 0.1085192286 0.0666198872 0.0218010107 0.0067827206 0.1975523596 
+##         2301         2302         2305         2306         2307         2313 
+## 0.0456308209 0.0747475897 0.0575950096 0.0415048636 0.0647156619 0.0074396302 
+##         2319         2322         2323         2324         2331         2341 
+## 0.1971032201 0.1115287381 0.1349142693 0.0323515124 0.0789315336 0.0541438026 
+##         2344         2353         2358         2369         2370         2374 
+## 0.0521274562 0.0074645708 0.2944190029 0.1159386399 0.0282820090 0.1115586147 
+##         2377         2378         2383         2385         2396         2400 
+## 0.1653850799 0.0570483979 0.0188402641 0.0943923362 0.0872206890 0.0656449091 
+##         2401         2408         2414         2416         2419         2429 
+## 0.0451033071 0.0047550331 0.0435163100 0.2572625622 0.0389691386 0.0425039938 
+##         2430         2433         2437         2440         2443         2444 
+## 0.0662349256 0.0206824606 0.3262851109 0.0082840728 0.0154471468 0.0959963256 
+##         2446         2449         2458         2461         2484         2491 
+## 0.0775673057 0.0805454601 0.1331441959 0.1846436802 0.0796087006 0.0498617505 
+##         2494         2495         2514         2516         2518         2519 
+## 0.0541438026 0.0108635165 0.0116548164 0.0589279009 0.0190709627 0.0372528781 
+##         2526         2535         2537         2540         2542         2543 
+## 0.0828741967 0.0273310415 0.0355305232 0.0949243139 0.0824036021 0.0559332878 
+##         2550         2551         2560         2574         2581         2583 
+## 0.0461509330 0.0010017360 0.0194663230 0.0033341113 0.0041622996 0.1749931079 
+##         2589         2596         2597         2606         2609         2628 
+## 0.0577491165 0.0867277472 0.0615788708 0.0028210688 0.1658185628 0.0042555032 
+##         2642         2643         2644         2645         2651         2660 
+## 0.3859623123 0.0328738970 0.0013580991 0.1309484211 0.0201446761 0.0594613870 
+##         2661         2668         2684         2703         2704         2714 
+## 0.0473948261 0.0191874371 0.1181562540 0.0093738449 0.0104648477 0.1568915438 
+##         2720         2723         2731         2748         2751         2754 
+## 0.3663631516 0.4142623963 0.0015090253 0.0078637382 0.0269487330 0.0089237553 
+##         2755         2759         2764         2767         2769         2783 
+## 0.0010074276 0.1046518072 0.0220555784 0.0484116857 0.0191874371 0.0030283777 
+##         2788         2799         2804         2810         2811         2812 
+## 0.0165670337 0.0059386804 0.0477002324 0.0525760993 0.0405282255 0.2798638987 
+##         2815         2816         2823         2826         2834         2835 
+## 0.0859719892 0.0730681203 0.3663631516 0.0127351740 0.0219335838 0.0528861711 
+##         2839         2850         2855         2868         2871         2874 
+## 0.0061075115 0.0270093422 0.0286254721 0.0384019847 0.0414955242 0.0027315001 
+##         2877         2878         2879         2885         2886         2887 
+## 0.0598095020 0.0308485069 0.0862373281 0.0724377290 0.0877161635 0.0184377886 
+##         2896         2900         2902         2906         2911         2919 
+## 0.0487093381 0.1692063281 0.0069753133 0.0843006803 0.0343778168 0.0599993950 
+##         2924         2928         2931         2935         2942         2945 
+## 0.0843006803 0.0185504691 0.0122067128 0.0666198872 0.0016849183 0.5871630623 
+##         2946         2950         2952         2960         2965         2967 
+## 0.0693732947 0.0519611001 0.0326696883 0.1912754004 0.0153413700 0.0083352269 
+##         2971         2977         2979         2987         2988         2994 
+## 0.0442980622 0.0089788237 0.0282755572 0.5796195780 0.0796307927 0.0081367978 
+##         2995         3004         3010         3017         3019         3022 
+## 0.0046103835 0.0681465338 0.0138827528 0.0157852436 0.0022422480 0.3541415663 
+##         3027         3029         3038         3042         3045         3047 
+## 0.0108518967 0.0099681909 0.0754121613 0.0685760352 0.0536825400 0.0093164634 
+##         3048         3051         3058         3062         3069         3071 
+## 0.0572589989 0.0596502449 0.0065363009 0.0417431267 0.0176676181 0.0070184430 
+##         3078         3086         3088         3094         3098         3104 
+## 0.0273517971 0.0330643223 0.0337572884 0.0119843041 0.0528979327 0.0013085113 
+##         3107         3115         3117         3120         3121         3127 
+## 0.4949487642 0.1932032587 0.0226093993 0.0109977373 0.0164747335 0.0047550331 
+##         3129         3132         3137         3152         3163         3174 
+## 0.0013361397 0.0654056042 0.0116937216 0.0610410749 0.0773472257 0.0231472185 
+##         3175         3176         3184         3189         3191         3192 
+## 0.0082376100 0.0830670143 0.0068878437 0.0227469833 0.3534932465 0.0145715787 
+##         3195         3197         3198         3213         3218         3236 
+## 0.0186121313 0.0052678686 0.0078416454 0.0088394302 0.0356278242 0.1710347927 
+##         3241         3242         3243         3254         3262         3264 
+## 0.0071494273 0.0017059153 0.0281830572 0.0021059342 0.1446796460 0.0959963256 
+##         3267         3270         3271         3281         3287         3288 
+## 0.0249616887 0.0097534522 0.0461745456 0.0068474969 0.0024283466 0.0077356001 
+##         3294         3296         3304         3314         3316         3329 
+## 0.1178611107 0.3478394772 0.0650924090 0.0716079618 0.1112248494 0.0718168001 
+##         3335         3337         3338         3341         3358         3360 
+## 0.2393593722 0.0087068090 0.0020041108 0.0086245161 0.0158735962 0.0081115940 
+##         3367         3371         3374         3375         3381         3384 
+## 0.0359212690 0.1191580522 0.1146721775 0.1378386411 0.0739134602 0.0877161635 
+##         3389         3391         3392         3393         3395         3403 
+## 0.0037702798 0.0165757730 0.0085670459 0.0056715748 0.1641083777 0.0159708608 
+##         3413         3415         3424         3429         3434         3435 
+## 0.0252848736 0.0336474765 0.0498617505 0.0511888870 0.1067306999 0.0259695697 
+##         3436         3438         3448         3455         3460         3461 
+## 0.0159179547 0.1619542198 0.0150319791 0.0208931517 0.2101867810 0.0070618375 
+##         3465         3474         3488         3502         3504         3507 
+## 0.0024822384 0.0005467002 0.0044425745 0.0223198341 0.0291478687 0.1001111220 
+##         3508         3512         3514         3515         3517         3519 
+## 0.0491300874 0.0504532246 0.0205047990 0.0122067128 0.0109245254 0.0374955033 
+##         3523         3526         3529         3531         3534         3536 
+## 0.0436344907 0.4785997130 0.1146721775 0.0149707612 0.0349934779 0.0051380916 
+##         3537         3538         3540         3544         3548         3555 
+## 0.0061075115 0.0253678769 0.0390956156 0.0392022828 0.0440233119 0.0088146207 
+##         3564         3567         3570         3571         3584         3595 
+## 0.0760663149 0.0193539101 0.0689391696 0.0053650555 0.0166219068 0.0079142346 
+##         3606         3617         3619         3620         3625         3627 
+## 0.0828741967 0.0370500082 0.0904649251 0.0030158666 0.0673960503 0.0180535908 
+##         3629         3635         3638         3642         3646         3651 
+## 0.0039017210 0.0018173562 0.0062007881 0.4965005474 0.1360362334 0.3394390083 
+##         3655         3660         3661         3663         3664         3668 
+## 0.0654711958 0.0048602634 0.0289724522 0.0516676591 0.0046389587 0.0414742003 
+##         3669         3670         3671         3672         3678         3682 
+## 0.0105564568 0.0639682500 0.0130580823 0.0056715748 0.0020181363 0.0720217432 
+##         3684         3693         3697         3698         3700         3705 
+## 0.0632288866 0.0047391024 0.0181585910 0.0533680621 0.0886911419 0.1038074802 
+##         3711         3714         3724         3730         3733         3736 
+## 0.1159386399 0.0110201137 0.0664105213 0.0456308209 0.0133821093 0.0181500531 
+##         3742         3743         3746         3748         3752         3757 
+## 0.1740987220 0.0311038570 0.1285857867 0.1296300551 0.0417431267 0.0773472257 
+##         3760         3768         3774         3779         3781         3791 
+## 0.0161756842 0.1155934753 0.0157649459 0.0329566877 0.0765037356 0.0435163100 
+##         3793         3794         3797         3803         3804         3806 
+## 0.0198354057 0.3779660721 0.4211217880 0.0468748516 0.0946350146 0.0109303214 
+##         3810         3815         3818         3822         3835         3836 
+## 0.0230884819 0.0246116843 0.2293361838 0.0076508033 0.0796307927 0.0501566617 
+##         3853         3857         3861         3863         3872         3884 
+## 0.2536187387 0.0218010107 0.0482812195 0.0046521142 0.0191140258 0.1020877142 
+##         3888         3889         3894         3905         3909         3913 
+## 0.2736514511 0.1382398477 0.0061626518 0.0137522178 0.0503175475 0.0144827104 
+##         3918         3919         3926         3939         3940         3945 
+## 0.5049687327 0.0384019847 0.0116223058 0.0265378327 0.0240836461 0.0109834247 
+##         3951         3952         3954         3960         3962         3967 
+## 0.0066995305 0.1658185628 0.0687573803 0.0025530344 0.0619527564 0.1188045909 
+##         3970         3975         3982         3986         3988         4000 
+## 0.0105349137 0.0284531074 0.0536825400 0.0266925687 0.2079564614 0.4302271401 
+##         4001         4002         4005         4008         4010         4019 
+## 0.0500217401 0.0539987653 0.1060894490 0.0198354057 0.0852222024 0.0413709281 
+##         4028         4032         4035         4041         4046         4051 
+## 0.0204432217 0.0169290637 0.3235618745 0.0127351740 0.1275162011 0.0305703501 
+##         4053         4058         4063         4065         4068         4072 
+## 0.0171938137 0.0018682420 0.0045819835 0.0064561739 0.0119687231 0.0292212921 
+##         4074         4077         4085         4089         4097         4100 
+## 0.0012071870 0.1191580522 0.0012106109 0.0126219728 0.0250629518 0.0135294367 
+##         4104         4111         4113         4115         4116         4118 
+## 0.0081096294 0.1140434733 0.0108939280 0.0037682308 0.0507514473 0.0492768505 
+##         4119         4123         4125         4148         4150         4158 
+## 0.0082608090 0.0363724954 0.0562619832 0.0013248364 0.0167236787 0.0907427541 
+##         4160         4164         4170         4174         4181         4186 
+## 0.4424403714 0.0160771925 0.0862373281 0.0536825400 0.0039891131 0.0607034417 
+##         4191         4195         4203         4207         4223         4230 
+## 0.1204673162 0.0970791453 0.0489868456 0.0488549089 0.0038408425 0.1244697822 
+##         4239         4245         4251         4252         4260         4265 
+## 0.1574091993 0.0107169471 0.0472805422 0.0970791453 0.0197105399 0.0174048702 
+##         4268         4270         4273         4274         4277         4284 
+## 0.0145309167 0.0823630627 0.0103717118 0.0106869247 0.0090900575 0.0327671597 
+##         4291         4303         4308         4313         4325         4327 
+## 0.0899115642 0.1549549608 0.0099349689 0.0797601086 0.0184990834 0.3498937272 
+##         4331         4332         4336         4344         4346         4349 
+## 0.0135397313 0.0364991207 0.0021266800 0.0572589989 0.0109552078 0.0359584300 
+##         4352         4362         4366         4376         4379         4392 
+## 0.0395646968 0.0142084937 0.0637666480 0.1416339790 0.0401573545 0.0478429391 
+##         4394         4399         4403         4409         4410         4412 
+## 0.0115450922 0.1181562540 0.4462057882 0.0039481616 0.0432586645 0.0107969144 
+##         4415         4420         4423         4430         4432         4435 
+## 0.0475609509 0.0100602657 0.2983023875 0.0098464101 0.0038201337 0.1265134707 
+##         4437         4439         4446         4447         4455         4460 
+## 0.1508654020 0.0028739447 0.0226093993 0.0069753133 0.0475609509 0.4655173565 
+##         4462         4469         4473         4480         4484         4486 
+## 0.0219335838 0.0022902136 0.0308555271 0.0492768505 0.2823728809 0.1046518072 
+##         4488         4498 
+## 0.0760663149 0.0775882052</code></pre>
+<pre class="r"><code>vif(best)</code></pre>
+<pre><code>##  contact duration     loan campaign 
+## 1.002714 1.011402 1.009681 1.000656</code></pre>
 <p>The above model is significant</p>
 <p>The contact, duration, loan and campaign are the best predictors</p>
 <p>I have done this manual logistic regression after the machine learning automated logsitic regression.</p>
 <p>As per the above manual and tidymodels logistic regresssion, it was evident from the confusion matric that majority of the customers are predicted that they will not subscribe to term deposit</p>
+</div>
+<div id="bootstrap-method" class="section level1">
+<h1>Bootstrap method</h1>
+<pre class="r"><code>bank_coef_intercept &lt;- NULL
+bank_coef_x1 &lt;- NULL
+
+for (i in 1:15000){
+ bootstrap_bank = bank[sample(1:nrow(bank), nrow(bank), replace = TRUE),] 
+ model_bootstrap &lt;- glm(y~ contact+duration+loan+campaign, data = bootstrap_bank, family =&quot;binomial&quot;)
+ bank_coef_intercept &lt;-
+   c(bank_coef_intercept, model_bootstrap$coefficients[1])
+ bank_coef_x1 &lt;-
+   c(bank_coef_x1, model_bootstrap$coefficient[2])
+ 
+ model_bootstrap
+ bank_coef_intercept
+ bank_coef_x1
+}</code></pre>
+<pre><code>## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</code></pre>
+<pre class="r"><code>print(model_bootstrap)</code></pre>
+<pre><code>## 
+## Call:  glm(formula = y ~ contact + duration + loan + campaign, family = &quot;binomial&quot;, 
+##     data = bootstrap_bank)
+## 
+## Coefficients:
+##                 (Intercept)  contacttelephone and others  
+##                   -3.584462                    -1.699906  
+##                    duration                        loan1  
+##                    0.007054                    -0.564929  
+##                    campaign  
+##                   -0.170843  
+## 
+## Degrees of Freedom: 943 Total (i.e. Null);  939 Residual
+## Null Deviance:       462.8 
+## Residual Deviance: 378.2     AIC: 388.2</code></pre>
+<pre class="r"><code>library(boot)  
+logit_test &lt;- function(bank,indices) {  
+bank &lt;- bank[indices,]  
+fit &lt;- glm(y~ contact+duration+loan+campaign, data = bank, family = &quot;binomial&quot;)  
+return(coef(fit))  
+}
+boot_fit &lt;- boot(  
+   data = bank, 
+   statistic = logit_test, 
+   R = 1e5
+) </code></pre>
+<pre><code>## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</code></pre>
+<pre class="r"><code>print(boot_fit)</code></pre>
+<pre><code>## 
+## ORDINARY NONPARAMETRIC BOOTSTRAP
+## 
+## 
+## Call:
+## boot(data = bank, statistic = logit_test, R = 1e+05)
+## 
+## 
+## Bootstrap Statistics :
+##         original        bias     std. error
+## t1* -2.959232236 -4.811544e-03 0.3732130502
+## t2* -1.821961548 -2.017324e-01 1.3756819997
+## t3*  0.006207592  5.107207e-05 0.0009704738
+## t4* -1.654347153 -8.441109e-01 3.3701343001
+## t5* -0.332374295 -1.588456e-02 0.1437944018</code></pre>
 <div id="observations-and-comments" class="section level2">
 <h2>Observations and comments</h2>
 <ol style="list-style-type: decimal">
