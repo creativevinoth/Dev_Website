@@ -6,7 +6,36 @@
     <description>Recent content on My website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 31 Oct 2021 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 10 Nov 2021 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Bank TD</title>
+      <link>/bank-td/</link>
+      <pubDate>Wed, 10 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/bank-td/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Bank updated</title>
+      <link>/2021/11/10/bank-updated/</link>
+      <pubDate>Wed, 10 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/2021/11/10/bank-updated/</guid>
+      <description>The report of logistic regression on bank data set to answer if customer will subscribe term deposit or not
+Table of contentsExecutive summary
+Issues and Challanges
+Univariate analysis on metric and nonmetric data
+Bivariate analysis
+Logistic regression using tidymodels
+Workflow and model creation with cross validation
+Manual logistic regression
+Bootstrap method
+Observation and comments
+References
+Executive sumamryThe portuguese banking institution has a product term deposit. The data was collected in a direct marketing campaign based on phone calls.</description>
+    </item>
+    
     <item>
       <title>Diamonds</title>
       <link>/2021/10/31/diamonds/</link>

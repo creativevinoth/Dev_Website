@@ -1,0 +1,2617 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.88.1" />
+
+
+<title>Bank updated - My website</title>
+<meta property="og:title" content="Bank updated - My website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/creativevinoth">GitHub</a></li>
+    
+    <li><a href="https://twitter.com/rstudio">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">69 min read</span>
+    
+
+    <h1 class="article-title">Bank updated</h1>
+
+    
+    <span class="article-date">2021-11-10</span>
+    
+
+    <div class="article-content">
+      
+<script src="/2021/11/10/bank-updated/index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>The report of logistic regression on bank data set to answer if customer will subscribe term deposit or not</p>
+<div id="table-of-contents" class="section level2">
+<h2>Table of contents</h2>
+<p>Executive summary</p>
+<p>Issues and Challanges</p>
+<p>Univariate analysis on metric and nonmetric data</p>
+<p>Bivariate analysis</p>
+<p>Logistic regression using tidymodels</p>
+<p>Workflow and model creation with cross validation</p>
+<p>Manual logistic regression</p>
+<p>Bootstrap method</p>
+<p>Observation and comments</p>
+<p>References</p>
+</div>
+<div id="executive-sumamry" class="section level2">
+<h2>Executive sumamry</h2>
+<p>The portuguese banking institution has a product term deposit. The data was collected in a direct marketing campaign based on phone calls. They would like to know if the customers would subscribe to the term deposit or not. The age, balance, day, duration, campaign, pdays and previous are numerical data. The job, marital, education, contact, poutcome are nominal categorical values.I consider the following variables as binary categorical values such as default, housing, loan, y and assigned o and 1. Y is the outcome and response variable. I consider month as a ordinal categorical value and i assign sequential numbers from 1 to 12 respective to a month.</p>
+<p>Initially, univariate analysis was performed to remove the outliers. Boxplot was graphed to find out the outliers. Bivariate analysis was performed to find out if there is any correlation between dependant and independant variable and find out the equation is significant or not. Using tidymodels, feature engineering was used to preprocess data and then used logistic regressing to fit the model and cross validation was done and used confusion matrix to validate the results. Then I used workflow model to automate and use the model for new data set. I have also done manual logistic regression model.</p>
+<p>It was clear that customers will not subscribe for the term deposit. The bank has to take some steps whereby stimulate the customers such as increasing rate of interest or offering some better additional offers like providing a health insurance free for term deposit of some amount.</p>
+</div>
+<div id="issues-and-challanges" class="section level1">
+<h1>Issues and challanges</h1>
+<p>The greatest challange for the bank is to find out which all variables to be considered to arrive at an outcome that if customers will subscribe to term deposit or not. There are some categorical variables, for twhich dummy values to be assigned. There are some binary categorical values and binary to be assigned and there is some ordianal categorical values, those can be considered as a numerical values by assigning a sequential values to it. After identifying the factors which influence most for sunscribing to the term deposit, marketing efforts should be directed towards the same to rope in more term deposit.</p>
+</div>
+<div id="structure-of-the-data-set" class="section level1">
+<h1>Structure of the data set</h1>
+<pre class="r"><code>str(bank)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    4521 obs. of  17 variables:
+##  $ age      : int  30 33 35 30 59 35 36 39 41 43 ...
+##  $ job      : chr  &quot;unemployed&quot; &quot;services&quot; &quot;management&quot; &quot;management&quot; ...
+##  $ marital  : chr  &quot;married&quot; &quot;married&quot; &quot;single&quot; &quot;married&quot; ...
+##  $ education: chr  &quot;primary&quot; &quot;secondary&quot; &quot;tertiary&quot; &quot;tertiary&quot; ...
+##  $ default  : chr  &quot;no&quot; &quot;no&quot; &quot;no&quot; &quot;no&quot; ...
+##  $ balance  : int  1787 4789 1350 1476 0 747 307 147 221 -88 ...
+##  $ housing  : chr  &quot;no&quot; &quot;yes&quot; &quot;yes&quot; &quot;yes&quot; ...
+##  $ loan     : chr  &quot;no&quot; &quot;yes&quot; &quot;no&quot; &quot;yes&quot; ...
+##  $ contact  : chr  &quot;cellular&quot; &quot;cellular&quot; &quot;cellular&quot; &quot;unknown&quot; ...
+##  $ day      : int  19 11 16 3 5 23 14 6 14 17 ...
+##  $ month    : chr  &quot;oct&quot; &quot;may&quot; &quot;apr&quot; &quot;jun&quot; ...
+##  $ duration : int  79 220 185 199 226 141 341 151 57 313 ...
+##  $ campaign : int  1 1 1 4 1 2 1 2 2 1 ...
+##  $ pdays    : int  -1 339 330 -1 -1 176 330 -1 -1 147 ...
+##  $ previous : int  0 4 1 0 0 3 2 0 0 2 ...
+##  $ poutcome : chr  &quot;unknown&quot; &quot;failure&quot; &quot;failure&quot; &quot;unknown&quot; ...
+##  $ y        : chr  &quot;no&quot; &quot;no&quot; &quot;no&quot; &quot;no&quot; ...</code></pre>
+</div>
+<div id="descriptive-statistics-of-numerical-independent-values" class="section level1">
+<h1>Descriptive statistics of numerical independent values</h1>
+<pre class="r"><code>descr(bank)</code></pre>
+<pre><code>## Non-numerical variable(s) ignored: job, marital, education, default, housing, loan, contact, month, poutcome, y</code></pre>
+<pre><code>## Descriptive Statistics  
+## bank  
+## N: 4521  
+## 
+##                         age    balance   campaign       day   duration     pdays   previous
+## ----------------- --------- ---------- ---------- --------- ---------- --------- ----------
+##              Mean     41.17    1422.66       2.79     15.92     263.96     39.77       0.54
+##           Std.Dev     10.58    3009.64       3.11      8.25     259.86    100.12       1.69
+##               Min     19.00   -3313.00       1.00      1.00       4.00     -1.00       0.00
+##                Q1     33.00      69.00       1.00      9.00     104.00     -1.00       0.00
+##            Median     39.00     444.00       2.00     16.00     185.00     -1.00       0.00
+##                Q3     49.00    1480.00       3.00     21.00     329.00     -1.00       0.00
+##               Max     87.00   71188.00      50.00     31.00    3025.00    871.00      25.00
+##               MAD     10.38     658.27       1.48     10.38     143.81      0.00       0.00
+##               IQR     16.00    1411.00       2.00     12.00     225.00      0.00       0.00
+##                CV      0.26       2.12       1.11      0.52       0.98      2.52       3.12
+##          Skewness      0.70       6.59       4.74      0.09       2.77      2.72       5.87
+##       SE.Skewness      0.04       0.04       0.04      0.04       0.04      0.04       0.04
+##          Kurtosis      0.35      88.25      37.11     -1.04      12.51      7.94      51.91
+##           N.Valid   4521.00    4521.00    4521.00   4521.00    4521.00   4521.00    4521.00
+##         Pct.Valid    100.00     100.00     100.00    100.00     100.00    100.00     100.00</code></pre>
+</div>
+<div id="summary-of-dataset" class="section level1">
+<h1>Summary of dataset</h1>
+<pre class="r"><code>summary(bank)</code></pre>
+<pre><code>##       age            job              marital           education        
+##  Min.   :19.00   Length:4521        Length:4521        Length:4521       
+##  1st Qu.:33.00   Class :character   Class :character   Class :character  
+##  Median :39.00   Mode  :character   Mode  :character   Mode  :character  
+##  Mean   :41.17                                                           
+##  3rd Qu.:49.00                                                           
+##  Max.   :87.00                                                           
+##    default             balance        housing              loan          
+##  Length:4521        Min.   :-3313   Length:4521        Length:4521       
+##  Class :character   1st Qu.:   69   Class :character   Class :character  
+##  Mode  :character   Median :  444   Mode  :character   Mode  :character  
+##                     Mean   : 1423                                        
+##                     3rd Qu.: 1480                                        
+##                     Max.   :71188                                        
+##    contact               day           month              duration   
+##  Length:4521        Min.   : 1.00   Length:4521        Min.   :   4  
+##  Class :character   1st Qu.: 9.00   Class :character   1st Qu.: 104  
+##  Mode  :character   Median :16.00   Mode  :character   Median : 185  
+##                     Mean   :15.92                      Mean   : 264  
+##                     3rd Qu.:21.00                      3rd Qu.: 329  
+##                     Max.   :31.00                      Max.   :3025  
+##     campaign          pdays           previous         poutcome        
+##  Min.   : 1.000   Min.   : -1.00   Min.   : 0.0000   Length:4521       
+##  1st Qu.: 1.000   1st Qu.: -1.00   1st Qu.: 0.0000   Class :character  
+##  Median : 2.000   Median : -1.00   Median : 0.0000   Mode  :character  
+##  Mean   : 2.794   Mean   : 39.77   Mean   : 0.5426                     
+##  3rd Qu.: 3.000   3rd Qu.: -1.00   3rd Qu.: 0.0000                     
+##  Max.   :50.000   Max.   :871.00   Max.   :25.0000                     
+##       y            
+##  Length:4521       
+##  Class :character  
+##  Mode  :character  
+##                    
+##                    
+## </code></pre>
+</div>
+<div id="data-table-of-data-set" class="section level1">
+<h1>Data table of data set</h1>
+<pre class="r"><code>data.table(bank)</code></pre>
+<pre><code>##       age           job marital education default balance housing loan  contact
+##    1:  30    unemployed married   primary      no    1787      no   no cellular
+##    2:  33      services married secondary      no    4789     yes  yes cellular
+##    3:  35    management  single  tertiary      no    1350     yes   no cellular
+##    4:  30    management married  tertiary      no    1476     yes  yes  unknown
+##    5:  59   blue-collar married secondary      no       0     yes   no  unknown
+##   ---                                                                          
+## 4517:  33      services married secondary      no    -333     yes   no cellular
+## 4518:  57 self-employed married  tertiary     yes   -3313     yes  yes  unknown
+## 4519:  57    technician married secondary      no     295      no   no cellular
+## 4520:  28   blue-collar married secondary      no    1137      no   no cellular
+## 4521:  44  entrepreneur  single  tertiary      no    1136     yes  yes cellular
+##       day month duration campaign pdays previous poutcome  y
+##    1:  19   oct       79        1    -1        0  unknown no
+##    2:  11   may      220        1   339        4  failure no
+##    3:  16   apr      185        1   330        1  failure no
+##    4:   3   jun      199        4    -1        0  unknown no
+##    5:   5   may      226        1    -1        0  unknown no
+##   ---                                                       
+## 4517:  30   jul      329        5    -1        0  unknown no
+## 4518:   9   may      153        1    -1        0  unknown no
+## 4519:  19   aug      151       11    -1        0  unknown no
+## 4520:   6   feb      129        4   211        3    other no
+## 4521:   3   apr      345        2   249        7    other no</code></pre>
+<div id="univariate-analysis-on-numerical-data" class="section level2">
+<h2>Univariate analysis on numerical data</h2>
+</div>
+</div>
+<div id="univariate-analysis-on-age" class="section level1">
+<h1>Univariate analysis on age</h1>
+<pre class="r"><code>descr(bank$age)</code></pre>
+<pre><code>## Descriptive Statistics  
+## bank$age  
+## N: 4521  
+## 
+##                         age
+## ----------------- ---------
+##              Mean     41.17
+##           Std.Dev     10.58
+##               Min     19.00
+##                Q1     33.00
+##            Median     39.00
+##                Q3     49.00
+##               Max     87.00
+##               MAD     10.38
+##               IQR     16.00
+##                CV      0.26
+##          Skewness      0.70
+##       SE.Skewness      0.04
+##          Kurtosis      0.35
+##           N.Valid   4521.00
+##         Pct.Valid    100.00</code></pre>
+<p>The minimum age of the customer is 19 and maximum age is 87. There is a standard deviation of 10.58, which is high in numbers. Let me dwar a box plot to find out the outliers so that data can be streamlined and standard deviation can be reduced</p>
+</div>
+<div id="box-plot-of-age-and-its-outliers" class="section level1">
+<h1>Box plot of age and its outliers</h1>
+<pre class="r"><code>age_outliers&lt;-boxplot.stats(bank$age)$out
+boxplot(bank$age, main = &quot;Box plot of age&quot;, boxwex = 0.6)
+mtext(paste(&quot;Outliers: &quot;, paste(age_outliers, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<pre class="r"><code>age_outliers</code></pre>
+<pre><code>##  [1] 78 77 78 75 75 77 81 83 80 77 75 80 83 75 79 77 86 78 77 74 80 74 80 80 75
+## [26] 76 79 77 87 79 76 80 79 74 75 84 83 83</code></pre>
+<p>We can see the outliers of the age lie between 74 and 87.</p>
+</div>
+<div id="minimum-value-of-age-outliers" class="section level1">
+<h1>Minimum value of age outliers</h1>
+<pre class="r"><code>min(age_outliers)</code></pre>
+<pre><code>## [1] 74</code></pre>
+</div>
+<div id="maximum-value-of-age-outliers" class="section level1">
+<h1>Maximum value of age outliers</h1>
+<pre class="r"><code>max(age_outliers)</code></pre>
+<pre><code>## [1] 87</code></pre>
+<p>I used subset function to add the age less than 74 so that outliers can be removed</p>
+<pre class="r"><code>bank&lt;- subset(bank, age &lt; 74)</code></pre>
+</div>
+<div id="boxplot-of-age-after-removal-of-outliers" class="section level1">
+<h1>Boxplot of age after removal of outliers</h1>
+<pre class="r"><code>age_withoutoutliers&lt;-boxplot.stats(bank$age)$out
+boxplot(bank$age, main = &quot;Box plot of age after reomval of outliers&quot;, boxwex = 0.6)
+mtext(paste(&quot;Outliers: &quot;, paste(age_withoutoutliers, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<pre class="r"><code>age_withoutoutliers</code></pre>
+<pre><code>##  [1] 71 72 73 71 73 73 72 73 71 73 72 71 71 72 71 73</code></pre>
+</div>
+<div id="univariate-analysis-on-balance" class="section level1">
+<h1>Univariate analysis on balance</h1>
+<pre class="r"><code>descr(bank$balance)</code></pre>
+<pre><code>## Descriptive Statistics  
+## bank$balance  
+## N: 4483  
+## 
+##                      balance
+## ----------------- ----------
+##              Mean    1409.82
+##           Std.Dev    2987.98
+##               Min   -3313.00
+##                Q1      67.00
+##            Median     440.00
+##                Q3    1469.00
+##               Max   71188.00
+##               MAD     652.34
+##               IQR    1401.00
+##                CV       2.12
+##          Skewness       6.66
+##       SE.Skewness       0.04
+##          Kurtosis      90.71
+##           N.Valid    4483.00
+##         Pct.Valid     100.00</code></pre>
+<p>The minimum balance of the customer is -3313, which is a negative balance because of non maintenance charges or some other charges. The maximum balance is 71188. The standard deviation is 2987 and median is 440.</p>
+</div>
+<div id="box-plot-of-balance-and-its-outliers" class="section level1">
+<h1>Box plot of balance and its outliers</h1>
+<pre class="r"><code>balance_outliers&lt;-boxplot.stats(bank$balance)$out
+boxplot(bank$balance, main = &quot;Box plot of balance&quot;, boxwex = 0.6)
+mtext(paste(&quot;Outliers: &quot;, paste(balance_outliers, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<pre class="r"><code>balance_outliers</code></pre>
+<pre><code>##   [1]  4789  9374  4073  5883  4189  3935 11971  4629  5887 16873  6248  3616
+##  [13] 14093  5426  5996  3777  4111  6313  8104  4590  9009  5181  6979  9216
+##  [25]  5563  9149 11494  4030  3571  3576  7082  4012  3762  7190  5803 12186
+##  [37] 11219  5776  4108  4994  3681  4531  4286  8545  6699 10924  3950  4099
+##  [49]  5450  8436 11262  7290  3705  9676  6613  6101  7685  4515  4380  3825
+##  [61]  4303  4508  5462 10378  8969  4608  7317  4943 12607  3872  5207  5799
+##  [73]  3696 12437 11269 11555  3611 12519  7050  3704  6619  9449  8023  6269
+##  [85] 23663  4063 11084  3706  4153  7708  6000  8894 14752 15311 10786  4020
+##  [97]  3924  4348 13669  7066  4798  4366  4900  8167  3671 26965 15030 11303
+## [109] 19358  9269  5291 10287  5235  4040 16353  7353  3913  6102  3575  8312
+## [121]  5920  3723  6411  3873  5436  3913 10758  8494  5346 25824  9720  3904
+## [133]  8262  7108  5278  7289  3897  5110  4820  4937  5403  4089  4567  3875
+## [145]  5957  5514  4579  5106  4415  5173  6016  3694 10177 15459  4902  4229
+## [157]  5050  4667  7744  5037  5845  5673  5801  9121  4170  4424  9019  4012
+## [169]  7343 13494  4665  3748  3696  4103  7546  8647 27733  6421  5060  3945
+## [181]  3638  3992  4760  6145  3990  7727  7702  5639  3672  6217 14533  4684
+## [193]  8004  8139  4968  4761  5958  3732  4415  3672  4565  7124 17555  5172
+## [205] 15520 13711 15834  6290  4075  4958 21244  4374  7179  8295  4143 10788
+## [217]  4143  4157 27359 18347  7813  7195  3921  4785  4657  4365  4404  6046
+## [229]  6217  7138  4758  4787  7876  7010  5137 13044  3859  4198  4760  4335
+## [241]  9339  6922  4265  4659  4897  3726  3727  4089  8883 26306  3823  4343
+## [253]  6766  3973  7696  4500  3782  5780 16430  5195 13342  6570  8238  6402
+## [265] 16992  6072 -2082  5498  5063  7041  3927 11386  4232  5564  3636  4007
+## [277]  5355  9976  4425  3573  8106  7513  5116  4148  7378  4541  4287  4895
+## [289]  5543  5191 22370  5366  4906  3672  4945  3733 11417  4213  9756  9851
+## [301]  5095  8309  8627  6095 22856  5314  5731  6307  7864  5715  3665  3931
+## [313]  6728  9305  8627  9228 12223  7007  4446 13658 10218  7635 12531 14220
+## [325] 12569  3587  4855 42045  3940  3735 26394 16957  4809  8044  4610  4030
+## [337]  4646  3948  8515  9146  6164  4745 11797  4015  5086  4824  6968  6904
+## [349] 13229  5739  5310 22171  3797  4438  5045 21664  5878 16264  9207  4256
+## [361]  3953 13204 22546  8131 10787  6839  4664  4908  8669  9324  7735  5320
+## [373]  4885  5462  6767  8876  6164  5039  5092  4280  5706  7780 16874  6483
+## [385]  4209 14363  3620  6495  5774 19317  3726  6610  6704  4543  3576  4994
+## [397] 16178 13893  4194  5969  5533  4022  4094  4539  5244 71188  5108  6649
+## [409]  4384  4130  3975  7495 22196  5731  7020  3658  5549 27069  8038  3663
+## [421]  5122  4503  4848 13683  4402  4722  3706  3809 14440  7944  5306  3676
+## [433]  8902  7337  5092 10655  6836  5527 17361 21515  5902  3800  9328  3601
+## [445] 14412  4441  3972  9374  6900  4086  4831  3940  4382  3939  8023  6844
+## [457] 10907  6637  3792 14058  5057  4717  4039  8218  6563  5980  5597  8652
+## [469]  6850  3608  8366 20453 19447 10888 13156  4210 16063  5431  4787  3854
+## [481]  3653  4795 10910  7929  4945  7845  3935  4888  4460 13117 12877  6880
+## [493]  5304  3953  6969  4554  4790  6945  4196 -3313</code></pre>
+<p>We can see more outliers in balance. The outliers ranges between -3313 and 0 and between 267 and 71188</p>
+</div>
+<div id="minimum-negative-value-of-balance-outlier" class="section level1">
+<h1>Minimum negative value of balance outlier</h1>
+<pre class="r"><code>min(balance_outliers)</code></pre>
+<pre><code>## [1] -3313</code></pre>
+</div>
+<div id="minimum-positive-value-of-balance-outlier" class="section level1">
+<h1>Minimum positive value of balance outlier</h1>
+<pre class="r"><code>which.min(balance_outliers&gt;0)</code></pre>
+<pre><code>## [1] 267</code></pre>
+</div>
+<div id="maximum-value-of-balance-outlier" class="section level1">
+<h1>Maximum value of balance outlier</h1>
+<pre class="r"><code>max(balance_outliers)</code></pre>
+<pre><code>## [1] 71188</code></pre>
+<p>The outliers are removed by choosing the value between 0 and 273</p>
+<pre class="r"><code>bank&lt;- subset(bank, balance &gt; 0 &amp; balance &lt; 273)</code></pre>
+</div>
+<div id="boxplot-of-balance-after-removal-of-outliers" class="section level1">
+<h1>Boxplot of balance after removal of outliers</h1>
+<pre class="r"><code>balance_withoutoutliers&lt;-boxplot.stats(bank$balance)$out
+boxplot(bank$balance, main = &quot;Box plot of balance after removal of outliers&quot;, boxwex = 0.6)
+mtext(paste(&quot;Outliers: &quot;, paste(balance_withoutoutliers, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<pre class="r"><code>balance_withoutoutliers</code></pre>
+<pre><code>## integer(0)</code></pre>
+</div>
+<div id="unvariate-analysis-on-day" class="section level1">
+<h1>Unvariate analysis on day</h1>
+<pre class="r"><code>descr(bank$day)</code></pre>
+<pre><code>## Descriptive Statistics  
+## bank$day  
+## N: 1103  
+## 
+##                         day
+## ----------------- ---------
+##              Mean     15.69
+##           Std.Dev      8.41
+##               Min      1.00
+##                Q1      8.00
+##            Median     16.00
+##                Q3     22.00
+##               Max     31.00
+##               MAD     10.38
+##               IQR     14.00
+##                CV      0.54
+##          Skewness      0.15
+##       SE.Skewness      0.07
+##          Kurtosis     -1.12
+##           N.Valid   1103.00
+##         Pct.Valid    100.00</code></pre>
+<p>The minimum contact day is 1 and maximum is 31. There is a standard deviation of 8.41</p>
+</div>
+<div id="boxplot-of-day-after-removal-of-outliers" class="section level1">
+<h1>Boxplot of day after removal of outliers</h1>
+<pre class="r"><code>day_outliers&lt;-boxplot.stats(bank$day)$out
+boxplot(bank$day, main = &quot;Box plot of day&quot;, boxwex = 0.6)
+mtext(paste(&quot;Outliers: &quot;, paste(day_outliers, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<pre class="r"><code>day_outliers</code></pre>
+<pre><code>## integer(0)</code></pre>
+<p>There are no outliers in day</p>
+</div>
+<div id="univariate-analysis-on-duration" class="section level1">
+<h1>Univariate analysis on duration</h1>
+<pre class="r"><code>descr(bank$duration)</code></pre>
+<pre><code>## Descriptive Statistics  
+## bank$duration  
+## N: 1103  
+## 
+##                     duration
+## ----------------- ----------
+##              Mean     238.88
+##           Std.Dev     234.81
+##               Min       5.00
+##                Q1      96.00
+##            Median     171.00
+##                Q3     297.00
+##               Max    2456.00
+##               MAD     131.95
+##               IQR     199.00
+##                CV       0.98
+##          Skewness       2.94
+##       SE.Skewness       0.07
+##          Kurtosis      14.12
+##           N.Valid    1103.00
+##         Pct.Valid     100.00</code></pre>
+<p>The minimum contact duration was 5 seconds and maximum duration was 2456 seconds. There is a standard deviation of 234.81 seconds</p>
+</div>
+<div id="box-plot-of-duration-and-its-outliers" class="section level1">
+<h1>Box plot of duration and its outliers</h1>
+<pre class="r"><code>duration_outliers&lt;-boxplot.stats(bank$duration)$out
+boxplot(bank$duration, main = &quot;Box plot of duration&quot;, boxwex = 0.6)
+mtext(paste(&quot;Outliers: &quot;, paste(duration_outliers, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<pre class="r"><code>duration_outliers</code></pre>
+<pre><code>##  [1] 1740  676  644  783  799 1017  597 1735  792  668 1031  614  676  717 1028
+## [16]  650  684  686  653  611  796 1126  635  753 1275  808  923  762  657 1309
+## [31]  908 1386  955 1164  606  635 1689  732  956  836  632  701  699  672  652
+## [46]  612  924 1467  990  646  998  747  650  622  836 1124  978  720 1117 1223
+## [61] 1101  744  631  650  634  764  731  821  742 2456  723  688  857  921  627
+## [76]  984  866  697 1151  873  599</code></pre>
+<p>There are some outliers in duration, ranging between 597 and 2456 seconds</p>
+</div>
+<div id="minimum-value-of-duration-outlier" class="section level1">
+<h1>Minimum value of duration outlier</h1>
+<pre class="r"><code>min(duration_outliers)</code></pre>
+<pre><code>## [1] 597</code></pre>
+</div>
+<div id="maximum-value-of-duration-outlier" class="section level1">
+<h1>Maximum value of duration outlier</h1>
+<pre class="r"><code>max(duration_outliers)</code></pre>
+<pre><code>## [1] 2456</code></pre>
+<p>The outliers are removed greater then 597 using subset</p>
+<pre class="r"><code>bank&lt;- subset(bank, duration &lt; 597)</code></pre>
+</div>
+<div id="boxplot-of-duration-after-removal-of-outliers" class="section level1">
+<h1>Boxplot of duration after removal of outliers</h1>
+<pre class="r"><code>duration_withoutoutliers&lt;-boxplot.stats(bank$duration)$out
+boxplot(bank$duration, main = &quot;Box plot of duration after outliers are removed&quot;, boxwex = 0.6)
+mtext(paste(&quot;Outliers: &quot;, paste(duration_withoutoutliers, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
+<pre class="r"><code>duration_withoutoutliers</code></pre>
+<pre><code>##  [1] 564 588 543 587 523 568 524 503 580 590 543 574 550 577 543 546 563 505 509
+## [20] 501 528 587 582 527 544 570 528 501 517 587 529 549 508</code></pre>
+</div>
+<div id="univariate-analysis-on-campaign" class="section level1">
+<h1>UNivariate analysis on campaign</h1>
+<pre class="r"><code>descr(bank$campaign)</code></pre>
+<pre><code>## Descriptive Statistics  
+## bank$campaign  
+## N: 1022  
+## 
+##                     campaign
+## ----------------- ----------
+##              Mean       2.79
+##           Std.Dev       2.88
+##               Min       1.00
+##                Q1       1.00
+##            Median       2.00
+##                Q3       3.00
+##               Max      31.00
+##               MAD       1.48
+##               IQR       2.00
+##                CV       1.03
+##          Skewness       3.63
+##       SE.Skewness       0.08
+##          Kurtosis      19.62
+##           N.Valid    1022.00
+##         Pct.Valid     100.00</code></pre>
+</div>
+<div id="box-plot-of-campaign" class="section level1">
+<h1>Box plot of Campaign</h1>
+<pre class="r"><code>campaign_outliers&lt;-boxplot.stats(bank$campaign)$out
+boxplot(bank$campaign, main = &quot;Box plot of campaign&quot;, boxwex = 0.6)
+mtext(paste(&quot;Outliers: &quot;, paste(campaign_outliers, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
+<pre class="r"><code>campaign_outliers</code></pre>
+<pre><code>##  [1] 12  7  7 10  9  7  8 10  8 22 11  9 12  7 11 11 11 11 13 11  8 12  7  8 11
+## [26]  7  8  7 17 19  7 24  8  9  9  7  8 17 20  9  9 12 10  9  9  8 11 11  7 13
+## [51]  7 11 18 15  8 10 11  9  8 31  8 19 17  7  7 12  7  8  7  7  8  7  9 12 10
+## [76]  7 15  9</code></pre>
+<p>There are many outliers in campaign ranging between 7 and 31</p>
+</div>
+<div id="minimum-of-campaign-outliers" class="section level1">
+<h1>Minimum of campaign outliers</h1>
+<pre class="r"><code>min(campaign_outliers)</code></pre>
+<pre><code>## [1] 7</code></pre>
+</div>
+<div id="maximum-of-campaign-outliers" class="section level1">
+<h1>Maximum of campaign outliers</h1>
+<pre class="r"><code>max(campaign_outliers)</code></pre>
+<pre><code>## [1] 31</code></pre>
+<p>The outliers are removed and data are taken less than 7</p>
+<pre class="r"><code>bank&lt;- subset(bank, campaign &lt; 7)</code></pre>
+</div>
+<div id="box-plot-of-campaign-after-removal-of-outliers" class="section level1">
+<h1>Box plot of campaign after removal of outliers</h1>
+<pre class="r"><code>campaign_withoutoutliers&lt;-boxplot.stats(bank$campaign)$out
+boxplot(bank$campaign, main = &quot;Box plot of campaign after removal of outliers&quot;, boxwex = 0.6)
+mtext(paste(&quot;Outliers: &quot;, paste(campaign_withoutoutliers, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
+<pre class="r"><code>campaign_withoutoutliers</code></pre>
+<pre><code>## integer(0)</code></pre>
+</div>
+<div id="box-plot-of-pdays" class="section level1">
+<h1>Box plot of pdays</h1>
+<pre class="r"><code>pdays_outliers&lt;-boxplot.stats(bank$pdays)$out
+boxplot(bank$pdays, main = &quot;Box plot of pdays&quot;, boxwex = 0.6)
+mtext(paste(&quot;Outliers: &quot;, paste(pdays_outliers, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-34-1.png" width="672" /></p>
+<pre class="r"><code>pdays_outliers</code></pre>
+<pre><code>##   [1] 152   5 170 297 196 137 207 288 436 347 271 347 351   1 347  96 358 337
+##  [19] 102 212  63 247 175 382 147 199  91 342 135 278 140 268 337 271 241  85
+##  [37] 349  80 345 371 246 169  69 322 169 273 112 346 808 113 378 107 360 293
+##  [55] 138 364 359 363 370 339 356 191 300 280 176 337 362 368  89 183  88 127
+##  [73] 365 174 169  84 193  85 461 182  96 183 171 337 342 170 126 273 368 152
+##  [91] 173  92 294 167 222 435 340 196  88 244   2 227  92 260 350 266 295 120
+## [109] 281 336 169 369 367 315 261 195 231 176 109 368 201 362 335 105 332 360
+## [127] 261 352 161 371 367 181 345  85 357 161 148 309 358  85 266 368  78  94
+## [145] 340 120  64 106 123 363 347 359 148 256 687 140 363 181 360 167 152 183
+## [163] 183 253 184 317 340 299 370 246 315 361</code></pre>
+<p>It is surprising to see that whole data are outliers.</p>
+</div>
+<div id="minimum-of-pdays-outliers" class="section level1">
+<h1>Minimum of pdays outliers</h1>
+<pre class="r"><code>min(pdays_outliers)</code></pre>
+<pre><code>## [1] 1</code></pre>
+</div>
+<div id="maximum-of-pdays-outliers" class="section level1">
+<h1>Maximum of pdays outliers</h1>
+<pre class="r"><code>max(pdays_outliers)</code></pre>
+<pre><code>## [1] 808</code></pre>
+<p>The whole coloum pdays is removed from dataset because of outliers high in numbers</p>
+<pre class="r"><code>bank&lt;- subset(bank, select = -pdays)</code></pre>
+</div>
+<div id="box-plot-of-previous" class="section level1">
+<h1>Box plot of previous</h1>
+<pre class="r"><code>previous_outliers&lt;-boxplot.stats(bank$previous)$out
+boxplot(bank$previous, main = &quot;Box plot of previous&quot;, boxwex = 0.6)
+mtext(paste(&quot;Outliers: &quot;, paste(previous_outliers, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-38-1.png" width="672" /></p>
+<pre class="r"><code>previous_outliers</code></pre>
+<pre><code>##   [1]  1  2  5  1  1 20  1  3  1  1  2  1 10  6  1  2  2  3  2  2  5  1  2  1  3
+##  [26]  3  1  1  1  2  2  2  2  1  1 19  1  1  2  3  1  2  2  1  2  3  3  2 12  5
+##  [51]  3  2  3  5  1  1  1  2  1  7  2  4  5  2  5  1  1  2  1  4  1  4  5 12  1
+##  [76]  3  2  5  1  2  2  2  3  1  3  2  4  3  4  1  3  1  1  6  3  1  1  1  4  4
+## [101]  3  1  1  4  1  8  1  1  1  2  3  4  2  2  1  1  2  1  4  1  1  5  2  2  1
+## [126]  3  5  2  2  3  1  4  1  5  4  9  4  3  2  1  3  2  8  2  2  1  2  2  2  1
+## [151]  5  1  1  3  2  1  2 14  1  1  6  4  1  1  7  3  1  3  1  1 11  5</code></pre>
+<p>Even the previous data has full outliers on data. Thus, I removed it from the dataset</p>
+</div>
+<div id="minimum-of-previous-outliers" class="section level1">
+<h1>Minimum of previous outliers</h1>
+<pre class="r"><code>min(previous_outliers)</code></pre>
+<pre><code>## [1] 1</code></pre>
+</div>
+<div id="maximum-outliers" class="section level1">
+<h1>Maximum outliers</h1>
+<pre class="r"><code>max(previous_outliers)</code></pre>
+<pre><code>## [1] 20</code></pre>
+<p>The whole column of previous is removed from the bank dataset due to more outliers</p>
+<pre class="r"><code>bank&lt;- subset(bank, select = -previous)</code></pre>
+<div id="univariate-analysis-on-categorical-value" class="section level2">
+<h2>Univariate analysis on categorical value</h2>
+</div>
+</div>
+<div id="frequency-distribution-of-job" class="section level1">
+<h1>Frequency distribution of job</h1>
+<pre class="r"><code>tab1(bank$job, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of job&quot;, xlab =&quot;Job&quot;)</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-42-1.png" width="672" /></p>
+<pre><code>## bank$job : 
+##               Frequency Percent Cum. percent
+## unknown               6     0.6          0.6
+## student              18     1.9          2.5
+## unemployed           19     2.0          4.6
+## housemaid            29     3.1          7.6
+## retired              36     3.8         11.4
+## entrepreneur         48     5.1         16.5
+## self-employed        52     5.5         22.0
+## services            105    11.1         33.2
+## admin.              107    11.3         44.5
+## management          157    16.6         61.1
+## technician          178    18.9         80.0
+## blue-collar         189    20.0        100.0
+##   Total             944   100.0        100.0</code></pre>
+<p>The frequency distribution of unknown, student, unemployed, housemaid, retired, entrepreneur, self-employed, services, admin are less in numbers. Thus they are are clubbed together as others so as to reduce the number of variables and improve the prediction accuracy</p>
+<pre class="r"><code>bank$job&lt;-as.character(bank$job)
+bank$job[bank$job %in% c(&quot;unknown&quot;, &quot;student&quot;, &quot;housemaid&quot;, &quot;unemployed&quot;, &quot;entrepreneur&quot;, &quot;self-employed&quot;, &quot;retired&quot;, &quot;services&quot;, &quot;admin.&quot;)]&lt;- &quot;Others&quot;
+bank$job&lt;-as.factor(bank$job)</code></pre>
+</div>
+<div id="the-frequency-distribution-after-clubing-together" class="section level1">
+<h1>The frequency distribution after clubing together</h1>
+<pre class="r"><code>freq_age_updated &lt;-tab1(bank$job, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of job after merging&quot;, xlab =&quot;Job&quot;)</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-44-1.png" width="672" /></p>
+<pre class="r"><code>freq_age_updated</code></pre>
+<pre><code>## bank$job : 
+##             Frequency Percent Cum. percent
+## management        157    16.6         16.6
+## technician        178    18.9         35.5
+## blue-collar       189    20.0         55.5
+## Others            420    44.5        100.0
+##   Total           944   100.0        100.0</code></pre>
+</div>
+<div id="frequency-distribution-of-marital" class="section level1">
+<h1>Frequency distribution of marital</h1>
+<pre class="r"><code>tab1(bank$marital, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of marital&quot;, xlab =&quot;Marital&quot;)</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-45-1.png" width="672" /></p>
+<pre><code>## bank$marital : 
+##          Frequency Percent Cum. percent
+## divorced       117    12.4         12.4
+## single         261    27.6         40.0
+## married        566    60.0        100.0
+##   Total        944   100.0        100.0</code></pre>
+<p>The frequency distribution of all items are greater than 10 percent. So, we are not doing any changes</p>
+</div>
+<div id="frequency-distribution-of-education" class="section level1">
+<h1>frequency distribution of Education</h1>
+<pre class="r"><code>tab1(bank$education, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of Education&quot;, xlab =&quot;Education&quot;)</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-46-1.png" width="672" /></p>
+<pre><code>## bank$education : 
+##           Frequency Percent Cum. percent
+## unknown          37     3.9          3.9
+## primary         152    16.1         20.0
+## tertiary        248    26.3         46.3
+## secondary       507    53.7        100.0
+##   Total         944   100.0        100.0</code></pre>
+<p>The frequency distribution of unknown in education is less than5 percent. Thus, they are merged with primary.</p>
+<pre class="r"><code>bank$education&lt;-as.character(bank$education)
+bank$education[bank$education %in% c(&quot;unknown&quot;, &quot;primary&quot;)]&lt;- &quot;primary and others&quot;
+bank$education&lt;-as.factor(bank$education)</code></pre>
+</div>
+<div id="frequency-distribution-of-education-after-merging" class="section level1">
+<h1>Frequency distribution of education after merging</h1>
+<pre class="r"><code>freq_education_updated&lt;- tab1(bank$education, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of Education after merging&quot;, xlab =&quot;Education&quot;)</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-48-1.png" width="672" /></p>
+<pre class="r"><code>freq_education_updated</code></pre>
+<pre><code>## bank$education : 
+##                    Frequency Percent Cum. percent
+## primary and others       189    20.0         20.0
+## tertiary                 248    26.3         46.3
+## secondary                507    53.7        100.0
+##   Total                  944   100.0        100.0</code></pre>
+</div>
+<div id="frequency-distribution-of-contact" class="section level1">
+<h1>Frequency distribution of Contact</h1>
+<pre class="r"><code>tab1(bank$contact, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of Contact&quot;, xlab =&quot;Contact&quot;)</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-49-1.png" width="672" /></p>
+<pre><code>## bank$contact : 
+##           Frequency Percent Cum. percent
+## telephone        52     5.5          5.5
+## unknown         257    27.2         32.7
+## cellular        635    67.3        100.0
+##   Total         944   100.0        100.0</code></pre>
+<p>The frequency of the telephone is only 5.5%, Thus, I add those values with unknowna and renamed it as telephone and others</p>
+<pre class="r"><code>bank$contact&lt;-as.character(bank$contact)
+bank$contact[bank$contact %in% c(&quot;telephone&quot;, &quot;unknown&quot;)]&lt;- &quot;telephone and others&quot;
+bank$contact&lt;-as.factor(bank$contact)</code></pre>
+</div>
+<div id="frequency-distribution-of-contact-after-merging" class="section level1">
+<h1>Frequency distribution of contact after merging</h1>
+<pre class="r"><code>freq_contact_updated &lt;- tab1(bank$contact, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of Contact after merging&quot;, xlab =&quot;Contact&quot;)</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-51-1.png" width="672" /></p>
+<pre class="r"><code>freq_contact_updated</code></pre>
+<pre><code>## bank$contact : 
+##                      Frequency Percent Cum. percent
+## telephone and others       309    32.7         32.7
+## cellular                   635    67.3        100.0
+##   Total                    944   100.0        100.0</code></pre>
+</div>
+<div id="frequency-distribution-of-poutcome" class="section level1">
+<h1>Frequency distribution of poutcome</h1>
+<pre class="r"><code>tab1(bank$poutcome, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of poutcome&quot;, xlab =&quot;poutcome&quot;)</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-52-1.png" width="672" /></p>
+<pre><code>## bank$poutcome : 
+##         Frequency Percent Cum. percent
+## success        20     2.1          2.1
+## other          43     4.6          6.7
+## failure       109    11.5         18.2
+## unknown       772    81.8        100.0
+##   Total       944   100.0        100.0</code></pre>
+<p>The frequency distribution of success and others are less in percentage. So, I combined both into one category and renamed it as success and others</p>
+<pre class="r"><code>bank$poutcome&lt;-as.character(bank$poutcome)
+bank$poutcome[bank$poutcome %in% c(&quot;success&quot;, &quot;other&quot;)]&lt;- &quot;success and others&quot;
+bank$poutcome&lt;-as.factor(bank$poutcome)</code></pre>
+</div>
+<div id="frequenct-distribution-of-poutcome-after-merging" class="section level1">
+<h1>Frequenct distribution of poutcome after merging</h1>
+<pre class="r"><code>freq_poutcome_updated&lt;-tab1(bank$poutcome, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of poutcome after merging&quot;, xlab =&quot;poutcome&quot;)</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-54-1.png" width="672" /></p>
+<pre class="r"><code>freq_poutcome_updated</code></pre>
+<pre><code>## bank$poutcome : 
+##                    Frequency Percent Cum. percent
+## success and others        63     6.7          6.7
+## failure                  109    11.5         18.2
+## unknown                  772    81.8        100.0
+##   Total                  944   100.0        100.0</code></pre>
+<p>considering the below as a Binary variables and binary numbers o and 1 are assigned</p>
+<p>Assigning binary numbers to default</p>
+<pre class="r"><code>bank$default[bank$default == &quot;no&quot; ] &lt;-&quot;0&quot;</code></pre>
+<pre class="r"><code>bank$default[bank$default == &quot;yes&quot; ] &lt;-&quot;1&quot;</code></pre>
+<p>Assigning binary numbers to Housing</p>
+<pre class="r"><code>bank$housing[bank$housing == &quot;no&quot; ] &lt;-&quot;0&quot;
+bank$housing[bank$housing == &quot;yes&quot; ] &lt;-&quot;1&quot;</code></pre>
+<p>Assigning binary numbers to loan</p>
+<pre class="r"><code>bank$loan[bank$loan == &quot;no&quot; ] &lt;-&quot;0&quot;
+bank$loan[bank$loan == &quot;yes&quot; ] &lt;-&quot;1&quot;</code></pre>
+<p>Assigning binary numbers to y</p>
+<pre class="r"><code>bank$y[bank$y == &quot;no&quot; ] &lt;-&quot;0&quot;
+bank$y[bank$y == &quot;yes&quot; ] &lt;-&quot;1&quot;</code></pre>
+<p>COnsidering the month as a ordinal categorical variable, I assign the numbers in a sequantial order</p>
+<pre class="r"><code>bank$month[bank$month == &quot;jan&quot; ] &lt;-&quot;1&quot;
+bank$month[bank$month == &quot;feb&quot; ] &lt;-&quot;2&quot;
+bank$month[bank$month == &quot;mar&quot; ] &lt;-&quot;3&quot;
+bank$month[bank$month == &quot;apr&quot; ] &lt;-&quot;4&quot;
+bank$month[bank$month == &quot;may&quot; ] &lt;-&quot;5&quot;
+bank$month[bank$month == &quot;jun&quot; ] &lt;-&quot;6&quot;
+bank$month[bank$month == &quot;jul&quot; ] &lt;-&quot;7&quot;
+bank$month[bank$month == &quot;aug&quot; ] &lt;-&quot;8&quot;
+bank$month[bank$month == &quot;sep&quot; ] &lt;-&quot;9&quot;
+bank$month[bank$month == &quot;oct&quot; ] &lt;-&quot;10&quot;
+bank$month[bank$month == &quot;nov&quot; ] &lt;-&quot;11&quot;
+bank$month[bank$month == &quot;dec&quot; ] &lt;-&quot;12&quot;</code></pre>
+<p>Converting binary and ordinal categorical variable to numeric to perform univariate analysis as a numerical variable</p>
+<pre class="r"><code>bank$default &lt;- as.numeric (bank$default)
+bank$housing &lt;- as.numeric (bank$housing)
+bank$loan &lt;- as.numeric (bank$loan)
+bank$y &lt;- as.numeric (bank$y)
+bank$month &lt;- as.numeric (bank$month)</code></pre>
+<div id="univariate-analysis-on-the-binary-variables" class="section level2">
+<h2>Univariate analysis on the binary variables</h2>
+</div>
+</div>
+<div id="frequency-distribution-of-default" class="section level1">
+<h1>Frequency distribution of Default</h1>
+<pre class="r"><code>tab1(bank$default, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of Default&quot;, xlab =&quot;Default&quot;)</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-62-1.png" width="672" /></p>
+<pre><code>## bank$default : 
+##         Frequency Percent Cum. percent
+## 1              18     1.9          1.9
+## 0             926    98.1        100.0
+##   Total       944   100.0        100.0</code></pre>
+<p>There are only 2 percentage of customers did default on loan and the rest 98 percent of customers are not defaulters</p>
+</div>
+<div id="frequency-distribution-of-housing" class="section level1">
+<h1>Frequency distribution of housing</h1>
+<pre class="r"><code>tab1(bank$housing, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of Housing&quot;, xlab =&quot;Housing&quot;)</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-63-1.png" width="672" /></p>
+<pre><code>## bank$housing : 
+##         Frequency Percent Cum. percent
+## 0             438    46.4         46.4
+## 1             506    53.6        100.0
+##   Total       944   100.0        100.0</code></pre>
+<p>The customers who have taken housing loan are 53.8 percentage and the other 46.2 percentage of customers did not take any housing loan</p>
+</div>
+<div id="frequency-distribution-of-loan" class="section level1">
+<h1>Frequency distribution of Loan</h1>
+<pre class="r"><code>tab1(bank$loan, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of Loan&quot;, xlab =&quot;Loan&quot;)</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-64-1.png" width="672" /></p>
+<pre><code>## bank$loan : 
+##         Frequency Percent Cum. percent
+## 1             159    16.8         16.8
+## 0             785    83.2        100.0
+##   Total       944   100.0        100.0</code></pre>
+<p>Only 16.7 % of customer took a personal loan and the remaining 83.3 % of customer did not avail any personal loan</p>
+</div>
+<div id="frequency-distribution-of-y" class="section level1">
+<h1>Frequency distribution of y</h1>
+<pre class="r"><code>tab1(bank$y, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of Y&quot;, xlab =&quot;Y&quot;)</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-65-1.png" width="672" /></p>
+<pre><code>## bank$y : 
+##         Frequency Percent Cum. percent
+## 1              63     6.7          6.7
+## 0             881    93.3        100.0
+##   Total       944   100.0        100.0</code></pre>
+<p>The majority of the customer, around 93.2 %, said that they would not subscribe to term deposit. Only 6.8 % of customers confirmed that they would subscribe it.</p>
+</div>
+<div id="box-plot-of-month" class="section level1">
+<h1>Box plot of Month</h1>
+<pre class="r"><code>month_outliers&lt;-boxplot.stats(bank$month)$out
+boxplot(bank$month, main = &quot;Box plot of Month&quot;, boxwex = 0.6)
+mtext(paste(&quot;Outliers: &quot;, paste(month_outliers, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-66-1.png" width="672" /></p>
+<pre class="r"><code>month_outliers</code></pre>
+<pre><code>##  [1] 11 11 11 11  1 11  1  1  1 11 11 11 11  1  1 11 11  1 11 11  1  1 11  1 11
+## [26] 11 11 11 11 11  1  1 11  1  1  1  1 11  1 11 11  1 11  1  1  1 11 11 11 11
+## [51] 11  1  1 11  1  1  1 11 11 11 11 11 11  1 11  1  1 11 11 11 11 11 11  1 11
+## [76] 11 11 11  1 11  1 11 11  1  1 11 11 11 11  1  1  1 11  1  1 11</code></pre>
+<div id="bivariate-analysis" class="section level2">
+<h2>Bivariate analysis</h2>
+<p>Let us see the relationship between indendent and dependent variable</p>
+</div>
+</div>
+<div id="relationship-between-y-and-age" class="section level1">
+<h1>Relationship between y and age</h1>
+</div>
+<div id="correlation-test" class="section level1">
+<h1>Correlation test</h1>
+<pre class="r"><code>cor.test(bank$y, bank$age)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  bank$y and bank$age
+## t = -1.5674, df = 942, p-value = 0.1173
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.11443724  0.01284453
+## sample estimates:
+##         cor 
+## -0.05100346</code></pre>
+<p>There is a negative correlation between y and age. It means more the age, less the people will subscribe to fixed deposit and less the age of the customer and there is a more likely that they will subscribe to term deposit. The correlation coefficient is -0.051</p>
+</div>
+<div id="logistic-regression-on-y-and-age" class="section level1">
+<h1>Logistic regression on y and age</h1>
+<pre class="r"><code>age_y = glm(y~ age, data = bank, family = &quot;binomial&quot;)
+summary(age_y)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ age, family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.4495  -0.3963  -0.3720  -0.3309   2.5562  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)   
+## (Intercept) -1.78130    0.55229  -3.225  0.00126 **
+## age         -0.02192    0.01404  -1.561  0.11847   
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 460.24  on 942  degrees of freedom
+## AIC: 464.24
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<p>The above equation is not significant</p>
+</div>
+<div id="jitter-and-box-plot-of-y-and-age" class="section level1">
+<h1>Jitter and box plot of y and age</h1>
+<pre class="r"><code>bank %&gt;%
+  ggplot(aes(x= age, y= &quot;subscribe or not&quot;, color = age))+geom_jitter()+geom_boxplot()+expand_limits(y=0)+geom_smooth(method =&quot;glm&quot;, se =FALSE, method.args = list(family = &quot;binomial&quot;))+labs(title =&quot;Relationship between y and age&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<pre><code>## Warning: glm.fit: algorithm did not converge</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-69-1.png" width="672" /></p>
+</div>
+<div id="relationship-between-y-and-job" class="section level1">
+<h1>Relationship between y and job</h1>
+<p>Logistic regression on y and job</p>
+<pre class="r"><code>job_y = glm(y~ job, data = bank, family = &quot;binomial&quot;)
+summary(job_y)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ job, family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.4196  -0.4109  -0.4109  -0.2316   2.6953  
+## 
+## Coefficients:
+##               Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)    -3.6055     0.4532  -7.955 1.79e-15 ***
+## jobmanagement   0.8055     0.5686   1.417   0.1566    
+## jobOthers       1.1760     0.4873   2.413   0.0158 *  
+## jobtechnician   1.2198     0.5275   2.313   0.0207 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 454.15  on 940  degrees of freedom
+## AIC: 462.15
+## 
+## Number of Fisher Scoring iterations: 6</code></pre>
+<p>The above equation is not good enough to predict the y by job as some of the coefficients are not significant</p>
+</div>
+<div id="bar-chart-of-y-and-job" class="section level1">
+<h1>Bar chart of y and job</h1>
+<pre class="r"><code>bank %&gt;%
+ggplot(aes(x= job, y= &quot;subscribe or not&quot;, color = job))+geom_col()+expand_limits(y=0)+geom_smooth(method =&quot;glm&quot;, se =FALSE, method.args = list(family = &quot;binomial&quot;))+labs(title =&quot;Relationship between y and job&quot;)+coord_flip()</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-71-1.png" width="672" /></p>
+<div id="relationship-between-y-and-marital" class="section level2">
+<h2>Relationship between y and marital</h2>
+<p>Logistic regression on y and marital</p>
+<pre class="r"><code>marital_y = glm(y~ marital, data = bank, family = &quot;binomial&quot;)
+summary(marital_y)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ marital, family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.4673  -0.3300  -0.3300  -0.3300   2.4374  
+## 
+## Coefficients:
+##                Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)    -2.91777    0.41912  -6.962 3.36e-12 ***
+## maritalmarried  0.03483    0.45919   0.076    0.940    
+## maritalsingle   0.75829    0.46580   1.628    0.104    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 455.57  on 941  degrees of freedom
+## AIC: 461.57
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<p>the above equation is not good as well because of all the coefficients are not significant</p>
+</div>
+</div>
+<div id="bar-chart-of-y-and-marital" class="section level1">
+<h1>Bar chart of y and marital</h1>
+<pre class="r"><code>bank %&gt;%
+ggplot(aes(x= marital, y= &quot;subscribe or not&quot;, color = marital))+geom_col()+expand_limits(y=0)+geom_smooth(method =&quot;glm&quot;, se =FALSE, method.args = list(family = &quot;binomial&quot;))+labs(title =&quot;Relationship between y and marital&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-73-1.png" width="672" /></p>
+</div>
+<div id="relationship-between-y-and-education" class="section level1">
+<h1>Relationship between y and Education</h1>
+<p>Logistic regression on y and education</p>
+<pre class="r"><code>education_y = glm(y~ education, data = bank, family = &quot;binomial&quot;)
+summary(education_y)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ education, family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.4101  -0.3838  -0.3838  -0.2747   2.5674  
+## 
+## Coefficients:
+##                    Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)         -3.2581     0.3852  -8.459   &lt;2e-16 ***
+## educationsecondary   0.6868     0.4222   1.627   0.1038    
+## educationtertiary    0.8245     0.4503   1.831   0.0671 .  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 458.75  on 941  degrees of freedom
+## AIC: 464.75
+## 
+## Number of Fisher Scoring iterations: 6</code></pre>
+<p>The intercept is only significant but all the coefficients are not significant. Thus, the above equation is not good to predict the y</p>
+</div>
+<div id="bar-chart-of-y-and-education" class="section level1">
+<h1>Bar chart of y and education</h1>
+<pre class="r"><code>bank %&gt;%
+ggplot(aes(x= education, y= &quot;subscribe or not&quot;, color =education))+geom_col()+expand_limits(y=0)+geom_smooth(method =&quot;glm&quot;, se =FALSE, method.args = list(family = &quot;binomial&quot;))+labs(title =&quot;Relationship between y and education&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-75-1.png" width="672" /></p>
+</div>
+<div id="relationship-between-y-and-default" class="section level1">
+<h1>Relationship between y and default</h1>
+<p>Correlation between y and default</p>
+<pre class="r"><code>cor.test(bank$y, bank$default)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  bank$y and bank$default
+## t = 1.7161, df = 942, p-value = 0.08647
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.008008571  0.119207728
+## sample estimates:
+##        cor 
+## 0.05582615</code></pre>
+<p>There is some correlation between y and default. The correlation coefficient is 0.056</p>
+</div>
+<div id="logistic-regression-on-y-and-default" class="section level1">
+<h1>Logistic regression on y and default</h1>
+<pre class="r"><code>default_y = glm(y~ default, data = bank, family = &quot;binomial&quot;)
+summary(default_y)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ default, family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.6039  -0.3660  -0.3660  -0.3660   2.3395  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  -2.6695     0.1335  -20.00   &lt;2e-16 ***
+## default       1.0601     0.6464    1.64    0.101    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 460.63  on 942  degrees of freedom
+## AIC: 464.63
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<p>Though there is some correlation between y and default, the coefficient of the above equation is not significant.</p>
+</div>
+<div id="bar-chart-of-y-and-default" class="section level1">
+<h1>Bar chart of y and default</h1>
+<pre class="r"><code>bank %&gt;%
+ggplot(aes(x= default, y= &quot;subscribe or not&quot;, colour= default))+geom_col()+expand_limits(y=0)+geom_smooth(method =&quot;glm&quot;, se =FALSE, method.args = list(family = &quot;binomial&quot;, maxit =100))+labs(title =&quot;Relationship between y and default&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-78-1.png" width="672" /></p>
+</div>
+<div id="relationship-between-y-and-balance" class="section level1">
+<h1>Relationship between y and balance</h1>
+<pre class="r"><code>cor.test(bank$y, bank$balance)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  bank$y and bank$balance
+## t = 0.48702, df = 942, p-value = 0.6264
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.04798865  0.07959176
+## sample estimates:
+##        cor 
+## 0.01586613</code></pre>
+<p>There is some positive correlation between y and balance. The correlation coefficient is 0.016</p>
+</div>
+<div id="logistice-regression-on-y-and-balance" class="section level1">
+<h1>Logistice regression on y and balance</h1>
+<pre class="r"><code>balance_y = glm(y~ balance, data = bank, family = &quot;binomial&quot;)
+summary(balance_y)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ balance, family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.3936  -0.3801  -0.3687  -0.3598   2.3636  
+## 
+## Coefficients:
+##               Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) -2.7308545  0.2340080 -11.670   &lt;2e-16 ***
+## balance      0.0007782  0.0015971   0.487    0.626    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 462.54  on 942  degrees of freedom
+## AIC: 466.54
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<p>Even though there is a positive correlation between y and balance, that above equation is not good as the coefficient is not significant</p>
+</div>
+<div id="jitter-and-box-plot-of-y-and-balance" class="section level1">
+<h1>JItter and box plot of y and balance</h1>
+<pre class="r"><code>bank %&gt;%
+ggplot(aes(x= balance, y= &quot;subscribe or not&quot;, color =balance))+geom_jitter()+geom_boxplot()+expand_limits(y=0)+geom_smooth(method =&quot;glm&quot;, se =FALSE, method.args = list(family = &quot;binomial&quot;))+labs(title =&quot;Relationship between y and balance&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<pre><code>## Warning: glm.fit: algorithm did not converge</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-81-1.png" width="672" /></p>
+<div id="relationship-between-y-and-housing" class="section level2">
+<h2>Relationship between y and housing</h2>
+<p>Correlation test between y and housing</p>
+<pre class="r"><code>cor.test(bank$y, bank$housing)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  bank$y and bank$housing
+## t = -2.5609, df = 942, p-value = 0.0106
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.1461792 -0.0194455
+## sample estimates:
+##         cor 
+## -0.08314853</code></pre>
+<p>There is a negative correlation between y and housing. The correlation coefficient is -0.083</p>
+</div>
+</div>
+<div id="logistic-regression-of-y-and-housing" class="section level1">
+<h1>Logistic regression of y and housing</h1>
+<pre class="r"><code>housing_y = glm(y~ housing, data = bank, family = &quot;binomial&quot;)
+summary(housing_y)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ housing, family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.4319  -0.4319  -0.3118  -0.3118   2.4692  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  -2.3254     0.1678 -13.861   &lt;2e-16 ***
+## housing      -0.6745     0.2681  -2.516   0.0119 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 456.25  on 942  degrees of freedom
+## AIC: 460.25
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<p>The above equation is significant to predict y but it is a negative correlation. If the customer takes more housing loan, it is less likely that he will subscribe to term deposit because he would have already a commitment to oay a monthly EMI. On the contrary, if the customer does not have any housing loan, it is more likely that he will subscribe to term deposit</p>
+</div>
+<div id="bar-chart-of-y-and-housing" class="section level1">
+<h1>Bar chart of y and housing</h1>
+<pre class="r"><code>bank %&gt;%
+ggplot(aes(x= housing, y= &quot;subscribe or not&quot;, colour = housing))+geom_col()+geom_smooth(method =&quot;glm&quot;, se =FALSE, method.args = list(family = &quot;binomial&quot;, maxit =100))+labs(title =&quot;Relationship between y and housing&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-84-1.png" width="672" />
+In the above chart, o represents no housing loan and 1 represents customer having housing loan.</p>
+</div>
+<div id="relationship-between-y-and-loan" class="section level1">
+<h1>Relationship between y and loan</h1>
+<p>Correlation test of y and loan</p>
+<pre class="r"><code>cor.test(bank$y, bank$loan)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  bank$y and bank$loan
+## t = -2.6594, df = 942, p-value = 0.007961
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.14930851 -0.02264324
+## sample estimates:
+##         cor 
+## -0.08632471</code></pre>
+<p>There is a negative correlation between y and loan. It is just like the case of housing loan. When the customers have an obligation towards personal loan, they will not have the sufficients funds to subscribe to term deposit. That is the reason, there is a negative correlation. When the customer does not have personal loan, there is a likely chance that they will subscribe to term deposit.</p>
+</div>
+<div id="logistic-regression-of-y-and-loan" class="section level1">
+<h1>Logistic regression of y and loan</h1>
+<pre class="r"><code>loan_y = glm(y~ loan, data = bank, family = &quot;binomial&quot;)
+summary(loan_y)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ loan, family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.3988  -0.3988  -0.3988  -0.3988   2.8179  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  -2.4918     0.1343  -18.55   &lt;2e-16 ***
+## loan         -1.4594     0.5981   -2.44   0.0147 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 453.62  on 942  degrees of freedom
+## AIC: 457.62
+## 
+## Number of Fisher Scoring iterations: 6</code></pre>
+<p>The above equation is to significant to predict the y. The AIC is 457.62</p>
+</div>
+<div id="bar-chart-of-y-and-loan" class="section level1">
+<h1>Bar chart of y and loan</h1>
+<pre class="r"><code>bank %&gt;%
+ggplot(aes(x= loan, y= &quot;subscribe or not&quot;, colour =loan))+geom_col()+geom_smooth(method =&quot;glm&quot;, se =FALSE, method.args = list(family = &quot;binomial&quot;, maxit =100))+labs(title =&quot;Relationship between y and loan&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-87-1.png" width="672" /></p>
+</div>
+<div id="relationship-between-y-and-contact" class="section level1">
+<h1>Relationship between y and contact</h1>
+<p>Logistic regression of y and contact</p>
+<pre class="r"><code>contact_y = glm(y~ contact, data = bank, family = &quot;binomial&quot;)
+summary(contact_y)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ contact, family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.4377  -0.4377  -0.4377  -0.1806   2.8719  
+## 
+## Coefficients:
+##                             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)                  -2.2974     0.1377 -16.678  &lt; 2e-16 ***
+## contacttelephone and others  -1.8102     0.4713  -3.841 0.000123 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 439.30  on 942  degrees of freedom
+## AIC: 443.3
+## 
+## Number of Fisher Scoring iterations: 6</code></pre>
+<p>The above equation is significant to predict y. The AIC is 443.3</p>
+</div>
+<div id="bar-chart-of-y-and-contact" class="section level1">
+<h1>Bar chart of y and contact</h1>
+<pre class="r"><code>bank %&gt;%
+ggplot(aes(x= contact, y= &quot;subscribe or not&quot;, colour =contact))+geom_col()+expand_limits(y=0)+geom_smooth(method =&quot;glm&quot;, se =FALSE, method.args = list(family = &quot;binomial&quot;))+labs(title =&quot;Relationship between y and contact&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-89-1.png" width="672" /></p>
+</div>
+<div id="relationship-between-y-and-day" class="section level1">
+<h1>Relationship between y and day</h1>
+<p>Correlation test of y and day</p>
+<pre class="r"><code>cor.test(bank$y, bank$day)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  bank$y and bank$day
+## t = 0.11781, df = 942, p-value = 0.9062
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.05998249  0.06762804
+## sample estimates:
+##         cor 
+## 0.003838402</code></pre>
+<p>There is a positive correaltion between y and day</p>
+</div>
+<div id="logistic-regression-of-y-and-day" class="section level1">
+<h1>Logistic regression of y and day</h1>
+<pre class="r"><code>day_y = glm(y~ day, data = bank, family = &quot;binomial&quot;)
+summary(day_y)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ day, family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.3769  -0.3735  -0.3712  -0.3689   2.3373  
+## 
+## Coefficients:
+##              Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) -2.666012   0.272307  -9.790   &lt;2e-16 ***
+## day          0.001832   0.015534   0.118    0.906    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 462.77  on 942  degrees of freedom
+## AIC: 466.77
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<p>Though there is a correlation between y and day, the above equation is not significant.</p>
+</div>
+<div id="jitter-and-box-plot-of-y-and-day" class="section level1">
+<h1>Jitter and box plot of y and day</h1>
+<pre class="r"><code>bank %&gt;%
+ggplot(aes(x= day, y= &quot;subscribe or not&quot;, color =day))+geom_jitter()+geom_boxplot()+expand_limits(y=0)+geom_smooth(method =&quot;glm&quot;, se =FALSE, method.args = list(family = &quot;binomial&quot;))+labs(title =&quot;Relationship between y and day&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<pre><code>## Warning: glm.fit: algorithm did not converge</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-92-1.png" width="672" /></p>
+</div>
+<div id="relationship-between-y-and-month" class="section level1">
+<h1>Relationship between y and month</h1>
+<p>Correlation between y and month</p>
+<pre class="r"><code>cor.test(bank$y, bank$month)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  bank$y and bank$month
+## t = -0.14919, df = 942, p-value = 0.8814
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.06864575  0.05896364
+## sample estimates:
+##          cor 
+## -0.004860841</code></pre>
+<p>There is a negative correlation. The correlation coefficient is - 0.004</p>
+</div>
+<div id="logistic-regression-on-y-and-month" class="section level1">
+<h1>Logistic regression on y and month</h1>
+<pre class="r"><code>month_y = glm(y~ month, data = bank, family = &quot;binomial&quot;)
+summary(month_y)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ month, family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.3794  -0.3731  -0.3716  -0.3685   2.3441  
+## 
+## Coefficients:
+##              Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) -2.586743   0.365642  -7.075  1.5e-12 ***
+## month       -0.008589   0.057512  -0.149    0.881    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 462.76  on 942  degrees of freedom
+## AIC: 466.76
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<p>The above equation is not good as the coefficient is not significant</p>
+</div>
+<div id="bar-chart-of-y-and-month" class="section level1">
+<h1>Bar chart of y and month</h1>
+<pre class="r"><code>bank %&gt;%
+ggplot(aes(x= month, y= &quot;subscribe or not&quot;, color =month))+geom_col()+geom_smooth(method =&quot;glm&quot;, se =FALSE, method.args = list(family = &quot;binomial&quot;,maxit =100))+labs(title =&quot;Relationship between y and month&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-95-1.png" width="672" /></p>
+<div id="relationship-between-y-and-duration" class="section level2">
+<h2>Relationship between y and duration</h2>
+<p>Correlation test of y and duration</p>
+<pre class="r"><code>cor.test(bank$y, bank$duration)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  bank$y and bank$duration
+## t = 7.4172, df = 942, p-value = 2.666e-13
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  0.1736999 0.2942979
+## sample estimates:
+##       cor 
+## 0.2349027</code></pre>
+<p>There is a positive correlation between y and duration. The correlation coefficient is 0.23</p>
+</div>
+</div>
+<div id="logistic-regression-of-y-and-duration" class="section level1">
+<h1>Logistic regression of y and duration</h1>
+<pre class="r"><code>duration_y = glm(y~ duration, data = bank, family = &quot;binomial&quot;)
+summary(duration_y)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ duration, family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.9607  -0.3715  -0.2863  -0.2346   2.6899  
+## 
+## Coefficients:
+##               Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) -4.0426075  0.2859768 -14.136  &lt; 2e-16 ***
+## duration     0.0059473  0.0008884   6.695 2.16e-11 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 419.13  on 942  degrees of freedom
+## AIC: 423.13
+## 
+## Number of Fisher Scoring iterations: 6</code></pre>
+<p>The above equation is significant to predict y. The AIC is 423.13</p>
+</div>
+<div id="box-plot-of-y-and-duration" class="section level1">
+<h1>Box plot of y and duration</h1>
+<pre class="r"><code>bank %&gt;%
+ggplot(aes(x= duration, y= &quot;subscribe or not&quot;, color =duration))+geom_boxplot()+expand_limits(y=0)+geom_smooth(method =&quot;glm&quot;, se =FALSE, method.args = list(family = &quot;binomial&quot;))+labs(title =&quot;Relationship between y and duration&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<pre><code>## Warning: glm.fit: algorithm did not converge</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-98-1.png" width="672" /></p>
+</div>
+<div id="relationship-between-y-and-campaign" class="section level1">
+<h1>Relationship between y and campaign</h1>
+<p>Correlation test between y and campaign</p>
+<pre class="r"><code>cor.test(bank$y, bank$campaign)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  bank$y and bank$campaign
+## t = -2.6585, df = 942, p-value = 0.007982
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.14927934 -0.02261342
+## sample estimates:
+##        cor 
+## -0.0862951</code></pre>
+<p>It is surprising to see that there is a negative correlation between y and campaign. Generally, more the campaign, more should be a new subscription of term deposit but it is opposite here</p>
+</div>
+<div id="logistic-regression-between-y-and-campaign" class="section level1">
+<h1>Logistic regression between y and campaign</h1>
+<pre class="r"><code>campaign_y = glm(y~ campaign, data = bank, family = &quot;binomial&quot;)
+summary(campaign_y)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ campaign, family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.4312  -0.4312  -0.3670  -0.3118   2.8370  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  -1.9932     0.2591  -7.693 1.44e-14 ***
+## campaign     -0.3355     0.1290  -2.602  0.00927 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 454.53  on 942  degrees of freedom
+## AIC: 458.53
+## 
+## Number of Fisher Scoring iterations: 6</code></pre>
+<p>The above equation is significant to predict the y because both the intercept and coefficient are significant. The AIC is 458.53</p>
+</div>
+<div id="box-plot-of-campaign-1" class="section level1">
+<h1>box plot of Campaign</h1>
+<pre class="r"><code>bank %&gt;%
+ggplot(aes(x= campaign, y= &quot;subscribe or not&quot;, color =campaign))+geom_boxplot()+expand_limits(y=0)+geom_smooth(method =&quot;glm&quot;, se =FALSE, method.args = list(family = &quot;binomial&quot;))+labs(title =&quot;Relationship between y and campaign&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<pre><code>## Warning: glm.fit: algorithm did not converge</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-101-1.png" width="672" /></p>
+</div>
+<div id="relationship-between-y-and-poutcome" class="section level1">
+<h1>Relationship between y and poutcome</h1>
+<p>Logistic regression of y and poutcome</p>
+<pre class="r"><code>poutcome_y = glm(y~ poutcome, data = bank, family = &quot;binomial&quot;)
+summary(poutcome_y)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ poutcome, family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.7655  -0.3345  -0.3345  -0.3345   2.4827  
+## 
+## Coefficients:
+##                            Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)                 -3.0350     0.4578  -6.630 3.37e-11 ***
+## poutcomesuccess and others   1.9574     0.5416   3.614 0.000302 ***
+## poutcomeunknown              0.1796     0.4845   0.371 0.710908    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 438.21  on 941  degrees of freedom
+## AIC: 444.21
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<p>In the above equation, one of the coefficient is not significant. We can take this in to our model since unknow result are more compared to known factors such as success or failure. There is a great chance to convert those customers in to subscribe the term deposit</p>
+</div>
+<div id="bar-chart-of-y-and-poutcome" class="section level1">
+<h1>Bar chart of y and poutcome</h1>
+<pre class="r"><code>bank %&gt;%
+ggplot(aes(x= poutcome, y= &quot;subscribe or not&quot;, color =poutcome))+geom_col()+expand_limits(y=0)+geom_smooth(method =&quot;glm&quot;, se =FALSE, method.args = list(family = &quot;binomial&quot;))+labs(title =&quot;Relationship between y and poutcome&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="/2021/11/10/bank-updated/index_files/figure-html/unnamed-chunk-103-1.png" width="672" /></p>
+<p>First, I would use tidymodels to build a logistic regression. In order to do, I have to convert the following as a character variable</p>
+<pre class="r"><code>bank$default &lt;- as.character (bank$default)
+bank$housing &lt;-  as.character (bank$housing)
+bank$loan &lt;-  as.character (bank$loan)
+bank$y &lt;-  as.character (bank$y)
+bank$month &lt;-  as.character (bank$month)</code></pre>
+</div>
+<div id="data-resampling" class="section level1">
+<h1>Data resampling</h1>
+<p>I have split the bank data in to trainig and test data with a split of 75:25</p>
+<pre class="r"><code>bank_split&lt;- initial_split(bank, prop = 0.75, strata = y)
+bank_training &lt;- bank_split %&gt;%
+  training()
+bank_test&lt;- bank_split %&gt;%
+  testing()</code></pre>
+</div>
+<div id="checking-number-of-rows-in-training-and-test-data" class="section level1">
+<h1>Checking number of rows in training and test data</h1>
+<pre class="r"><code>nrow(bank_training)</code></pre>
+<pre><code>## [1] 708</code></pre>
+<pre class="r"><code>nrow(bank_test)</code></pre>
+<pre><code>## [1] 236</code></pre>
+</div>
+<div id="checking-multicollinearity-between-numerical-values-in-a-training-bank-data-set" class="section level1">
+<h1>Checking multicollinearity between numerical values in a training bank data set</h1>
+<pre class="r"><code>bank_training %&gt;%
+  select_if(is.numeric) %&gt;%
+  cor()</code></pre>
+<pre><code>##                   age     balance          day    duration    campaign
+## age       1.000000000  0.04098821  0.005746856 -0.03526987  0.01900824
+## balance   0.040988209  1.00000000 -0.052685313  0.01442163 -0.03348450
+## day       0.005746856 -0.05268531  1.000000000 -0.02247526  0.13408827
+## duration -0.035269867  0.01442163 -0.022475262  1.00000000 -0.04000151
+## campaign  0.019008243 -0.03348450  0.134088271 -0.04000151  1.00000000</code></pre>
+<p>We can notice that there is no much corellation the independent variable</p>
+</div>
+<div id="model-specification" class="section level1">
+<h1>Model specification</h1>
+<p>I specify the logistic regression model here</p>
+<pre class="r"><code>logistic_model&lt;- logistic_reg() %&gt;%
+  set_engine(&#39;glm&#39;) %&gt;%
+  set_mode(&#39;classification&#39;)</code></pre>
+</div>
+<div id="feature-engineering" class="section level1">
+<h1>Feature engineering</h1>
+<p>This is step to do pre-processing of data</p>
+<pre class="r"><code>bank_recipe &lt;- recipe(y ~., data = bank_training) %&gt;%
+  step_corr(all_numeric(), threshold =0.8) %&gt;%
+  step_normalize(all_numeric()) %&gt;%
+  step_dummy(all_nominal(), -all_outcomes())
+bank_recipe</code></pre>
+<pre><code>## Recipe
+## 
+## Inputs:
+## 
+##       role #variables
+##    outcome          1
+##  predictor         14
+## 
+## Operations:
+## 
+## Correlation filter on all_numeric()
+## Centering and scaling for all_numeric()
+## Dummy variables from all_nominal(), -all_outcomes()</code></pre>
+<p>I have given instruction above in the model that to check the correlation for all numeric variables and keep the thresholding limit as 0.8. I have also given instruction in the model to normalize all the numeric variables and set dummy to all nominal or character variables except the outcome variables because outcome is in factor</p>
+</div>
+<div id="recipe-training" class="section level1">
+<h1>Recipe training</h1>
+<pre class="r"><code>bank_recipe_prep&lt;- bank_recipe %&gt;%
+  prep(training = bank_training)
+bank_recipe_prep</code></pre>
+<pre><code>## Recipe
+## 
+## Inputs:
+## 
+##       role #variables
+##    outcome          1
+##  predictor         14
+## 
+## Training data contained 708 data points and no missing data.
+## 
+## Operations:
+## 
+## Correlation filter removed no terms [trained]
+## Centering and scaling for age, balance, day, duration, campaign [trained]
+## Dummy variables from job, marital, education, default, housing, loan, contact,... [trained]</code></pre>
+<div id="preprocess-training-data" class="section level2">
+<h2>Preprocess training data</h2>
+<p>Applying the trained recipe to the training data</p>
+<pre class="r"><code>bank_training_prep &lt;- bank_recipe_prep %&gt;%
+  bake (new_data = NULL)
+bank_training_prep</code></pre>
+<pre><code>## # A tibble: 708 x 29
+##        age balance    day duration campaign y     job_management job_Others
+##      &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;fct&gt;          &lt;dbl&gt;      &lt;dbl&gt;
+##  1 -0.0426   0.415 -1.10  -0.295     -0.122 0                  0          0
+##  2  0.166    1.33  -0.149 -1.04      -0.122 0                  0          1
+##  3  0.375    1.86   0.206 -0.596     -0.122 0                  0          1
+##  4  0.0617   0.997  1.62   0.00634   -0.122 0                  1          0
+##  5  0.270   -1.21   0.442 -0.382      0.614 0                  1          0
+##  6  0.479   -0.254 -0.977 -0.501     -0.122 0                  0          1
+##  7 -0.877    0.712  1.39  -0.850      0.614 0                  0          0
+##  8  2.04    -0.885  0.679 -1.17      -0.857 0                  1          0
+##  9  1.63     0.390 -1.57  -1.02       0.614 0                  0          0
+## 10 -0.147   -0.786  1.62  -0.715     -0.122 0                  0          0
+## # ... with 698 more rows, and 21 more variables: job_technician &lt;dbl&gt;,
+## #   marital_married &lt;dbl&gt;, marital_single &lt;dbl&gt;, education_secondary &lt;dbl&gt;,
+## #   education_tertiary &lt;dbl&gt;, default_X1 &lt;dbl&gt;, housing_X1 &lt;dbl&gt;,
+## #   loan_X1 &lt;dbl&gt;, contact_telephone.and.others &lt;dbl&gt;, month_X10 &lt;dbl&gt;,
+## #   month_X11 &lt;dbl&gt;, month_X2 &lt;dbl&gt;, month_X3 &lt;dbl&gt;, month_X4 &lt;dbl&gt;,
+## #   month_X5 &lt;dbl&gt;, month_X6 &lt;dbl&gt;, month_X7 &lt;dbl&gt;, month_X8 &lt;dbl&gt;,
+## #   month_X9 &lt;dbl&gt;, poutcome_success.and.others &lt;dbl&gt;, ...</code></pre>
+</div>
+<div id="preprocess-test-data" class="section level2">
+<h2>Preprocess test data</h2>
+<p>Applying trained recipe to the test data</p>
+<pre class="r"><code>bank_test_prep &lt;- bank_recipe_prep %&gt;%
+  bake (new_data = bank_test)
+bank_test_prep</code></pre>
+<pre><code>## # A tibble: 236 x 29
+##        age balance     day duration campaign y     job_management job_Others
+##      &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;fct&gt;          &lt;dbl&gt;      &lt;dbl&gt;
+##  1 -0.877   0.229  -0.977  -0.319     -0.857 0                  0          1
+##  2  0.479  -0.0929 -0.386  -0.628     -0.122 0                  0          1
+##  3  1.42   -0.105   0.679  -0.905     -0.122 0                  0          1
+##  4 -0.355  -0.155   1.27    0.997     -0.857 0                  0          1
+##  5  1.21    1.11   -0.859  -0.430     -0.857 0                  0          0
+##  6 -0.0426 -0.762  -0.267  -0.945     -0.857 0                  0          0
+##  7 -1.61    0.0681 -0.0309 -1.09      -0.857 0                  0          1
+##  8  0.166   0.675   0.324  -0.00952    0.614 0                  0          0
+##  9 -0.251   0.774  -1.21   -0.327     -0.122 0                  0          1
+## 10 -1.19    0.724  -1.57    0.0460    -0.122 0                  0          0
+## # ... with 226 more rows, and 21 more variables: job_technician &lt;dbl&gt;,
+## #   marital_married &lt;dbl&gt;, marital_single &lt;dbl&gt;, education_secondary &lt;dbl&gt;,
+## #   education_tertiary &lt;dbl&gt;, default_X1 &lt;dbl&gt;, housing_X1 &lt;dbl&gt;,
+## #   loan_X1 &lt;dbl&gt;, contact_telephone.and.others &lt;dbl&gt;, month_X10 &lt;dbl&gt;,
+## #   month_X11 &lt;dbl&gt;, month_X2 &lt;dbl&gt;, month_X3 &lt;dbl&gt;, month_X4 &lt;dbl&gt;,
+## #   month_X5 &lt;dbl&gt;, month_X6 &lt;dbl&gt;, month_X7 &lt;dbl&gt;, month_X8 &lt;dbl&gt;,
+## #   month_X9 &lt;dbl&gt;, poutcome_success.and.others &lt;dbl&gt;, ...</code></pre>
+</div>
+</div>
+<div id="model-fitting" class="section level1">
+<h1>Model fitting</h1>
+<pre class="r"><code>logistic_fit &lt;- logistic_model %&gt;%
+  fit(y ~., data = bank_training_prep)
+logistic_fit</code></pre>
+<pre><code>## parsnip model object
+## 
+## Fit time:  40ms 
+## 
+## Call:  stats::glm(formula = y ~ ., family = stats::binomial, data = data)
+## 
+## Coefficients:
+##                  (Intercept)                           age  
+##                    -20.34417                      -0.33019  
+##                      balance                           day  
+##                      0.10534                       0.13428  
+##                     duration                      campaign  
+##                      0.73569                      -0.22044  
+##               job_management                    job_Others  
+##                      0.57509                       0.77225  
+##               job_technician               marital_married  
+##                      0.30762                      -0.19703  
+##               marital_single           education_secondary  
+##                      0.13022                      -0.09898  
+##           education_tertiary                    default_X1  
+##                      0.02453                       2.14240  
+##                   housing_X1                       loan_X1  
+##                      0.20043                      -1.05211  
+## contact_telephone.and.others                     month_X10  
+##                     -2.14496                      18.48265  
+##                    month_X11                      month_X2  
+##                     15.62813                      15.63503  
+##                     month_X3                      month_X4  
+##                     18.66876                      16.77484  
+##                     month_X5                      month_X6  
+##                     15.53694                      17.39347  
+##                     month_X7                      month_X8  
+##                     15.01205                      16.52477  
+##                     month_X9   poutcome_success.and.others  
+##                     17.21563                       2.47299  
+##             poutcome_unknown  
+##                      0.93086  
+## 
+## Degrees of Freedom: 707 Total (i.e. Null);  679 Residual
+## Null Deviance:       340.5 
+## Residual Deviance: 223   AIC: 281</code></pre>
+<p>The above is the significant equation to predict the outcome variable. The AIC is 289.2, which is quite good compared to our manual method</p>
+</div>
+<div id="predicting-outcome-categories" class="section level1">
+<h1>Predicting outcome categories</h1>
+<pre class="r"><code>class_preds &lt;- predict (logistic_fit, new_data = bank_test_prep, type =&quot;class&quot;)
+class_preds</code></pre>
+<pre><code>## # A tibble: 236 x 1
+##    .pred_class
+##    &lt;fct&gt;      
+##  1 0          
+##  2 0          
+##  3 0          
+##  4 0          
+##  5 0          
+##  6 0          
+##  7 0          
+##  8 0          
+##  9 0          
+## 10 0          
+## # ... with 226 more rows</code></pre>
+<p>The above .pred class is the outcome of our results. That is if the customer is to subscribe to term deposit or not. The number o means no and 1 means yes to subscriptions</p>
+</div>
+<div id="estimated-probabilities" class="section level1">
+<h1>Estimated probabilities</h1>
+<pre class="r"><code>prob_preds &lt;- predict (logistic_fit, new_data = bank_test_prep, type =&quot;prob&quot;)
+prob_preds</code></pre>
+<pre><code>## # A tibble: 236 x 2
+##    .pred_0 .pred_1
+##      &lt;dbl&gt;   &lt;dbl&gt;
+##  1   0.904 0.0957 
+##  2   0.982 0.0177 
+##  3   0.989 0.0111 
+##  4   0.992 0.00757
+##  5   0.995 0.00532
+##  6   0.976 0.0243 
+##  7   0.974 0.0262 
+##  8   0.979 0.0205 
+##  9   0.987 0.0128 
+## 10   0.979 0.0209 
+## # ... with 226 more rows</code></pre>
+<p>The above prediction is the probability of outcome occurences.</p>
+<p>In tidymodels, outcome variable needs to be a factor</p>
+<pre class="r"><code>bank$y &lt;- as.factor (bank$y)</code></pre>
+</div>
+<div id="combining-results" class="section level1">
+<h1>Combining results</h1>
+<pre class="r"><code>results &lt;- bank_test_prep %&gt;%
+  bind_cols(class_preds, prob_preds)
+results</code></pre>
+<pre><code>## # A tibble: 236 x 32
+##        age balance     day duration campaign y     job_management job_Others
+##      &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;fct&gt;          &lt;dbl&gt;      &lt;dbl&gt;
+##  1 -0.877   0.229  -0.977  -0.319     -0.857 0                  0          1
+##  2  0.479  -0.0929 -0.386  -0.628     -0.122 0                  0          1
+##  3  1.42   -0.105   0.679  -0.905     -0.122 0                  0          1
+##  4 -0.355  -0.155   1.27    0.997     -0.857 0                  0          1
+##  5  1.21    1.11   -0.859  -0.430     -0.857 0                  0          0
+##  6 -0.0426 -0.762  -0.267  -0.945     -0.857 0                  0          0
+##  7 -1.61    0.0681 -0.0309 -1.09      -0.857 0                  0          1
+##  8  0.166   0.675   0.324  -0.00952    0.614 0                  0          0
+##  9 -0.251   0.774  -1.21   -0.327     -0.122 0                  0          1
+## 10 -1.19    0.724  -1.57    0.0460    -0.122 0                  0          0
+## # ... with 226 more rows, and 24 more variables: job_technician &lt;dbl&gt;,
+## #   marital_married &lt;dbl&gt;, marital_single &lt;dbl&gt;, education_secondary &lt;dbl&gt;,
+## #   education_tertiary &lt;dbl&gt;, default_X1 &lt;dbl&gt;, housing_X1 &lt;dbl&gt;,
+## #   loan_X1 &lt;dbl&gt;, contact_telephone.and.others &lt;dbl&gt;, month_X10 &lt;dbl&gt;,
+## #   month_X11 &lt;dbl&gt;, month_X2 &lt;dbl&gt;, month_X3 &lt;dbl&gt;, month_X4 &lt;dbl&gt;,
+## #   month_X5 &lt;dbl&gt;, month_X6 &lt;dbl&gt;, month_X7 &lt;dbl&gt;, month_X8 &lt;dbl&gt;,
+## #   month_X9 &lt;dbl&gt;, poutcome_success.and.others &lt;dbl&gt;, ...</code></pre>
+<p>I was trying to select only y and show the .pred_class and .pred probability to show how much actual and prediction class and its probability but when i used select (y) %&gt;%, I was getting error, so I show here the whole model with .pred class and its probability at the end of the table</p>
+</div>
+<div id="assessing-the-model-fit-using-confusion-matrix" class="section level1">
+<h1>Assessing the model fit using Confusion matrix</h1>
+<pre class="r"><code>results %&gt;%
+  conf_mat(truth = y, estimate = .pred_class)</code></pre>
+<pre><code>##           Truth
+## Prediction   0   1
+##          0 218  13
+##          1   1   4</code></pre>
+</div>
+<div id="correct-predictions" class="section level1">
+<h1>Correct predictions</h1>
+<p>True negative is 220, which is the customer did not subscibe to term deposit
+True positive is 2, which is the customers subscripe to term deposit</p>
+</div>
+<div id="classification-error" class="section level1">
+<h1>Classification error</h1>
+<p>False negative is 5, which is the customer did not subscribe to term deposit but wrongly predicted as subscriped
+False positive is 9, which is the customer subscribed to term deposit but wronly predicted as not subscribed</p>
+<p>It is clear that the customers will not subscribe to the term deposit</p>
+<p>In order to automate this logistic regression model in machine learning, I have created the following workflow models</p>
+</div>
+<div id="creating-workflow" class="section level1">
+<h1>Creating workflow</h1>
+<pre class="r"><code>bank_wkfl&lt;- workflow() %&gt;%
+add_model(logistic_model) %&gt;%
+add_recipe(bank_recipe)
+bank_wkfl</code></pre>
+<pre><code>## == Workflow ====================================================================
+## Preprocessor: Recipe
+## Model: logistic_reg()
+## 
+## -- Preprocessor ----------------------------------------------------------------
+## 3 Recipe Steps
+## 
+## * step_corr()
+## * step_normalize()
+## * step_dummy()
+## 
+## -- Model -----------------------------------------------------------------------
+## Logistic Regression Model Specification (classification)
+## 
+## Computational engine: glm</code></pre>
+<p>I have given instruction above in the model that to check the correlation for all numeric variables and keep the thresholding limit as 0.8. I have also given instruction in the model to normalize all the numeric variables and set dummy to all nominal or character variables except the outcome variables because outcome is in factor</p>
+</div>
+<div id="train-the-workflow" class="section level1">
+<h1>Train the workflow</h1>
+<pre class="r"><code>bank_wkfl_fit &lt;- bank_wkfl %&gt;%
+  last_fit( split = bank_split)
+bank_wkfl_fit</code></pre>
+<pre><code>## # Resampling results
+## # Manual resampling 
+## # A tibble: 1 x 6
+##   splits            id               .metrics   .notes   .predictions  .workflow
+##   &lt;list&gt;            &lt;chr&gt;            &lt;list&gt;     &lt;list&gt;   &lt;list&gt;        &lt;list&gt;   
+## 1 &lt;split [708/236]&gt; train/test split &lt;tibble [~ &lt;tibble~ &lt;tibble [236~ &lt;workflo~</code></pre>
+</div>
+<div id="calculating-performance-metrics-on-test-data" class="section level1">
+<h1>Calculating performance metrics on test data</h1>
+<pre class="r"><code>bank_wkfl_fit %&gt;%
+   collect_metrics() </code></pre>
+<pre><code>## # A tibble: 2 x 4
+##   .metric  .estimator .estimate .config             
+##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+## 1 accuracy binary         0.941 Preprocessor1_Model1
+## 2 roc_auc  binary         0.867 Preprocessor1_Model1</code></pre>
+</div>
+<div id="collecting-predictions" class="section level1">
+<h1>collecting predictions</h1>
+<pre class="r"><code>bank_wkfl_fit_results&lt;- bank_wkfl_fit %&gt;%
+  collect_predictions()
+bank_wkfl_fit_results</code></pre>
+<pre><code>## # A tibble: 236 x 7
+##    id               .pred_0 .pred_1  .row .pred_class y     .config             
+##    &lt;chr&gt;              &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt; &lt;fct&gt;       &lt;fct&gt; &lt;chr&gt;               
+##  1 train/test split   0.904 0.0957      5 0           0     Preprocessor1_Model1
+##  2 train/test split   0.982 0.0177      7 0           0     Preprocessor1_Model1
+##  3 train/test split   0.989 0.0111      9 0           0     Preprocessor1_Model1
+##  4 train/test split   0.992 0.00757    15 0           0     Preprocessor1_Model1
+##  5 train/test split   0.995 0.00532    16 0           0     Preprocessor1_Model1
+##  6 train/test split   0.976 0.0243     26 0           0     Preprocessor1_Model1
+##  7 train/test split   0.974 0.0262     28 0           0     Preprocessor1_Model1
+##  8 train/test split   0.979 0.0205     30 0           0     Preprocessor1_Model1
+##  9 train/test split   0.987 0.0128     37 0           0     Preprocessor1_Model1
+## 10 train/test split   0.979 0.0209     38 0           0     Preprocessor1_Model1
+## # ... with 226 more rows</code></pre>
+</div>
+<div id="creating-custom-metrics" class="section level1">
+<h1>Creating custom metrics</h1>
+<pre class="r"><code>bank_metrics &lt;- metric_set(roc_auc,sens,spec)
+bank_metrics</code></pre>
+<pre><code>## # A tibble: 3 x 3
+##   metric  class        direction
+##   &lt;chr&gt;   &lt;chr&gt;        &lt;chr&gt;    
+## 1 roc_auc prob_metric  maximize 
+## 2 sens    class_metric maximize 
+## 3 spec    class_metric maximize</code></pre>
+<pre class="r"><code>bank_wkfl_fit_results %&gt;%
+  bank_metrics(truth = y, estimate = .pred_class, .pred_1)</code></pre>
+<pre><code>## # A tibble: 3 x 3
+##   .metric .estimator .estimate
+##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+## 1 sens    binary         0.995
+## 2 spec    binary         0.235
+## 3 roc_auc binary         0.133</code></pre>
+</div>
+<div id="creating-cross-validation-folds" class="section level1">
+<h1>Creating cross validation folds</h1>
+<p>Bank training data has been splited into 5 fold using cross validation</p>
+<pre class="r"><code>set.seed(315)
+bank_folds&lt;- vfold_cv(bank_training, v = 5, strata = y)
+bank_folds</code></pre>
+<pre><code>## #  5-fold cross-validation using stratification 
+## # A tibble: 5 x 2
+##   splits            id   
+##   &lt;list&gt;            &lt;chr&gt;
+## 1 &lt;split [566/142]&gt; Fold1
+## 2 &lt;split [566/142]&gt; Fold2
+## 3 &lt;split [566/142]&gt; Fold3
+## 4 &lt;split [567/141]&gt; Fold4
+## 5 &lt;split [567/141]&gt; Fold5</code></pre>
+</div>
+<div id="fit-resamples" class="section level1">
+<h1>Fit resamples</h1>
+<pre class="r"><code>bank_rs &lt;- bank_wkfl %&gt;%
+  fit_resamples(resamples = bank_folds, metrics = bank_metrics)
+bank_rs %&gt;%
+  collect_metrics()</code></pre>
+<pre><code>## # A tibble: 3 x 6
+##   .metric .estimator  mean     n std_err .config             
+##   &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
+## 1 roc_auc binary     0.766     5 0.0469  Preprocessor1_Model1
+## 2 sens    binary     0.976     5 0.00985 Preprocessor1_Model1
+## 3 spec    binary     0.157     5 0.0671  Preprocessor1_Model1</code></pre>
+<p>The roc_auc is 0.76
+The sensitivity is 0.98, which is the proportion of positive cases that were correctly classified
+The secificity is 0.19, which is the proportion of negative cases that were correctly classified</p>
+</div>
+<div id="detailed-cross-validation-results" class="section level1">
+<h1>Detailed cross validation results</h1>
+<pre class="r"><code>bank_detailed_results &lt;- bank_rs %&gt;%
+  collect_metrics(summarize = FALSE)
+bank_detailed_results</code></pre>
+<pre><code>## # A tibble: 15 x 5
+##    id    .metric .estimator .estimate .config             
+##    &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+##  1 Fold1 sens    binary         0.957 Preprocessor1_Model1
+##  2 Fold1 spec    binary         0     Preprocessor1_Model1
+##  3 Fold1 roc_auc binary         0.679 Preprocessor1_Model1
+##  4 Fold2 sens    binary         0.961 Preprocessor1_Model1
+##  5 Fold2 spec    binary         0.231 Preprocessor1_Model1
+##  6 Fold2 roc_auc binary         0.651 Preprocessor1_Model1
+##  7 Fold3 sens    binary         1     Preprocessor1_Model1
+##  8 Fold3 spec    binary         0.333 Preprocessor1_Model1
+##  9 Fold3 roc_auc binary         0.888 Preprocessor1_Model1
+## 10 Fold4 sens    binary         1     Preprocessor1_Model1
+## 11 Fold4 spec    binary         0     Preprocessor1_Model1
+## 12 Fold4 roc_auc binary         0.856 Preprocessor1_Model1
+## 13 Fold5 sens    binary         0.962 Preprocessor1_Model1
+## 14 Fold5 spec    binary         0.222 Preprocessor1_Model1
+## 15 Fold5 roc_auc binary         0.756 Preprocessor1_Model1</code></pre>
+</div>
+<div id="summarizing-cross-validation-results" class="section level1">
+<h1>Summarizing cross validation results</h1>
+<pre class="r"><code>bank_detailed_results %&gt;%
+   group_by(id) %&gt;%
+  filter(.metric == &#39;roc_auc&#39;) %&gt;%
+ summarize(min = min(.estimate),
+            median = median(.estimate),
+            max = max(.estimate), mean = mean (.estimate),
+            sd = sd(.estimate)
+           )</code></pre>
+<pre><code>##         min    median       max     mean        sd
+## 1 0.6505665 0.7558923 0.8884804 0.766061 0.1049289</code></pre>
+</div>
+<div id="viewing-the-best-performing-models" class="section level1">
+<h1>Viewing the best performing models</h1>
+<pre class="r"><code>bank_rs %&gt;%
+  show_best(metric = &#39;roc_auc&#39;, n=5)</code></pre>
+<pre><code>## # A tibble: 1 x 6
+##   .metric .estimator  mean     n std_err .config             
+##   &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
+## 1 roc_auc binary     0.766     5  0.0469 Preprocessor1_Model1</code></pre>
+<pre class="r"><code>best_bank_model &lt;- bank_rs %&gt;%
+  select_best(metric = &#39;roc_auc&#39;)
+best_bank_model </code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   .config             
+##   &lt;chr&gt;               
+## 1 Preprocessor1_Model1</code></pre>
+<p>We have got the best model as Preprocessor1_Model1</p>
+</div>
+<div id="finalizing-the-workflow" class="section level1">
+<h1>Finalizing the workflow</h1>
+<pre class="r"><code>final_bank_wkfl &lt;- bank_wkfl %&gt;%
+finalize_workflow(best_bank_model)
+final_bank_wkfl</code></pre>
+<pre><code>## == Workflow ====================================================================
+## Preprocessor: Recipe
+## Model: logistic_reg()
+## 
+## -- Preprocessor ----------------------------------------------------------------
+## 3 Recipe Steps
+## 
+## * step_corr()
+## * step_normalize()
+## * step_dummy()
+## 
+## -- Model -----------------------------------------------------------------------
+## Logistic Regression Model Specification (classification)
+## 
+## Computational engine: glm</code></pre>
+</div>
+<div id="model-fitting-1" class="section level1">
+<h1>Model fitting</h1>
+<pre class="r"><code>bank_final_fit &lt;- final_bank_wkfl %&gt;%
+  last_fit(split = bank_split)
+bank_final_fit %&gt;%
+  collect_metrics()</code></pre>
+<pre><code>## # A tibble: 2 x 4
+##   .metric  .estimator .estimate .config             
+##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+## 1 accuracy binary         0.941 Preprocessor1_Model1
+## 2 roc_auc  binary         0.867 Preprocessor1_Model1</code></pre>
+<p>We can see here this model is good to predict and ready to use the same model to predic anynew data set. Its accuracy is 0.94 and roc_auc is 0.88</p>
+</div>
+<div id="model-evaluation" class="section level1">
+<h1>Model evaluation</h1>
+<pre class="r"><code>bank_wkfl_fit_results  %&gt;%
+  conf_mat(truth = y, estimate = .pred_class)</code></pre>
+<pre><code>##           Truth
+## Prediction   0   1
+##          0 218  13
+##          1   1   4</code></pre>
+</div>
+<div id="correct-predictions-1" class="section level1">
+<h1>Correct predictions</h1>
+<p>True negative is 220, which is the customer did not subscibe to term deposit
+True positive is 3, which is the customers subscripe to term deposit</p>
+</div>
+<div id="classification-error-1" class="section level1">
+<h1>Classification error</h1>
+<p>False negative is 3, which is the customer did not subscribe to term deposit but wrongly predicted as subscriped
+False positive is 10, which is the customer subscribed to term deposit but wronly predicted as not subscribed</p>
+<p>It is clear that the customers will not subscribe to the term deposit</p>
+<p>Converting character to factor to run logistic regression so that I can run below the manual logistic regression using glm function</p>
+<pre class="r"><code>bank$default &lt;- as.factor (bank$default)
+bank$housing &lt;- as.factor (bank$housing)
+bank$loan &lt;- as.factor (bank$loan)
+bank$y &lt;-  as.factor (bank$y)
+bank$month &lt;- as.factor (bank$month)
+bank$job &lt;- as.factor (bank$job)
+bank$marital &lt;- as.factor (bank$marital)
+bank$education &lt;- as.factor (bank$education)
+bank$poutcome &lt;- as.factor (bank$poutcome)
+bank$contact &lt;- as.factor (bank$contact)</code></pre>
+</div>
+<div id="structure-of-bank-after-applying-factor" class="section level1">
+<h1>Structure of bank after applying factor</h1>
+<pre class="r"><code>str(bank)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    944 obs. of  15 variables:
+##  $ age      : int  39 41 43 40 31 42 44 44 53 31 ...
+##  $ job      : Factor w/ 4 levels &quot;blue-collar&quot;,..: 4 3 3 2 3 2 3 3 3 4 ...
+##  $ marital  : Factor w/ 3 levels &quot;divorced&quot;,&quot;married&quot;,..: 2 2 2 2 2 1 3 2 2 2 ...
+##  $ education: Factor w/ 3 levels &quot;primary and others&quot;,..: 2 3 2 3 2 3 2 2 2 2 ...
+##  $ default  : Factor w/ 2 levels &quot;0&quot;,&quot;1&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ balance  : int  147 221 264 194 132 16 106 93 105 171 ...
+##  $ housing  : Factor w/ 2 levels &quot;0&quot;,&quot;1&quot;: 2 2 2 1 1 1 1 1 1 1 ...
+##  $ loan     : Factor w/ 2 levels &quot;0&quot;,&quot;1&quot;: 1 1 1 2 1 1 1 1 2 1 ...
+##  $ contact  : Factor w/ 2 levels &quot;cellular&quot;,&quot;telephone and others&quot;: 1 2 1 1 1 1 2 1 1 1 ...
+##  $ day      : int  6 14 17 29 7 19 12 7 21 27 ...
+##  $ month    : Factor w/ 11 levels &quot;1&quot;,&quot;10&quot;,&quot;11&quot;,..: 7 7 6 10 9 3 8 9 10 10 ...
+##  $ duration : int  151 57 113 189 148 140 109 125 74 81 ...
+##  $ campaign : int  2 2 2 2 1 3 2 2 2 3 ...
+##  $ poutcome : Factor w/ 3 levels &quot;failure&quot;,&quot;success and others&quot;,..: 3 3 3 3 2 3 3 3 3 3 ...
+##  $ y        : Factor w/ 2 levels &quot;0&quot;,&quot;1&quot;: 1 1 1 1 1 1 1 1 1 1 ...</code></pre>
+</div>
+<div id="summary-after-changing-the-factor-variable" class="section level1">
+<h1>Summary after changing the factor variable</h1>
+<pre class="r"><code>summary(bank)</code></pre>
+<pre><code>##       age                 job          marital                 education  
+##  Min.   :19.00   blue-collar:189   divorced:117   primary and others:189  
+##  1st Qu.:32.00   management :157   married :566   secondary         :507  
+##  Median :38.00   Others     :420   single  :261   tertiary          :248  
+##  Mean   :39.96   technician :178                                          
+##  3rd Qu.:47.00                                                            
+##  Max.   :73.00                                                            
+##                                                                           
+##  default    balance       housing loan                    contact   
+##  0:926   Min.   :  1.00   0:438   0:785   cellular            :635  
+##  1: 18   1st Qu.: 43.75   1:506   1:159   telephone and others:309  
+##          Median :108.50                                             
+##          Mean   :117.18                                             
+##          3rd Qu.:186.00                                             
+##          Max.   :272.00                                             
+##                                                                     
+##       day            month        duration      campaign    
+##  Min.   : 1.00   5      :325   Min.   :  5   Min.   :1.000  
+##  1st Qu.: 8.00   7      :154   1st Qu.: 95   1st Qu.:1.000  
+##  Median :15.00   8      :151   Median :161   Median :2.000  
+##  Mean   :15.28   6      : 88   Mean   :190   Mean   :2.144  
+##  3rd Qu.:21.00   11     : 57   3rd Qu.:253   3rd Qu.:3.000  
+##  Max.   :31.00   2      : 51   Max.   :590   Max.   :6.000  
+##                  (Other):118                                
+##                poutcome   y      
+##  failure           :109   0:881  
+##  success and others: 63   1: 63  
+##  unknown           :772          
+##                                  
+##                                  
+##                                  
+## </code></pre>
+</div>
+<div id="best-subset-regression" class="section level1">
+<h1>Best subset regression</h1>
+<pre class="r"><code>best&lt;-regsubsets(y~ ., data= bank, nvmax= 14)
+summary(best)</code></pre>
+<pre><code>## Subset selection object
+## Call: regsubsets.formula(y ~ ., data = bank, nvmax = 14)
+## 28 Variables  (and intercept)
+##                             Forced in Forced out
+## age                             FALSE      FALSE
+## jobmanagement                   FALSE      FALSE
+## jobOthers                       FALSE      FALSE
+## jobtechnician                   FALSE      FALSE
+## maritalmarried                  FALSE      FALSE
+## maritalsingle                   FALSE      FALSE
+## educationsecondary              FALSE      FALSE
+## educationtertiary               FALSE      FALSE
+## default1                        FALSE      FALSE
+## balance                         FALSE      FALSE
+## housing1                        FALSE      FALSE
+## loan1                           FALSE      FALSE
+## contacttelephone and others     FALSE      FALSE
+## day                             FALSE      FALSE
+## month10                         FALSE      FALSE
+## month11                         FALSE      FALSE
+## month2                          FALSE      FALSE
+## month3                          FALSE      FALSE
+## month4                          FALSE      FALSE
+## month5                          FALSE      FALSE
+## month6                          FALSE      FALSE
+## month7                          FALSE      FALSE
+## month8                          FALSE      FALSE
+## month9                          FALSE      FALSE
+## duration                        FALSE      FALSE
+## campaign                        FALSE      FALSE
+## poutcomesuccess and others      FALSE      FALSE
+## poutcomeunknown                 FALSE      FALSE
+## 1 subsets of each size up to 14
+## Selection Algorithm: exhaustive
+##           age jobmanagement jobOthers jobtechnician maritalmarried
+## 1  ( 1 )  &quot; &quot; &quot; &quot;           &quot; &quot;       &quot; &quot;           &quot; &quot;           
+## 2  ( 1 )  &quot; &quot; &quot; &quot;           &quot; &quot;       &quot; &quot;           &quot; &quot;           
+## 3  ( 1 )  &quot; &quot; &quot; &quot;           &quot; &quot;       &quot; &quot;           &quot; &quot;           
+## 4  ( 1 )  &quot; &quot; &quot; &quot;           &quot; &quot;       &quot; &quot;           &quot; &quot;           
+## 5  ( 1 )  &quot; &quot; &quot; &quot;           &quot; &quot;       &quot; &quot;           &quot; &quot;           
+## 6  ( 1 )  &quot; &quot; &quot; &quot;           &quot; &quot;       &quot; &quot;           &quot; &quot;           
+## 7  ( 1 )  &quot; &quot; &quot; &quot;           &quot; &quot;       &quot; &quot;           &quot; &quot;           
+## 8  ( 1 )  &quot; &quot; &quot; &quot;           &quot; &quot;       &quot; &quot;           &quot; &quot;           
+## 9  ( 1 )  &quot; &quot; &quot; &quot;           &quot; &quot;       &quot; &quot;           &quot; &quot;           
+## 10  ( 1 ) &quot; &quot; &quot; &quot;           &quot; &quot;       &quot; &quot;           &quot; &quot;           
+## 11  ( 1 ) &quot; &quot; &quot; &quot;           &quot; &quot;       &quot; &quot;           &quot; &quot;           
+## 12  ( 1 ) &quot; &quot; &quot; &quot;           &quot; &quot;       &quot; &quot;           &quot; &quot;           
+## 13  ( 1 ) &quot; &quot; &quot; &quot;           &quot; &quot;       &quot; &quot;           &quot; &quot;           
+## 14  ( 1 ) &quot; &quot; &quot; &quot;           &quot; &quot;       &quot; &quot;           &quot; &quot;           
+##           maritalsingle educationsecondary educationtertiary default1 balance
+## 1  ( 1 )  &quot; &quot;           &quot; &quot;                &quot; &quot;               &quot; &quot;      &quot; &quot;    
+## 2  ( 1 )  &quot; &quot;           &quot; &quot;                &quot; &quot;               &quot; &quot;      &quot; &quot;    
+## 3  ( 1 )  &quot; &quot;           &quot; &quot;                &quot; &quot;               &quot; &quot;      &quot; &quot;    
+## 4  ( 1 )  &quot; &quot;           &quot; &quot;                &quot; &quot;               &quot; &quot;      &quot; &quot;    
+## 5  ( 1 )  &quot; &quot;           &quot; &quot;                &quot; &quot;               &quot; &quot;      &quot; &quot;    
+## 6  ( 1 )  &quot; &quot;           &quot; &quot;                &quot; &quot;               &quot; &quot;      &quot; &quot;    
+## 7  ( 1 )  &quot; &quot;           &quot; &quot;                &quot; &quot;               &quot; &quot;      &quot; &quot;    
+## 8  ( 1 )  &quot; &quot;           &quot; &quot;                &quot; &quot;               &quot; &quot;      &quot; &quot;    
+## 9  ( 1 )  &quot; &quot;           &quot; &quot;                &quot; &quot;               &quot; &quot;      &quot; &quot;    
+## 10  ( 1 ) &quot; &quot;           &quot; &quot;                &quot; &quot;               &quot;*&quot;      &quot; &quot;    
+## 11  ( 1 ) &quot;*&quot;           &quot; &quot;                &quot; &quot;               &quot;*&quot;      &quot; &quot;    
+## 12  ( 1 ) &quot;*&quot;           &quot; &quot;                &quot; &quot;               &quot;*&quot;      &quot; &quot;    
+## 13  ( 1 ) &quot;*&quot;           &quot; &quot;                &quot; &quot;               &quot;*&quot;      &quot; &quot;    
+## 14  ( 1 ) &quot;*&quot;           &quot; &quot;                &quot; &quot;               &quot;*&quot;      &quot; &quot;    
+##           housing1 loan1 contacttelephone and others day month10 month11 month2
+## 1  ( 1 )  &quot; &quot;      &quot; &quot;   &quot; &quot;                         &quot; &quot; &quot; &quot;     &quot; &quot;     &quot; &quot;   
+## 2  ( 1 )  &quot; &quot;      &quot; &quot;   &quot; &quot;                         &quot; &quot; &quot; &quot;     &quot; &quot;     &quot; &quot;   
+## 3  ( 1 )  &quot; &quot;      &quot; &quot;   &quot; &quot;                         &quot; &quot; &quot; &quot;     &quot; &quot;     &quot; &quot;   
+## 4  ( 1 )  &quot; &quot;      &quot; &quot;   &quot; &quot;                         &quot; &quot; &quot; &quot;     &quot; &quot;     &quot; &quot;   
+## 5  ( 1 )  &quot; &quot;      &quot; &quot;   &quot; &quot;                         &quot; &quot; &quot;*&quot;     &quot; &quot;     &quot; &quot;   
+## 6  ( 1 )  &quot; &quot;      &quot; &quot;   &quot;*&quot;                         &quot; &quot; &quot;*&quot;     &quot; &quot;     &quot; &quot;   
+## 7  ( 1 )  &quot; &quot;      &quot; &quot;   &quot;*&quot;                         &quot; &quot; &quot;*&quot;     &quot; &quot;     &quot; &quot;   
+## 8  ( 1 )  &quot; &quot;      &quot; &quot;   &quot;*&quot;                         &quot; &quot; &quot;*&quot;     &quot; &quot;     &quot; &quot;   
+## 9  ( 1 )  &quot; &quot;      &quot;*&quot;   &quot;*&quot;                         &quot; &quot; &quot;*&quot;     &quot; &quot;     &quot; &quot;   
+## 10  ( 1 ) &quot; &quot;      &quot;*&quot;   &quot;*&quot;                         &quot; &quot; &quot;*&quot;     &quot; &quot;     &quot; &quot;   
+## 11  ( 1 ) &quot; &quot;      &quot;*&quot;   &quot;*&quot;                         &quot; &quot; &quot;*&quot;     &quot; &quot;     &quot; &quot;   
+## 12  ( 1 ) &quot; &quot;      &quot;*&quot;   &quot;*&quot;                         &quot; &quot; &quot;*&quot;     &quot; &quot;     &quot; &quot;   
+## 13  ( 1 ) &quot; &quot;      &quot;*&quot;   &quot;*&quot;                         &quot; &quot; &quot;*&quot;     &quot; &quot;     &quot; &quot;   
+## 14  ( 1 ) &quot; &quot;      &quot;*&quot;   &quot;*&quot;                         &quot; &quot; &quot;*&quot;     &quot; &quot;     &quot; &quot;   
+##           month3 month4 month5 month6 month7 month8 month9 duration campaign
+## 1  ( 1 )  &quot; &quot;    &quot; &quot;    &quot; &quot;    &quot; &quot;    &quot; &quot;    &quot; &quot;    &quot; &quot;    &quot;*&quot;      &quot; &quot;     
+## 2  ( 1 )  &quot;*&quot;    &quot; &quot;    &quot; &quot;    &quot; &quot;    &quot; &quot;    &quot; &quot;    &quot; &quot;    &quot;*&quot;      &quot; &quot;     
+## 3  ( 1 )  &quot;*&quot;    &quot; &quot;    &quot; &quot;    &quot; &quot;    &quot; &quot;    &quot; &quot;    &quot; &quot;    &quot;*&quot;      &quot; &quot;     
+## 4  ( 1 )  &quot;*&quot;    &quot;*&quot;    &quot; &quot;    &quot; &quot;    &quot; &quot;    &quot; &quot;    &quot; &quot;    &quot;*&quot;      &quot; &quot;     
+## 5  ( 1 )  &quot;*&quot;    &quot;*&quot;    &quot; &quot;    &quot; &quot;    &quot; &quot;    &quot; &quot;    &quot; &quot;    &quot;*&quot;      &quot; &quot;     
+## 6  ( 1 )  &quot;*&quot;    &quot;*&quot;    &quot; &quot;    &quot; &quot;    &quot; &quot;    &quot; &quot;    &quot; &quot;    &quot;*&quot;      &quot; &quot;     
+## 7  ( 1 )  &quot;*&quot;    &quot;*&quot;    &quot; &quot;    &quot;*&quot;    &quot; &quot;    &quot; &quot;    &quot; &quot;    &quot;*&quot;      &quot; &quot;     
+## 8  ( 1 )  &quot;*&quot;    &quot;*&quot;    &quot; &quot;    &quot;*&quot;    &quot; &quot;    &quot; &quot;    &quot;*&quot;    &quot;*&quot;      &quot; &quot;     
+## 9  ( 1 )  &quot;*&quot;    &quot;*&quot;    &quot; &quot;    &quot;*&quot;    &quot; &quot;    &quot; &quot;    &quot;*&quot;    &quot;*&quot;      &quot; &quot;     
+## 10  ( 1 ) &quot;*&quot;    &quot;*&quot;    &quot; &quot;    &quot;*&quot;    &quot; &quot;    &quot; &quot;    &quot;*&quot;    &quot;*&quot;      &quot; &quot;     
+## 11  ( 1 ) &quot;*&quot;    &quot;*&quot;    &quot; &quot;    &quot;*&quot;    &quot; &quot;    &quot; &quot;    &quot;*&quot;    &quot;*&quot;      &quot; &quot;     
+## 12  ( 1 ) &quot;*&quot;    &quot;*&quot;    &quot; &quot;    &quot;*&quot;    &quot; &quot;    &quot; &quot;    &quot;*&quot;    &quot;*&quot;      &quot; &quot;     
+## 13  ( 1 ) &quot;*&quot;    &quot;*&quot;    &quot; &quot;    &quot;*&quot;    &quot; &quot;    &quot;*&quot;    &quot;*&quot;    &quot;*&quot;      &quot;*&quot;     
+## 14  ( 1 ) &quot;*&quot;    &quot;*&quot;    &quot; &quot;    &quot;*&quot;    &quot; &quot;    &quot;*&quot;    &quot;*&quot;    &quot;*&quot;      &quot;*&quot;     
+##           poutcomesuccess and others poutcomeunknown
+## 1  ( 1 )  &quot; &quot;                        &quot; &quot;            
+## 2  ( 1 )  &quot; &quot;                        &quot; &quot;            
+## 3  ( 1 )  &quot;*&quot;                        &quot; &quot;            
+## 4  ( 1 )  &quot;*&quot;                        &quot; &quot;            
+## 5  ( 1 )  &quot;*&quot;                        &quot; &quot;            
+## 6  ( 1 )  &quot;*&quot;                        &quot; &quot;            
+## 7  ( 1 )  &quot;*&quot;                        &quot; &quot;            
+## 8  ( 1 )  &quot;*&quot;                        &quot; &quot;            
+## 9  ( 1 )  &quot;*&quot;                        &quot; &quot;            
+## 10  ( 1 ) &quot;*&quot;                        &quot; &quot;            
+## 11  ( 1 ) &quot;*&quot;                        &quot; &quot;            
+## 12  ( 1 ) &quot;*&quot;                        &quot;*&quot;            
+## 13  ( 1 ) &quot;*&quot;                        &quot; &quot;            
+## 14  ( 1 ) &quot;*&quot;                        &quot;*&quot;</code></pre>
+</div>
+<div id="logistic-regression-on-full-model" class="section level1">
+<h1>Logistic regression on full model</h1>
+<pre class="r"><code>fullmodel = glm(y~., data = bank, family = &quot;binomial&quot;)
+summary(fullmodel)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ ., family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##      Min        1Q    Median        3Q       Max  
+## -2.29979  -0.27914  -0.16943  -0.08596   3.09433  
+## 
+## Coefficients:
+##                               Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)                 -2.089e+01  9.786e+02  -0.021  0.98297    
+## age                         -1.254e-02  2.016e-02  -0.622  0.53380    
+## jobmanagement                5.743e-01  7.577e-01   0.758  0.44845    
+## jobOthers                    9.508e-01  5.885e-01   1.616  0.10617    
+## jobtechnician                9.533e-01  6.572e-01   1.451  0.14690    
+## maritalmarried               2.258e-01  5.553e-01   0.407  0.68426    
+## maritalsingle                5.491e-01  6.174e-01   0.889  0.37382    
+## educationsecondary           8.794e-02  5.411e-01   0.163  0.87090    
+## educationtertiary            2.786e-01  6.181e-01   0.451  0.65213    
+## default1                     1.255e+00  8.568e-01   1.464  0.14306    
+## balance                      2.947e-04  1.946e-03   0.151  0.87963    
+## housing1                    -1.667e-01  3.854e-01  -0.433  0.66535    
+## loan1                       -1.210e+00  6.441e-01  -1.879  0.06023 .  
+## contacttelephone and others -1.890e+00  6.157e-01  -3.069  0.00215 ** 
+## day                          1.438e-02  2.306e-02   0.624  0.53290    
+## month10                      1.818e+01  9.786e+02   0.019  0.98518    
+## month11                      1.551e+01  9.786e+02   0.016  0.98736    
+## month2                       1.586e+01  9.786e+02   0.016  0.98707    
+## month3                       1.894e+01  9.786e+02   0.019  0.98456    
+## month4                       1.730e+01  9.786e+02   0.018  0.98589    
+## month5                       1.562e+01  9.786e+02   0.016  0.98727    
+## month6                       1.736e+01  9.786e+02   0.018  0.98585    
+## month7                       1.479e+01  9.786e+02   0.015  0.98794    
+## month8                       1.588e+01  9.786e+02   0.016  0.98706    
+## month9                       1.666e+01  9.786e+02   0.017  0.98642    
+## duration                     5.833e-03  1.084e-03   5.383 7.34e-08 ***
+## campaign                    -2.178e-01  1.589e-01  -1.371  0.17036    
+## poutcomesuccess and others   2.071e+00  6.686e-01   3.097  0.00195 ** 
+## poutcomeunknown              6.297e-01  5.851e-01   1.076  0.28177    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 299.15  on 915  degrees of freedom
+## AIC: 357.15
+## 
+## Number of Fisher Scoring iterations: 17</code></pre>
+<p>The full model is not good as many of the coefficients are not significant</p>
+<p>After a many trials, the following is the best model</p>
+</div>
+<div id="backward-regression" class="section level1">
+<h1>Backward regression</h1>
+<p>The following is the best model by backward regression</p>
+<pre class="r"><code>mod_step&lt;- stepAIC(fullmodel, direction = &#39;backward&#39;, trace = FALSE)
+mod_step</code></pre>
+<pre><code>## 
+## Call:  glm(formula = y ~ default + loan + contact + month + duration + 
+##     campaign + poutcome, family = &quot;binomial&quot;, data = bank)
+## 
+## Coefficients:
+##                 (Intercept)                     default1  
+##                  -19.610827                     1.271180  
+##                       loan1  contacttelephone and others  
+##                   -1.202972                    -1.961554  
+##                     month10                      month11  
+##                   18.046599                    15.121627  
+##                      month2                       month3  
+##                   15.574634                    18.660513  
+##                      month4                       month5  
+##                   17.025514                    15.127680  
+##                      month6                       month7  
+##                   16.971346                    14.538569  
+##                      month8                       month9  
+##                   15.682285                    17.041161  
+##                    duration                     campaign  
+##                    0.005898                    -0.249001  
+##  poutcomesuccess and others              poutcomeunknown  
+##                    1.897647                     0.620638  
+## 
+## Degrees of Freedom: 943 Total (i.e. Null);  926 Residual
+## Null Deviance:       462.8 
+## Residual Deviance: 307.3     AIC: 343.3</code></pre>
+</div>
+<div id="bootstrap-method" class="section level1">
+<h1>Bootstrap method</h1>
+<p>Using bootstrap re sampling with replacement method to access the consistency predictors selected with stepwise</p>
+<div id="bootstrap-summary" class="section level2">
+<h2>Bootstrap summary</h2>
+<pre class="r"><code>print(mod_boot)</code></pre>
+<pre><code>## 
+## Summary of Bootstrapping the &#39;stepAIC()&#39; procedure for
+## 
+## Call:
+## glm(formula = y ~ ., family = &quot;binomial&quot;, data = bank)
+## 
+## Bootstrap samples: 50 
+## Direction: backward 
+## Penalty: 2 * df
+## 
+## Covariates selected
+##           (%)
+## duration  100
+## month     100
+## contact    98
+## loan       88
+## poutcome   84
+## job        64
+## campaign   48
+## housing    48
+## default    40
+## age        34
+## marital    30
+## day        28
+## education  24
+## balance    18
+## 
+## Coefficients Sign
+##                              + (%)  - (%)
+## duration                    100.00   0.00
+## jobOthers                   100.00   0.00
+## month10                     100.00   0.00
+## month2                      100.00   0.00
+## month4                      100.00   0.00
+## month5                      100.00   0.00
+## month6                      100.00   0.00
+## month7                      100.00   0.00
+## month8                      100.00   0.00
+## poutcomesuccess and others  100.00   0.00
+## month3                       98.00   2.00
+## month11                      96.00   4.00
+## default1                     95.00   5.00
+## jobtechnician                93.75   6.25
+## month9                       90.00  10.00
+## maritalsingle                86.67  13.33
+## educationtertiary            83.33  16.67
+## jobmanagement                81.25  18.75
+## poutcomeunknown              80.95  19.05
+## day                          78.57  21.43
+## maritalmarried               73.33  26.67
+## educationsecondary           66.67  33.33
+## balance                      44.44  55.56
+## housing1                     20.83  79.17
+## age                          17.65  82.35
+## campaign                      0.00 100.00
+## contacttelephone and others   0.00 100.00
+## loan1                         0.00 100.00
+## 
+## Stat Significance
+##                                (%)
+## duration                    100.00
+## contacttelephone and others  93.88
+## poutcomesuccess and others   90.48
+## jobOthers                    75.00
+## age                          70.59
+## jobtechnician                62.50
+## default1                     60.00
+## maritalsingle                60.00
+## loan1                        56.82
+## day                          50.00
+## campaign                     41.67
+## educationtertiary            41.67
+## housing1                     41.67
+## jobmanagement                40.62
+## balance                      33.33
+## educationsecondary           16.67
+## poutcomeunknown              16.67
+## maritalmarried               13.33
+## month10                       0.00
+## month11                       0.00
+## month2                        0.00
+## month3                        0.00
+## month4                        0.00
+## month5                        0.00
+## month6                        0.00
+## month7                        0.00
+## month8                        0.00
+## month9                        0.00
+## 
+## 
+## The stepAIC() for the original data-set gave
+## 
+## Call:  glm(formula = y ~ default + loan + contact + month + duration + 
+##     campaign + poutcome, family = &quot;binomial&quot;, data = bank)
+## 
+## Coefficients:
+##                 (Intercept)                     default1  
+##                  -19.610827                     1.271180  
+##                       loan1  contacttelephone and others  
+##                   -1.202972                    -1.961554  
+##                     month10                      month11  
+##                   18.046599                    15.121627  
+##                      month2                       month3  
+##                   15.574634                    18.660513  
+##                      month4                       month5  
+##                   17.025514                    15.127680  
+##                      month6                       month7  
+##                   16.971346                    14.538569  
+##                      month8                       month9  
+##                   15.682285                    17.041161  
+##                    duration                     campaign  
+##                    0.005898                    -0.249001  
+##  poutcomesuccess and others              poutcomeunknown  
+##                    1.897647                     0.620638  
+## 
+## Degrees of Freedom: 943 Total (i.e. Null);  926 Residual
+## Null Deviance:       462.8 
+## Residual Deviance: 307.3     AIC: 343.3
+## 
+## Stepwise Model Path 
+## Analysis of Deviance Table
+## 
+## Initial Model:
+## y ~ age + job + marital + education + default + balance + housing + 
+##     loan + contact + day + month + duration + campaign + poutcome
+## 
+## Final Model:
+## y ~ default + loan + contact + month + duration + campaign + 
+##     poutcome
+## 
+## 
+##          Step Df  Deviance Resid. Df Resid. Dev      AIC
+## 1                                915   299.1494 357.1494
+## 2 - education  2 0.2662136       917   299.4156 353.4156
+## 3   - marital  2 0.9848868       919   300.4005 350.4005
+## 4   - balance  1 0.0127710       920   300.4132 348.4132
+## 5   - housing  1 0.3485095       921   300.7617 346.7617
+## 6       - job  3 4.4161489       924   305.1779 345.1779
+## 7       - day  1 0.6648733       925   305.8428 343.8428
+## 8       - age  1 1.4999372       926   307.3427 343.3427</code></pre>
+</div>
+</div>
+<div id="best-model-by-bootstrap-method" class="section level1">
+<h1>Best model by bootstrap method</h1>
+<pre class="r"><code>best_bootmodel &lt;- glm(y ~ default + loan + contact + month + duration + campaign + poutcome, data = bank, family = &quot;binomial&quot;)
+summary(best_bootmodel)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ default + loan + contact + month + duration + 
+##     campaign + poutcome, family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##      Min        1Q    Median        3Q       Max  
+## -2.08779  -0.28936  -0.18286  -0.09143   3.04509  
+## 
+## Coefficients:
+##                               Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)                 -19.610827 992.438640  -0.020  0.98423    
+## default1                      1.271180   0.796819   1.595  0.11064    
+## loan1                        -1.202972   0.630718  -1.907  0.05648 .  
+## contacttelephone and others  -1.961554   0.599162  -3.274  0.00106 ** 
+## month10                      18.046599 992.438716   0.018  0.98549    
+## month11                      15.121627 992.438662   0.015  0.98784    
+## month2                       15.574634 992.438606   0.016  0.98748    
+## month3                       18.660513 992.438811   0.019  0.98500    
+## month4                       17.025514 992.438538   0.017  0.98631    
+## month5                       15.127680 992.438533   0.015  0.98784    
+## month6                       16.971346 992.438602   0.017  0.98636    
+## month7                       14.538569 992.438648   0.015  0.98831    
+## month8                       15.682285 992.438528   0.016  0.98739    
+## month9                       17.041161 992.438920   0.017  0.98630    
+## duration                      0.005898   0.001061   5.556 2.76e-08 ***
+## campaign                     -0.249001   0.159972  -1.557  0.11958    
+## poutcomesuccess and others    1.897647   0.634094   2.993  0.00277 ** 
+## poutcomeunknown               0.620638   0.557923   1.112  0.26596    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 307.34  on 926  degrees of freedom
+## AIC: 343.34
+## 
+## Number of Fisher Scoring iterations: 17</code></pre>
+<p>We can see still many coefficients are significant.</p>
+</div>
+<div id="odds-ratio" class="section level1">
+<h1>Odds ratio</h1>
+<pre class="r"><code>bank_or &lt;- data.frame(exp(best_bootmodel$coefficients))
+bank_or</code></pre>
+<pre><code>##                             exp.best_bootmodel.coefficients.
+## (Intercept)                                     3.041766e-09
+## default1                                        3.565058e+00
+## loan1                                           3.003004e-01
+## contacttelephone and others                     1.406396e-01
+## month10                                         6.879206e+07
+## month11                                         3.691809e+06
+## month2                                          5.807343e+06
+## month3                                          1.271035e+08
+## month4                                          2.477917e+07
+## month5                                          3.714224e+06
+## month6                                          2.347264e+07
+## month7                                          2.060726e+06
+## month8                                          6.467400e+06
+## month9                                          2.516995e+07
+## duration                                        1.005915e+00
+## campaign                                        7.795791e-01
+## poutcomesuccess and others                      6.670183e+00
+## poutcomeunknown                                 1.860114e+00</code></pre>
+</div>
+<div id="produce-percentage-odds" class="section level1">
+<h1>produce percentage odds</h1>
+<pre class="r"><code>bank_or_perc&lt;- (bank_or-1)*100
+bank_or_perc</code></pre>
+<pre><code>##                             exp.best_bootmodel.coefficients.
+## (Intercept)                                    -1.000000e+02
+## default1                                        2.565058e+02
+## loan1                                          -6.996996e+01
+## contacttelephone and others                    -8.593604e+01
+## month10                                         6.879206e+09
+## month11                                         3.691808e+08
+## month2                                          5.807342e+08
+## month3                                          1.271035e+10
+## month4                                          2.477917e+09
+## month5                                          3.714223e+08
+## month6                                          2.347264e+09
+## month7                                          2.060725e+08
+## month8                                          6.467399e+08
+## month9                                          2.516994e+09
+## duration                                        5.915226e-01
+## campaign                                       -2.204209e+01
+## poutcomesuccess and others                      5.670183e+02
+## poutcomeunknown                                 8.601140e+01</code></pre>
+<p>The above percentage shows that positive values are that much percentage chance that customer will subscribe to term deposit and negative values are that there are less chance of subscribing to term deposit</p>
+</div>
+<div id="multicolinearity" class="section level1">
+<h1>Multicolinearity</h1>
+<pre class="r"><code>vif(best_bootmodel)</code></pre>
+<pre><code>##              GVIF Df GVIF^(1/(2*Df))
+## default  1.071967  1        1.035359
+## loan     1.019627  1        1.009766
+## contact  1.470646  1        1.212702
+## month    2.044676 10        1.036409
+## duration 1.054404  1        1.026842
+## campaign 1.139525  1        1.067486
+## poutcome 1.251915  2        1.057776</code></pre>
+</div>
+<div id="best-model" class="section level1">
+<h1>Best model</h1>
+<p>After many iterations, below are the best model to predict the classification models</p>
+<pre class="r"><code>best &lt;- glm(y~ contact+duration+loan+campaign,  data = bank, family = &quot;binomial&quot;)
+summary(best)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ contact + duration + loan + campaign, family = &quot;binomial&quot;, 
+##     data = bank)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.3165  -0.3882  -0.2509  -0.1343   3.1220  
+## 
+## Coefficients:
+##                               Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)                 -2.9592322  0.3834729  -7.717 1.19e-14 ***
+## contacttelephone and others -1.8219615  0.4801834  -3.794 0.000148 ***
+## duration                     0.0062076  0.0009473   6.553 5.65e-11 ***
+## loan1                       -1.6543472  0.6153348  -2.689 0.007177 ** 
+## campaign                    -0.3323743  0.1404095  -2.367 0.017924 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 378.51  on 939  degrees of freedom
+## AIC: 388.51
+## 
+## Number of Fisher Scoring iterations: 7</code></pre>
+<div id="multicolinearity-analysis" class="section level2">
+<h2>Multicolinearity analysis</h2>
+<pre class="r"><code>vif(best)</code></pre>
+<pre><code>##  contact duration     loan campaign 
+## 1.002714 1.011402 1.009681 1.000656</code></pre>
+<p>The above is evident that there is no multi-colinearity among the variables</p>
+<p>The above model is significant</p>
+<p>The contact, duration, loan and campaign are the best predictors</p>
+<p>I have done this manual logistic regression after the machine learning automated logsitic regression.</p>
+<p>As per the above manual and tidymodels logistic regresssion, it was evident from the confusion matric that majority of the customers are predicted that they will not subscribe to term deposit</p>
+</div>
+<div id="observations-and-comments" class="section level2">
+<h2>Observations and comments</h2>
+<ol style="list-style-type: decimal">
+<li><p>The important determinants of the subscription to term deposit are contact, duration, loan and campaign.</p></li>
+<li><p>Though balance, day and default had positive correlation, it failed to get significance in a whole equation</p></li>
+<li><p>They failed to include the main determinants such as rate of interest, tenure of the term deposit, flexibility of foreclosure, etc which are the main influence for the customer to subscribe to term deposit</p></li>
+<li><p>All the character variables are assigned as a factor and few of the ordinal categorical variables are assigned a number</p></li>
+<li><p>cross validation and boot strapping methods used for re sampling technique.</p></li>
+<li><p>Based on the outcome, bank should stop targeting those who has any loan as they wont be able to subscribe to term deposit due to fixed monthly obligations by loan EMI</p></li>
+<li><p>Bank should keep doing marketing campaign as that will eventually gain a good business, if not immediately, at least in future.</p></li>
+</ol>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<p>[Moro et al., 2014] S. Moro, P. Cortez and P. Rita. A Data-Driven Approach to Predict the Success of Bank Telemarketing. Decision Support Systems, Elsevier, 62:22-31, June 2014
+<a href="https://archive.ics.uci.edu/ml/datasets/Bank+Marketing" class="uri">https://archive.ics.uci.edu/ml/datasets/Bank+Marketing</a></p>
+</div>
+</div>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+
