@@ -1174,6 +1174,7 @@ str(bank)
 summary(bank)
 ```
 
+
 # Best subset regression
 ```{r}
 best<-regsubsets(y~ ., data= bank, nvmax= 14)
@@ -1192,15 +1193,67 @@ The full model is not good as many of the coefficients are not significant
 
 After a many trials, the following is the best model
 
+# Backward regression
+The following is the best model by backward regression
+```{r}
+
+mod_step<- stepAIC(fullmodel, direction = 'backward', trace = FALSE)
+mod_step
+```
+
+# Bootstrap 
+Using bootstrap resampling with relacement method to access the consistency predictors selected with stepwise
+```{r message = FALSE, warning = FALSE, echo = FALSE}
+library(bootStepAIC)
+```
+```{r}
+mod_boot<- boot.stepAIC(fullmodel, bank, B =50)
+```
+```{r}
+print(mod_boot)
+```
+```{r}
+best_bootmodel <- glm(y ~ default + loan + contact + month + duration + campaign + poutcome, data = bank, family = "binomial")
+summary(best_bootmodel)
+```
+
+# Odds ratio
+```{r}
+bank_or <- data.frame(exp(best_bootmodel$coefficients))
+bank_or
+```
+# produce percentage odds
+```{r}
+bank_or_perc<- (bank_or-1)*100
+bank_or_perc
+```
+```{r}
+predict(best_bootmodel, bank, type ="response")
+```
+```{r message = FALSE, warning = FALSE, echo = FALSE}
+library(car)
+
+```
+```{r}
+vif(best_bootmodel)
+```
 
 # Best model
 
 After many iterations, below are the best model to predict the classification models
 
 ```{r}
-best = glm(y~ contact+duration+loan+campaign,  data = bank, family = "binomial")
+best <- glm(y~ contact+duration+loan+campaign,  data = bank, family = "binomial")
 summary(best)
 ```
+```{r}
+predict(best, bank, type ="response")
+```
+```{r}
+vif(best)
+```
+
+
 The above model is significant
 
 The contact, duration, loan and campaign are the best predictors
@@ -1209,6 +1262,47 @@ I have done this manual logistic regression after the machine learning automated
 
 
 As per the above manual and tidymodels logistic regresssion, it was evident from the confusion matric that majority of the customers are predicted that they will not subscribe to term deposit
+
+# Bootstrap method
+```{r}
+bank_coef_intercept <- NULL
+bank_coef_x1 <- NULL
+
+for (i in 1:15000){
+ bootstrap_bank = bank[sample(1:nrow(bank), nrow(bank), replace = TRUE),] 
+ model_bootstrap <- glm(y~ contact+duration+loan+campaign, data = bootstrap_bank, family ="binomial")
+ bank_coef_intercept <-
+   c(bank_coef_intercept, model_bootstrap$coefficients[1])
+ bank_coef_x1 <-
+   c(bank_coef_x1, model_bootstrap$coefficient[2])
+ 
+ model_bootstrap
+ bank_coef_intercept
+ bank_coef_x1
+}
+
+```
+```{r}
+print(model_bootstrap)
+```
+
+```{r}
+library(boot)  
+logit_test <- function(bank,indices) {  
+bank <- bank[indices,]  
+fit <- glm(y~ contact+duration+loan+campaign, data = bank, family = "binomial")  
+return(coef(fit))  
+}
+boot_fit <- boot(  
+   data = bank, 
+   statistic = logit_test, 
+   R = 1e5
+) 
+```
+```{r}
+print(boot_fit)
+```
+
 
 
 ## Observations and comments
