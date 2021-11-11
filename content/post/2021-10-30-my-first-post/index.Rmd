@@ -2,12 +2,9 @@
 title: "Bank"
 author: ''
 date: '2021-10-30'
-output:
-  html_document:
-    df_print: paged
+slug: Bank
 categories: []
 tags: []
-slug: Bank
 ---
 ```{r message = FALSE, warning = FALSE, echo = FALSE}
 
