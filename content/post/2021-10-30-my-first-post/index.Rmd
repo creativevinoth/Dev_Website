@@ -50,9 +50,11 @@ Bivariate analysis
 
 Logistic regression using tidymodels
 
-Workflow and model creation
+Workflow and model creation with cross validation
 
 Manual logistic regression
+
+Bootstrap method
 
 Observation and comments
 
@@ -1201,21 +1203,27 @@ mod_step<- stepAIC(fullmodel, direction = 'backward', trace = FALSE)
 mod_step
 ```
 
-# Bootstrap 
-Using bootstrap resampling with relacement method to access the consistency predictors selected with stepwise
+# Bootstrap method
+Using bootstrap re sampling with replacement method to access the consistency predictors selected with stepwise
 ```{r message = FALSE, warning = FALSE, echo = FALSE}
 library(bootStepAIC)
 ```
 ```{r message = FALSE, warning = FALSE, echo = FALSE}
 mod_boot<- boot.stepAIC(fullmodel, bank, B =50)
 ```
+
+## Bootstrap summary
+
 ```{r}
 print(mod_boot)
 ```
+
+# Best model by bootstrap method
 ```{r}
 best_bootmodel <- glm(y ~ default + loan + contact + month + duration + campaign + poutcome, data = bank, family = "binomial")
 summary(best_bootmodel)
 ```
+We can see still many coefficients are significant. 
 
 # Odds ratio
 ```{r}
@@ -1227,13 +1235,13 @@ bank_or
 bank_or_perc<- (bank_or-1)*100
 bank_or_perc
 ```
-```{r}
-predict(best_bootmodel, bank, type ="response")
-```
+The above percentage shows that positive values are that much percentage chance that customer will subscribe to term deposit and negative values are that there are less chance of subscribing to term deposit
 ```{r message = FALSE, warning = FALSE, echo = FALSE}
 library(car)
 
 ```
+# Multicolinearity
+
 ```{r}
 vif(best_bootmodel)
 ```
@@ -1246,13 +1254,11 @@ After many iterations, below are the best model to predict the classification mo
 best <- glm(y~ contact+duration+loan+campaign,  data = bank, family = "binomial")
 summary(best)
 ```
-```{r}
-predict(best, bank, type ="response")
-```
+## Multicolinearity analysis
 ```{r}
 vif(best)
 ```
-
+The above is evident that there is no multi-colinearity among the variables
 
 The above model is significant
 
@@ -1265,21 +1271,21 @@ As per the above manual and tidymodels logistic regresssion, it was evident from
 
 
 
-
-
 ## Observations and comments
 
- 1. The important determinants of the subcription to term deposit are contact, duration, loan and campaign.
+1. The important determinants of the subscription to term deposit are contact, duration, loan and campaign.
 
 2. Though balance, day and default had positive correlation, it failed to get significance in a whole equation
 
-3. They failed to include the main determinats such as rate of interest, tenure of the term deposit, flexibility of preclosure, etc which are the main influencer for the customer to subscribe to term deposit
+3. They failed to include the main determinants such as rate of interest, tenure of the term deposit, flexibility of foreclosure, etc which are the main influence for the customer to subscribe to term deposit
 
 4. All the character variables are assigned as a factor and few of the ordinal categorical variables are assigned a number
 
-5. Based on the outcome, bank should stop targeting those who has any loan as they wont be able to subscribe to term deposit due to fixed monthly obligations by loan EMI
+5. cross validation and boot strapping methods used for re sampling technique.
 
-6. Bank should keep doing marketing campaign as that will eventually gain a good business, if not immediately, at least in future.
+6. Based on the outcome, bank should stop targeting those who has any loan as they wont be able to subscribe to term deposit due to fixed monthly obligations by loan EMI
+
+7. Bank should keep doing marketing campaign as that will eventually gain a good business, if not immediately, at least in future.
 
 
 ## References
