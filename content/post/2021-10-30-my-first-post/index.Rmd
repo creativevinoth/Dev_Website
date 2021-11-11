@@ -2,9 +2,12 @@
 title: "Bank"
 author: ''
 date: '2021-10-30'
-slug: Bank
+output:
+  html_document:
+    df_print: paged
 categories: []
 tags: []
+slug: Bank
 ---
 ```{r message = FALSE, warning = FALSE, echo = FALSE}
 
@@ -28,7 +31,6 @@ library(tidymodels)
 library(Rmisc)
 library(SIBER)
 ```
-
 
 
 ```{r message = FALSE, warning = FALSE, echo = FALSE, include = FALSE}
