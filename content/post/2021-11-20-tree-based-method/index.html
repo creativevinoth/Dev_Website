@@ -1,0 +1,733 @@
+---
+title: Tree based method
+author: ''
+date: '2021-11-20'
+slug: tree-based-method
+categories: []
+tags: []
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<div id="structure-of-the-data-set" class="section level1">
+<h1>Structure of the data set</h1>
+<pre class="r"><code>str(bank)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    4521 obs. of  17 variables:
+##  $ age      : int  30 33 35 30 59 35 36 39 41 43 ...
+##  $ job      : chr  &quot;unemployed&quot; &quot;services&quot; &quot;management&quot; &quot;management&quot; ...
+##  $ marital  : chr  &quot;married&quot; &quot;married&quot; &quot;single&quot; &quot;married&quot; ...
+##  $ education: chr  &quot;primary&quot; &quot;secondary&quot; &quot;tertiary&quot; &quot;tertiary&quot; ...
+##  $ default  : chr  &quot;no&quot; &quot;no&quot; &quot;no&quot; &quot;no&quot; ...
+##  $ balance  : int  1787 4789 1350 1476 0 747 307 147 221 -88 ...
+##  $ housing  : chr  &quot;no&quot; &quot;yes&quot; &quot;yes&quot; &quot;yes&quot; ...
+##  $ loan     : chr  &quot;no&quot; &quot;yes&quot; &quot;no&quot; &quot;yes&quot; ...
+##  $ contact  : chr  &quot;cellular&quot; &quot;cellular&quot; &quot;cellular&quot; &quot;unknown&quot; ...
+##  $ day      : int  19 11 16 3 5 23 14 6 14 17 ...
+##  $ month    : chr  &quot;oct&quot; &quot;may&quot; &quot;apr&quot; &quot;jun&quot; ...
+##  $ duration : int  79 220 185 199 226 141 341 151 57 313 ...
+##  $ campaign : int  1 1 1 4 1 2 1 2 2 1 ...
+##  $ pdays    : int  -1 339 330 -1 -1 176 330 -1 -1 147 ...
+##  $ previous : int  0 4 1 0 0 3 2 0 0 2 ...
+##  $ poutcome : chr  &quot;unknown&quot; &quot;failure&quot; &quot;failure&quot; &quot;unknown&quot; ...
+##  $ y        : chr  &quot;no&quot; &quot;no&quot; &quot;no&quot; &quot;no&quot; ...</code></pre>
+</div>
+<div id="descriptive-statistics-of-numerical-independent-values" class="section level1">
+<h1>Descriptive statistics of numerical independent values</h1>
+<pre class="r"><code>descr(bank)</code></pre>
+<pre><code>## Non-numerical variable(s) ignored: job, marital, education, default, housing, loan, contact, month, poutcome, y</code></pre>
+<pre><code>## Descriptive Statistics  
+## bank  
+## N: 4521  
+## 
+##                         age    balance   campaign       day   duration     pdays   previous
+## ----------------- --------- ---------- ---------- --------- ---------- --------- ----------
+##              Mean     41.17    1422.66       2.79     15.92     263.96     39.77       0.54
+##           Std.Dev     10.58    3009.64       3.11      8.25     259.86    100.12       1.69
+##               Min     19.00   -3313.00       1.00      1.00       4.00     -1.00       0.00
+##                Q1     33.00      69.00       1.00      9.00     104.00     -1.00       0.00
+##            Median     39.00     444.00       2.00     16.00     185.00     -1.00       0.00
+##                Q3     49.00    1480.00       3.00     21.00     329.00     -1.00       0.00
+##               Max     87.00   71188.00      50.00     31.00    3025.00    871.00      25.00
+##               MAD     10.38     658.27       1.48     10.38     143.81      0.00       0.00
+##               IQR     16.00    1411.00       2.00     12.00     225.00      0.00       0.00
+##                CV      0.26       2.12       1.11      0.52       0.98      2.52       3.12
+##          Skewness      0.70       6.59       4.74      0.09       2.77      2.72       5.87
+##       SE.Skewness      0.04       0.04       0.04      0.04       0.04      0.04       0.04
+##          Kurtosis      0.35      88.25      37.11     -1.04      12.51      7.94      51.91
+##           N.Valid   4521.00    4521.00    4521.00   4521.00    4521.00   4521.00    4521.00
+##         Pct.Valid    100.00     100.00     100.00    100.00     100.00    100.00     100.00</code></pre>
+</div>
+<div id="summary-of-dataset" class="section level1">
+<h1>Summary of dataset</h1>
+<pre class="r"><code>summary(bank)</code></pre>
+<pre><code>##       age            job              marital           education        
+##  Min.   :19.00   Length:4521        Length:4521        Length:4521       
+##  1st Qu.:33.00   Class :character   Class :character   Class :character  
+##  Median :39.00   Mode  :character   Mode  :character   Mode  :character  
+##  Mean   :41.17                                                           
+##  3rd Qu.:49.00                                                           
+##  Max.   :87.00                                                           
+##    default             balance        housing              loan          
+##  Length:4521        Min.   :-3313   Length:4521        Length:4521       
+##  Class :character   1st Qu.:   69   Class :character   Class :character  
+##  Mode  :character   Median :  444   Mode  :character   Mode  :character  
+##                     Mean   : 1423                                        
+##                     3rd Qu.: 1480                                        
+##                     Max.   :71188                                        
+##    contact               day           month              duration   
+##  Length:4521        Min.   : 1.00   Length:4521        Min.   :   4  
+##  Class :character   1st Qu.: 9.00   Class :character   1st Qu.: 104  
+##  Mode  :character   Median :16.00   Mode  :character   Median : 185  
+##                     Mean   :15.92                      Mean   : 264  
+##                     3rd Qu.:21.00                      3rd Qu.: 329  
+##                     Max.   :31.00                      Max.   :3025  
+##     campaign          pdays           previous         poutcome        
+##  Min.   : 1.000   Min.   : -1.00   Min.   : 0.0000   Length:4521       
+##  1st Qu.: 1.000   1st Qu.: -1.00   1st Qu.: 0.0000   Class :character  
+##  Median : 2.000   Median : -1.00   Median : 0.0000   Mode  :character  
+##  Mean   : 2.794   Mean   : 39.77   Mean   : 0.5426                     
+##  3rd Qu.: 3.000   3rd Qu.: -1.00   3rd Qu.: 0.0000                     
+##  Max.   :50.000   Max.   :871.00   Max.   :25.0000                     
+##       y            
+##  Length:4521       
+##  Class :character  
+##  Mode  :character  
+##                    
+##                    
+## </code></pre>
+</div>
+<div id="data-table-of-data-set" class="section level1">
+<h1>Data table of data set</h1>
+<pre class="r"><code>data.table(bank)</code></pre>
+<pre><code>##       age           job marital education default balance housing loan  contact
+##    1:  30    unemployed married   primary      no    1787      no   no cellular
+##    2:  33      services married secondary      no    4789     yes  yes cellular
+##    3:  35    management  single  tertiary      no    1350     yes   no cellular
+##    4:  30    management married  tertiary      no    1476     yes  yes  unknown
+##    5:  59   blue-collar married secondary      no       0     yes   no  unknown
+##   ---                                                                          
+## 4517:  33      services married secondary      no    -333     yes   no cellular
+## 4518:  57 self-employed married  tertiary     yes   -3313     yes  yes  unknown
+## 4519:  57    technician married secondary      no     295      no   no cellular
+## 4520:  28   blue-collar married secondary      no    1137      no   no cellular
+## 4521:  44  entrepreneur  single  tertiary      no    1136     yes  yes cellular
+##       day month duration campaign pdays previous poutcome  y
+##    1:  19   oct       79        1    -1        0  unknown no
+##    2:  11   may      220        1   339        4  failure no
+##    3:  16   apr      185        1   330        1  failure no
+##    4:   3   jun      199        4    -1        0  unknown no
+##    5:   5   may      226        1    -1        0  unknown no
+##   ---                                                       
+## 4517:  30   jul      329        5    -1        0  unknown no
+## 4518:   9   may      153        1    -1        0  unknown no
+## 4519:  19   aug      151       11    -1        0  unknown no
+## 4520:   6   feb      129        4   211        3    other no
+## 4521:   3   apr      345        2   249        7    other no</code></pre>
+<div id="univariate-analysis-on-numerical-data" class="section level2">
+<h2>Univariate analysis on numerical data</h2>
+</div>
+</div>
+<div id="univariate-analysis-on-age" class="section level1">
+<h1>Univariate analysis on age</h1>
+<pre class="r"><code>descr(bank$age)</code></pre>
+<pre><code>## Descriptive Statistics  
+## bank$age  
+## N: 4521  
+## 
+##                         age
+## ----------------- ---------
+##              Mean     41.17
+##           Std.Dev     10.58
+##               Min     19.00
+##                Q1     33.00
+##            Median     39.00
+##                Q3     49.00
+##               Max     87.00
+##               MAD     10.38
+##               IQR     16.00
+##                CV      0.26
+##          Skewness      0.70
+##       SE.Skewness      0.04
+##          Kurtosis      0.35
+##           N.Valid   4521.00
+##         Pct.Valid    100.00</code></pre>
+<p>The minimum age of the customer is 19 and maximum age is 87. There is a standard deviation of 10.58, which is high in numbers. Let me dwar a box plot to find out the outliers so that data can be streamlined and standard deviation can be reduced</p>
+</div>
+<div id="box-plot-of-age-and-its-outliers" class="section level1">
+<h1>Box plot of age and its outliers</h1>
+<pre class="r"><code>age_outliers&lt;-boxplot.stats(bank$age)$out
+boxplot(bank$age, main = &quot;Box plot of age&quot;, boxwex = 0.6)
+mtext(paste(&quot;Outliers: &quot;, paste(age_outliers, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<pre class="r"><code>age_outliers</code></pre>
+<pre><code>##  [1] 78 77 78 75 75 77 81 83 80 77 75 80 83 75 79 77 86 78 77 74 80 74 80 80 75
+## [26] 76 79 77 87 79 76 80 79 74 75 84 83 83</code></pre>
+<p>We can see the outliers of the age lie between 74 and 87.</p>
+</div>
+<div id="minimum-value-of-age-outliers" class="section level1">
+<h1>Minimum value of age outliers</h1>
+<pre class="r"><code>min(age_outliers)</code></pre>
+<pre><code>## [1] 74</code></pre>
+</div>
+<div id="maximum-value-of-age-outliers" class="section level1">
+<h1>Maximum value of age outliers</h1>
+<pre class="r"><code>max(age_outliers)</code></pre>
+<pre><code>## [1] 87</code></pre>
+<p>I used subset function to add the age less than 74 so that outliers can be removed</p>
+<pre class="r"><code>bank&lt;- subset(bank, age &lt; 74)</code></pre>
+</div>
+<div id="boxplot-of-age-after-removal-of-outliers" class="section level1">
+<h1>Boxplot of age after removal of outliers</h1>
+<pre class="r"><code>age_withoutoutliers&lt;-boxplot.stats(bank$age)$out
+boxplot(bank$age, main = &quot;Box plot of age after reomval of outliers&quot;, boxwex = 0.6)
+mtext(paste(&quot;Outliers: &quot;, paste(age_withoutoutliers, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<pre class="r"><code>age_withoutoutliers</code></pre>
+<pre><code>##  [1] 71 72 73 71 73 73 72 73 71 73 72 71 71 72 71 73</code></pre>
+</div>
+<div id="univariate-analysis-on-balance" class="section level1">
+<h1>Univariate analysis on balance</h1>
+<pre class="r"><code>descr(bank$balance)</code></pre>
+<pre><code>## Descriptive Statistics  
+## bank$balance  
+## N: 4483  
+## 
+##                      balance
+## ----------------- ----------
+##              Mean    1409.82
+##           Std.Dev    2987.98
+##               Min   -3313.00
+##                Q1      67.00
+##            Median     440.00
+##                Q3    1469.00
+##               Max   71188.00
+##               MAD     652.34
+##               IQR    1401.00
+##                CV       2.12
+##          Skewness       6.66
+##       SE.Skewness       0.04
+##          Kurtosis      90.71
+##           N.Valid    4483.00
+##         Pct.Valid     100.00</code></pre>
+<p>The minimum balance of the customer is -3313, which is a negative balance because of non maintenance charges or some other charges. The maximum balance is 71188. The standard deviation is 2987 and median is 440.</p>
+</div>
+<div id="box-plot-of-balance-and-its-outliers" class="section level1">
+<h1>Box plot of balance and its outliers</h1>
+<pre class="r"><code>balance_outliers&lt;-boxplot.stats(bank$balance)$out
+boxplot(bank$balance, main = &quot;Box plot of balance&quot;, boxwex = 0.6)
+mtext(paste(&quot;Outliers: &quot;, paste(balance_outliers, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<pre class="r"><code>balance_outliers</code></pre>
+<pre><code>##   [1]  4789  9374  4073  5883  4189  3935 11971  4629  5887 16873  6248  3616
+##  [13] 14093  5426  5996  3777  4111  6313  8104  4590  9009  5181  6979  9216
+##  [25]  5563  9149 11494  4030  3571  3576  7082  4012  3762  7190  5803 12186
+##  [37] 11219  5776  4108  4994  3681  4531  4286  8545  6699 10924  3950  4099
+##  [49]  5450  8436 11262  7290  3705  9676  6613  6101  7685  4515  4380  3825
+##  [61]  4303  4508  5462 10378  8969  4608  7317  4943 12607  3872  5207  5799
+##  [73]  3696 12437 11269 11555  3611 12519  7050  3704  6619  9449  8023  6269
+##  [85] 23663  4063 11084  3706  4153  7708  6000  8894 14752 15311 10786  4020
+##  [97]  3924  4348 13669  7066  4798  4366  4900  8167  3671 26965 15030 11303
+## [109] 19358  9269  5291 10287  5235  4040 16353  7353  3913  6102  3575  8312
+## [121]  5920  3723  6411  3873  5436  3913 10758  8494  5346 25824  9720  3904
+## [133]  8262  7108  5278  7289  3897  5110  4820  4937  5403  4089  4567  3875
+## [145]  5957  5514  4579  5106  4415  5173  6016  3694 10177 15459  4902  4229
+## [157]  5050  4667  7744  5037  5845  5673  5801  9121  4170  4424  9019  4012
+## [169]  7343 13494  4665  3748  3696  4103  7546  8647 27733  6421  5060  3945
+## [181]  3638  3992  4760  6145  3990  7727  7702  5639  3672  6217 14533  4684
+## [193]  8004  8139  4968  4761  5958  3732  4415  3672  4565  7124 17555  5172
+## [205] 15520 13711 15834  6290  4075  4958 21244  4374  7179  8295  4143 10788
+## [217]  4143  4157 27359 18347  7813  7195  3921  4785  4657  4365  4404  6046
+## [229]  6217  7138  4758  4787  7876  7010  5137 13044  3859  4198  4760  4335
+## [241]  9339  6922  4265  4659  4897  3726  3727  4089  8883 26306  3823  4343
+## [253]  6766  3973  7696  4500  3782  5780 16430  5195 13342  6570  8238  6402
+## [265] 16992  6072 -2082  5498  5063  7041  3927 11386  4232  5564  3636  4007
+## [277]  5355  9976  4425  3573  8106  7513  5116  4148  7378  4541  4287  4895
+## [289]  5543  5191 22370  5366  4906  3672  4945  3733 11417  4213  9756  9851
+## [301]  5095  8309  8627  6095 22856  5314  5731  6307  7864  5715  3665  3931
+## [313]  6728  9305  8627  9228 12223  7007  4446 13658 10218  7635 12531 14220
+## [325] 12569  3587  4855 42045  3940  3735 26394 16957  4809  8044  4610  4030
+## [337]  4646  3948  8515  9146  6164  4745 11797  4015  5086  4824  6968  6904
+## [349] 13229  5739  5310 22171  3797  4438  5045 21664  5878 16264  9207  4256
+## [361]  3953 13204 22546  8131 10787  6839  4664  4908  8669  9324  7735  5320
+## [373]  4885  5462  6767  8876  6164  5039  5092  4280  5706  7780 16874  6483
+## [385]  4209 14363  3620  6495  5774 19317  3726  6610  6704  4543  3576  4994
+## [397] 16178 13893  4194  5969  5533  4022  4094  4539  5244 71188  5108  6649
+## [409]  4384  4130  3975  7495 22196  5731  7020  3658  5549 27069  8038  3663
+## [421]  5122  4503  4848 13683  4402  4722  3706  3809 14440  7944  5306  3676
+## [433]  8902  7337  5092 10655  6836  5527 17361 21515  5902  3800  9328  3601
+## [445] 14412  4441  3972  9374  6900  4086  4831  3940  4382  3939  8023  6844
+## [457] 10907  6637  3792 14058  5057  4717  4039  8218  6563  5980  5597  8652
+## [469]  6850  3608  8366 20453 19447 10888 13156  4210 16063  5431  4787  3854
+## [481]  3653  4795 10910  7929  4945  7845  3935  4888  4460 13117 12877  6880
+## [493]  5304  3953  6969  4554  4790  6945  4196 -3313</code></pre>
+<p>We can see more outliers in balance. The outliers ranges between -3313 and 0 and between 267 and 71188</p>
+</div>
+<div id="minimum-negative-value-of-balance-outlier" class="section level1">
+<h1>Minimum negative value of balance outlier</h1>
+<pre class="r"><code>min(balance_outliers)</code></pre>
+<pre><code>## [1] -3313</code></pre>
+</div>
+<div id="minimum-positive-value-of-balance-outlier" class="section level1">
+<h1>Minimum positive value of balance outlier</h1>
+<pre class="r"><code>which.min(balance_outliers&gt;0)</code></pre>
+<pre><code>## [1] 267</code></pre>
+</div>
+<div id="maximum-value-of-balance-outlier" class="section level1">
+<h1>Maximum value of balance outlier</h1>
+<pre class="r"><code>max(balance_outliers)</code></pre>
+<pre><code>## [1] 71188</code></pre>
+<p>The outliers are removed by choosing the value between 0 and 273</p>
+<pre class="r"><code>bank&lt;- subset(bank, balance &gt; 0 &amp; balance &lt; 273)</code></pre>
+</div>
+<div id="boxplot-of-balance-after-removal-of-outliers" class="section level1">
+<h1>Boxplot of balance after removal of outliers</h1>
+<pre class="r"><code>balance_withoutoutliers&lt;-boxplot.stats(bank$balance)$out
+boxplot(bank$balance, main = &quot;Box plot of balance after removal of outliers&quot;, boxwex = 0.6)
+mtext(paste(&quot;Outliers: &quot;, paste(balance_withoutoutliers, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<pre class="r"><code>balance_withoutoutliers</code></pre>
+<pre><code>## integer(0)</code></pre>
+</div>
+<div id="unvariate-analysis-on-day" class="section level1">
+<h1>Unvariate analysis on day</h1>
+<pre class="r"><code>descr(bank$day)</code></pre>
+<pre><code>## Descriptive Statistics  
+## bank$day  
+## N: 1103  
+## 
+##                         day
+## ----------------- ---------
+##              Mean     15.69
+##           Std.Dev      8.41
+##               Min      1.00
+##                Q1      8.00
+##            Median     16.00
+##                Q3     22.00
+##               Max     31.00
+##               MAD     10.38
+##               IQR     14.00
+##                CV      0.54
+##          Skewness      0.15
+##       SE.Skewness      0.07
+##          Kurtosis     -1.12
+##           N.Valid   1103.00
+##         Pct.Valid    100.00</code></pre>
+<p>The minimum contact day is 1 and maximum is 31. There is a standard deviation of 8.41</p>
+</div>
+<div id="boxplot-of-day-after-removal-of-outliers" class="section level1">
+<h1>Boxplot of day after removal of outliers</h1>
+<pre class="r"><code>day_outliers&lt;-boxplot.stats(bank$day)$out
+boxplot(bank$day, main = &quot;Box plot of day&quot;, boxwex = 0.6)
+mtext(paste(&quot;Outliers: &quot;, paste(day_outliers, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<pre class="r"><code>day_outliers</code></pre>
+<pre><code>## integer(0)</code></pre>
+<p>There are no outliers in day</p>
+</div>
+<div id="univariate-analysis-on-duration" class="section level1">
+<h1>Univariate analysis on duration</h1>
+<pre class="r"><code>descr(bank$duration)</code></pre>
+<pre><code>## Descriptive Statistics  
+## bank$duration  
+## N: 1103  
+## 
+##                     duration
+## ----------------- ----------
+##              Mean     238.88
+##           Std.Dev     234.81
+##               Min       5.00
+##                Q1      96.00
+##            Median     171.00
+##                Q3     297.00
+##               Max    2456.00
+##               MAD     131.95
+##               IQR     199.00
+##                CV       0.98
+##          Skewness       2.94
+##       SE.Skewness       0.07
+##          Kurtosis      14.12
+##           N.Valid    1103.00
+##         Pct.Valid     100.00</code></pre>
+<p>The minimum contact duration was 5 seconds and maximum duration was 2456 seconds. There is a standard deviation of 234.81 seconds</p>
+</div>
+<div id="box-plot-of-duration-and-its-outliers" class="section level1">
+<h1>Box plot of duration and its outliers</h1>
+<pre class="r"><code>duration_outliers&lt;-boxplot.stats(bank$duration)$out
+boxplot(bank$duration, main = &quot;Box plot of duration&quot;, boxwex = 0.6)
+mtext(paste(&quot;Outliers: &quot;, paste(duration_outliers, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<pre class="r"><code>duration_outliers</code></pre>
+<pre><code>##  [1] 1740  676  644  783  799 1017  597 1735  792  668 1031  614  676  717 1028
+## [16]  650  684  686  653  611  796 1126  635  753 1275  808  923  762  657 1309
+## [31]  908 1386  955 1164  606  635 1689  732  956  836  632  701  699  672  652
+## [46]  612  924 1467  990  646  998  747  650  622  836 1124  978  720 1117 1223
+## [61] 1101  744  631  650  634  764  731  821  742 2456  723  688  857  921  627
+## [76]  984  866  697 1151  873  599</code></pre>
+<p>There are some outliers in duration, ranging between 597 and 2456 seconds</p>
+</div>
+<div id="minimum-value-of-duration-outlier" class="section level1">
+<h1>Minimum value of duration outlier</h1>
+<pre class="r"><code>min(duration_outliers)</code></pre>
+<pre><code>## [1] 597</code></pre>
+</div>
+<div id="maximum-value-of-duration-outlier" class="section level1">
+<h1>Maximum value of duration outlier</h1>
+<pre class="r"><code>max(duration_outliers)</code></pre>
+<pre><code>## [1] 2456</code></pre>
+<p>The outliers are removed greater then 597 using subset</p>
+<pre class="r"><code>bank&lt;- subset(bank, duration &lt; 597)</code></pre>
+</div>
+<div id="boxplot-of-duration-after-removal-of-outliers" class="section level1">
+<h1>Boxplot of duration after removal of outliers</h1>
+<pre class="r"><code>duration_withoutoutliers&lt;-boxplot.stats(bank$duration)$out
+boxplot(bank$duration, main = &quot;Box plot of duration after outliers are removed&quot;, boxwex = 0.6)
+mtext(paste(&quot;Outliers: &quot;, paste(duration_withoutoutliers, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
+<pre class="r"><code>duration_withoutoutliers</code></pre>
+<pre><code>##  [1] 564 588 543 587 523 568 524 503 580 590 543 574 550 577 543 546 563 505 509
+## [20] 501 528 587 582 527 544 570 528 501 517 587 529 549 508</code></pre>
+</div>
+<div id="univariate-analysis-on-campaign" class="section level1">
+<h1>UNivariate analysis on campaign</h1>
+<pre class="r"><code>descr(bank$campaign)</code></pre>
+<pre><code>## Descriptive Statistics  
+## bank$campaign  
+## N: 1022  
+## 
+##                     campaign
+## ----------------- ----------
+##              Mean       2.79
+##           Std.Dev       2.88
+##               Min       1.00
+##                Q1       1.00
+##            Median       2.00
+##                Q3       3.00
+##               Max      31.00
+##               MAD       1.48
+##               IQR       2.00
+##                CV       1.03
+##          Skewness       3.63
+##       SE.Skewness       0.08
+##          Kurtosis      19.62
+##           N.Valid    1022.00
+##         Pct.Valid     100.00</code></pre>
+</div>
+<div id="box-plot-of-campaign" class="section level1">
+<h1>Box plot of Campaign</h1>
+<pre class="r"><code>campaign_outliers&lt;-boxplot.stats(bank$campaign)$out
+boxplot(bank$campaign, main = &quot;Box plot of campaign&quot;, boxwex = 0.6)
+mtext(paste(&quot;Outliers: &quot;, paste(campaign_outliers, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
+<pre class="r"><code>campaign_outliers</code></pre>
+<pre><code>##  [1] 12  7  7 10  9  7  8 10  8 22 11  9 12  7 11 11 11 11 13 11  8 12  7  8 11
+## [26]  7  8  7 17 19  7 24  8  9  9  7  8 17 20  9  9 12 10  9  9  8 11 11  7 13
+## [51]  7 11 18 15  8 10 11  9  8 31  8 19 17  7  7 12  7  8  7  7  8  7  9 12 10
+## [76]  7 15  9</code></pre>
+<p>There are many outliers in campaign ranging between 7 and 31</p>
+</div>
+<div id="minimum-of-campaign-outliers" class="section level1">
+<h1>Minimum of campaign outliers</h1>
+<pre class="r"><code>min(campaign_outliers)</code></pre>
+<pre><code>## [1] 7</code></pre>
+</div>
+<div id="maximum-of-campaign-outliers" class="section level1">
+<h1>Maximum of campaign outliers</h1>
+<pre class="r"><code>max(campaign_outliers)</code></pre>
+<pre><code>## [1] 31</code></pre>
+<p>The outliers are removed and data are taken less than 7</p>
+<pre class="r"><code>bank&lt;- subset(bank, campaign &lt; 7)</code></pre>
+</div>
+<div id="box-plot-of-campaign-after-removal-of-outliers" class="section level1">
+<h1>Box plot of campaign after removal of outliers</h1>
+<pre class="r"><code>campaign_withoutoutliers&lt;-boxplot.stats(bank$campaign)$out
+boxplot(bank$campaign, main = &quot;Box plot of campaign after removal of outliers&quot;, boxwex = 0.6)
+mtext(paste(&quot;Outliers: &quot;, paste(campaign_withoutoutliers, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
+<pre class="r"><code>campaign_withoutoutliers</code></pre>
+<pre><code>## integer(0)</code></pre>
+</div>
+<div id="box-plot-of-pdays" class="section level1">
+<h1>Box plot of pdays</h1>
+<pre class="r"><code>pdays_outliers&lt;-boxplot.stats(bank$pdays)$out
+boxplot(bank$pdays, main = &quot;Box plot of pdays&quot;, boxwex = 0.6)
+mtext(paste(&quot;Outliers: &quot;, paste(pdays_outliers, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-34-1.png" width="672" /></p>
+<pre class="r"><code>pdays_outliers</code></pre>
+<pre><code>##   [1] 152   5 170 297 196 137 207 288 436 347 271 347 351   1 347  96 358 337
+##  [19] 102 212  63 247 175 382 147 199  91 342 135 278 140 268 337 271 241  85
+##  [37] 349  80 345 371 246 169  69 322 169 273 112 346 808 113 378 107 360 293
+##  [55] 138 364 359 363 370 339 356 191 300 280 176 337 362 368  89 183  88 127
+##  [73] 365 174 169  84 193  85 461 182  96 183 171 337 342 170 126 273 368 152
+##  [91] 173  92 294 167 222 435 340 196  88 244   2 227  92 260 350 266 295 120
+## [109] 281 336 169 369 367 315 261 195 231 176 109 368 201 362 335 105 332 360
+## [127] 261 352 161 371 367 181 345  85 357 161 148 309 358  85 266 368  78  94
+## [145] 340 120  64 106 123 363 347 359 148 256 687 140 363 181 360 167 152 183
+## [163] 183 253 184 317 340 299 370 246 315 361</code></pre>
+<p>It is surprising to see that whole data are outliers.</p>
+</div>
+<div id="minimum-of-pdays-outliers" class="section level1">
+<h1>Minimum of pdays outliers</h1>
+<pre class="r"><code>min(pdays_outliers)</code></pre>
+<pre><code>## [1] 1</code></pre>
+</div>
+<div id="maximum-of-pdays-outliers" class="section level1">
+<h1>Maximum of pdays outliers</h1>
+<pre class="r"><code>max(pdays_outliers)</code></pre>
+<pre><code>## [1] 808</code></pre>
+<p>The whole coloum pdays is removed from dataset because of outliers high in numbers</p>
+<pre class="r"><code>bank&lt;- subset(bank, select = -pdays)</code></pre>
+</div>
+<div id="box-plot-of-previous" class="section level1">
+<h1>Box plot of previous</h1>
+<pre class="r"><code>previous_outliers&lt;-boxplot.stats(bank$previous)$out
+boxplot(bank$previous, main = &quot;Box plot of previous&quot;, boxwex = 0.6)
+mtext(paste(&quot;Outliers: &quot;, paste(previous_outliers, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-38-1.png" width="672" /></p>
+<pre class="r"><code>previous_outliers</code></pre>
+<pre><code>##   [1]  1  2  5  1  1 20  1  3  1  1  2  1 10  6  1  2  2  3  2  2  5  1  2  1  3
+##  [26]  3  1  1  1  2  2  2  2  1  1 19  1  1  2  3  1  2  2  1  2  3  3  2 12  5
+##  [51]  3  2  3  5  1  1  1  2  1  7  2  4  5  2  5  1  1  2  1  4  1  4  5 12  1
+##  [76]  3  2  5  1  2  2  2  3  1  3  2  4  3  4  1  3  1  1  6  3  1  1  1  4  4
+## [101]  3  1  1  4  1  8  1  1  1  2  3  4  2  2  1  1  2  1  4  1  1  5  2  2  1
+## [126]  3  5  2  2  3  1  4  1  5  4  9  4  3  2  1  3  2  8  2  2  1  2  2  2  1
+## [151]  5  1  1  3  2  1  2 14  1  1  6  4  1  1  7  3  1  3  1  1 11  5</code></pre>
+<p>Even the previous data has full outliers on data. Thus, I removed it from the dataset</p>
+</div>
+<div id="minimum-of-previous-outliers" class="section level1">
+<h1>Minimum of previous outliers</h1>
+<pre class="r"><code>min(previous_outliers)</code></pre>
+<pre><code>## [1] 1</code></pre>
+</div>
+<div id="maximum-outliers" class="section level1">
+<h1>Maximum outliers</h1>
+<pre class="r"><code>max(previous_outliers)</code></pre>
+<pre><code>## [1] 20</code></pre>
+<p>The whole column of previous is removed from the bank dataset due to more outliers</p>
+<pre class="r"><code>bank&lt;- subset(bank, select = -previous)</code></pre>
+<div id="univariate-analysis-on-categorical-value" class="section level2">
+<h2>Univariate analysis on categorical value</h2>
+</div>
+</div>
+<div id="frequency-distribution-of-job" class="section level1">
+<h1>Frequency distribution of job</h1>
+<pre class="r"><code>tab1(bank$job, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of job&quot;, xlab =&quot;Job&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-42-1.png" width="672" /></p>
+<pre><code>## bank$job : 
+##               Frequency Percent Cum. percent
+## unknown               6     0.6          0.6
+## student              18     1.9          2.5
+## unemployed           19     2.0          4.6
+## housemaid            29     3.1          7.6
+## retired              36     3.8         11.4
+## entrepreneur         48     5.1         16.5
+## self-employed        52     5.5         22.0
+## services            105    11.1         33.2
+## admin.              107    11.3         44.5
+## management          157    16.6         61.1
+## technician          178    18.9         80.0
+## blue-collar         189    20.0        100.0
+##   Total             944   100.0        100.0</code></pre>
+<p>The frequency distribution of unknown, student, unemployed, housemaid, retired, entrepreneur, self-employed, services, admin are less in numbers. Thus they are are clubbed together as others so as to reduce the number of variables and improve the prediction accuracy</p>
+<pre class="r"><code>bank$job&lt;-as.character(bank$job)
+bank$job[bank$job %in% c(&quot;unknown&quot;, &quot;student&quot;, &quot;housemaid&quot;, &quot;unemployed&quot;, &quot;entrepreneur&quot;, &quot;self-employed&quot;, &quot;retired&quot;, &quot;services&quot;, &quot;admin.&quot;)]&lt;- &quot;Others&quot;
+bank$job&lt;-as.factor(bank$job)</code></pre>
+</div>
+<div id="the-frequency-distribution-after-clubing-together" class="section level1">
+<h1>The frequency distribution after clubing together</h1>
+<pre class="r"><code>freq_age_updated &lt;-tab1(bank$job, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of job after merging&quot;, xlab =&quot;Job&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-44-1.png" width="672" /></p>
+<pre class="r"><code>freq_age_updated</code></pre>
+<pre><code>## bank$job : 
+##             Frequency Percent Cum. percent
+## management        157    16.6         16.6
+## technician        178    18.9         35.5
+## blue-collar       189    20.0         55.5
+## Others            420    44.5        100.0
+##   Total           944   100.0        100.0</code></pre>
+</div>
+<div id="frequency-distribution-of-marital" class="section level1">
+<h1>Frequency distribution of marital</h1>
+<pre class="r"><code>tab1(bank$marital, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of marital&quot;, xlab =&quot;Marital&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-45-1.png" width="672" /></p>
+<pre><code>## bank$marital : 
+##          Frequency Percent Cum. percent
+## divorced       117    12.4         12.4
+## single         261    27.6         40.0
+## married        566    60.0        100.0
+##   Total        944   100.0        100.0</code></pre>
+<p>The frequency distribution of all items are greater than 10 percent. So, we are not doing any changes</p>
+</div>
+<div id="frequency-distribution-of-education" class="section level1">
+<h1>frequency distribution of Education</h1>
+<pre class="r"><code>tab1(bank$education, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of Education&quot;, xlab =&quot;Education&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-46-1.png" width="672" /></p>
+<pre><code>## bank$education : 
+##           Frequency Percent Cum. percent
+## unknown          37     3.9          3.9
+## primary         152    16.1         20.0
+## tertiary        248    26.3         46.3
+## secondary       507    53.7        100.0
+##   Total         944   100.0        100.0</code></pre>
+<p>The frequency distribution of unknown in education is less than5 percent. Thus, they are merged with primary.</p>
+<pre class="r"><code>bank$education&lt;-as.character(bank$education)
+bank$education[bank$education %in% c(&quot;unknown&quot;, &quot;primary&quot;)]&lt;- &quot;primary and others&quot;
+bank$education&lt;-as.factor(bank$education)</code></pre>
+</div>
+<div id="frequency-distribution-of-education-after-merging" class="section level1">
+<h1>Frequency distribution of education after merging</h1>
+<pre class="r"><code>freq_education_updated&lt;- tab1(bank$education, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of Education after merging&quot;, xlab =&quot;Education&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-48-1.png" width="672" /></p>
+<pre class="r"><code>freq_education_updated</code></pre>
+<pre><code>## bank$education : 
+##                    Frequency Percent Cum. percent
+## primary and others       189    20.0         20.0
+## tertiary                 248    26.3         46.3
+## secondary                507    53.7        100.0
+##   Total                  944   100.0        100.0</code></pre>
+</div>
+<div id="frequency-distribution-of-contact" class="section level1">
+<h1>Frequency distribution of Contact</h1>
+<pre class="r"><code>tab1(bank$contact, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of Contact&quot;, xlab =&quot;Contact&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-49-1.png" width="672" /></p>
+<pre><code>## bank$contact : 
+##           Frequency Percent Cum. percent
+## telephone        52     5.5          5.5
+## unknown         257    27.2         32.7
+## cellular        635    67.3        100.0
+##   Total         944   100.0        100.0</code></pre>
+<p>The frequency of the telephone is only 5.5%, Thus, I add those values with unknowna and renamed it as telephone and others</p>
+<pre class="r"><code>bank$contact&lt;-as.character(bank$contact)
+bank$contact[bank$contact %in% c(&quot;telephone&quot;, &quot;unknown&quot;)]&lt;- &quot;telephone and others&quot;
+bank$contact&lt;-as.factor(bank$contact)</code></pre>
+</div>
+<div id="frequency-distribution-of-contact-after-merging" class="section level1">
+<h1>Frequency distribution of contact after merging</h1>
+<pre class="r"><code>freq_contact_updated &lt;- tab1(bank$contact, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of Contact after merging&quot;, xlab =&quot;Contact&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-51-1.png" width="672" /></p>
+<pre class="r"><code>freq_contact_updated</code></pre>
+<pre><code>## bank$contact : 
+##                      Frequency Percent Cum. percent
+## telephone and others       309    32.7         32.7
+## cellular                   635    67.3        100.0
+##   Total                    944   100.0        100.0</code></pre>
+</div>
+<div id="frequency-distribution-of-poutcome" class="section level1">
+<h1>Frequency distribution of poutcome</h1>
+<pre class="r"><code>tab1(bank$poutcome, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of poutcome&quot;, xlab =&quot;poutcome&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-52-1.png" width="672" /></p>
+<pre><code>## bank$poutcome : 
+##         Frequency Percent Cum. percent
+## success        20     2.1          2.1
+## other          43     4.6          6.7
+## failure       109    11.5         18.2
+## unknown       772    81.8        100.0
+##   Total       944   100.0        100.0</code></pre>
+<p>The frequency distribution of success and others are less in percentage. So, I combined both into one category and renamed it as success and others</p>
+<pre class="r"><code>bank$poutcome&lt;-as.character(bank$poutcome)
+bank$poutcome[bank$poutcome %in% c(&quot;success&quot;, &quot;other&quot;)]&lt;- &quot;success and others&quot;
+bank$poutcome&lt;-as.factor(bank$poutcome)</code></pre>
+</div>
+<div id="frequenct-distribution-of-poutcome-after-merging" class="section level1">
+<h1>Frequenct distribution of poutcome after merging</h1>
+<pre class="r"><code>freq_poutcome_updated&lt;-tab1(bank$poutcome, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of poutcome after merging&quot;, xlab =&quot;poutcome&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-54-1.png" width="672" /></p>
+<pre class="r"><code>freq_poutcome_updated</code></pre>
+<pre><code>## bank$poutcome : 
+##                    Frequency Percent Cum. percent
+## success and others        63     6.7          6.7
+## failure                  109    11.5         18.2
+## unknown                  772    81.8        100.0
+##   Total                  944   100.0        100.0</code></pre>
+<p>considering the below as a Binary variables and binary numbers o and 1 are assigned</p>
+<p>Assigning binary numbers to default</p>
+<pre class="r"><code>bank$default[bank$default == &quot;no&quot; ] &lt;-&quot;0&quot;</code></pre>
+<pre class="r"><code>bank$default[bank$default == &quot;yes&quot; ] &lt;-&quot;1&quot;</code></pre>
+<p>Assigning binary numbers to Housing</p>
+<pre class="r"><code>bank$housing[bank$housing == &quot;no&quot; ] &lt;-&quot;0&quot;
+bank$housing[bank$housing == &quot;yes&quot; ] &lt;-&quot;1&quot;</code></pre>
+<p>Assigning binary numbers to loan</p>
+<pre class="r"><code>bank$loan[bank$loan == &quot;no&quot; ] &lt;-&quot;0&quot;
+bank$loan[bank$loan == &quot;yes&quot; ] &lt;-&quot;1&quot;</code></pre>
+<p>Assigning binary numbers to y</p>
+<pre class="r"><code>bank$y[bank$y == &quot;no&quot; ] &lt;-&quot;0&quot;
+bank$y[bank$y == &quot;yes&quot; ] &lt;-&quot;1&quot;</code></pre>
+<p>COnsidering the month as a ordinal categorical variable, I assign the numbers in a sequantial order</p>
+<pre class="r"><code>bank$month[bank$month == &quot;jan&quot; ] &lt;-&quot;1&quot;
+bank$month[bank$month == &quot;feb&quot; ] &lt;-&quot;2&quot;
+bank$month[bank$month == &quot;mar&quot; ] &lt;-&quot;3&quot;
+bank$month[bank$month == &quot;apr&quot; ] &lt;-&quot;4&quot;
+bank$month[bank$month == &quot;may&quot; ] &lt;-&quot;5&quot;
+bank$month[bank$month == &quot;jun&quot; ] &lt;-&quot;6&quot;
+bank$month[bank$month == &quot;jul&quot; ] &lt;-&quot;7&quot;
+bank$month[bank$month == &quot;aug&quot; ] &lt;-&quot;8&quot;
+bank$month[bank$month == &quot;sep&quot; ] &lt;-&quot;9&quot;
+bank$month[bank$month == &quot;oct&quot; ] &lt;-&quot;10&quot;
+bank$month[bank$month == &quot;nov&quot; ] &lt;-&quot;11&quot;
+bank$month[bank$month == &quot;dec&quot; ] &lt;-&quot;12&quot;</code></pre>
+<p>Converting binary and ordinal categorical variable to numeric to perform univariate analysis as a numerical variable</p>
+<pre class="r"><code>bank$default &lt;- as.numeric (bank$default)
+bank$housing &lt;- as.numeric (bank$housing)
+bank$loan &lt;- as.numeric (bank$loan)
+bank$y &lt;- as.numeric (bank$y)
+bank$month &lt;- as.numeric (bank$month)</code></pre>
+<div id="univariate-analysis-on-the-binary-variables" class="section level2">
+<h2>Univariate analysis on the binary variables</h2>
+</div>
+</div>
+<div id="frequency-distribution-of-default" class="section level1">
+<h1>Frequency distribution of Default</h1>
+<pre class="r"><code>tab1(bank$default, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of Default&quot;, xlab =&quot;Default&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-62-1.png" width="672" /></p>
+<pre><code>## bank$default : 
+##         Frequency Percent Cum. percent
+## 1              18     1.9          1.9
+## 0             926    98.1        100.0
+##   Total       944   100.0        100.0</code></pre>
+<p>There are only 2 percentage of customers did default on loan and the rest 98 percent of customers are not defaulters</p>
+</div>
+<div id="frequency-distribution-of-housing" class="section level1">
+<h1>Frequency distribution of housing</h1>
+<pre class="r"><code>tab1(bank$housing, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of Housing&quot;, xlab =&quot;Housing&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-63-1.png" width="672" /></p>
+<pre><code>## bank$housing : 
+##         Frequency Percent Cum. percent
+## 0             438    46.4         46.4
+## 1             506    53.6        100.0
+##   Total       944   100.0        100.0</code></pre>
+<p>The customers who have taken housing loan are 53.8 percentage and the other 46.2 percentage of customers did not take any housing loan</p>
+</div>
+<div id="frequency-distribution-of-loan" class="section level1">
+<h1>Frequency distribution of Loan</h1>
+<pre class="r"><code>tab1(bank$loan, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of Loan&quot;, xlab =&quot;Loan&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-64-1.png" width="672" /></p>
+<pre><code>## bank$loan : 
+##         Frequency Percent Cum. percent
+## 1             159    16.8         16.8
+## 0             785    83.2        100.0
+##   Total       944   100.0        100.0</code></pre>
+<p>Only 16.7 % of customer took a personal loan and the remaining 83.3 % of customer did not avail any personal loan</p>
+</div>
+<div id="frequency-distribution-of-y" class="section level1">
+<h1>Frequency distribution of y</h1>
+<pre class="r"><code>tab1(bank$y, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of Y&quot;, xlab =&quot;Y&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-65-1.png" width="672" /></p>
+<pre><code>## bank$y : 
+##         Frequency Percent Cum. percent
+## 1              63     6.7          6.7
+## 0             881    93.3        100.0
+##   Total       944   100.0        100.0</code></pre>
+<p>The majority of the customer, around 93.2 %, said that they would not subscribe to term deposit. Only 6.8 % of customers confirmed that they would subscribe it.</p>
+</div>
+<div id="box-plot-of-month" class="section level1">
+<h1>Box plot of Month</h1>
+<pre class="r"><code>month_outliers&lt;-boxplot.stats(bank$month)$out
+boxplot(bank$month, main = &quot;Box plot of Month&quot;, boxwex = 0.6)
+mtext(paste(&quot;Outliers: &quot;, paste(month_outliers, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-66-1.png" width="672" /></p>
+<pre class="r"><code>month_outliers</code></pre>
+<pre><code>##  [1] 11 11 11 11  1 11  1  1  1 11 11 11 11  1  1 11 11  1 11 11  1  1 11  1 11
+## [26] 11 11 11 11 11  1  1 11  1  1  1  1 11  1 11 11  1 11  1  1  1 11 11 11 11
+## [51] 11  1  1 11  1  1  1 11 11 11 11 11 11  1 11  1  1 11 11 11 11 11 11  1 11
+## [76] 11 11 11  1 11  1 11 11  1  1 11 11 11 11  1  1  1 11  1  1 11</code></pre>
+</div>

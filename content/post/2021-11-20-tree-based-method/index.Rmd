@@ -6,3 +6,503 @@ slug: tree-based-method
 categories: []
 tags: []
 ---
+```{r message = FALSE, warning = FALSE, echo = FALSE}
+
+library(ggplot2)
+library(dplyr)
+library(data.table)
+library(tidyr)
+library(GGally)
+library(gapminder)
+library(tidyverse)
+library(pastecs)
+library(ggpubr)
+library(fastDummies)
+library(QuantPsyc)
+library(MASS)
+library(caret)
+library(leaps)
+library(summarytools)
+library(epiDisplay)
+library(tidymodels)
+library(Rmisc)
+```
+```{r message = FALSE, warning = FALSE, echo = FALSE, include = FALSE}
+bank <- read.csv("D:/Vinoth peronal/UNB/STUDY/Fall 2021/Business analytics/Dev_Website/content/post/2021-11-20-tree-based-method/bank.csv")
+```
+# Structure of the data set
+```{r}
+str(bank)
+```
+# Descriptive statistics of numerical independent values
+
+```{r}
+descr(bank)
+```
+# Summary of dataset
+```{r}
+summary(bank)
+```
+# Data table of data set
+
+```{r}
+data.table(bank)
+```
+## Univariate analysis on numerical data
+
+# Univariate analysis on age
+
+```{r}
+descr(bank$age)
+```
+The minimum age of the customer is 19 and maximum age is 87. There is a standard deviation of 10.58, which is high in numbers. Let me dwar a box plot to find out the outliers so that data can be streamlined and standard deviation can be reduced
+
+# Box plot of age and its outliers
+
+```{r}
+age_outliers<-boxplot.stats(bank$age)$out
+boxplot(bank$age, main = "Box plot of age", boxwex = 0.6)
+mtext(paste("Outliers: ", paste(age_outliers, collapse =", ")), cex = 0.6)
+age_outliers
+```
+
+We can see the outliers of the age lie between 74 and 87.
+
+# Minimum value of age outliers
+
+```{r}
+min(age_outliers)
+```
+# Maximum value of age outliers
+
+```{r}
+max(age_outliers)
+```
+I used subset function to add the age less than 74 so that outliers can be removed
+
+```{r}
+bank<- subset(bank, age < 74)
+```
+
+# Boxplot of age after removal of outliers
+
+```{r}
+age_withoutoutliers<-boxplot.stats(bank$age)$out
+boxplot(bank$age, main = "Box plot of age after reomval of outliers", boxwex = 0.6)
+mtext(paste("Outliers: ", paste(age_withoutoutliers, collapse =", ")), cex = 0.6)
+age_withoutoutliers
+```
+
+
+# Univariate analysis on balance
+
+```{r}
+descr(bank$balance)
+```
+The minimum balance of the customer is -3313, which is a negative balance because of non maintenance charges or some other charges. The maximum balance is 71188. The standard deviation is 2987 and median is 440.
+
+# Box plot of balance and its outliers
+
+```{r}
+balance_outliers<-boxplot.stats(bank$balance)$out
+boxplot(bank$balance, main = "Box plot of balance", boxwex = 0.6)
+mtext(paste("Outliers: ", paste(balance_outliers, collapse =", ")), cex = 0.6)
+balance_outliers
+```
+We can see more outliers in balance. The outliers ranges between -3313 and 0 and between 267 and 71188
+
+
+# Minimum negative value of balance outlier
+
+```{r}
+min(balance_outliers)
+```
+# Minimum positive value of balance outlier
+```{r}
+which.min(balance_outliers>0)
+```
+# Maximum value of balance outlier
+
+```{r}
+max(balance_outliers)
+```
+The outliers are removed by choosing the value between 0 and 273
+```{r}
+bank<- subset(bank, balance > 0 & balance < 273)
+```
+
+# Boxplot of balance after removal of outliers
+```{r}
+balance_withoutoutliers<-boxplot.stats(bank$balance)$out
+boxplot(bank$balance, main = "Box plot of balance after removal of outliers", boxwex = 0.6)
+mtext(paste("Outliers: ", paste(balance_withoutoutliers, collapse =", ")), cex = 0.6)
+balance_withoutoutliers
+```
+
+
+# Unvariate analysis on day
+
+```{r}
+descr(bank$day)
+```
+
+The minimum contact day is 1 and maximum is 31. There is a standard deviation of 8.41
+
+
+# Boxplot of day after removal of outliers
+
+```{r}
+day_outliers<-boxplot.stats(bank$day)$out
+boxplot(bank$day, main = "Box plot of day", boxwex = 0.6)
+mtext(paste("Outliers: ", paste(day_outliers, collapse =", ")), cex = 0.6)
+day_outliers
+```
+There are no outliers in day
+
+
+# Univariate analysis on duration
+
+```{r}
+descr(bank$duration)
+```
+
+The minimum contact duration was 5 seconds and maximum duration was 2456 seconds. There is a standard deviation of 234.81 seconds
+
+# Box plot of duration and its outliers
+
+```{r}
+duration_outliers<-boxplot.stats(bank$duration)$out
+boxplot(bank$duration, main = "Box plot of duration", boxwex = 0.6)
+mtext(paste("Outliers: ", paste(duration_outliers, collapse =", ")), cex = 0.6)
+duration_outliers
+```
+There are some outliers in duration, ranging between 597 and 2456 seconds
+
+
+# Minimum value of duration outlier
+
+```{r}
+min(duration_outliers)
+```
+# Maximum value of duration outlier
+
+```{r}
+max(duration_outliers)
+```
+
+The outliers are removed greater then 597 using subset
+```{r}
+bank<- subset(bank, duration < 597)
+```
+
+# Boxplot of duration after removal of outliers
+
+```{r}
+duration_withoutoutliers<-boxplot.stats(bank$duration)$out
+boxplot(bank$duration, main = "Box plot of duration after outliers are removed", boxwex = 0.6)
+mtext(paste("Outliers: ", paste(duration_withoutoutliers, collapse =", ")), cex = 0.6)
+duration_withoutoutliers
+```
+
+
+
+# UNivariate analysis on campaign
+
+```{r}
+descr(bank$campaign)
+```
+# Box plot of Campaign
+
+```{r}
+campaign_outliers<-boxplot.stats(bank$campaign)$out
+boxplot(bank$campaign, main = "Box plot of campaign", boxwex = 0.6)
+mtext(paste("Outliers: ", paste(campaign_outliers, collapse =", ")), cex = 0.6)
+campaign_outliers
+```
+There are many outliers in campaign ranging between 7 and 31
+
+# Minimum of campaign outliers
+
+```{r}
+min(campaign_outliers)
+```
+# Maximum of campaign outliers
+
+```{r}
+max(campaign_outliers)
+```
+The outliers are removed and data are taken less than 7
+
+```{r}
+bank<- subset(bank, campaign < 7)
+```
+
+# Box plot of campaign after removal of outliers
+
+```{r}
+campaign_withoutoutliers<-boxplot.stats(bank$campaign)$out
+boxplot(bank$campaign, main = "Box plot of campaign after removal of outliers", boxwex = 0.6)
+mtext(paste("Outliers: ", paste(campaign_withoutoutliers, collapse =", ")), cex = 0.6)
+campaign_withoutoutliers
+```
+
+# Box plot of pdays
+
+```{r}
+pdays_outliers<-boxplot.stats(bank$pdays)$out
+boxplot(bank$pdays, main = "Box plot of pdays", boxwex = 0.6)
+mtext(paste("Outliers: ", paste(pdays_outliers, collapse =", ")), cex = 0.6)
+pdays_outliers
+```
+It is surprising to see that whole data are outliers.
+
+# Minimum of pdays outliers
+
+```{r}
+min(pdays_outliers)
+```
+# Maximum of pdays outliers
+
+```{r}
+max(pdays_outliers)
+```
+The whole coloum pdays is removed from dataset because of outliers high in numbers
+
+```{r}
+bank<- subset(bank, select = -pdays)
+```
+
+
+
+# Box plot of previous
+
+```{r}
+previous_outliers<-boxplot.stats(bank$previous)$out
+boxplot(bank$previous, main = "Box plot of previous", boxwex = 0.6)
+mtext(paste("Outliers: ", paste(previous_outliers, collapse =", ")), cex = 0.6)
+previous_outliers
+```
+Even the previous data has full outliers on data. Thus, I removed it from the dataset
+
+# Minimum of previous outliers
+
+```{r}
+min(previous_outliers)
+```
+# Maximum outliers
+
+```{r}
+max(previous_outliers)
+```
+The whole column of previous is removed from the bank dataset due to more outliers
+
+```{r}
+bank<- subset(bank, select = -previous)
+```
+
+
+## Univariate analysis on categorical value
+
+# Frequency distribution of job
+
+
+```{r}
+tab1(bank$job, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of job", xlab ="Job")
+```
+The frequency distribution of unknown, student, unemployed, housemaid, retired, entrepreneur, self-employed, services, admin are less in numbers. Thus they are are clubbed together as others so as to reduce the number of variables and improve the prediction accuracy
+
+```{r}
+bank$job<-as.character(bank$job)
+bank$job[bank$job %in% c("unknown", "student", "housemaid", "unemployed", "entrepreneur", "self-employed", "retired", "services", "admin.")]<- "Others"
+bank$job<-as.factor(bank$job)
+```
+
+# The frequency distribution after clubing together
+
+```{r}
+freq_age_updated <-tab1(bank$job, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of job after merging", xlab ="Job")
+freq_age_updated
+```
+
+
+
+# Frequency distribution of marital
+
+```{r}
+tab1(bank$marital, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of marital", xlab ="Marital")
+```
+The frequency distribution of all items are greater than 10 percent. So, we are not doing any changes
+
+# frequency distribution of Education
+
+```{r}
+tab1(bank$education, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of Education", xlab ="Education")
+```
+The frequency distribution of unknown in education is less than5 percent. Thus, they are merged with primary.
+
+
+```{r}
+bank$education<-as.character(bank$education)
+bank$education[bank$education %in% c("unknown", "primary")]<- "primary and others"
+bank$education<-as.factor(bank$education)
+
+```
+
+# Frequency distribution of education after merging
+
+```{r}
+freq_education_updated<- tab1(bank$education, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of Education after merging", xlab ="Education")
+freq_education_updated
+```
+
+
+# Frequency distribution of Contact
+
+```{r}
+tab1(bank$contact, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of Contact", xlab ="Contact")
+```
+The frequency of the telephone is only 5.5%, Thus, I add those values with unknowna and renamed it as telephone and others
+
+```{r}
+bank$contact<-as.character(bank$contact)
+bank$contact[bank$contact %in% c("telephone", "unknown")]<- "telephone and others"
+bank$contact<-as.factor(bank$contact)
+```
+
+# Frequency distribution of contact after merging
+
+```{r}
+freq_contact_updated <- tab1(bank$contact, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of Contact after merging", xlab ="Contact")
+freq_contact_updated
+```
+
+
+# Frequency distribution of poutcome
+
+```{r}
+tab1(bank$poutcome, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of poutcome", xlab ="poutcome")
+```
+The frequency distribution of success and others are less in percentage. So, I combined both into one category and renamed it as success and others
+
+```{r}
+bank$poutcome<-as.character(bank$poutcome)
+bank$poutcome[bank$poutcome %in% c("success", "other")]<- "success and others"
+bank$poutcome<-as.factor(bank$poutcome)
+```
+
+# Frequenct distribution of poutcome after merging
+
+```{r}
+freq_poutcome_updated<-tab1(bank$poutcome, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of poutcome after merging", xlab ="poutcome")
+freq_poutcome_updated
+```
+
+
+considering the below as a Binary variables and binary numbers o and 1 are assigned
+
+Assigning binary numbers to default
+
+```{r}
+bank$default[bank$default == "no" ] <-"0"
+```
+
+```{r}
+bank$default[bank$default == "yes" ] <-"1"
+```
+
+Assigning binary numbers to Housing
+
+```{r}
+bank$housing[bank$housing == "no" ] <-"0"
+bank$housing[bank$housing == "yes" ] <-"1"
+```
+
+Assigning binary numbers to loan
+
+```{r}
+bank$loan[bank$loan == "no" ] <-"0"
+bank$loan[bank$loan == "yes" ] <-"1"
+```
+
+Assigning binary numbers to y
+
+```{r}
+bank$y[bank$y == "no" ] <-"0"
+bank$y[bank$y == "yes" ] <-"1"
+```
+
+
+COnsidering the month as a ordinal categorical variable, I assign the numbers in a sequantial order
+
+```{r}
+bank$month[bank$month == "jan" ] <-"1"
+bank$month[bank$month == "feb" ] <-"2"
+bank$month[bank$month == "mar" ] <-"3"
+bank$month[bank$month == "apr" ] <-"4"
+bank$month[bank$month == "may" ] <-"5"
+bank$month[bank$month == "jun" ] <-"6"
+bank$month[bank$month == "jul" ] <-"7"
+bank$month[bank$month == "aug" ] <-"8"
+bank$month[bank$month == "sep" ] <-"9"
+bank$month[bank$month == "oct" ] <-"10"
+bank$month[bank$month == "nov" ] <-"11"
+bank$month[bank$month == "dec" ] <-"12"
+```
+
+Converting binary and ordinal categorical variable to numeric to perform univariate analysis as a numerical variable
+
+```{r}
+bank$default <- as.numeric (bank$default)
+bank$housing <- as.numeric (bank$housing)
+bank$loan <- as.numeric (bank$loan)
+bank$y <- as.numeric (bank$y)
+bank$month <- as.numeric (bank$month)
+
+```
+
+
+## Univariate analysis on the binary variables
+
+# Frequency distribution of Default
+
+
+```{r}
+tab1(bank$default, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of Default", xlab ="Default")
+```
+There are only 2 percentage of customers did default on loan and the rest 98 percent of customers are not defaulters
+
+# Frequency distribution of housing
+
+```{r}
+tab1(bank$housing, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of Housing", xlab ="Housing")
+```
+The customers who have taken housing loan are 53.8 percentage and the other 46.2 percentage of customers did not take any housing loan
+
+
+# Frequency distribution of Loan
+
+```{r}
+tab1(bank$loan, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of Loan", xlab ="Loan")
+```
+Only 16.7 % of customer took a personal loan and the remaining 83.3 % of customer did not avail any personal loan
+
+
+# Frequency distribution of y
+
+
+```{r}
+tab1(bank$y, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of Y", xlab ="Y")
+```
+The majority of the customer, around 93.2 %, said that they would not subscribe to term deposit. Only 6.8 % of customers confirmed that they would subscribe it.
+
+
+# Box plot of Month
+
+
+```{r}
+month_outliers<-boxplot.stats(bank$month)$out
+boxplot(bank$month, main = "Box plot of Month", boxwex = 0.6)
+mtext(paste("Outliers: ", paste(month_outliers, collapse =", ")), cex = 0.6)
+month_outliers
+```
+
