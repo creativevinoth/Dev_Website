@@ -6,7 +6,16 @@
     <description>Recent content in Posts on My website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 10 Nov 2021 00:00:00 +0000</lastBuildDate><atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 20 Nov 2021 00:00:00 +0000</lastBuildDate><atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Tree based method</title>
+      <link>/2021/11/20/tree-based-method/</link>
+      <pubDate>Sat, 20 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/2021/11/20/tree-based-method/</guid>
+      <description>Structure of the data setstr(bank)## &amp;#39;data.frame&amp;#39;: 4521 obs. of 17 variables:## $ age : int 30 33 35 30 59 35 36 39 41 43 ...## $ job : chr &amp;quot;unemployed&amp;quot; &amp;quot;services&amp;quot; &amp;quot;management&amp;quot; &amp;quot;management&amp;quot; ...## $ marital : chr &amp;quot;married&amp;quot; &amp;quot;married&amp;quot; &amp;quot;single&amp;quot; &amp;quot;married&amp;quot; ...## $ education: chr &amp;quot;primary&amp;quot; &amp;quot;secondary&amp;quot; &amp;quot;tertiary&amp;quot; &amp;quot;tertiary&amp;quot; ...## $ default : chr &amp;quot;no&amp;quot; &amp;quot;no&amp;quot; &amp;quot;no&amp;quot; &amp;quot;no&amp;quot; ...## $ balance : int 1787 4789 1350 1476 0 747 307 147 221 -88 .</description>
+    </item>
+    
     <item>
       <title>Bank updated</title>
       <link>/2021/11/10/bank-updated/</link>
