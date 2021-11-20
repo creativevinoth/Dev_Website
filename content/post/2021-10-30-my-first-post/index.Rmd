@@ -1,10 +1,8 @@
 ---
-title: "Bank"
+title: My first post
 author: ''
-date: '2021-10-30'
+date: '2021-11-11'
 slug: Bank
-categories: []
-tags: []
 ---
 ```{r message = FALSE, warning = FALSE, echo = FALSE}
 
