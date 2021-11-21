@@ -730,4 +730,1084 @@ mtext(paste(&quot;Outliers: &quot;, paste(month_outliers, collapse =&quot;, &quo
 ## [26] 11 11 11 11 11  1  1 11  1  1  1  1 11  1 11 11  1 11  1  1  1 11 11 11 11
 ## [51] 11  1  1 11  1  1  1 11 11 11 11 11 11  1 11  1  1 11 11 11 11 11 11  1 11
 ## [76] 11 11 11  1 11  1 11 11  1  1 11 11 11 11  1  1  1 11  1  1 11</code></pre>
+<div id="bivariate-analysis" class="section level2">
+<h2>Bivariate analysis</h2>
+<p>Let us see the relationship between indendent and dependent variable</p>
+</div>
+</div>
+<div id="relationship-between-y-and-age" class="section level1">
+<h1>Relationship between y and age</h1>
+</div>
+<div id="correlation-test" class="section level1">
+<h1>Correlation test</h1>
+<pre class="r"><code>cor.test(bank$y, bank$age)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  bank$y and bank$age
+## t = -1.5674, df = 942, p-value = 0.1173
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.11443724  0.01284453
+## sample estimates:
+##         cor 
+## -0.05100346</code></pre>
+<p>There is a negative correlation between y and age. It means more the age, less the people will subscribe to fixed deposit and less the age of the customer and there is a more likely that they will subscribe to term deposit. The correlation coefficient is -0.051</p>
+</div>
+<div id="logistic-regression-on-y-and-age" class="section level1">
+<h1>Logistic regression on y and age</h1>
+<pre class="r"><code>age_y = glm(y~ age, data = bank, family = &quot;binomial&quot;)
+summary(age_y)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ age, family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.4495  -0.3963  -0.3720  -0.3309   2.5562  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)   
+## (Intercept) -1.78130    0.55229  -3.225  0.00126 **
+## age         -0.02192    0.01404  -1.561  0.11847   
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 460.24  on 942  degrees of freedom
+## AIC: 464.24
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<p>The above equation is not significant</p>
+</div>
+<div id="jitter-and-box-plot-of-y-and-age" class="section level1">
+<h1>Jitter and box plot of y and age</h1>
+<pre class="r"><code>bank %&gt;%
+  ggplot(aes(x= age, y= &quot;subscribe or not&quot;, color = age))+geom_jitter()+geom_boxplot()+expand_limits(y=0)+geom_smooth(method =&quot;glm&quot;, se =FALSE, method.args = list(family = &quot;binomial&quot;))+labs(title =&quot;Relationship between y and age&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<pre><code>## Warning: glm.fit: algorithm did not converge</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-69-1.png" width="672" /></p>
+</div>
+<div id="relationship-between-y-and-job" class="section level1">
+<h1>Relationship between y and job</h1>
+<p>Logistic regression on y and job</p>
+<pre class="r"><code>job_y = glm(y~ job, data = bank, family = &quot;binomial&quot;)
+summary(job_y)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ job, family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.4196  -0.4109  -0.4109  -0.2316   2.6953  
+## 
+## Coefficients:
+##               Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)    -3.6055     0.4532  -7.955 1.79e-15 ***
+## jobmanagement   0.8055     0.5686   1.417   0.1566    
+## jobOthers       1.1760     0.4873   2.413   0.0158 *  
+## jobtechnician   1.2198     0.5275   2.313   0.0207 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 454.15  on 940  degrees of freedom
+## AIC: 462.15
+## 
+## Number of Fisher Scoring iterations: 6</code></pre>
+<p>The above equation is not good enough to predict the y by job as some of the coefficients are not significant</p>
+</div>
+<div id="bar-chart-of-y-and-job" class="section level1">
+<h1>Bar chart of y and job</h1>
+<pre class="r"><code>bank %&gt;%
+ggplot(aes(x= job, y= &quot;subscribe or not&quot;, color = job))+geom_col()+expand_limits(y=0)+geom_smooth(method =&quot;glm&quot;, se =FALSE, method.args = list(family = &quot;binomial&quot;))+labs(title =&quot;Relationship between y and job&quot;)+coord_flip()</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-71-1.png" width="672" /></p>
+<div id="relationship-between-y-and-marital" class="section level2">
+<h2>Relationship between y and marital</h2>
+<p>Logistic regression on y and marital</p>
+<pre class="r"><code>marital_y = glm(y~ marital, data = bank, family = &quot;binomial&quot;)
+summary(marital_y)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ marital, family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.4673  -0.3300  -0.3300  -0.3300   2.4374  
+## 
+## Coefficients:
+##                Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)    -2.91777    0.41912  -6.962 3.36e-12 ***
+## maritalmarried  0.03483    0.45919   0.076    0.940    
+## maritalsingle   0.75829    0.46580   1.628    0.104    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 455.57  on 941  degrees of freedom
+## AIC: 461.57
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<p>the above equation is not good as well because of all the coefficients are not significant</p>
+</div>
+</div>
+<div id="bar-chart-of-y-and-marital" class="section level1">
+<h1>Bar chart of y and marital</h1>
+<pre class="r"><code>bank %&gt;%
+ggplot(aes(x= marital, y= &quot;subscribe or not&quot;, color = marital))+geom_col()+expand_limits(y=0)+geom_smooth(method =&quot;glm&quot;, se =FALSE, method.args = list(family = &quot;binomial&quot;))+labs(title =&quot;Relationship between y and marital&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-73-1.png" width="672" /></p>
+</div>
+<div id="relationship-between-y-and-education" class="section level1">
+<h1>Relationship between y and Education</h1>
+<p>Logistic regression on y and education</p>
+<pre class="r"><code>education_y = glm(y~ education, data = bank, family = &quot;binomial&quot;)
+summary(education_y)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ education, family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.4101  -0.3838  -0.3838  -0.2747   2.5674  
+## 
+## Coefficients:
+##                    Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)         -3.2581     0.3852  -8.459   &lt;2e-16 ***
+## educationsecondary   0.6868     0.4222   1.627   0.1038    
+## educationtertiary    0.8245     0.4503   1.831   0.0671 .  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 458.75  on 941  degrees of freedom
+## AIC: 464.75
+## 
+## Number of Fisher Scoring iterations: 6</code></pre>
+<p>The intercept is only significant but all the coefficients are not significant. Thus, the above equation is not good to predict the y</p>
+</div>
+<div id="bar-chart-of-y-and-education" class="section level1">
+<h1>Bar chart of y and education</h1>
+<pre class="r"><code>bank %&gt;%
+ggplot(aes(x= education, y= &quot;subscribe or not&quot;, color =education))+geom_col()+expand_limits(y=0)+geom_smooth(method =&quot;glm&quot;, se =FALSE, method.args = list(family = &quot;binomial&quot;))+labs(title =&quot;Relationship between y and education&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-75-1.png" width="672" /></p>
+</div>
+<div id="relationship-between-y-and-default" class="section level1">
+<h1>Relationship between y and default</h1>
+<p>Correlation between y and default</p>
+<pre class="r"><code>cor.test(bank$y, bank$default)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  bank$y and bank$default
+## t = 1.7161, df = 942, p-value = 0.08647
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.008008571  0.119207728
+## sample estimates:
+##        cor 
+## 0.05582615</code></pre>
+<p>There is some correlation between y and default. The correlation coefficient is 0.056</p>
+</div>
+<div id="logistic-regression-on-y-and-default" class="section level1">
+<h1>Logistic regression on y and default</h1>
+<pre class="r"><code>default_y = glm(y~ default, data = bank, family = &quot;binomial&quot;)
+summary(default_y)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ default, family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.6039  -0.3660  -0.3660  -0.3660   2.3395  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  -2.6695     0.1335  -20.00   &lt;2e-16 ***
+## default       1.0601     0.6464    1.64    0.101    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 460.63  on 942  degrees of freedom
+## AIC: 464.63
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<p>Though there is some correlation between y and default, the coefficient of the above equation is not significant.</p>
+</div>
+<div id="bar-chart-of-y-and-default" class="section level1">
+<h1>Bar chart of y and default</h1>
+<pre class="r"><code>bank %&gt;%
+ggplot(aes(x= default, y= &quot;subscribe or not&quot;, colour= default))+geom_col()+expand_limits(y=0)+geom_smooth(method =&quot;glm&quot;, se =FALSE, method.args = list(family = &quot;binomial&quot;, maxit =100))+labs(title =&quot;Relationship between y and default&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-78-1.png" width="672" /></p>
+</div>
+<div id="relationship-between-y-and-balance" class="section level1">
+<h1>Relationship between y and balance</h1>
+<pre class="r"><code>cor.test(bank$y, bank$balance)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  bank$y and bank$balance
+## t = 0.48702, df = 942, p-value = 0.6264
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.04798865  0.07959176
+## sample estimates:
+##        cor 
+## 0.01586613</code></pre>
+<p>There is some positive correlation between y and balance. The correlation coefficient is 0.016</p>
+</div>
+<div id="logistice-regression-on-y-and-balance" class="section level1">
+<h1>Logistice regression on y and balance</h1>
+<pre class="r"><code>balance_y = glm(y~ balance, data = bank, family = &quot;binomial&quot;)
+summary(balance_y)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ balance, family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.3936  -0.3801  -0.3687  -0.3598   2.3636  
+## 
+## Coefficients:
+##               Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) -2.7308545  0.2340080 -11.670   &lt;2e-16 ***
+## balance      0.0007782  0.0015971   0.487    0.626    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 462.54  on 942  degrees of freedom
+## AIC: 466.54
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<p>Even though there is a positive correlation between y and balance, that above equation is not good as the coefficient is not significant</p>
+</div>
+<div id="jitter-and-box-plot-of-y-and-balance" class="section level1">
+<h1>JItter and box plot of y and balance</h1>
+<pre class="r"><code>bank %&gt;%
+ggplot(aes(x= balance, y= &quot;subscribe or not&quot;, color =balance))+geom_jitter()+geom_boxplot()+expand_limits(y=0)+geom_smooth(method =&quot;glm&quot;, se =FALSE, method.args = list(family = &quot;binomial&quot;))+labs(title =&quot;Relationship between y and balance&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<pre><code>## Warning: glm.fit: algorithm did not converge</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-81-1.png" width="672" /></p>
+<div id="relationship-between-y-and-housing" class="section level2">
+<h2>Relationship between y and housing</h2>
+<p>Correlation test between y and housing</p>
+<pre class="r"><code>cor.test(bank$y, bank$housing)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  bank$y and bank$housing
+## t = -2.5609, df = 942, p-value = 0.0106
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.1461792 -0.0194455
+## sample estimates:
+##         cor 
+## -0.08314853</code></pre>
+<p>There is a negative correlation between y and housing. The correlation coefficient is -0.083</p>
+</div>
+</div>
+<div id="logistic-regression-of-y-and-housing" class="section level1">
+<h1>Logistic regression of y and housing</h1>
+<pre class="r"><code>housing_y = glm(y~ housing, data = bank, family = &quot;binomial&quot;)
+summary(housing_y)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ housing, family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.4319  -0.4319  -0.3118  -0.3118   2.4692  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  -2.3254     0.1678 -13.861   &lt;2e-16 ***
+## housing      -0.6745     0.2681  -2.516   0.0119 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 456.25  on 942  degrees of freedom
+## AIC: 460.25
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<p>The above equation is significant to predict y but it is a negative correlation. If the customer takes more housing loan, it is less likely that he will subscribe to term deposit because he would have already a commitment to oay a monthly EMI. On the contrary, if the customer does not have any housing loan, it is more likely that he will subscribe to term deposit</p>
+</div>
+<div id="bar-chart-of-y-and-housing" class="section level1">
+<h1>Bar chart of y and housing</h1>
+<pre class="r"><code>bank %&gt;%
+ggplot(aes(x= housing, y= &quot;subscribe or not&quot;, colour = housing))+geom_col()+geom_smooth(method =&quot;glm&quot;, se =FALSE, method.args = list(family = &quot;binomial&quot;, maxit =100))+labs(title =&quot;Relationship between y and housing&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-84-1.png" width="672" />
+In the above chart, o represents no housing loan and 1 represents customer having housing loan.</p>
+</div>
+<div id="relationship-between-y-and-loan" class="section level1">
+<h1>Relationship between y and loan</h1>
+<p>Correlation test of y and loan</p>
+<pre class="r"><code>cor.test(bank$y, bank$loan)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  bank$y and bank$loan
+## t = -2.6594, df = 942, p-value = 0.007961
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.14930851 -0.02264324
+## sample estimates:
+##         cor 
+## -0.08632471</code></pre>
+<p>There is a negative correlation between y and loan. It is just like the case of housing loan. When the customers have an obligation towards personal loan, they will not have the sufficients funds to subscribe to term deposit. That is the reason, there is a negative correlation. When the customer does not have personal loan, there is a likely chance that they will subscribe to term deposit.</p>
+</div>
+<div id="logistic-regression-of-y-and-loan" class="section level1">
+<h1>Logistic regression of y and loan</h1>
+<pre class="r"><code>loan_y = glm(y~ loan, data = bank, family = &quot;binomial&quot;)
+summary(loan_y)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ loan, family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.3988  -0.3988  -0.3988  -0.3988   2.8179  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  -2.4918     0.1343  -18.55   &lt;2e-16 ***
+## loan         -1.4594     0.5981   -2.44   0.0147 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 453.62  on 942  degrees of freedom
+## AIC: 457.62
+## 
+## Number of Fisher Scoring iterations: 6</code></pre>
+<p>The above equation is to significant to predict the y. The AIC is 457.62</p>
+</div>
+<div id="bar-chart-of-y-and-loan" class="section level1">
+<h1>Bar chart of y and loan</h1>
+<pre class="r"><code>bank %&gt;%
+ggplot(aes(x= loan, y= &quot;subscribe or not&quot;, colour =loan))+geom_col()+geom_smooth(method =&quot;glm&quot;, se =FALSE, method.args = list(family = &quot;binomial&quot;, maxit =100))+labs(title =&quot;Relationship between y and loan&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-87-1.png" width="672" /></p>
+</div>
+<div id="relationship-between-y-and-contact" class="section level1">
+<h1>Relationship between y and contact</h1>
+<p>Logistic regression of y and contact</p>
+<pre class="r"><code>contact_y = glm(y~ contact, data = bank, family = &quot;binomial&quot;)
+summary(contact_y)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ contact, family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.4377  -0.4377  -0.4377  -0.1806   2.8719  
+## 
+## Coefficients:
+##                             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)                  -2.2974     0.1377 -16.678  &lt; 2e-16 ***
+## contacttelephone and others  -1.8102     0.4713  -3.841 0.000123 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 439.30  on 942  degrees of freedom
+## AIC: 443.3
+## 
+## Number of Fisher Scoring iterations: 6</code></pre>
+<p>The above equation is significant to predict y. The AIC is 443.3</p>
+</div>
+<div id="bar-chart-of-y-and-contact" class="section level1">
+<h1>Bar chart of y and contact</h1>
+<pre class="r"><code>bank %&gt;%
+ggplot(aes(x= contact, y= &quot;subscribe or not&quot;, colour =contact))+geom_col()+expand_limits(y=0)+geom_smooth(method =&quot;glm&quot;, se =FALSE, method.args = list(family = &quot;binomial&quot;))+labs(title =&quot;Relationship between y and contact&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-89-1.png" width="672" /></p>
+</div>
+<div id="relationship-between-y-and-day" class="section level1">
+<h1>Relationship between y and day</h1>
+<p>Correlation test of y and day</p>
+<pre class="r"><code>cor.test(bank$y, bank$day)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  bank$y and bank$day
+## t = 0.11781, df = 942, p-value = 0.9062
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.05998249  0.06762804
+## sample estimates:
+##         cor 
+## 0.003838402</code></pre>
+<p>There is a positive correaltion between y and day</p>
+</div>
+<div id="logistic-regression-of-y-and-day" class="section level1">
+<h1>Logistic regression of y and day</h1>
+<pre class="r"><code>day_y = glm(y~ day, data = bank, family = &quot;binomial&quot;)
+summary(day_y)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ day, family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.3769  -0.3735  -0.3712  -0.3689   2.3373  
+## 
+## Coefficients:
+##              Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) -2.666012   0.272307  -9.790   &lt;2e-16 ***
+## day          0.001832   0.015534   0.118    0.906    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 462.77  on 942  degrees of freedom
+## AIC: 466.77
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<p>Though there is a correlation between y and day, the above equation is not significant.</p>
+</div>
+<div id="jitter-and-box-plot-of-y-and-day" class="section level1">
+<h1>Jitter and box plot of y and day</h1>
+<pre class="r"><code>bank %&gt;%
+ggplot(aes(x= day, y= &quot;subscribe or not&quot;, color =day))+geom_jitter()+geom_boxplot()+expand_limits(y=0)+geom_smooth(method =&quot;glm&quot;, se =FALSE, method.args = list(family = &quot;binomial&quot;))+labs(title =&quot;Relationship between y and day&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<pre><code>## Warning: glm.fit: algorithm did not converge</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-92-1.png" width="672" /></p>
+</div>
+<div id="relationship-between-y-and-month" class="section level1">
+<h1>Relationship between y and month</h1>
+<p>Correlation between y and month</p>
+<pre class="r"><code>cor.test(bank$y, bank$month)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  bank$y and bank$month
+## t = -0.14919, df = 942, p-value = 0.8814
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.06864575  0.05896364
+## sample estimates:
+##          cor 
+## -0.004860841</code></pre>
+<p>There is a negative correlation. The correlation coefficient is - 0.004</p>
+</div>
+<div id="logistic-regression-on-y-and-month" class="section level1">
+<h1>Logistic regression on y and month</h1>
+<pre class="r"><code>month_y = glm(y~ month, data = bank, family = &quot;binomial&quot;)
+summary(month_y)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ month, family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.3794  -0.3731  -0.3716  -0.3685   2.3441  
+## 
+## Coefficients:
+##              Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) -2.586743   0.365642  -7.075  1.5e-12 ***
+## month       -0.008589   0.057512  -0.149    0.881    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 462.76  on 942  degrees of freedom
+## AIC: 466.76
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<p>The above equation is not good as the coefficient is not significant</p>
+</div>
+<div id="bar-chart-of-y-and-month" class="section level1">
+<h1>Bar chart of y and month</h1>
+<pre class="r"><code>bank %&gt;%
+ggplot(aes(x= month, y= &quot;subscribe or not&quot;, color =month))+geom_col()+geom_smooth(method =&quot;glm&quot;, se =FALSE, method.args = list(family = &quot;binomial&quot;,maxit =100))+labs(title =&quot;Relationship between y and month&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-95-1.png" width="672" /></p>
+<div id="relationship-between-y-and-duration" class="section level2">
+<h2>Relationship between y and duration</h2>
+<p>Correlation test of y and duration</p>
+<pre class="r"><code>cor.test(bank$y, bank$duration)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  bank$y and bank$duration
+## t = 7.4172, df = 942, p-value = 2.666e-13
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  0.1736999 0.2942979
+## sample estimates:
+##       cor 
+## 0.2349027</code></pre>
+<p>There is a positive correlation between y and duration. The correlation coefficient is 0.23</p>
+</div>
+</div>
+<div id="logistic-regression-of-y-and-duration" class="section level1">
+<h1>Logistic regression of y and duration</h1>
+<pre class="r"><code>duration_y = glm(y~ duration, data = bank, family = &quot;binomial&quot;)
+summary(duration_y)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ duration, family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.9607  -0.3715  -0.2863  -0.2346   2.6899  
+## 
+## Coefficients:
+##               Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) -4.0426075  0.2859768 -14.136  &lt; 2e-16 ***
+## duration     0.0059473  0.0008884   6.695 2.16e-11 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 419.13  on 942  degrees of freedom
+## AIC: 423.13
+## 
+## Number of Fisher Scoring iterations: 6</code></pre>
+<p>The above equation is significant to predict y. The AIC is 423.13</p>
+</div>
+<div id="box-plot-of-y-and-duration" class="section level1">
+<h1>Box plot of y and duration</h1>
+<pre class="r"><code>bank %&gt;%
+ggplot(aes(x= duration, y= &quot;subscribe or not&quot;, color =duration))+geom_boxplot()+expand_limits(y=0)+geom_smooth(method =&quot;glm&quot;, se =FALSE, method.args = list(family = &quot;binomial&quot;))+labs(title =&quot;Relationship between y and duration&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<pre><code>## Warning: glm.fit: algorithm did not converge</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-98-1.png" width="672" /></p>
+</div>
+<div id="relationship-between-y-and-campaign" class="section level1">
+<h1>Relationship between y and campaign</h1>
+<p>Correlation test between y and campaign</p>
+<pre class="r"><code>cor.test(bank$y, bank$campaign)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  bank$y and bank$campaign
+## t = -2.6585, df = 942, p-value = 0.007982
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.14927934 -0.02261342
+## sample estimates:
+##        cor 
+## -0.0862951</code></pre>
+<p>It is surprising to see that there is a negative correlation between y and campaign. Generally, more the campaign, more should be a new subscription of term deposit but it is opposite here</p>
+</div>
+<div id="logistic-regression-between-y-and-campaign" class="section level1">
+<h1>Logistic regression between y and campaign</h1>
+<pre class="r"><code>campaign_y = glm(y~ campaign, data = bank, family = &quot;binomial&quot;)
+summary(campaign_y)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ campaign, family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.4312  -0.4312  -0.3670  -0.3118   2.8370  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  -1.9932     0.2591  -7.693 1.44e-14 ***
+## campaign     -0.3355     0.1290  -2.602  0.00927 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 454.53  on 942  degrees of freedom
+## AIC: 458.53
+## 
+## Number of Fisher Scoring iterations: 6</code></pre>
+<p>The above equation is significant to predict the y because both the intercept and coefficient are significant. The AIC is 458.53</p>
+</div>
+<div id="box-plot-of-campaign-1" class="section level1">
+<h1>box plot of Campaign</h1>
+<pre class="r"><code>bank %&gt;%
+ggplot(aes(x= campaign, y= &quot;subscribe or not&quot;, color =campaign))+geom_boxplot()+expand_limits(y=0)+geom_smooth(method =&quot;glm&quot;, se =FALSE, method.args = list(family = &quot;binomial&quot;))+labs(title =&quot;Relationship between y and campaign&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<pre><code>## Warning: glm.fit: algorithm did not converge</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-101-1.png" width="672" /></p>
+</div>
+<div id="relationship-between-y-and-poutcome" class="section level1">
+<h1>Relationship between y and poutcome</h1>
+<p>Logistic regression of y and poutcome</p>
+<pre class="r"><code>poutcome_y = glm(y~ poutcome, data = bank, family = &quot;binomial&quot;)
+summary(poutcome_y)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ poutcome, family = &quot;binomial&quot;, data = bank)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.7655  -0.3345  -0.3345  -0.3345   2.4827  
+## 
+## Coefficients:
+##                            Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)                 -3.0350     0.4578  -6.630 3.37e-11 ***
+## poutcomesuccess and others   1.9574     0.5416   3.614 0.000302 ***
+## poutcomeunknown              0.1796     0.4845   0.371 0.710908    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 462.78  on 943  degrees of freedom
+## Residual deviance: 438.21  on 941  degrees of freedom
+## AIC: 444.21
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<p>In the above equation, one of the coefficient is not significant. We can take this in to our model since unknow result are more compared to known factors such as success or failure. There is a great chance to convert those customers in to subscribe the term deposit</p>
+</div>
+<div id="bar-chart-of-y-and-poutcome" class="section level1">
+<h1>Bar chart of y and poutcome</h1>
+<pre class="r"><code>bank %&gt;%
+ggplot(aes(x= poutcome, y= &quot;subscribe or not&quot;, color =poutcome))+geom_col()+expand_limits(y=0)+geom_smooth(method =&quot;glm&quot;, se =FALSE, method.args = list(family = &quot;binomial&quot;))+labs(title =&quot;Relationship between y and poutcome&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-103-1.png" width="672" /></p>
+<p>First, I would use tidymodels to build a logistic regression. In order to do, I have to convert the following as a character variable</p>
+<pre class="r"><code>bank$default &lt;- as.character (bank$default)
+bank$housing &lt;-  as.character (bank$housing)
+bank$loan &lt;-  as.character (bank$loan)
+bank$y &lt;-  as.character (bank$y)
+bank$month &lt;-  as.character (bank$month)</code></pre>
+<p>Re-assigning character</p>
+<pre class="r"><code>bank$y[bank$y == &quot;0&quot; ] &lt;-&quot;no&quot;
+bank$y[bank$y == &quot;1&quot; ] &lt;-&quot;yes&quot;</code></pre>
+</div>
+<div id="data-resampling" class="section level1">
+<h1>Data resampling</h1>
+<p>I have split the bank data in to trainig and test data with a split of 75:25</p>
+<pre class="r"><code>bank_split&lt;- initial_split(bank, prop = 0.75, strata = y)
+bank_training &lt;- bank_split %&gt;%
+  training()
+bank_test&lt;- bank_split %&gt;%
+  testing()</code></pre>
+</div>
+<div id="checking-number-of-rows-in-training-and-test-data" class="section level1">
+<h1>Checking number of rows in training and test data</h1>
+<pre class="r"><code>nrow(bank_training)</code></pre>
+<pre><code>## [1] 708</code></pre>
+<pre class="r"><code>nrow(bank_test)</code></pre>
+<pre><code>## [1] 236</code></pre>
+</div>
+<div id="checking-multicollinearity-between-numerical-values-in-a-training-bank-data-set" class="section level1">
+<h1>Checking multicollinearity between numerical values in a training bank data set</h1>
+<pre class="r"><code>bank_training %&gt;%
+  select_if(is.numeric) %&gt;%
+  cor()</code></pre>
+<pre><code>##                   age     balance          day    duration    campaign
+## age       1.000000000  0.05498818 -0.001743781 -0.05118158  0.05599283
+## balance   0.054988182  1.00000000 -0.065985821  0.02552215 -0.03226312
+## day      -0.001743781 -0.06598582  1.000000000 -0.01533587  0.10098624
+## duration -0.051181576  0.02552215 -0.015335868  1.00000000 -0.04978579
+## campaign  0.055992825 -0.03226312  0.100986241 -0.04978579  1.00000000</code></pre>
+<p>We can notice that there is no much corellation the independent variable</p>
+</div>
+<div id="model-specification" class="section level1">
+<h1>Model specification</h1>
+<p>I specify the decision tree based model here</p>
+<pre class="r"><code>dt_model&lt;- decision_tree() %&gt;%
+  set_engine(&#39;rpart&#39;) %&gt;%
+  set_mode(&#39;classification&#39;)</code></pre>
+</div>
+<div id="feature-engineering" class="section level1">
+<h1>Feature engineering</h1>
+<p>This is step to do pre-processing of data</p>
+<pre class="r"><code>bank_recipe_dt &lt;- recipe(y ~., data = bank_training) %&gt;%
+  step_corr(all_numeric(), threshold =0.8) %&gt;%
+  step_normalize(all_numeric()) %&gt;%
+  step_dummy(all_nominal(), -all_outcomes())
+bank_recipe_dt</code></pre>
+<pre><code>## Recipe
+## 
+## Inputs:
+## 
+##       role #variables
+##    outcome          1
+##  predictor         14
+## 
+## Operations:
+## 
+## Correlation filter on all_numeric()
+## Centering and scaling for all_numeric()
+## Dummy variables from all_nominal(), -all_outcomes()</code></pre>
+<p>I have given instruction above in the model that to check the correlation for all numeric variables and keep the thresholding limit as 0.8. I have also given instruction in the model to normalize all the numeric variables and set dummy to all nominal or character variables except the outcome variables because outcome is in factor</p>
+</div>
+<div id="combining-models-and-recipe" class="section level1">
+<h1>Combining models and recipe</h1>
+<pre class="r"><code>bank_wkfl_dt&lt;- workflow() %&gt;%
+  add_model(dt_model) %&gt;%
+  add_recipe(bank_recipe_dt)
+bank_wkfl_dt</code></pre>
+<pre><code>## == Workflow ====================================================================
+## Preprocessor: Recipe
+## Model: decision_tree()
+## 
+## -- Preprocessor ----------------------------------------------------------------
+## 3 Recipe Steps
+## 
+## * step_corr()
+## * step_normalize()
+## * step_dummy()
+## 
+## -- Model -----------------------------------------------------------------------
+## Decision Tree Model Specification (classification)
+## 
+## Computational engine: rpart</code></pre>
+</div>
+<div id="model-fitting-with-workflows" class="section level1">
+<h1>Model fitting with workflows</h1>
+<pre class="r"><code>bank_wkfl_fit_dt &lt;- bank_wkfl_dt %&gt;%
+  last_fit(split = bank_split)
+bank_wkfl_fit_dt %&gt;%
+  collect_metrics()</code></pre>
+<pre><code>## # A tibble: 2 x 4
+##   .metric  .estimator .estimate .config             
+##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+## 1 accuracy binary         0.928 Preprocessor1_Model1
+## 2 roc_auc  binary         0.774 Preprocessor1_Model1</code></pre>
+</div>
+<div id="collecting-predictions" class="section level1">
+<h1>Collecting Predictions</h1>
+<pre class="r"><code>bank_wkfl_preds_dt &lt;- bank_wkfl_fit_dt %&gt;%
+  collect_predictions()
+bank_wkfl_preds_dt</code></pre>
+<pre><code>## # A tibble: 236 x 7
+##    id               .pred_no .pred_yes  .row .pred_class y     .config          
+##    &lt;chr&gt;               &lt;dbl&gt;     &lt;dbl&gt; &lt;int&gt; &lt;fct&gt;       &lt;fct&gt; &lt;chr&gt;            
+##  1 train/test split    0.967    0.0329     1 no          no    Preprocessor1_Mo~
+##  2 train/test split    0.967    0.0329     9 no          no    Preprocessor1_Mo~
+##  3 train/test split    0.967    0.0329    13 no          no    Preprocessor1_Mo~
+##  4 train/test split    0.967    0.0329    16 no          no    Preprocessor1_Mo~
+##  5 train/test split    0.8      0.2       17 no          no    Preprocessor1_Mo~
+##  6 train/test split    0.967    0.0329    19 no          no    Preprocessor1_Mo~
+##  7 train/test split    0.967    0.0329    21 no          no    Preprocessor1_Mo~
+##  8 train/test split    0.967    0.0329    30 no          no    Preprocessor1_Mo~
+##  9 train/test split    0.967    0.0329    34 no          no    Preprocessor1_Mo~
+## 10 train/test split    0.967    0.0329    37 no          no    Preprocessor1_Mo~
+## # ... with 226 more rows</code></pre>
+</div>
+<div id="confusion-matrix" class="section level1">
+<h1>Confusion matrix</h1>
+<pre class="r"><code>conf_mat(bank_wkfl_preds_dt, truth = y, estimate = .pred_class) %&gt;%
+  autoplot(type = &#39;heatmap&#39;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-114-1.png" width="672" />
+# Correct predictions
+True negative is 210, which is the customer did not subscribe to term deposit True positive is 4, which is the customers subscribe to term deposit</p>
+</div>
+<div id="classification-error" class="section level1">
+<h1>Classification error</h1>
+<p>False negative is 7, which is the customer did subscribe to term deposit but wrongly predicted as not subscribed. False positive is 15, which is the customer not subscribed to term deposit but wrongly predicted as subscribed</p>
+<p>It is clear that the customers will not subscribe to the term deposit</p>
+</div>
+<div id="exploring-custom-metrics" class="section level1">
+<h1>Exploring custom metrics</h1>
+<pre class="r"><code>bank_metrics_dt &lt;- metric_set(roc_auc, sens, spec)
+bank_wkfl_preds_dt %&gt;%
+ bank_metrics_dt(truth = y, estimate = .pred_class, .pred_yes)</code></pre>
+<pre><code>## # A tibble: 3 x 3
+##   .metric .estimator .estimate
+##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+## 1 sens    binary         0.991
+## 2 spec    binary         0.211
+## 3 roc_auc binary         0.226</code></pre>
+</div>
+<div id="creating-k-fold-cross-validation" class="section level1">
+<h1>Creating k-fold cross validation</h1>
+<pre class="r"><code>set.seed(212)
+bank_folds_dt &lt;- vfold_cv(bank_training, v = 10, strata = y)
+bank_folds_dt</code></pre>
+<pre><code>## #  10-fold cross-validation using stratification 
+## # A tibble: 10 x 2
+##    splits           id    
+##    &lt;list&gt;           &lt;chr&gt; 
+##  1 &lt;split [637/71]&gt; Fold01
+##  2 &lt;split [637/71]&gt; Fold02
+##  3 &lt;split [637/71]&gt; Fold03
+##  4 &lt;split [637/71]&gt; Fold04
+##  5 &lt;split [637/71]&gt; Fold05
+##  6 &lt;split [637/71]&gt; Fold06
+##  7 &lt;split [637/71]&gt; Fold07
+##  8 &lt;split [637/71]&gt; Fold08
+##  9 &lt;split [638/70]&gt; Fold09
+## 10 &lt;split [638/70]&gt; Fold10</code></pre>
+</div>
+<div id="model-training-with-cross-validation" class="section level1">
+<h1>Model training with cross validation</h1>
+<pre class="r"><code>bank_rs_fit_dt &lt;-bank_wkfl_dt %&gt;%
+  fit_resamples(resamples = bank_folds_dt, metrics = bank_metrics_dt)
+bank_rs_fit_dt %&gt;%
+  collect_metrics()</code></pre>
+<pre><code>## # A tibble: 3 x 6
+##   .metric .estimator  mean     n std_err .config             
+##   &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
+## 1 roc_auc binary     0.542    10 0.0261  Preprocessor1_Model1
+## 2 sens    binary     0.991    10 0.00395 Preprocessor1_Model1
+## 3 spec    binary     0        10 0       Preprocessor1_Model1</code></pre>
+</div>
+<div id="detailed-cross-validation-results" class="section level1">
+<h1>Detailed cross validation results</h1>
+<pre class="r"><code>rs_metrics_dt &lt;- bank_rs_fit_dt %&gt;%
+  collect_metrics(summarize = FALSE)
+rs_metrics_dt</code></pre>
+<pre><code>## # A tibble: 30 x 5
+##    id     .metric .estimator .estimate .config             
+##    &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+##  1 Fold01 sens    binary         0.986 Preprocessor1_Model1
+##  2 Fold01 spec    binary         0     Preprocessor1_Model1
+##  3 Fold01 roc_auc binary         0.413 Preprocessor1_Model1
+##  4 Fold02 sens    binary         1     Preprocessor1_Model1
+##  5 Fold02 spec    binary         0     Preprocessor1_Model1
+##  6 Fold02 roc_auc binary         0.643 Preprocessor1_Model1
+##  7 Fold03 sens    binary         1     Preprocessor1_Model1
+##  8 Fold03 spec    binary         0     Preprocessor1_Model1
+##  9 Fold03 roc_auc binary         0.5   Preprocessor1_Model1
+## 10 Fold04 sens    binary         1     Preprocessor1_Model1
+## # ... with 20 more rows</code></pre>
+</div>
+<div id="summarizing-cross-validation-results" class="section level1">
+<h1>Summarizing cross validation results</h1>
+<pre class="r"><code>rs_metrics_dt %&gt;%
+  group_by(.metric) %&gt;%
+  summarize(min= min(.estimate),
+            median = median(.estimate),
+            max = max(.estimate),
+            sd = sd(.estimate))</code></pre>
+<pre><code>##   min    median max        sd
+## 1   0 0.5235507   1 0.4147642</code></pre>
+</div>
+<div id="hyper-parameter-tuning" class="section level1">
+<h1>Hyper parameter tuning</h1>
+<pre class="r"><code>dt_tune_model &lt;- decision_tree(cost_complexity = tune(), tree_depth = tune(), min_n = tune()) %&gt;%
+  set_engine(&#39;rpart&#39;) %&gt;%
+  set_mode(&#39;classification&#39;)
+dt_tune_model</code></pre>
+<pre><code>## Decision Tree Model Specification (classification)
+## 
+## Main Arguments:
+##   cost_complexity = tune()
+##   tree_depth = tune()
+##   min_n = tune()
+## 
+## Computational engine: rpart</code></pre>
+</div>
+<div id="creating-tuning-workflow" class="section level1">
+<h1>Creating tuning workflow</h1>
+<pre class="r"><code>bank_tune_wkfl &lt;- bank_wkfl_dt %&gt;%
+  update_model(dt_tune_model)
+bank_tune_wkfl</code></pre>
+<pre><code>## == Workflow ====================================================================
+## Preprocessor: Recipe
+## Model: decision_tree()
+## 
+## -- Preprocessor ----------------------------------------------------------------
+## 3 Recipe Steps
+## 
+## * step_corr()
+## * step_normalize()
+## * step_dummy()
+## 
+## -- Model -----------------------------------------------------------------------
+## Decision Tree Model Specification (classification)
+## 
+## Main Arguments:
+##   cost_complexity = tune()
+##   tree_depth = tune()
+##   min_n = tune()
+## 
+## Computational engine: rpart</code></pre>
+</div>
+<div id="identifying-hyperparameters" class="section level1">
+<h1>Identifying hyperparameters</h1>
+<pre class="r"><code>parameters(dt_tune_model )</code></pre>
+<pre><code>## Collection of 3 parameters for tuning
+## 
+##       identifier            type    object
+##  cost_complexity cost_complexity nparam[+]
+##       tree_depth      tree_depth nparam[+]
+##            min_n           min_n nparam[+]</code></pre>
+</div>
+<div id="generating-random-grid" class="section level1">
+<h1>Generating random grid</h1>
+<pre class="r"><code>set.seed(224)
+dt_grid &lt;- grid_random(parameters(dt_tune_model), size = 5)
+dt_grid</code></pre>
+<pre><code>## # A tibble: 5 x 3
+##   cost_complexity tree_depth min_n
+##             &lt;dbl&gt;      &lt;int&gt; &lt;int&gt;
+## 1     0.000608             8    23
+## 2     0.0000191            1     7
+## 3     0.000000289          7    22
+## 4     0.0343              15    22
+## 5     0.0000747           12     8</code></pre>
+</div>
+<div id="hyperparameter-tuning-with-cross-validation" class="section level1">
+<h1>Hyperparameter tuning with cross validation</h1>
+<pre class="r"><code>dt_tuning &lt;- bank_tune_wkfl %&gt;%
+  tune_grid(resamples= bank_folds_dt, grid = dt_grid, metrics = bank_metrics_dt)
+dt_tuning</code></pre>
+<pre><code>## # Tuning results
+## # 10-fold cross-validation using stratification 
+## # A tibble: 10 x 4
+##    splits           id     .metrics          .notes          
+##    &lt;list&gt;           &lt;chr&gt;  &lt;list&gt;            &lt;list&gt;          
+##  1 &lt;split [637/71]&gt; Fold01 &lt;tibble [15 x 7]&gt; &lt;tibble [0 x 1]&gt;
+##  2 &lt;split [637/71]&gt; Fold02 &lt;tibble [15 x 7]&gt; &lt;tibble [0 x 1]&gt;
+##  3 &lt;split [637/71]&gt; Fold03 &lt;tibble [15 x 7]&gt; &lt;tibble [0 x 1]&gt;
+##  4 &lt;split [637/71]&gt; Fold04 &lt;tibble [15 x 7]&gt; &lt;tibble [0 x 1]&gt;
+##  5 &lt;split [637/71]&gt; Fold05 &lt;tibble [15 x 7]&gt; &lt;tibble [0 x 1]&gt;
+##  6 &lt;split [637/71]&gt; Fold06 &lt;tibble [15 x 7]&gt; &lt;tibble [0 x 1]&gt;
+##  7 &lt;split [637/71]&gt; Fold07 &lt;tibble [15 x 7]&gt; &lt;tibble [0 x 1]&gt;
+##  8 &lt;split [637/71]&gt; Fold08 &lt;tibble [15 x 7]&gt; &lt;tibble [0 x 1]&gt;
+##  9 &lt;split [638/70]&gt; Fold09 &lt;tibble [15 x 7]&gt; &lt;tibble [0 x 1]&gt;
+## 10 &lt;split [638/70]&gt; Fold10 &lt;tibble [15 x 7]&gt; &lt;tibble [0 x 1]&gt;</code></pre>
+</div>
+<div id="exploring-tuning-results" class="section level1">
+<h1>Exploring tuning results</h1>
+<pre class="r"><code>dt_tuning %&gt;%
+  collect_metrics()</code></pre>
+<pre><code>## # A tibble: 15 x 9
+##    cost_complexity tree_depth min_n .metric .estimator   mean     n std_err
+##              &lt;dbl&gt;      &lt;int&gt; &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;
+##  1     0.000608             8    23 roc_auc binary     0.535     10 0.0272 
+##  2     0.000608             8    23 sens    binary     0.990     10 0.00501
+##  3     0.000608             8    23 spec    binary     0         10 0      
+##  4     0.0000191            1     7 roc_auc binary     0.539     10 0.0164 
+##  5     0.0000191            1     7 sens    binary     0.998     10 0.00152
+##  6     0.0000191            1     7 spec    binary     0.0793    10 0.0333 
+##  7     0.000000289          7    22 roc_auc binary     0.590     10 0.0305 
+##  8     0.000000289          7    22 sens    binary     0.981     10 0.00875
+##  9     0.000000289          7    22 spec    binary     0.02      10 0.02   
+## 10     0.0343              15    22 roc_auc binary     0.5       10 0      
+## 11     0.0343              15    22 sens    binary     1         10 0      
+## 12     0.0343              15    22 spec    binary     0         10 0      
+## 13     0.0000747           12     8 roc_auc binary     0.650     10 0.0574 
+## 14     0.0000747           12     8 sens    binary     0.953     10 0.00630
+## 15     0.0000747           12     8 spec    binary     0.227     10 0.0740 
+## # ... with 1 more variable: .config &lt;chr&gt;</code></pre>
+</div>
+<div id="detailed-tuning-results" class="section level1">
+<h1>Detailed tuning results</h1>
+<pre class="r"><code>dt_tuning %&gt;%
+  collect_metrics(summarize = FALSE)</code></pre>
+<pre><code>## # A tibble: 150 x 8
+##    id     cost_complexity tree_depth min_n .metric .estimator .estimate .config 
+##    &lt;chr&gt;            &lt;dbl&gt;      &lt;int&gt; &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;   
+##  1 Fold01        0.000608          8    23 sens    binary         0.986 Preproc~
+##  2 Fold01        0.000608          8    23 spec    binary         0     Preproc~
+##  3 Fold01        0.000608          8    23 roc_auc binary         0.413 Preproc~
+##  4 Fold02        0.000608          8    23 sens    binary         1     Preproc~
+##  5 Fold02        0.000608          8    23 spec    binary         0     Preproc~
+##  6 Fold02        0.000608          8    23 roc_auc binary         0.643 Preproc~
+##  7 Fold03        0.000608          8    23 sens    binary         1     Preproc~
+##  8 Fold03        0.000608          8    23 spec    binary         0     Preproc~
+##  9 Fold03        0.000608          8    23 roc_auc binary         0.5   Preproc~
+## 10 Fold04        0.000608          8    23 sens    binary         1     Preproc~
+## # ... with 140 more rows</code></pre>
+</div>
+<div id="exploring-tuning-results-1" class="section level1">
+<h1>Exploring tuning results</h1>
+<pre class="r"><code>dt_tuning %&gt;%
+  collect_metrics(summarize = FALSE) %&gt;%
+  filter(.metric == &#39;roc_auc&#39;) %&gt;%
+  group_by (id) %&gt;%
+  summarize( min_roc_auc = min(.estimate),
+             median_roc_auc = median(.estimate),
+             max_roc_auc = max(.estimate))</code></pre>
+<pre><code>##   min_roc_auc median_roc_auc max_roc_auc
+## 1   0.3115942            0.5   0.8794643</code></pre>
+</div>
+<div id="viewing-the-best-performing-model" class="section level1">
+<h1>Viewing the best performing model</h1>
+<pre class="r"><code>dt_tuning %&gt;%
+  show_best(metric = &#39;roc_auc&#39;, n =5)</code></pre>
+<pre><code>## # A tibble: 5 x 9
+##   cost_complexity tree_depth min_n .metric .estimator  mean     n std_err
+##             &lt;dbl&gt;      &lt;int&gt; &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;
+## 1     0.0000747           12     8 roc_auc binary     0.650    10  0.0574
+## 2     0.000000289          7    22 roc_auc binary     0.590    10  0.0305
+## 3     0.0000191            1     7 roc_auc binary     0.539    10  0.0164
+## 4     0.000608             8    23 roc_auc binary     0.535    10  0.0272
+## 5     0.0343              15    22 roc_auc binary     0.5      10  0     
+## # ... with 1 more variable: .config &lt;chr&gt;</code></pre>
+<p>Model 5 is the best model</p>
+</div>
+<div id="selecting-the-best-model" class="section level1">
+<h1>Selecting the best model</h1>
+<pre class="r"><code>best_dt_model &lt;- dt_tuning %&gt;%
+  select_best(metric = &#39;roc_auc&#39;)
+best_dt_model</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##   cost_complexity tree_depth min_n .config             
+##             &lt;dbl&gt;      &lt;int&gt; &lt;int&gt; &lt;chr&gt;               
+## 1       0.0000747         12     8 Preprocessor1_Model5</code></pre>
+<p>The above are best performing model and hyper parameter values</p>
+</div>
+<div id="finalizing-the-workflow" class="section level1">
+<h1>Finalizing the workflow</h1>
+<pre class="r"><code>final_bank_wkfl_dt &lt;- bank_tune_wkfl %&gt;%
+  finalize_workflow(best_dt_model)
+final_bank_wkfl_dt</code></pre>
+<pre><code>## == Workflow ====================================================================
+## Preprocessor: Recipe
+## Model: decision_tree()
+## 
+## -- Preprocessor ----------------------------------------------------------------
+## 3 Recipe Steps
+## 
+## * step_corr()
+## * step_normalize()
+## * step_dummy()
+## 
+## -- Model -----------------------------------------------------------------------
+## Decision Tree Model Specification (classification)
+## 
+## Main Arguments:
+##   cost_complexity = 7.46526755883198e-05
+##   tree_depth = 12
+##   min_n = 8
+## 
+## Computational engine: rpart</code></pre>
+</div>
+<div id="model-fitting" class="section level1">
+<h1>Model fitting</h1>
+<pre class="r"><code>bank_final_fit_dt &lt;- final_bank_wkfl_dt %&gt;%
+  last_fit(split = bank_split)
+bank_final_fit_dt %&gt;%
+  collect_metrics()</code></pre>
+<pre><code>## # A tibble: 2 x 4
+##   .metric  .estimator .estimate .config             
+##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+## 1 accuracy binary         0.915 Preprocessor1_Model1
+## 2 roc_auc  binary         0.668 Preprocessor1_Model1</code></pre>
 </div>
