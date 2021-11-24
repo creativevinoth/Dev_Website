@@ -1,0 +1,265 @@
+---
+title: Titanic Tree Based Model
+author: ''
+date: '2021-11-22'
+slug: titanic-tree-based-model
+categories: []
+tags: []
+---
+```{r message = FALSE, warning = FALSE, echo = FALSE}
+
+library(ggplot2)
+library(dplyr)
+library(data.table)
+library(tidyr)
+library(GGally)
+library(gapminder)
+library(tidyverse)
+library(pastecs)
+library(ggpubr)
+library(fastDummies)
+library(QuantPsyc)
+library(MASS)
+library(caret)
+library(leaps)
+library(summarytools)
+library(epiDisplay)
+library(tidymodels)
+library(Rmisc)
+library(Amelia)
+```
+```{r message = FALSE, warning = FALSE, echo = FALSE, include = FALSE}
+titanic3 <- read.csv("titanic3.csv", na.strings = "")
+```
+
+
+# SUmmary
+```{r}
+summary(titanic3)
+```
+We can see above the NA values are in age, fare and body but character variable NA values are not given above. Hence, we use misssmap to visualize the NA values.
+
+# Cleaning and preparing the dataset
+
+```{r}
+missmap(titanic3, col = c("black", "grey"))
+```
+We can see many NA values for body, cabin, boat, home.dest and age and we can intuitively decide that body, Cabin, boat, home.dest will not impact the survival. Age also has some NA values but it is likely that it will impact the survival and we will remove the NA values. Though there is no NA for name and ticket number, we can intutively remove those as it will not impact survival
+
+# Removing cabin, body, boat and home.dest
+```{r}
+titanic3 <- subset (titanic3, select = - cabin)
+titanic3 <- subset (titanic3, select = - body)
+titanic3 <- subset (titanic3, select = - boat)
+titanic3 <- subset (titanic3, select = - home.dest)
+titanic3 <- subset (titanic3, select = - name)
+titanic3 <- subset (titanic3, select = - ticket)
+
+```
+
+
+# Dropping the missing values
+```{r}
+titanic3 = na.omit(titanic3)
+```
+
+# summary after removing NA
+```{r}
+summary(titanic3)
+```
+# Descriptive Statistics
+```{r}
+descr(titanic3)
+```
+# Structure of the data
+```{r}
+str(titanic3)
+```
+pclass is the ticket class and it is ordinal categorical value but it is taken as integer. Survived is a nominal categorical value but taken as integer. Hence, I change both as a categorical values
+
+# Changing survived and pclass as categorical value
+```{r}
+titanic3$survived = factor(titanic3$survived)
+titanic3$pclass = factor(titanic3$pclass, order=TRUE, levels = c(3, 2, 1))
+```
+
+# Revised structure
+```{r}
+str(titanic3)
+```
+
+# Univariate analysis on numerical data
+
+# Univariate analysis on age
+```{r}
+descr(titanic3$age)
+```
+# Boxplot of age and its outliers
+
+```{r}
+age_outliers<-boxplot.stats(titanic3$age)$out
+boxplot(titanic3$age, main = "Box plot of age", boxwex = 0.6)
+mtext(paste("Outliers: ", paste(age_outliers, collapse =", ")), cex = 0.6)
+age_outliers
+```
+# Removal of outliers of age
+```{r}
+titanic3 <- subset (titanic3, age < 67)
+```
+
+# Univariate analysis on sibsp
+```{r}
+descr(titanic3$sibsp)
+```
+
+# Boxplot of sibsp and its outliers
+
+```{r}
+sibsp_outliers<-boxplot.stats(titanic3$sibsp)$out
+boxplot(titanic3$sibsp, main = "Box plot of sibsp", boxwex = 0.6)
+mtext(paste("Outliers: ", paste(sibsp_outliers, collapse =", ")), cex = 0.6)
+sibsp_outliers
+```
+# Removal of outliers of sibsp
+```{r}
+titanic3 <- subset (titanic3, sibsp < 3)
+```
+Removed siblings/ spouses greater than 3
+
+# Univariate analysis on parch
+```{r}
+descr(titanic3$parch)
+```
+
+# Boxplot of parch and its outliers
+
+```{r}
+parch_outliers<-boxplot.stats(titanic3$parch)$out
+boxplot(titanic3$parch, main = "Box plot of parch", boxwex = 0.6)
+mtext(paste("Outliers: ", paste(parch_outliers, collapse =", ")), cex = 0.6)
+parch_outliers
+```
+Though majority of the data are shown as outliers for parents and childern aboard the Titanic, i feel that they might influence the survival, Hence, I did not remove the outliers or the data
+
+# Univariate analysis on fare
+```{r}
+descr(titanic3$fare)
+```
+# Boxplot of fare and its outliers
+
+```{r}
+fare_outliers<-boxplot.stats(titanic3$fare)$out
+boxplot(titanic3$fare, main = "Box plot of fare", boxwex = 0.6)
+mtext(paste("Outliers: ", paste(fare_outliers, collapse =", ")), cex = 0.6)
+fare_outliers
+```
+Here, fare also has more outliers but I don't delete it and keep the file as it is and process further.
+
+# UNivariate analysis on categorical value
+
+# Frequency distribution of pclass
+```{r}
+tab1(titanic3$pclass, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of pclass", xlab ="pclass")
+```
+
+# Frequency distribution of survived
+```{r}
+tab1(titanic3$survived, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of survived", xlab ="survived")
+```
+
+# Frequency distribution of sex
+```{r}
+tab1(titanic3$sex, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of sex", xlab ="sex")
+```
+
+# Frequency distribution of embarked
+Writing the embarked data in full words
+```{r}
+titanic3$embarked[titanic3$embarked == "S" ] <-"Southampton"
+titanic3$embarked[titanic3$embarked == "C" ] <-"Cherbourg"
+titanic3$embarked[titanic3$embarked == "Q" ] <-"Queenstown"
+
+```
+
+
+```{r}
+tab1(titanic3$embarked, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of embarked", xlab ="embarked")
+```
+
+# Bivariate analysis to see the relationship between dependant and independant variable
+
+# Relationship between survived and pclass
+```{r}
+pclass_survived = glm(survived~ pclass, data = titanic3, family = "binomial")
+summary(pclass_survived)
+```
+
+```{r}
+ggplot(titanic3, aes(x = survived, fill = pclass)) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
+```
+
+# Relationship between survived and sex
+```{r}
+sex_survived = glm(survived~ sex, data = titanic3, family = "binomial")
+summary(sex_survived)
+```
+
+```{r}
+ggplot(titanic3, aes(x = survived, fill = sex)) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
+```
+
+# Relationship between survived and embarked
+```{r}
+embarked_survived = glm(survived~ embarked, data = titanic3, family = "binomial")
+summary(embarked_survived)
+```
+```{r}
+ggplot(titanic3, aes(x = survived, fill = embarked)) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
+```
+
+# Relationship between survived and age
+```{r}
+age_survived = glm(survived~ age, data = titanic3, family = "binomial")
+summary(age_survived)
+```
+
+```{r}
+titanic3$discretized.age = cut(titanic3$age, c(0, 10, 20, 30, 40, 50, 60, 70))
+ggplot(titanic3, aes(x = discretized.age, fill = survived)) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
+```
+
+# Relationship between survived and sibsp
+```{r}
+sibsp_survived = glm(survived~ sibsp, data = titanic3, family = "binomial")
+summary(sibsp_survived)
+```
+```{r}
+
+ggplot(titanic3, aes(x = sibsp, fill = survived)) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
+```
+
+# Relationship between survived and parch
+```{r}
+parch_survived = glm(survived~ parch, data = titanic3, family = "binomial")
+summary(parch_survived)
+```
+```{r}
+ggplot(titanic3, aes(x = parch, fill = survived)) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
+```
+
+# Relationship between survived and fare
+```{r}
+fare_survived = glm(survived~ fare, data = titanic3, family = "binomial")
+summary(fare_survived)
+```
+
+```{r}
+titanic3$discretized.fare = cut(titanic3$fare, c(0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550))
+ggplot(titanic3, aes(x = discretized.fare, fill = survived)) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
+```
+
+
+
+
+
+
