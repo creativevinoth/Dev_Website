@@ -647,7 +647,7 @@ titanic_rs_metrics_rf %>%
 
 # Hyper parameter tuning
 ```{r}
-titanic_rf_tune_model <- rand_forest(trees = tune(), min_n = tune()) %>%
+titanic_rf_tune_model <- rand_forest(mtry = tune(), trees = tune(), min_n = tune()) %>%
   set_engine('ranger') %>%
   set_mode('classification')
 titanic_rf_tune_model
@@ -664,12 +664,13 @@ titanic_tune_wkfl_rf
 ```{r}
 parameters(titanic_rf_tune_model)
 ```
+`
 
 
 # Hyperparameter tuning with cross validation
 ```{r}
 titanic_rf_tuning <- titanic_tune_wkfl_rf %>%
-  tune_grid(resamples= titanic_folds_rf, metrics = titanic_metrics_rf)
+  tune_grid(resamples= titanic_folds_rf,  metrics = titanic_metrics_rf)
 titanic_rf_tuning
 ```
 
@@ -701,14 +702,14 @@ titanic_rf_tuning %>%
 titanic_rf_tuning %>%
   show_best(metric = 'roc_auc', n =5)
 ```
-Model 5 is the best model
+Model 6 is the best model
 # Selecting the best model
 ```{r}
 titanic_best_rf_model <- titanic_rf_tuning %>%
   select_best(metric = 'roc_auc')
 titanic_best_rf_model 
 ```
-The model 5 are best performing model and hyper parameter values
+The model 6 are best performing model and hyper parameter values
 
 # Finalizing the workflow
 ```{r}
