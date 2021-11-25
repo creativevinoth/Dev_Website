@@ -27,6 +27,7 @@ library(epiDisplay)
 library(tidymodels)
 library(Rmisc)
 library(Amelia)
+library(ranger)
 ```
 ```{r message = FALSE, warning = FALSE, echo = FALSE, include = FALSE}
 titanic3 <- read.csv("titanic3.csv", na.strings = "")
@@ -298,6 +299,60 @@ titanic_recipe_dt <- recipe(survived ~ sex+ pclass + age + sibsp + parch + fare 
   step_dummy(all_nominal(), -all_outcomes())
 titanic_recipe_dt
 ```
+
+# Recipe training
+```{r}
+titanic_recipe_prep_dt<- titanic_recipe_dt %>%
+  prep(training = titanic_training)
+titanic_recipe_prep_dt
+```
+# Preprocess training data
+```{r}
+titanic_training_prep_dt <- titanic_recipe_prep_dt %>%
+  bake (new_data = NULL)
+titanic_training_prep_dt
+```
+
+# Preprocess test data
+```{r}
+titanic_test_prep_dt <- titanic_recipe_prep_dt %>%
+  bake (new_data = titanic_test)
+titanic_test_prep_dt
+```
+
+# Model fitting
+```{r}
+titanic_fit_dt <- titanic_dt_model %>%
+  fit(survived ~ ., data = titanic_training_prep_dt)
+titanic_fit_dt
+```
+# Predicting outcome variables
+
+```{r}
+titanic_class_preds <- predict(titanic_fit_dt, new_data = titanic_test_prep_dt, type = "class")
+titanic_class_preds
+```
+# Estimated probabilities
+```{r}
+titanic_prob_preds <- predict(titanic_fit_dt, new_data = titanic_test_prep_dt, type = "prob")
+titanic_prob_preds
+```
+# Combining results
+
+```{r}
+titanic_results <- titanic_test_prep_dt %>%
+  bind_cols(titanic_class_preds, titanic_prob_preds)
+titanic_results
+```
+
+# Assessing model fit using confusion matrix
+```{r}
+titanic_results %>%
+  conf_mat(truth = survived, estimate = .pred_class) %>%
+autoplot(type = 'heatmap')
+```
+
+
 # Combining models and recipe
 ```{r}
 titanic_wkfl_dt<- workflow() %>%
@@ -457,5 +512,231 @@ titanic_final_fit_dt <- final_titanic_wkfl_dt %>%
   last_fit(split = titanic_split)
 titanic_final_fit_dt %>%
   collect_metrics()
+
 ```
 We can see that there is some improvement compared to what we got from without tuning model
+
+`
+```{r}
+titanic_prediction<- titanic_final_fit_dt %>%
+  collect_predictions()
+titanic_prediction
+```
+
+```{r}
+conf_mat(titanic_prediction, truth = survived, estimate = .pred_class) %>%
+  autoplot(type = 'heatmap')
+```
+
+# Random forest model
+# Model specification using random forest
+```{r}
+titanic_rf_model<- rand_forest(mtry =4,trees = 100, min_n =10) %>%
+  set_engine('ranger') %>%
+  set_mode('classification')
+```
+# Training a forest
+```{r}
+titanic_fit_rf <- titanic_rf_model %>%
+  fit (survived ~ sex+ pclass + age + sibsp + parch + fare + embarked, data = titanic_training)
+titanic_fit_rf
+```
+
+
+# Predicting outcome variables
+
+```{r}
+titanic_class_preds_rf <- predict(titanic_fit_rf, new_data = titanic_test, type = "class")
+titanic_class_preds_rf
+```
+# Estimated probabilities
+```{r}
+titanic_prob_preds_rf <- predict(titanic_fit_rf, new_data = titanic_test, type = "prob")
+titanic_prob_preds_rf
+```
+# Combining results
+
+```{r}
+titanic_results_rf <- titanic_test %>%
+  bind_cols(titanic_class_preds_rf, titanic_prob_preds_rf)
+titanic_results_rf
+```
+
+# Assessing model fit using confusion matrix
+```{r}
+titanic_results_rf %>%
+  conf_mat(truth = survived, estimate = .pred_class) %>%
+autoplot(type = 'heatmap')
+```
+
+
+# Combining models and recipe
+```{r}
+titanic_wkfl_rf<- workflow() %>%
+  add_model(titanic_rf_model) %>%
+  add_recipe(titanic_recipe_dt)
+titanic_wkfl_rf
+```
+
+# Model fitting with workflow
+```{r}
+titanic_wkfl_fit_rf <- titanic_wkfl_rf %>%
+  last_fit(split = titanic_split)
+titanic_wkfl_fit_rf %>%
+  collect_metrics()
+```
+
+# Collecting predictions
+```{r}
+titanic_wkfl_preds_rf <- titanic_wkfl_fit_rf %>%
+  collect_predictions()
+titanic_wkfl_preds_rf
+```
+
+# Confusion matrix
+```{r}
+conf_mat(titanic_wkfl_preds_rf, truth = survived, estimate = .pred_class) %>%
+  autoplot(type = 'heatmap')
+```
+# Correct predictions
+True negative is 100 people, who did not survive. True positive is 61 people survived. 
+
+# Classification error
+False positive is 15 people, who are predicted as survived but actually not survived. False negative is 22 people, who are predicted as not survived but actually survived.
+
+More number of people not survived in Titanic
+
+# Exploring custom metrics
+```{r}
+titanic_metrics_rf <- metric_set(roc_auc, sens, spec, accuracy)
+titanic_wkfl_preds_rf %>%
+titanic_metrics_rf(truth = survived, estimate = .pred_class, .pred_1)
+```
+
+# Creating k-fold cross validation
+```{r}
+set.seed(222)
+titanic_folds_rf <- vfold_cv(titanic_training, v = 10, strata = survived)
+titanic_folds_rf
+```
+
+# Model training with cross validation
+```{r}
+titanic_rs_fit_rf <-titanic_wkfl_rf %>%
+  fit_resamples(resamples = titanic_folds_rf, metrics = titanic_metrics_rf)
+titanic_rs_fit_rf %>%
+  collect_metrics()
+```
+
+# Detailed cross_validation results
+```{r}
+titanic_rs_metrics_rf <-titanic_rs_fit_rf %>%
+  collect_metrics(summarize = FALSE)
+titanic_rs_metrics_rf 
+```
+
+# Summarizing cross validation results
+```{r}
+titanic_rs_metrics_rf %>%
+  group_by(.metric) %>%
+  summarize(min= min(.estimate),
+            median = median(.estimate),
+            max = max(.estimate),
+            sd = sd(.estimate))
+```
+
+# Hyper parameter tuning
+```{r}
+titanic_rf_tune_model <- rand_forest(trees = tune(), min_n = tune()) %>%
+  set_engine('ranger') %>%
+  set_mode('classification')
+titanic_rf_tune_model
+```
+
+# Creating tuning workflow
+```{r}
+titanic_tune_wkfl_rf <- titanic_wkfl_rf %>%
+  update_model(titanic_rf_tune_model)
+titanic_tune_wkfl_rf
+```
+
+# Identifying hyperparameters
+```{r}
+parameters(titanic_rf_tune_model)
+```
+
+
+# Hyperparameter tuning with cross validation
+```{r}
+titanic_rf_tuning <- titanic_tune_wkfl_rf %>%
+  tune_grid(resamples= titanic_folds_rf, metrics = titanic_metrics_rf)
+titanic_rf_tuning
+```
+
+# Exploring tuning results
+```{r}
+titanic_rf_tuning %>%
+  collect_metrics()
+```
+
+# Detailed tuning results
+```{r}
+titanic_rf_tuning %>%
+  collect_metrics(summarize = FALSE)
+```
+
+# Exploring tuning results
+```{r}
+titanic_rf_tuning %>%
+  collect_metrics(summarize = FALSE) %>%
+  filter(.metric == 'roc_auc') %>%
+  group_by (id) %>%
+  summarize( min_roc_auc = min(.estimate),
+             median_roc_auc = median(.estimate),
+             max_roc_auc = max(.estimate))
+```
+
+# Viewing the best performing model
+```{r}
+titanic_rf_tuning %>%
+  show_best(metric = 'roc_auc', n =5)
+```
+Model 5 is the best model
+# Selecting the best model
+```{r}
+titanic_best_rf_model <- titanic_rf_tuning %>%
+  select_best(metric = 'roc_auc')
+titanic_best_rf_model 
+```
+The model 5 are best performing model and hyper parameter values
+
+# Finalizing the workflow
+```{r}
+final_titanic_wkfl_rf <- titanic_tune_wkfl_rf %>%
+  finalize_workflow(titanic_best_rf_model)
+final_titanic_wkfl_rf
+```
+
+# Model fitting
+```{r}
+titanic_final_fit_rf <- final_titanic_wkfl_rf %>%
+  last_fit(split = titanic_split)
+titanic_final_fit_rf %>%
+  collect_metrics()
+
+```
+We can see that there is some improvement compared to what we got from without tuning model
+
+`
+```{r}
+titanic_prediction_rf<- titanic_final_fit_rf %>%
+  collect_predictions()
+titanic_prediction_rf
+```
+
+```{r}
+conf_mat(titanic_prediction_rf, truth = survived, estimate = .pred_class) %>%
+  autoplot(type = 'heatmap')
+```
+
+

@@ -598,11 +598,11 @@ titanic_test &lt;- titanic_split %&gt;%
 <pre class="r"><code>titanic_training %&gt;%
   select_if(is.numeric) %&gt;%
   cor()</code></pre>
-<pre><code>##               age      sibsp       parch      fare
-## age    1.00000000 -0.0592946 -0.05325892 0.1917420
-## sibsp -0.05929460  1.0000000  0.26170521 0.1770886
-## parch -0.05325892  0.2617052  1.00000000 0.2232772
-## fare   0.19174203  0.1770886  0.22327719 1.0000000</code></pre>
+<pre><code>##               age       sibsp       parch      fare
+## age    1.00000000 -0.05120173 -0.07702511 0.1922136
+## sibsp -0.05120173  1.00000000  0.24795406 0.1822656
+## parch -0.07702511  0.24795406  1.00000000 0.1967360
+## fare   0.19221362  0.18226557  0.19673599 1.0000000</code></pre>
 <p>There is no multicolinearity between the independant variables</p>
 </div>
 <div id="model-specification-using-decision-tree" class="section level1">
@@ -632,6 +632,162 @@ titanic_recipe_dt</code></pre>
 ## Correlation filter on all_numeric()
 ## Centering and scaling for all_numeric()
 ## Dummy variables from all_nominal(), -all_outcomes()</code></pre>
+</div>
+<div id="recipe-training" class="section level1">
+<h1>Recipe training</h1>
+<pre class="r"><code>titanic_recipe_prep_dt&lt;- titanic_recipe_dt %&gt;%
+  prep(training = titanic_training)
+titanic_recipe_prep_dt</code></pre>
+<pre><code>## Recipe
+## 
+## Inputs:
+## 
+##       role #variables
+##    outcome          1
+##  predictor          7
+## 
+## Training data contained 791 data points and no missing data.
+## 
+## Operations:
+## 
+## Correlation filter removed no terms [trained]
+## Centering and scaling for age, sibsp, parch, fare [trained]
+## Dummy variables from sex, pclass, embarked [trained]</code></pre>
+</div>
+<div id="preprocess-training-data" class="section level1">
+<h1>Preprocess training data</h1>
+<pre class="r"><code>titanic_training_prep_dt &lt;- titanic_recipe_prep_dt %&gt;%
+  bake (new_data = NULL)
+titanic_training_prep_dt</code></pre>
+<pre><code>## # A tibble: 791 x 10
+##        age  sibsp  parch    fare survived sex_male pclass_1 pclass_2
+##      &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt; &lt;fct&gt;       &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+##  1 -2.12    1.23   1.96   2.04   0               0    0.707    0.408
+##  2 -0.0466  1.23   1.96   2.04   0               1    0.707    0.408
+##  3 -0.417   1.23   1.96   2.04   0               0    0.707    0.408
+##  4  0.620  -0.632 -0.447 -0.641  0               1    0.707    0.408
+##  5  1.21    1.23  -0.447  3.38   0               1    0.707    0.408
+##  6  0.398  -0.632 -0.447  0.689  0               1    0.707    0.408
+##  7  1.06   -0.632 -0.447 -0.0133 0               1    0.707    0.408
+##  8  0.842  -0.632 -0.447 -0.172  0               1    0.707    0.408
+##  9  0.768  -0.632 -0.447 -0.102  0               1    0.707    0.408
+## 10  1.29   -0.632 -0.447  0.252  0               1    0.707    0.408
+## # ... with 781 more rows, and 2 more variables: embarked_Queenstown &lt;dbl&gt;,
+## #   embarked_Southampton &lt;dbl&gt;</code></pre>
+</div>
+<div id="preprocess-test-data" class="section level1">
+<h1>Preprocess test data</h1>
+<pre class="r"><code>titanic_test_prep_dt &lt;- titanic_recipe_prep_dt %&gt;%
+  bake (new_data = titanic_test)
+titanic_test_prep_dt</code></pre>
+<pre><code>## # A tibble: 198 x 10
+##       age  sibsp  parch   fare survived sex_male pclass_1 pclass_2
+##     &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;fct&gt;       &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+##  1  1.66   3.10  -0.447  0.269 1               0    0.707    0.408
+##  2 -0.935  1.23  -0.447  3.38  1               0    0.707    0.408
+##  3 -0.491 -0.632  0.755  3.73  0               1    0.707    0.408
+##  4  1.43  -0.632  0.755  3.73  1               0    0.707    0.408
+##  5  0.472  1.23   0.755  0.288 1               1    0.707    0.408
+##  6 -0.417 -0.632 -0.447 -0.181 0               1    0.707    0.408
+##  7  0.324 -0.632 -0.447  1.76  1               0    0.707    0.408
+##  8  2.17  -0.632 -0.447  0.708 1               0    0.707    0.408
+##  9  0.768 -0.632 -0.447  1.74  1               0    0.707    0.408
+## 10  0.842 -0.632 -0.447 -0.176 1               1    0.707    0.408
+## # ... with 188 more rows, and 2 more variables: embarked_Queenstown &lt;dbl&gt;,
+## #   embarked_Southampton &lt;dbl&gt;</code></pre>
+</div>
+<div id="model-fitting" class="section level1">
+<h1>Model fitting</h1>
+<pre class="r"><code>titanic_fit_dt &lt;- titanic_dt_model %&gt;%
+  fit(survived ~ ., data = titanic_training_prep_dt)
+titanic_fit_dt</code></pre>
+<pre><code>## parsnip model object
+## 
+## Fit time:  61ms 
+## n= 791 
+## 
+## node), split, n, loss, yval, (yprob)
+##       * denotes terminal node
+## 
+##  1) root 791 331 0 (0.58154235 0.41845765)  
+##    2) sex_male&gt;=0.5 501 110 0 (0.78043912 0.21956088)  
+##      4) age&gt;=-1.434328 479  90 0 (0.81210856 0.18789144) *
+##      5) age&lt; -1.434328 22   2 1 (0.09090909 0.90909091) *
+##    3) sex_male&lt; 0.5 290  69 1 (0.23793103 0.76206897)  
+##      6) pclass_1&lt; -0.3535534 111  54 0 (0.51351351 0.48648649)  
+##       12) fare&gt;=-0.2327481 10   1 0 (0.90000000 0.10000000) *
+##       13) fare&lt; -0.2327481 101  48 1 (0.47524752 0.52475248)  
+##         26) fare&lt; -0.3642866 83  39 0 (0.53012048 0.46987952)  
+##           52) fare&gt;=-0.504885 72  30 0 (0.58333333 0.41666667) *
+##           53) fare&lt; -0.504885 11   2 1 (0.18181818 0.81818182) *
+##         27) fare&gt;=-0.3642866 18   4 1 (0.22222222 0.77777778) *
+##      7) pclass_1&gt;=-0.3535534 179  12 1 (0.06703911 0.93296089) *</code></pre>
+</div>
+<div id="predicting-outcome-variables" class="section level1">
+<h1>Predicting outcome variables</h1>
+<pre class="r"><code>titanic_class_preds &lt;- predict(titanic_fit_dt, new_data = titanic_test_prep_dt, type = &quot;class&quot;)
+titanic_class_preds</code></pre>
+<pre><code>## # A tibble: 198 x 1
+##    .pred_class
+##    &lt;fct&gt;      
+##  1 1          
+##  2 1          
+##  3 0          
+##  4 1          
+##  5 0          
+##  6 0          
+##  7 1          
+##  8 1          
+##  9 1          
+## 10 0          
+## # ... with 188 more rows</code></pre>
+</div>
+<div id="estimated-probabilities" class="section level1">
+<h1>Estimated probabilities</h1>
+<pre class="r"><code>titanic_prob_preds &lt;- predict(titanic_fit_dt, new_data = titanic_test_prep_dt, type = &quot;prob&quot;)
+titanic_prob_preds</code></pre>
+<pre><code>## # A tibble: 198 x 2
+##    .pred_0 .pred_1
+##      &lt;dbl&gt;   &lt;dbl&gt;
+##  1  0.0670   0.933
+##  2  0.0670   0.933
+##  3  0.812    0.188
+##  4  0.0670   0.933
+##  5  0.812    0.188
+##  6  0.812    0.188
+##  7  0.0670   0.933
+##  8  0.0670   0.933
+##  9  0.0670   0.933
+## 10  0.812    0.188
+## # ... with 188 more rows</code></pre>
+</div>
+<div id="combining-results" class="section level1">
+<h1>Combining results</h1>
+<pre class="r"><code>titanic_results &lt;- titanic_test_prep_dt %&gt;%
+  bind_cols(titanic_class_preds, titanic_prob_preds)
+titanic_results</code></pre>
+<pre><code>## # A tibble: 198 x 13
+##       age  sibsp  parch   fare survived sex_male pclass_1 pclass_2
+##     &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;fct&gt;       &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+##  1  1.66   3.10  -0.447  0.269 1               0    0.707    0.408
+##  2 -0.935  1.23  -0.447  3.38  1               0    0.707    0.408
+##  3 -0.491 -0.632  0.755  3.73  0               1    0.707    0.408
+##  4  1.43  -0.632  0.755  3.73  1               0    0.707    0.408
+##  5  0.472  1.23   0.755  0.288 1               1    0.707    0.408
+##  6 -0.417 -0.632 -0.447 -0.181 0               1    0.707    0.408
+##  7  0.324 -0.632 -0.447  1.76  1               0    0.707    0.408
+##  8  2.17  -0.632 -0.447  0.708 1               0    0.707    0.408
+##  9  0.768 -0.632 -0.447  1.74  1               0    0.707    0.408
+## 10  0.842 -0.632 -0.447 -0.176 1               1    0.707    0.408
+## # ... with 188 more rows, and 5 more variables: embarked_Queenstown &lt;dbl&gt;,
+## #   embarked_Southampton &lt;dbl&gt;, .pred_class &lt;fct&gt;, .pred_0 &lt;dbl&gt;, .pred_1 &lt;dbl&gt;</code></pre>
+</div>
+<div id="assessing-model-fit-using-confusion-matrix" class="section level1">
+<h1>Assessing model fit using confusion matrix</h1>
+<pre class="r"><code>titanic_results %&gt;%
+  conf_mat(truth = survived, estimate = .pred_class) %&gt;%
+autoplot(type = &#39;heatmap&#39;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-53-1.png" width="672" /></p>
 </div>
 <div id="combining-models-and-recipe" class="section level1">
 <h1>Combining models and recipe</h1>
@@ -664,8 +820,8 @@ titanic_wkfl_fit_dt %&gt;%
 <pre><code>## # A tibble: 2 x 4
 ##   .metric  .estimator .estimate .config             
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-## 1 accuracy binary         0.768 Preprocessor1_Model1
-## 2 roc_auc  binary         0.777 Preprocessor1_Model1</code></pre>
+## 1 accuracy binary         0.823 Preprocessor1_Model1
+## 2 roc_auc  binary         0.856 Preprocessor1_Model1</code></pre>
 </div>
 <div id="collecting-predictions" class="section level1">
 <h1>Collecting predictions</h1>
@@ -675,23 +831,23 @@ titanic_wkfl_preds_dt</code></pre>
 <pre><code>## # A tibble: 198 x 7
 ##    id               .pred_0 .pred_1  .row .pred_class survived .config          
 ##    &lt;chr&gt;              &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt; &lt;fct&gt;       &lt;fct&gt;    &lt;chr&gt;            
-##  1 train/test split  0.0541   0.946     3 1           0        Preprocessor1_Mo~
-##  2 train/test split  0.0541   0.946     5 1           0        Preprocessor1_Mo~
-##  3 train/test split  0.831    0.169    10 0           0        Preprocessor1_Mo~
-##  4 train/test split  0.831    0.169    14 0           0        Preprocessor1_Mo~
-##  5 train/test split  0.831    0.169    24 0           1        Preprocessor1_Mo~
-##  6 train/test split  0.831    0.169    29 0           1        Preprocessor1_Mo~
-##  7 train/test split  0.0541   0.946    31 1           1        Preprocessor1_Mo~
-##  8 train/test split  0.0541   0.946    33 1           1        Preprocessor1_Mo~
-##  9 train/test split  0.0541   0.946    34 1           1        Preprocessor1_Mo~
-## 10 train/test split  0.831    0.169    36 0           0        Preprocessor1_Mo~
+##  1 train/test split  0.0670   0.933     9 1           1        Preprocessor1_Mo~
+##  2 train/test split  0.0670   0.933    11 1           1        Preprocessor1_Mo~
+##  3 train/test split  0.812    0.188    14 0           0        Preprocessor1_Mo~
+##  4 train/test split  0.0670   0.933    15 1           1        Preprocessor1_Mo~
+##  5 train/test split  0.812    0.188    18 0           1        Preprocessor1_Mo~
+##  6 train/test split  0.812    0.188    23 0           0        Preprocessor1_Mo~
+##  7 train/test split  0.0670   0.933    26 1           1        Preprocessor1_Mo~
+##  8 train/test split  0.0670   0.933    39 1           1        Preprocessor1_Mo~
+##  9 train/test split  0.0670   0.933    40 1           1        Preprocessor1_Mo~
+## 10 train/test split  0.812    0.188    42 0           1        Preprocessor1_Mo~
 ## # ... with 188 more rows</code></pre>
 </div>
 <div id="confusion-matrix" class="section level1">
 <h1>Confusion matrix</h1>
 <pre class="r"><code>conf_mat(titanic_wkfl_preds_dt, truth = survived, estimate = .pred_class) %&gt;%
   autoplot(type = &#39;heatmap&#39;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-49-1.png" width="672" />
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-57-1.png" width="672" />
 # Correct predictions
 True negative is 108 people, who did not survive. True positive is 56 people survived.</p>
 </div>
@@ -708,10 +864,10 @@ titanic_metrics_dt(truth = survived, estimate = .pred_class, .pred_1)</code></pr
 <pre><code>## # A tibble: 4 x 3
 ##   .metric  .estimator .estimate
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt;
-## 1 sens     binary         0.861
-## 2 spec     binary         0.639
-## 3 accuracy binary         0.768
-## 4 roc_auc  binary         0.223</code></pre>
+## 1 sens     binary         0.904
+## 2 spec     binary         0.711
+## 3 accuracy binary         0.823
+## 4 roc_auc  binary         0.144</code></pre>
 </div>
 <div id="creating-k-fold-cross-validation" class="section level1">
 <h1>Creating k-fold cross validation</h1>
@@ -742,10 +898,10 @@ titanic_rs_fit_dt %&gt;%
 <pre><code>## # A tibble: 4 x 6
 ##   .metric  .estimator  mean     n std_err .config             
 ##   &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
-## 1 accuracy binary     0.810    10  0.0116 Preprocessor1_Model1
-## 2 roc_auc  binary     0.834    10  0.0125 Preprocessor1_Model1
-## 3 sens     binary     0.9      10  0.0205 Preprocessor1_Model1
-## 4 spec     binary     0.686    10  0.0242 Preprocessor1_Model1</code></pre>
+## 1 accuracy binary     0.801    10  0.0128 Preprocessor1_Model1
+## 2 roc_auc  binary     0.813    10  0.0136 Preprocessor1_Model1
+## 3 sens     binary     0.926    10  0.0134 Preprocessor1_Model1
+## 4 spec     binary     0.628    10  0.0322 Preprocessor1_Model1</code></pre>
 </div>
 <div id="detailed-cross_validation-results" class="section level1">
 <h1>Detailed cross_validation results</h1>
@@ -755,16 +911,16 @@ titanic_rs_metrics_dt </code></pre>
 <pre><code>## # A tibble: 40 x 5
 ##    id     .metric  .estimator .estimate .config             
 ##    &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-##  1 Fold01 sens     binary         0.826 Preprocessor1_Model1
-##  2 Fold01 spec     binary         0.647 Preprocessor1_Model1
-##  3 Fold01 accuracy binary         0.75  Preprocessor1_Model1
-##  4 Fold01 roc_auc  binary         0.788 Preprocessor1_Model1
-##  5 Fold02 sens     binary         0.978 Preprocessor1_Model1
-##  6 Fold02 spec     binary         0.727 Preprocessor1_Model1
-##  7 Fold02 accuracy binary         0.873 Preprocessor1_Model1
-##  8 Fold02 roc_auc  binary         0.900 Preprocessor1_Model1
-##  9 Fold03 sens     binary         0.826 Preprocessor1_Model1
-## 10 Fold03 spec     binary         0.697 Preprocessor1_Model1
+##  1 Fold01 sens     binary         0.957 Preprocessor1_Model1
+##  2 Fold01 spec     binary         0.735 Preprocessor1_Model1
+##  3 Fold01 accuracy binary         0.862 Preprocessor1_Model1
+##  4 Fold01 roc_auc  binary         0.848 Preprocessor1_Model1
+##  5 Fold02 sens     binary         0.891 Preprocessor1_Model1
+##  6 Fold02 spec     binary         0.788 Preprocessor1_Model1
+##  7 Fold02 accuracy binary         0.848 Preprocessor1_Model1
+##  8 Fold02 roc_auc  binary         0.870 Preprocessor1_Model1
+##  9 Fold03 sens     binary         0.891 Preprocessor1_Model1
+## 10 Fold03 spec     binary         0.545 Preprocessor1_Model1
 ## # ... with 30 more rows</code></pre>
 </div>
 <div id="summarizing-cross-validation-results" class="section level1">
@@ -775,8 +931,8 @@ titanic_rs_metrics_dt </code></pre>
             median = median(.estimate),
             max = max(.estimate),
             sd = sd(.estimate))</code></pre>
-<pre><code>##         min    median       max         sd
-## 1 0.5757576 0.8101266 0.9782609 0.09569488</code></pre>
+<pre><code>##         min    median       max       sd
+## 1 0.4848485 0.7961133 0.9782609 0.123517</code></pre>
 </div>
 <div id="hyper-parameter-tuning" class="section level1">
 <h1>Hyper parameter tuning</h1>
@@ -871,26 +1027,26 @@ titanic_dt_tuning</code></pre>
 <pre><code>## # A tibble: 20 x 9
 ##    cost_complexity tree_depth min_n .metric  .estimator  mean     n std_err
 ##              &lt;dbl&gt;      &lt;int&gt; &lt;int&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;
-##  1     0.000608             8    23 accuracy binary     0.791    10  0.0129
-##  2     0.000608             8    23 roc_auc  binary     0.864    10  0.0144
-##  3     0.000608             8    23 sens     binary     0.841    10  0.0195
-##  4     0.000608             8    23 spec     binary     0.722    10  0.0190
-##  5     0.0000191            1     7 accuracy binary     0.794    10  0.0151
-##  6     0.0000191            1     7 roc_auc  binary     0.781    10  0.0143
-##  7     0.0000191            1     7 sens     binary     0.861    10  0.0225
-##  8     0.0000191            1     7 spec     binary     0.701    10  0.0174
-##  9     0.000000289          7    22 accuracy binary     0.795    10  0.0116
-## 10     0.000000289          7    22 roc_auc  binary     0.853    10  0.0164
-## 11     0.000000289          7    22 sens     binary     0.867    10  0.0179
-## 12     0.000000289          7    22 spec     binary     0.695    10  0.0208
-## 13     0.0343              15    22 accuracy binary     0.812    10  0.0147
-## 14     0.0343              15    22 roc_auc  binary     0.802    10  0.0144
-## 15     0.0343              15    22 sens     binary     0.85     10  0.0204
-## 16     0.0343              15    22 spec     binary     0.758    10  0.0183
-## 17     0.0000747           12     8 accuracy binary     0.780    10  0.0173
-## 18     0.0000747           12     8 roc_auc  binary     0.836    10  0.0145
-## 19     0.0000747           12     8 sens     binary     0.824    10  0.0179
-## 20     0.0000747           12     8 spec     binary     0.719    10  0.0266
+##  1     0.000608             8    23 accuracy binary     0.781    10  0.0194
+##  2     0.000608             8    23 roc_auc  binary     0.831    10  0.0171
+##  3     0.000608             8    23 sens     binary     0.841    10  0.0172
+##  4     0.000608             8    23 spec     binary     0.698    10  0.0315
+##  5     0.0000191            1     7 accuracy binary     0.774    10  0.0175
+##  6     0.0000191            1     7 roc_auc  binary     0.759    10  0.0183
+##  7     0.0000191            1     7 sens     binary     0.85     10  0.0201
+##  8     0.0000191            1     7 spec     binary     0.668    10  0.0285
+##  9     0.000000289          7    22 accuracy binary     0.775    10  0.0164
+## 10     0.000000289          7    22 roc_auc  binary     0.829    10  0.0173
+## 11     0.000000289          7    22 sens     binary     0.835    10  0.0153
+## 12     0.000000289          7    22 spec     binary     0.692    10  0.0321
+## 13     0.0343              15    22 accuracy binary     0.794    10  0.0161
+## 14     0.0343              15    22 roc_auc  binary     0.786    10  0.0152
+## 15     0.0343              15    22 sens     binary     0.843    10  0.0222
+## 16     0.0343              15    22 spec     binary     0.725    10  0.0194
+## 17     0.0000747           12     8 accuracy binary     0.761    10  0.0182
+## 18     0.0000747           12     8 roc_auc  binary     0.811    10  0.0226
+## 19     0.0000747           12     8 sens     binary     0.820    10  0.0203
+## 20     0.0000747           12     8 spec     binary     0.679    10  0.0404
 ## # ... with 1 more variable: .config &lt;chr&gt;</code></pre>
 </div>
 <div id="detailed-tuning-results" class="section level1">
@@ -900,16 +1056,16 @@ titanic_dt_tuning</code></pre>
 <pre><code>## # A tibble: 200 x 8
 ##    id     cost_complexity tree_depth min_n .metric  .estimator .estimate .config
 ##    &lt;chr&gt;            &lt;dbl&gt;      &lt;int&gt; &lt;int&gt; &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;  
-##  1 Fold01        0.000608          8    23 sens     binary         0.804 Prepro~
-##  2 Fold01        0.000608          8    23 spec     binary         0.706 Prepro~
-##  3 Fold01        0.000608          8    23 accuracy binary         0.762 Prepro~
-##  4 Fold01        0.000608          8    23 roc_auc  binary         0.845 Prepro~
-##  5 Fold02        0.000608          8    23 sens     binary         0.957 Prepro~
-##  6 Fold02        0.000608          8    23 spec     binary         0.788 Prepro~
-##  7 Fold02        0.000608          8    23 accuracy binary         0.886 Prepro~
-##  8 Fold02        0.000608          8    23 roc_auc  binary         0.926 Prepro~
-##  9 Fold03        0.000608          8    23 sens     binary         0.848 Prepro~
-## 10 Fold03        0.000608          8    23 spec     binary         0.667 Prepro~
+##  1 Fold01        0.000608          8    23 sens     binary         0.870 Prepro~
+##  2 Fold01        0.000608          8    23 spec     binary         0.794 Prepro~
+##  3 Fold01        0.000608          8    23 accuracy binary         0.838 Prepro~
+##  4 Fold01        0.000608          8    23 roc_auc  binary         0.883 Prepro~
+##  5 Fold02        0.000608          8    23 sens     binary         0.848 Prepro~
+##  6 Fold02        0.000608          8    23 spec     binary         0.818 Prepro~
+##  7 Fold02        0.000608          8    23 accuracy binary         0.835 Prepro~
+##  8 Fold02        0.000608          8    23 roc_auc  binary         0.871 Prepro~
+##  9 Fold03        0.000608          8    23 sens     binary         0.870 Prepro~
+## 10 Fold03        0.000608          8    23 spec     binary         0.606 Prepro~
 ## # ... with 190 more rows</code></pre>
 </div>
 <div id="exploring-tuning-results-1" class="section level1">
@@ -922,7 +1078,7 @@ titanic_dt_tuning</code></pre>
              median_roc_auc = median(.estimate),
              max_roc_auc = max(.estimate))</code></pre>
 <pre><code>##   min_roc_auc median_roc_auc max_roc_auc
-## 1   0.7039642       0.823946   0.9321476</code></pre>
+## 1    0.627141      0.8237813    0.883312</code></pre>
 </div>
 <div id="viewing-the-best-performing-model" class="section level1">
 <h1>Viewing the best performing model</h1>
@@ -931,11 +1087,11 @@ titanic_dt_tuning</code></pre>
 <pre><code>## # A tibble: 5 x 9
 ##   cost_complexity tree_depth min_n .metric .estimator  mean     n std_err
 ##             &lt;dbl&gt;      &lt;int&gt; &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;
-## 1     0.000608             8    23 roc_auc binary     0.864    10  0.0144
-## 2     0.000000289          7    22 roc_auc binary     0.853    10  0.0164
-## 3     0.0000747           12     8 roc_auc binary     0.836    10  0.0145
-## 4     0.0343              15    22 roc_auc binary     0.802    10  0.0144
-## 5     0.0000191            1     7 roc_auc binary     0.781    10  0.0143
+## 1     0.000608             8    23 roc_auc binary     0.831    10  0.0171
+## 2     0.000000289          7    22 roc_auc binary     0.829    10  0.0173
+## 3     0.0000747           12     8 roc_auc binary     0.811    10  0.0226
+## 4     0.0343              15    22 roc_auc binary     0.786    10  0.0152
+## 5     0.0000191            1     7 roc_auc binary     0.759    10  0.0183
 ## # ... with 1 more variable: .config &lt;chr&gt;</code></pre>
 <p>Model 1 is the best model
 # Selecting the best model</p>
@@ -974,7 +1130,7 @@ final_titanic_wkfl_dt</code></pre>
 ## 
 ## Computational engine: rpart</code></pre>
 </div>
-<div id="model-fitting" class="section level1">
+<div id="model-fitting-1" class="section level1">
 <h1>Model fitting</h1>
 <pre class="r"><code>titanic_final_fit_dt &lt;- final_titanic_wkfl_dt %&gt;%
   last_fit(split = titanic_split)
@@ -983,7 +1139,860 @@ titanic_final_fit_dt %&gt;%
 <pre><code>## # A tibble: 2 x 4
 ##   .metric  .estimator .estimate .config             
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-## 1 accuracy binary         0.773 Preprocessor1_Model1
-## 2 roc_auc  binary         0.801 Preprocessor1_Model1</code></pre>
+## 1 accuracy binary         0.793 Preprocessor1_Model1
+## 2 roc_auc  binary         0.877 Preprocessor1_Model1</code></pre>
 <p>We can see that there is some improvement compared to what we got from without tuning model</p>
+<p>`</p>
+<pre class="r"><code>titanic_prediction&lt;- titanic_final_fit_dt %&gt;%
+  collect_predictions()
+titanic_prediction</code></pre>
+<pre><code>## # A tibble: 198 x 7
+##    id               .pred_0 .pred_1  .row .pred_class survived .config          
+##    &lt;chr&gt;              &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt; &lt;fct&gt;       &lt;fct&gt;    &lt;chr&gt;            
+##  1 train/test split  0.0670   0.933     9 1           1        Preprocessor1_Mo~
+##  2 train/test split  0.0670   0.933    11 1           1        Preprocessor1_Mo~
+##  3 train/test split  0.429    0.571    14 1           0        Preprocessor1_Mo~
+##  4 train/test split  0.0670   0.933    15 1           1        Preprocessor1_Mo~
+##  5 train/test split  0.818    0.182    18 0           1        Preprocessor1_Mo~
+##  6 train/test split  0.429    0.571    23 1           0        Preprocessor1_Mo~
+##  7 train/test split  0.0670   0.933    26 1           1        Preprocessor1_Mo~
+##  8 train/test split  0.0670   0.933    39 1           1        Preprocessor1_Mo~
+##  9 train/test split  0.0670   0.933    40 1           1        Preprocessor1_Mo~
+## 10 train/test split  0.818    0.182    42 0           1        Preprocessor1_Mo~
+## # ... with 188 more rows</code></pre>
+<pre class="r"><code>conf_mat(titanic_prediction, truth = survived, estimate = .pred_class) %&gt;%
+  autoplot(type = &#39;heatmap&#39;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-76-1.png" width="672" /></p>
+</div>
+<div id="random-forest-model" class="section level1">
+<h1>Random forest model</h1>
+</div>
+<div id="model-specification-using-random-forest" class="section level1">
+<h1>Model specification using random forest</h1>
+<pre class="r"><code>titanic_rf_model&lt;- rand_forest(mtry =4,trees = 100, min_n =10) %&gt;%
+  set_engine(&#39;ranger&#39;) %&gt;%
+  set_mode(&#39;classification&#39;)</code></pre>
+</div>
+<div id="training-a-forest" class="section level1">
+<h1>Training a forest</h1>
+<pre class="r"><code>titanic_fit_rf &lt;- titanic_rf_model %&gt;%
+  fit (survived ~ sex+ pclass + age + sibsp + parch + fare + embarked, data = titanic_training)
+titanic_fit_rf</code></pre>
+<pre><code>## parsnip model object
+## 
+## Fit time:  110ms 
+## Ranger result
+## 
+## Call:
+##  ranger::ranger(x = maybe_data_frame(x), y = y, mtry = min_cols(~4,      x), num.trees = ~100, min.node.size = min_rows(~10, x), num.threads = 1,      verbose = FALSE, seed = sample.int(10^5, 1), probability = TRUE) 
+## 
+## Type:                             Probability estimation 
+## Number of trees:                  100 
+## Sample size:                      791 
+## Number of independent variables:  7 
+## Mtry:                             4 
+## Target node size:                 10 
+## Variable importance mode:         none 
+## Splitrule:                        gini 
+## OOB prediction error (Brier s.):  0.1541558</code></pre>
+</div>
+<div id="predicting-outcome-variables-1" class="section level1">
+<h1>Predicting outcome variables</h1>
+<pre class="r"><code>titanic_class_preds_rf &lt;- predict(titanic_fit_rf, new_data = titanic_test, type = &quot;class&quot;)
+titanic_class_preds_rf</code></pre>
+<pre><code>## # A tibble: 198 x 1
+##    .pred_class
+##    &lt;fct&gt;      
+##  1 1          
+##  2 1          
+##  3 0          
+##  4 1          
+##  5 0          
+##  6 1          
+##  7 1          
+##  8 1          
+##  9 1          
+## 10 1          
+## # ... with 188 more rows</code></pre>
+</div>
+<div id="estimated-probabilities-1" class="section level1">
+<h1>Estimated probabilities</h1>
+<pre class="r"><code>titanic_prob_preds_rf &lt;- predict(titanic_fit_rf, new_data = titanic_test, type = &quot;prob&quot;)
+titanic_prob_preds_rf</code></pre>
+<pre><code>## # A tibble: 198 x 2
+##    .pred_0 .pred_1
+##      &lt;dbl&gt;   &lt;dbl&gt;
+##  1 0         1    
+##  2 0.0783    0.922
+##  3 0.578     0.422
+##  4 0.00422   0.996
+##  5 0.711     0.289
+##  6 0.440     0.560
+##  7 0         1    
+##  8 0.0584    0.942
+##  9 0         1    
+## 10 0.473     0.527
+## # ... with 188 more rows</code></pre>
+</div>
+<div id="combining-results-1" class="section level1">
+<h1>Combining results</h1>
+<pre class="r"><code>titanic_results_rf &lt;- titanic_test %&gt;%
+  bind_cols(titanic_class_preds_rf, titanic_prob_preds_rf)
+titanic_results_rf</code></pre>
+<pre><code>##     pclass survived    sex   age sibsp parch     fare    embarked
+## 1        1        1 female 53.00     2     0  51.4792 Southampton
+## 2        1        1 female 18.00     1     0 227.5250   Cherbourg
+## 3        1        0   male 24.00     0     1 247.5208   Cherbourg
+## 4        1        1 female 50.00     0     1 247.5208   Cherbourg
+## 5        1        1   male 37.00     1     1  52.5542 Southampton
+## 6        1        0   male 25.00     0     0  26.0000   Cherbourg
+## 7        1        1 female 35.00     0     0 135.6333 Southampton
+## 8        1        1 female 60.00     0     0  76.2917   Cherbourg
+## 9        1        1 female 41.00     0     0 134.5000   Cherbourg
+## 10       1        1   male 42.00     0     0  26.2875 Southampton
+## 11       1        0   male 17.00     0     0  47.1000 Southampton
+## 12       1        1   male 36.00     1     2 120.0000 Southampton
+## 13       1        1 female 33.00     1     0  53.1000 Southampton
+## 14       1        1 female 30.00     0     0  86.5000 Southampton
+## 15       1        1   male 45.00     0     0  29.7000   Cherbourg
+## 16       1        1 female 55.00     2     0  25.7000 Southampton
+## 17       1        1 female 17.00     1     0  57.0000 Southampton
+## 18       1        1   male  4.00     0     2  81.8583 Southampton
+## 19       1        0   male 50.00     1     0 106.4250   Cherbourg
+## 20       1        0   male 39.00     0     0  29.7000   Cherbourg
+## 21       1        1 female 54.00     1     0  78.2667   Cherbourg
+## 22       1        0   male 64.00     1     4 263.0000 Southampton
+## 23       1        0   male 47.00     0     0  38.5000 Southampton
+## 24       1        1 female 35.00     0     0 211.5000   Cherbourg
+## 25       1        0   male 24.00     0     0  79.2000   Cherbourg
+## 26       1        1   male 23.00     0     1  63.3583   Cherbourg
+## 27       1        1 female 25.00     1     0  55.4417   Cherbourg
+## 28       1        1 female 16.00     0     1  57.9792   Cherbourg
+## 29       1        0 female 50.00     0     0  28.7125   Cherbourg
+## 30       1        0   male 46.00     0     0  26.0000 Southampton
+## 31       1        0   male 42.00     0     0  26.5500 Southampton
+## 32       1        1 female 16.00     0     0  86.5000 Southampton
+## 33       1        1   male 30.00     1     0  57.7500   Cherbourg
+## 34       1        1 female 19.00     0     2  26.2833 Southampton
+## 35       1        1 female 22.00     1     0  66.6000 Southampton
+## 36       1        1 female 17.00     1     0 108.9000   Cherbourg
+## 37       1        1 female 30.00     0     0  93.5000 Southampton
+## 38       1        0   male 47.00     0     0  52.0000 Southampton
+## 39       1        0   male 22.00     0     0 135.6333   Cherbourg
+## 40       1        0   male 31.00     0     0  50.4958 Southampton
+## 41       1        1 female 18.00     2     2 262.3750   Cherbourg
+## 42       1        0   male 56.00     0     0  26.5500 Southampton
+## 43       1        0   male 57.00     1     0 146.5208   Cherbourg
+## 44       1        0   male 62.00     0     0  26.5500 Southampton
+## 45       1        1 female 39.00     1     1 110.8833   Cherbourg
+## 46       1        1   male 31.00     0     0  28.5375   Cherbourg
+## 47       1        0   male 50.00     1     1 211.5000   Cherbourg
+## 48       1        0   male 51.00     0     1  61.3792   Cherbourg
+## 49       2        1 female 36.00     1     0  26.0000 Southampton
+## 50       2        1 female 19.00     1     0  26.0000 Southampton
+## 51       2        1 female 19.00     0     0  13.0000 Southampton
+## 52       2        0   male 23.00     0     0  13.0000 Southampton
+## 53       2        1 female 15.00     0     2  39.0000 Southampton
+## 54       2        0   male 60.00     1     1  39.0000 Southampton
+## 55       2        1 female 40.00     1     1  39.0000 Southampton
+## 56       2        0 female 44.00     1     0  26.0000 Southampton
+## 57       2        1 female 45.00     0     2  30.0000 Southampton
+## 58       2        0   male 29.00     0     0  10.5000 Southampton
+## 59       2        0   male 28.00     0     0  13.0000 Southampton
+## 60       2        1 female 22.00     0     0  10.5000 Southampton
+## 61       2        0   male 21.00     0     0  11.5000 Southampton
+## 62       2        1 female 28.00     0     0  13.0000 Southampton
+## 63       2        0   male 32.00     0     0  13.0000 Southampton
+## 64       2        0   male 42.00     1     1  32.5000 Southampton
+## 65       2        1 female 30.00     1     0  13.8583   Cherbourg
+## 66       2        0   male 23.00     0     0  13.0000 Southampton
+## 67       2        0 female 38.00     0     0  13.0000 Southampton
+## 68       2        0   male 26.00     0     0  10.5000 Southampton
+## 69       2        0   male 47.00     0     0  10.5000 Southampton
+## 70       2        0   male 30.00     0     0  13.0000 Southampton
+## 71       2        1 female 24.00     0     2  14.5000 Southampton
+## 72       2        0   male 43.00     1     1  26.2500 Southampton
+## 73       2        1 female 45.00     1     1  26.2500 Southampton
+## 74       2        0   male 49.00     1     2  65.0000 Southampton
+## 75       2        0 female 18.00     1     1  13.0000 Southampton
+## 76       2        0   male 23.00     2     1  11.5000 Southampton
+## 77       2        1 female 54.00     1     3  23.0000 Southampton
+## 78       2        1 female 29.00     1     0  26.0000 Southampton
+## 79       2        1   male 42.00     0     0  13.0000 Southampton
+## 80       2        1 female 24.00     1     0  26.0000 Southampton
+## 81       2        0   male 30.00     1     1  26.0000 Southampton
+## 82       2        1 female  1.00     1     2  41.5792   Cherbourg
+## 83       2        1 female 17.00     0     0  12.0000   Cherbourg
+## 84       2        0   male 36.00     0     0  12.8750   Cherbourg
+## 85       2        1 female 42.00     1     0  26.0000 Southampton
+## 86       2        1 female 24.00     1     1  37.0042   Cherbourg
+## 87       2        0   male 30.00     0     0  13.0000 Southampton
+## 88       2        0   male 46.00     0     0  26.0000 Southampton
+## 89       2        1 female 41.00     0     1  19.5000 Southampton
+## 90       2        1   male 19.00     0     0  10.5000 Southampton
+## 91       2        0   male 16.00     0     0  10.5000 Southampton
+## 92       2        1   male 22.00     0     0  10.5000 Southampton
+## 93       2        0   male 23.00     0     0  10.5000 Southampton
+## 94       2        0   male 19.00     0     0  10.5000 Southampton
+## 95       2        1 female  8.00     1     1  26.0000 Southampton
+## 96       2        0   male 34.00     1     0  21.0000 Southampton
+## 97       2        1   male  0.83     1     1  18.7500 Southampton
+## 98       2        0   male 35.00     0     0  10.5000 Southampton
+## 99       2        0   male 41.00     0     0  15.0458   Cherbourg
+## 100      2        1 female 28.00     0     0  12.6500 Southampton
+## 101      2        0   male 29.00     1     0  21.0000 Southampton
+## 102      2        0   male 40.00     0     0  13.0000 Southampton
+## 103      2        0   male 30.00     1     0  21.0000 Southampton
+## 104      2        1 female 32.50     0     0  13.0000 Southampton
+## 105      2        1 female 29.00     1     0  26.0000 Southampton
+## 106      2        1 female 29.00     0     2  23.0000 Southampton
+## 107      2        1 female  0.92     1     2  27.7500 Southampton
+## 108      3        1 female 18.00     0     1   9.3500 Southampton
+## 109      3        0   male 24.00     0     0   7.0500 Southampton
+## 110      3        0   male 18.00     0     0   8.3000 Southampton
+## 111      3        0   male 25.00     1     0  17.8000 Southampton
+## 112      3        0   male 24.00     0     0   7.7750 Southampton
+## 113      3        0   male 21.00     0     0   7.2250   Cherbourg
+## 114      3        1 female 13.00     0     0   7.2292   Cherbourg
+## 115      3        1 female  0.75     2     1  19.2583   Cherbourg
+## 116      3        1 female  0.75     2     1  19.2583   Cherbourg
+## 117      3        1 female 24.00     0     3  19.2583   Cherbourg
+## 118      3        0   male 40.00     0     0   7.2250   Cherbourg
+## 119      3        0 female 27.00     0     0   7.8792  Queenstown
+## 120      3        0   male 20.00     0     0   4.0125   Cherbourg
+## 121      3        0   male 18.00     0     0   7.7500 Southampton
+## 122      3        0   male 21.00     0     0  16.1000 Southampton
+## 123      3        1 female 22.00     0     0   7.7250  Queenstown
+## 124      3        0 female 21.00     0     0   8.6625 Southampton
+## 125      3        0   male 18.00     0     0   8.6625 Southampton
+## 126      3        0   male 38.00     0     0   8.6625 Southampton
+## 127      3        0   male 17.00     0     0   8.6625 Southampton
+## 128      3        0   male 21.00     0     0   7.7500  Queenstown
+## 129      3        1   male 32.00     0     0  56.4958 Southampton
+## 130      3        1 female 22.00     0     0   7.7500  Queenstown
+## 131      3        0   male 30.00     0     0   8.0500 Southampton
+## 132      3        1   male  9.00     1     1  15.9000 Southampton
+## 133      3        0   male 17.00     0     0   8.6625 Southampton
+## 134      3        0   male 19.00     0     0  10.1708 Southampton
+## 135      3        0   male  0.33     0     2  14.4000 Southampton
+## 136      3        0   male 34.00     1     1  14.4000 Southampton
+## 137      3        0   male 17.00     2     0   8.0500 Southampton
+## 138      3        1 female 36.00     1     0  17.4000 Southampton
+## 139      3        0   male 43.00     0     0   7.8958 Southampton
+## 140      3        0 female 24.00     0     0   7.7500  Queenstown
+## 141      3        1   male 24.00     0     0   7.5500 Southampton
+## 142      3        0   male 18.00     0     0   7.7750 Southampton
+## 143      3        0   male 16.00     0     0   7.7750 Southampton
+## 144      3        1 female  5.00     0     0  12.4750 Southampton
+## 145      3        0 female 21.00     2     2  34.3750 Southampton
+## 146      3        0   male 18.00     2     2  34.3750 Southampton
+## 147      3        0   male 16.00     1     3  34.3750 Southampton
+## 148      3        0 female 48.00     1     3  34.3750 Southampton
+## 149      3        0   male 32.00     0     0   8.3625 Southampton
+## 150      3        1 female 24.00     1     0  15.8500 Southampton
+## 151      3        0   male 41.00     2     0  14.1083 Southampton
+## 152      3        0   male 21.00     0     0   7.8542 Southampton
+## 153      3        0   male 11.00     0     0  18.7875   Cherbourg
+## 154      3        0 female 18.00     0     0   6.7500  Queenstown
+## 155      3        0   male 43.00     0     0   6.4500 Southampton
+## 156      3        0   male 28.00     0     0  22.5250 Southampton
+## 157      3        0   male 30.00     0     0   7.2292   Cherbourg
+## 158      3        0   male 17.00     1     0   7.0542 Southampton
+## 159      3        0   male 34.00     0     0   6.4958 Southampton
+## 160      3        1 female  1.00     1     1  11.1333 Southampton
+## 161      3        0   male 49.00     0     0   0.0000 Southampton
+## 162      3        0   male 33.00     0     0   7.7750 Southampton
+## 163      3        0   male 27.00     0     0   7.8542 Southampton
+## 164      3        0   male 18.00     1     1   7.8542 Southampton
+## 165      3        1   male 25.00     0     0   7.2292   Cherbourg
+## 166      3        1 female 22.00     0     0   7.2500 Southampton
+## 167      3        1   male 26.00     0     0  56.4958 Southampton
+## 168      3        0   male 29.00     0     0   9.4833 Southampton
+## 169      3        0   male 22.00     0     0   7.7750 Southampton
+## 170      3        0   male 32.00     0     0   7.9250 Southampton
+## 171      3        0   male 36.00     1     0  15.5500 Southampton
+## 172      3        1   male 20.00     1     0   7.9250 Southampton
+## 173      3        0   male 51.00     0     0   7.0542 Southampton
+## 174      3        0   male 22.00     0     0   7.1250 Southampton
+## 175      3        0   male 29.00     0     0   7.9250 Southampton
+## 176      3        0 female 30.50     0     0   7.7500  Queenstown
+## 177      3        0 female 19.00     1     0  16.1000 Southampton
+## 178      3        0   male 22.00     0     0   7.8958 Southampton
+## 179      3        1   male 12.00     1     0  11.2417   Cherbourg
+## 180      3        1 female 14.00     1     0  11.2417   Cherbourg
+## 181      3        0   male 23.00     0     0   9.2250 Southampton
+## 182      3        1   male  9.00     0     1   3.1708 Southampton
+## 183      3        0   male 24.00     0     0   8.0500 Southampton
+## 184      3        0 female 28.00     0     0   7.8958 Southampton
+## 185      3        0   male 17.00     0     0   8.6625 Southampton
+## 186      3        0 female 41.00     0     2  20.2125 Southampton
+## 187      3        0   male 24.50     0     0   8.0500 Southampton
+## 188      3        1   male 31.00     0     0   7.9250 Southampton
+## 189      3        1   male  7.00     1     1  15.2458   Cherbourg
+## 190      3        1 female  9.00     1     1  15.2458   Cherbourg
+## 191      3        0   male 33.00     0     0   9.5000 Southampton
+## 192      3        0 female 18.00     2     0  18.0000 Southampton
+## 193      3        0 female 31.00     1     0  18.0000 Southampton
+## 194      3        0   male 32.50     0     0   9.5000 Southampton
+## 195      3        1 female 47.00     1     0   7.0000 Southampton
+## 196      3        0   male 36.00     0     0   9.5000 Southampton
+## 197      3        0   male 45.50     0     0   7.2250   Cherbourg
+## 198      3        0   male 26.50     0     0   7.2250   Cherbourg
+##     discretized.age discretized.fare .pred_class     .pred_0     .pred_1
+## 1           (50,60]         (50,100]           1 0.000000000 1.000000000
+## 2           (10,20]        (200,250]           1 0.078333333 0.921666667
+## 3           (20,30]        (200,250]           0 0.578487013 0.421512987
+## 4           (40,50]        (200,250]           1 0.004222222 0.995777778
+## 5           (30,40]         (50,100]           0 0.710615079 0.289384921
+## 6           (20,30]           (0,50]           1 0.440295455 0.559704545
+## 7           (30,40]        (100,150]           1 0.000000000 1.000000000
+## 8           (50,60]         (50,100]           1 0.058444444 0.941555556
+## 9           (40,50]        (100,150]           1 0.000000000 1.000000000
+## 10          (40,50]           (0,50]           1 0.472501611 0.527498389
+## 11          (10,20]           (0,50]           0 0.721489429 0.278510571
+## 12          (30,40]        (100,150]           0 0.735642857 0.264357143
+## 13          (30,40]         (50,100]           1 0.000000000 1.000000000
+## 14          (20,30]         (50,100]           1 0.001250000 0.998750000
+## 15          (40,50]           (0,50]           0 0.614968735 0.385031265
+## 16          (50,60]           (0,50]           1 0.194575397 0.805424603
+## 17          (10,20]         (50,100]           1 0.002222222 0.997777778
+## 18           (0,10]         (50,100]           1 0.102273810 0.897726190
+## 19          (40,50]        (100,150]           1 0.467580808 0.532419192
+## 20          (30,40]           (0,50]           0 0.602298100 0.397701900
+## 21          (50,60]         (50,100]           1 0.010000000 0.990000000
+## 22          (60,70]        (250,300]           0 0.823023810 0.176976190
+## 23          (40,50]           (0,50]           0 0.879575815 0.120424185
+## 24          (30,40]        (200,250]           1 0.002222222 0.997777778
+## 25          (20,30]         (50,100]           0 0.520844156 0.479155844
+## 26          (20,30]         (50,100]           1 0.430161616 0.569838384
+## 27          (20,30]         (50,100]           1 0.010000000 0.990000000
+## 28          (10,20]         (50,100]           1 0.007000000 0.993000000
+## 29          (40,50]           (0,50]           1 0.049357143 0.950642857
+## 30          (40,50]           (0,50]           0 0.889973472 0.110026528
+## 31          (40,50]           (0,50]           0 0.631172246 0.368827754
+## 32          (10,20]         (50,100]           1 0.003472222 0.996527778
+## 33          (20,30]         (50,100]           0 0.608739538 0.391260462
+## 34          (10,20]           (0,50]           1 0.016476190 0.983523810
+## 35          (20,30]         (50,100]           1 0.002222222 0.997777778
+## 36          (10,20]        (100,150]           1 0.008250000 0.991750000
+## 37          (20,30]         (50,100]           1 0.001250000 0.998750000
+## 38          (40,50]         (50,100]           0 0.914678571 0.085321429
+## 39          (20,30]        (100,150]           0 0.570042569 0.429957431
+## 40          (30,40]         (50,100]           0 0.850533079 0.149466921
+## 41          (10,20]        (250,300]           1 0.139214286 0.860785714
+## 42          (50,60]           (0,50]           0 0.758631840 0.241368160
+## 43          (50,60]        (100,150]           0 0.701326840 0.298673160
+## 44          (60,70]           (0,50]           0 0.896119048 0.103880952
+## 45          (30,40]        (100,150]           1 0.000000000 1.000000000
+## 46          (30,40]           (0,50]           0 0.609385402 0.390614598
+## 47          (40,50]        (200,250]           0 0.641441919 0.358558081
+## 48          (50,60]         (50,100]           0 0.670812169 0.329187831
+## 49          (30,40]           (0,50]           1 0.260769841 0.739230159
+## 50          (10,20]           (0,50]           1 0.155250000 0.844750000
+## 51          (10,20]           (0,50]           1 0.173099846 0.826900154
+## 52          (20,30]           (0,50]           0 0.993672988 0.006327012
+## 53          (10,20]           (0,50]           1 0.002361111 0.997638889
+## 54          (50,60]           (0,50]           0 0.919595238 0.080404762
+## 55          (30,40]           (0,50]           1 0.048154762 0.951845238
+## 56          (40,50]           (0,50]           1 0.257567460 0.742432540
+## 57          (40,50]           (0,50]           1 0.026000000 0.974000000
+## 58          (20,30]           (0,50]           0 0.879169636 0.120830364
+## 59          (20,30]           (0,50]           0 0.987752374 0.012247626
+## 60          (20,30]           (0,50]           1 0.208031470 0.791968530
+## 61          (20,30]           (0,50]           0 0.992905546 0.007094454
+## 62          (20,30]           (0,50]           1 0.198309553 0.801690447
+## 63          (30,40]           (0,50]           0 0.683451160 0.316548840
+## 64          (40,50]           (0,50]           0 0.960845238 0.039154762
+## 65          (20,30]           (0,50]           1 0.170250000 0.829750000
+## 66          (20,30]           (0,50]           0 0.993672988 0.006327012
+## 67          (30,40]           (0,50]           1 0.040368161 0.959631839
+## 68          (20,30]           (0,50]           0 0.903019678 0.096980322
+## 69          (40,50]           (0,50]           0 0.904336013 0.095663987
+## 70          (20,30]           (0,50]           0 0.942784120 0.057215880
+## 71          (20,30]           (0,50]           1 0.220393375 0.779606625
+## 72          (40,50]           (0,50]           0 0.920785714 0.079214286
+## 73          (40,50]           (0,50]           1 0.066523810 0.933476190
+## 74          (40,50]         (50,100]           0 0.892527778 0.107472222
+## 75          (10,20]           (0,50]           1 0.175549052 0.824450948
+## 76          (20,30]           (0,50]           0 0.851469979 0.148530021
+## 77          (50,60]           (0,50]           1 0.157876984 0.842123016
+## 78          (20,30]           (0,50]           1 0.427952381 0.572047619
+## 79          (40,50]           (0,50]           0 0.991248922 0.008751078
+## 80          (20,30]           (0,50]           1 0.323186508 0.676813492
+## 81          (20,30]           (0,50]           0 0.889075397 0.110924603
+## 82           (0,10]           (0,50]           1 0.247281746 0.752718254
+## 83          (10,20]           (0,50]           1 0.097973138 0.902026862
+## 84          (30,40]           (0,50]           0 0.624620616 0.375379384
+## 85          (40,50]           (0,50]           1 0.257567460 0.742432540
+## 86          (20,30]           (0,50]           1 0.021412698 0.978587302
+## 87          (20,30]           (0,50]           0 0.942784120 0.057215880
+## 88          (40,50]           (0,50]           0 0.978166667 0.021833333
+## 89          (40,50]           (0,50]           1 0.036047619 0.963952381
+## 90          (10,20]           (0,50]           0 0.930115863 0.069884137
+## 91          (10,20]           (0,50]           0 0.911969038 0.088030962
+## 92          (20,30]           (0,50]           0 0.933020625 0.066979375
+## 93          (20,30]           (0,50]           0 0.925291687 0.074708313
+## 94          (10,20]           (0,50]           0 0.930115863 0.069884137
+## 95           (0,10]           (0,50]           1 0.068071429 0.931928571
+## 96          (30,40]           (0,50]           0 0.930563492 0.069436508
+## 97           (0,10]           (0,50]           1 0.045250000 0.954750000
+## 98          (30,40]           (0,50]           0 0.909462997 0.090537003
+## 99          (40,50]           (0,50]           0 0.795757937 0.204242063
+## 100         (20,30]           (0,50]           1 0.152651433 0.847348567
+## 101         (20,30]           (0,50]           0 0.967103175 0.032896825
+## 102         (30,40]           (0,50]           0 0.991248922 0.008751078
+## 103         (20,30]           (0,50]           0 0.959186508 0.040813492
+## 104         (30,40]           (0,50]           1 0.054618161 0.945381839
+## 105         (20,30]           (0,50]           1 0.427952381 0.572047619
+## 106         (20,30]           (0,50]           1 0.127349206 0.872650794
+## 107          (0,10]           (0,50]           1 0.251388889 0.748611111
+## 108         (10,20]           (0,50]           0 0.528950577 0.471049423
+## 109         (20,30]           (0,50]           0 0.774993539 0.225006461
+## 110         (10,20]           (0,50]           0 0.697809128 0.302190872
+## 111         (20,30]           (0,50]           0 0.895117647 0.104882353
+## 112         (20,30]           (0,50]           0 0.641250530 0.358749470
+## 113         (20,30]           (0,50]           0 0.558009068 0.441990932
+## 114         (10,20]           (0,50]           1 0.207849567 0.792150433
+## 115          (0,10]           (0,50]           1 0.195468254 0.804531746
+## 116          (0,10]           (0,50]           1 0.195468254 0.804531746
+## 117         (20,30]           (0,50]           1 0.256309524 0.743690476
+## 118         (30,40]           (0,50]           0 0.865682789 0.134317211
+## 119         (20,30]           (0,50]           1 0.459510776 0.540489224
+## 120         (10,20]           (0,50]           0 0.570533550 0.429466450
+## 121         (10,20]           (0,50]           0 0.855287716 0.144712284
+## 122         (20,30]           (0,50]           0 0.938766653 0.061233347
+## 123         (20,30]           (0,50]           1 0.348396995 0.651603005
+## 124         (20,30]           (0,50]           0 0.788090718 0.211909282
+## 125         (10,20]           (0,50]           0 0.778864863 0.221135137
+## 126         (30,40]           (0,50]           0 0.927847982 0.072152018
+## 127         (10,20]           (0,50]           0 0.789963153 0.210036847
+## 128         (20,30]           (0,50]           0 0.677633514 0.322366486
+## 129         (30,40]         (50,100]           0 0.542127218 0.457872782
+## 130         (20,30]           (0,50]           1 0.381635090 0.618364910
+## 131         (20,30]           (0,50]           0 0.881182524 0.118817476
+## 132          (0,10]           (0,50]           1 0.206531746 0.793468254
+## 133         (10,20]           (0,50]           0 0.789963153 0.210036847
+## 134         (10,20]           (0,50]           0 0.899207872 0.100792128
+## 135          (0,10]           (0,50]           1 0.336861111 0.663138889
+## 136         (30,40]           (0,50]           0 0.901080891 0.098919109
+## 137         (10,20]           (0,50]           0 0.742075801 0.257924199
+## 138         (30,40]           (0,50]           0 0.615845781 0.384154219
+## 139         (40,50]           (0,50]           0 0.964797541 0.035202459
+## 140         (20,30]           (0,50]           1 0.394972392 0.605027608
+## 141         (20,30]           (0,50]           0 0.759905014 0.240094986
+## 142         (10,20]           (0,50]           0 0.818784801 0.181215199
+## 143         (10,20]           (0,50]           0 0.782479425 0.217520575
+## 144          (0,10]           (0,50]           1 0.344746032 0.655253968
+## 145         (20,30]           (0,50]           0 0.737494987 0.262505013
+## 146         (10,20]           (0,50]           0 0.880841270 0.119158730
+## 147         (10,20]           (0,50]           0 0.849174603 0.150825397
+## 148         (40,50]           (0,50]           0 0.746078321 0.253921679
+## 149         (30,40]           (0,50]           0 0.631340012 0.368659988
+## 150         (20,30]           (0,50]           0 0.636758480 0.363241520
+## 151         (40,50]           (0,50]           0 0.938202507 0.061797493
+## 152         (20,30]           (0,50]           0 0.964321077 0.035678923
+## 153         (10,20]           (0,50]           1 0.400734127 0.599265873
+## 154         (10,20]           (0,50]           1 0.276466450 0.723533550
+## 155         (40,50]           (0,50]           0 0.941112434 0.058887566
+## 156         (20,30]           (0,50]           0 0.948558553 0.051441447
+## 157         (20,30]           (0,50]           0 0.793583271 0.206416729
+## 158         (10,20]           (0,50]           0 0.951703119 0.048296881
+## 159         (30,40]           (0,50]           0 0.921860630 0.078139370
+## 160          (0,10]           (0,50]           0 0.639380952 0.360619048
+## 161         (40,50]             &lt;NA&gt;           0 0.808025132 0.191974868
+## 162         (30,40]           (0,50]           0 0.822316341 0.177683659
+## 163         (20,30]           (0,50]           0 0.922970912 0.077029088
+## 164         (10,20]           (0,50]           0 0.854351544 0.145648456
+## 165         (20,30]           (0,50]           0 0.866900371 0.133099629
+## 166         (20,30]           (0,50]           1 0.146846235 0.853153765
+## 167         (20,30]         (50,100]           0 0.736251973 0.263748027
+## 168         (20,30]           (0,50]           0 0.534323113 0.465676887
+## 169         (20,30]           (0,50]           0 0.745209137 0.254790863
+## 170         (30,40]           (0,50]           0 0.537941219 0.462058781
+## 171         (30,40]           (0,50]           0 0.874192433 0.125807567
+## 172         (10,20]           (0,50]           0 0.814763143 0.185236857
+## 173         (50,60]           (0,50]           0 0.975787775 0.024212225
+## 174         (20,30]           (0,50]           0 0.908166445 0.091833555
+## 175         (20,30]           (0,50]           0 0.783437950 0.216562050
+## 176         (30,40]           (0,50]           0 0.753468424 0.246531576
+## 177         (10,20]           (0,50]           0 0.631459273 0.368540727
+## 178         (20,30]           (0,50]           0 0.988760637 0.011239363
+## 179         (10,20]           (0,50]           0 0.510964286 0.489035714
+## 180         (10,20]           (0,50]           1 0.440900794 0.559099206
+## 181         (20,30]           (0,50]           0 0.961998292 0.038001708
+## 182          (0,10]           (0,50]           1 0.273619048 0.726380952
+## 183         (20,30]           (0,50]           0 0.974493668 0.025506332
+## 184         (20,30]           (0,50]           0 0.690365839 0.309634161
+## 185         (10,20]           (0,50]           0 0.789963153 0.210036847
+## 186         (40,50]           (0,50]           1 0.432234127 0.567765873
+## 187         (20,30]           (0,50]           0 0.974493668 0.025506332
+## 188         (30,40]           (0,50]           0 0.720143521 0.279856479
+## 189          (0,10]           (0,50]           1 0.397428571 0.602571429
+## 190          (0,10]           (0,50]           0 0.576448413 0.423551587
+## 191         (30,40]           (0,50]           0 0.847732669 0.152267331
+## 192         (10,20]           (0,50]           0 0.657185464 0.342814536
+## 193         (30,40]           (0,50]           0 0.612659273 0.387340727
+## 194         (30,40]           (0,50]           0 0.580089290 0.419910710
+## 195         (40,50]           (0,50]           1 0.363780702 0.636219298
+## 196         (30,40]           (0,50]           0 0.852375526 0.147624474
+## 197         (40,50]           (0,50]           0 0.845321678 0.154678322
+## 198         (20,30]           (0,50]           0 0.795451958 0.204548042</code></pre>
+</div>
+<div id="assessing-model-fit-using-confusion-matrix-1" class="section level1">
+<h1>Assessing model fit using confusion matrix</h1>
+<pre class="r"><code>titanic_results_rf %&gt;%
+  conf_mat(truth = survived, estimate = .pred_class) %&gt;%
+autoplot(type = &#39;heatmap&#39;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-82-1.png" width="672" /></p>
+</div>
+<div id="combining-models-and-recipe-1" class="section level1">
+<h1>Combining models and recipe</h1>
+<pre class="r"><code>titanic_wkfl_rf&lt;- workflow() %&gt;%
+  add_model(titanic_rf_model) %&gt;%
+  add_recipe(titanic_recipe_dt)
+titanic_wkfl_rf</code></pre>
+<pre><code>## == Workflow ====================================================================
+## Preprocessor: Recipe
+## Model: rand_forest()
+## 
+## -- Preprocessor ----------------------------------------------------------------
+## 3 Recipe Steps
+## 
+## * step_corr()
+## * step_normalize()
+## * step_dummy()
+## 
+## -- Model -----------------------------------------------------------------------
+## Random Forest Model Specification (classification)
+## 
+## Main Arguments:
+##   mtry = 4
+##   trees = 100
+##   min_n = 10
+## 
+## Computational engine: ranger</code></pre>
+</div>
+<div id="model-fitting-with-workflow-1" class="section level1">
+<h1>Model fitting with workflow</h1>
+<pre class="r"><code>titanic_wkfl_fit_rf &lt;- titanic_wkfl_rf %&gt;%
+  last_fit(split = titanic_split)
+titanic_wkfl_fit_rf %&gt;%
+  collect_metrics()</code></pre>
+<pre><code>## # A tibble: 2 x 4
+##   .metric  .estimator .estimate .config             
+##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+## 1 accuracy binary         0.833 Preprocessor1_Model1
+## 2 roc_auc  binary         0.896 Preprocessor1_Model1</code></pre>
+</div>
+<div id="collecting-predictions-1" class="section level1">
+<h1>Collecting predictions</h1>
+<pre class="r"><code>titanic_wkfl_preds_rf &lt;- titanic_wkfl_fit_rf %&gt;%
+  collect_predictions()
+titanic_wkfl_preds_rf</code></pre>
+<pre><code>## # A tibble: 198 x 7
+##    id               .pred_0 .pred_1  .row .pred_class survived .config          
+##    &lt;chr&gt;              &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt; &lt;fct&gt;       &lt;fct&gt;    &lt;chr&gt;            
+##  1 train/test split 0.0235    0.977     9 1           1        Preprocessor1_Mo~
+##  2 train/test split 0.0626    0.937    11 1           1        Preprocessor1_Mo~
+##  3 train/test split 0.527     0.473    14 0           0        Preprocessor1_Mo~
+##  4 train/test split 0.0109    0.989    15 1           1        Preprocessor1_Mo~
+##  5 train/test split 0.724     0.276    18 0           1        Preprocessor1_Mo~
+##  6 train/test split 0.500     0.500    23 1           0        Preprocessor1_Mo~
+##  7 train/test split 0.00622   0.994    26 1           1        Preprocessor1_Mo~
+##  8 train/test split 0.0886    0.911    39 1           1        Preprocessor1_Mo~
+##  9 train/test split 0.00155   0.998    40 1           1        Preprocessor1_Mo~
+## 10 train/test split 0.492     0.508    42 1           1        Preprocessor1_Mo~
+## # ... with 188 more rows</code></pre>
+</div>
+<div id="confusion-matrix-1" class="section level1">
+<h1>Confusion matrix</h1>
+<pre class="r"><code>conf_mat(titanic_wkfl_preds_rf, truth = survived, estimate = .pred_class) %&gt;%
+  autoplot(type = &#39;heatmap&#39;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-86-1.png" width="672" />
+# Correct predictions
+True negative is 100 people, who did not survive. True positive is 61 people survived.</p>
+</div>
+<div id="classification-error-1" class="section level1">
+<h1>Classification error</h1>
+<p>False positive is 15 people, who are predicted as survived but actually not survived. False negative is 22 people, who are predicted as not survived but actually survived.</p>
+<p>More number of people not survived in Titanic</p>
+</div>
+<div id="exploring-custom-metrics-1" class="section level1">
+<h1>Exploring custom metrics</h1>
+<pre class="r"><code>titanic_metrics_rf &lt;- metric_set(roc_auc, sens, spec, accuracy)
+titanic_wkfl_preds_rf %&gt;%
+titanic_metrics_rf(truth = survived, estimate = .pred_class, .pred_1)</code></pre>
+<pre><code>## # A tibble: 4 x 3
+##   .metric  .estimator .estimate
+##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt;
+## 1 sens     binary         0.913
+## 2 spec     binary         0.723
+## 3 accuracy binary         0.833
+## 4 roc_auc  binary         0.104</code></pre>
+</div>
+<div id="creating-k-fold-cross-validation-1" class="section level1">
+<h1>Creating k-fold cross validation</h1>
+<pre class="r"><code>set.seed(222)
+titanic_folds_rf &lt;- vfold_cv(titanic_training, v = 10, strata = survived)
+titanic_folds_rf</code></pre>
+<pre><code>## #  10-fold cross-validation using stratification 
+## # A tibble: 10 x 2
+##    splits           id    
+##    &lt;list&gt;           &lt;chr&gt; 
+##  1 &lt;split [711/80]&gt; Fold01
+##  2 &lt;split [712/79]&gt; Fold02
+##  3 &lt;split [712/79]&gt; Fold03
+##  4 &lt;split [712/79]&gt; Fold04
+##  5 &lt;split [712/79]&gt; Fold05
+##  6 &lt;split [712/79]&gt; Fold06
+##  7 &lt;split [712/79]&gt; Fold07
+##  8 &lt;split [712/79]&gt; Fold08
+##  9 &lt;split [712/79]&gt; Fold09
+## 10 &lt;split [712/79]&gt; Fold10</code></pre>
+</div>
+<div id="model-training-with-cross-validation-1" class="section level1">
+<h1>Model training with cross validation</h1>
+<pre class="r"><code>titanic_rs_fit_rf &lt;-titanic_wkfl_rf %&gt;%
+  fit_resamples(resamples = titanic_folds_rf, metrics = titanic_metrics_rf)
+titanic_rs_fit_rf %&gt;%
+  collect_metrics()</code></pre>
+<pre><code>## # A tibble: 4 x 6
+##   .metric  .estimator  mean     n std_err .config             
+##   &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
+## 1 accuracy binary     0.794    10  0.0181 Preprocessor1_Model1
+## 2 roc_auc  binary     0.853    10  0.0150 Preprocessor1_Model1
+## 3 sens     binary     0.878    10  0.0118 Preprocessor1_Model1
+## 4 spec     binary     0.676    10  0.0366 Preprocessor1_Model1</code></pre>
+</div>
+<div id="detailed-cross_validation-results-1" class="section level1">
+<h1>Detailed cross_validation results</h1>
+<pre class="r"><code>titanic_rs_metrics_rf &lt;-titanic_rs_fit_rf %&gt;%
+  collect_metrics(summarize = FALSE)
+titanic_rs_metrics_rf </code></pre>
+<pre><code>## # A tibble: 40 x 5
+##    id     .metric  .estimator .estimate .config             
+##    &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+##  1 Fold01 sens     binary         0.870 Preprocessor1_Model1
+##  2 Fold01 spec     binary         0.765 Preprocessor1_Model1
+##  3 Fold01 accuracy binary         0.825 Preprocessor1_Model1
+##  4 Fold01 roc_auc  binary         0.890 Preprocessor1_Model1
+##  5 Fold02 sens     binary         0.891 Preprocessor1_Model1
+##  6 Fold02 spec     binary         0.848 Preprocessor1_Model1
+##  7 Fold02 accuracy binary         0.873 Preprocessor1_Model1
+##  8 Fold02 roc_auc  binary         0.900 Preprocessor1_Model1
+##  9 Fold03 sens     binary         0.826 Preprocessor1_Model1
+## 10 Fold03 spec     binary         0.788 Preprocessor1_Model1
+## # ... with 30 more rows</code></pre>
+</div>
+<div id="summarizing-cross-validation-results-1" class="section level1">
+<h1>Summarizing cross validation results</h1>
+<pre class="r"><code>titanic_rs_metrics_rf %&gt;%
+  group_by(.metric) %&gt;%
+  summarize(min= min(.estimate),
+            median = median(.estimate),
+            max = max(.estimate),
+            sd = sd(.estimate))</code></pre>
+<pre><code>##         min    median       max        sd
+## 1 0.4848485 0.8255435 0.9565217 0.1043686</code></pre>
+</div>
+<div id="hyper-parameter-tuning-1" class="section level1">
+<h1>Hyper parameter tuning</h1>
+<pre class="r"><code>titanic_rf_tune_model &lt;- rand_forest(trees = tune(), min_n = tune()) %&gt;%
+  set_engine(&#39;ranger&#39;) %&gt;%
+  set_mode(&#39;classification&#39;)
+titanic_rf_tune_model</code></pre>
+<pre><code>## Random Forest Model Specification (classification)
+## 
+## Main Arguments:
+##   trees = tune()
+##   min_n = tune()
+## 
+## Computational engine: ranger</code></pre>
+</div>
+<div id="creating-tuning-workflow-1" class="section level1">
+<h1>Creating tuning workflow</h1>
+<pre class="r"><code>titanic_tune_wkfl_rf &lt;- titanic_wkfl_rf %&gt;%
+  update_model(titanic_rf_tune_model)
+titanic_tune_wkfl_rf</code></pre>
+<pre><code>## == Workflow ====================================================================
+## Preprocessor: Recipe
+## Model: rand_forest()
+## 
+## -- Preprocessor ----------------------------------------------------------------
+## 3 Recipe Steps
+## 
+## * step_corr()
+## * step_normalize()
+## * step_dummy()
+## 
+## -- Model -----------------------------------------------------------------------
+## Random Forest Model Specification (classification)
+## 
+## Main Arguments:
+##   trees = tune()
+##   min_n = tune()
+## 
+## Computational engine: ranger</code></pre>
+</div>
+<div id="identifying-hyperparameters-1" class="section level1">
+<h1>Identifying hyperparameters</h1>
+<pre class="r"><code>parameters(titanic_rf_tune_model)</code></pre>
+<pre><code>## Collection of 2 parameters for tuning
+## 
+##  identifier  type    object
+##       trees trees nparam[+]
+##       min_n min_n nparam[+]</code></pre>
+</div>
+<div id="hyperparameter-tuning-with-cross-validation-1" class="section level1">
+<h1>Hyperparameter tuning with cross validation</h1>
+<pre class="r"><code>titanic_rf_tuning &lt;- titanic_tune_wkfl_rf %&gt;%
+  tune_grid(resamples= titanic_folds_rf, metrics = titanic_metrics_rf)
+titanic_rf_tuning</code></pre>
+<pre><code>## # Tuning results
+## # 10-fold cross-validation using stratification 
+## # A tibble: 10 x 4
+##    splits           id     .metrics          .notes          
+##    &lt;list&gt;           &lt;chr&gt;  &lt;list&gt;            &lt;list&gt;          
+##  1 &lt;split [711/80]&gt; Fold01 &lt;tibble [40 x 6]&gt; &lt;tibble [0 x 1]&gt;
+##  2 &lt;split [712/79]&gt; Fold02 &lt;tibble [40 x 6]&gt; &lt;tibble [0 x 1]&gt;
+##  3 &lt;split [712/79]&gt; Fold03 &lt;tibble [40 x 6]&gt; &lt;tibble [0 x 1]&gt;
+##  4 &lt;split [712/79]&gt; Fold04 &lt;tibble [40 x 6]&gt; &lt;tibble [0 x 1]&gt;
+##  5 &lt;split [712/79]&gt; Fold05 &lt;tibble [40 x 6]&gt; &lt;tibble [0 x 1]&gt;
+##  6 &lt;split [712/79]&gt; Fold06 &lt;tibble [40 x 6]&gt; &lt;tibble [0 x 1]&gt;
+##  7 &lt;split [712/79]&gt; Fold07 &lt;tibble [40 x 6]&gt; &lt;tibble [0 x 1]&gt;
+##  8 &lt;split [712/79]&gt; Fold08 &lt;tibble [40 x 6]&gt; &lt;tibble [0 x 1]&gt;
+##  9 &lt;split [712/79]&gt; Fold09 &lt;tibble [40 x 6]&gt; &lt;tibble [0 x 1]&gt;
+## 10 &lt;split [712/79]&gt; Fold10 &lt;tibble [40 x 6]&gt; &lt;tibble [0 x 1]&gt;</code></pre>
+</div>
+<div id="exploring-tuning-results-2" class="section level1">
+<h1>Exploring tuning results</h1>
+<pre class="r"><code>titanic_rf_tuning %&gt;%
+  collect_metrics()</code></pre>
+<pre><code>## # A tibble: 40 x 8
+##    trees min_n .metric  .estimator  mean     n std_err .config              
+##    &lt;int&gt; &lt;int&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;                
+##  1  1671    30 accuracy binary     0.796    10 0.0154  Preprocessor1_Model01
+##  2  1671    30 roc_auc  binary     0.860    10 0.0144  Preprocessor1_Model01
+##  3  1671    30 sens     binary     0.896    10 0.0141  Preprocessor1_Model01
+##  4  1671    30 spec     binary     0.658    10 0.0331  Preprocessor1_Model01
+##  5  1121     9 accuracy binary     0.790    10 0.0141  Preprocessor1_Model02
+##  6  1121     9 roc_auc  binary     0.853    10 0.0149  Preprocessor1_Model02
+##  7  1121     9 sens     binary     0.876    10 0.00975 Preprocessor1_Model02
+##  8  1121     9 spec     binary     0.670    10 0.0359  Preprocessor1_Model02
+##  9  1346     5 accuracy binary     0.790    10 0.0131  Preprocessor1_Model03
+## 10  1346     5 roc_auc  binary     0.851    10 0.0153  Preprocessor1_Model03
+## # ... with 30 more rows</code></pre>
+</div>
+<div id="detailed-tuning-results-1" class="section level1">
+<h1>Detailed tuning results</h1>
+<pre class="r"><code>titanic_rf_tuning %&gt;%
+  collect_metrics(summarize = FALSE)</code></pre>
+<pre><code>## # A tibble: 400 x 7
+##    id     trees min_n .metric  .estimator .estimate .config              
+##    &lt;chr&gt;  &lt;int&gt; &lt;int&gt; &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;                
+##  1 Fold01  1671    30 sens     binary         0.848 Preprocessor1_Model01
+##  2 Fold01  1671    30 spec     binary         0.735 Preprocessor1_Model01
+##  3 Fold01  1671    30 accuracy binary         0.8   Preprocessor1_Model01
+##  4 Fold01  1671    30 roc_auc  binary         0.884 Preprocessor1_Model01
+##  5 Fold02  1671    30 sens     binary         0.935 Preprocessor1_Model01
+##  6 Fold02  1671    30 spec     binary         0.818 Preprocessor1_Model01
+##  7 Fold02  1671    30 accuracy binary         0.886 Preprocessor1_Model01
+##  8 Fold02  1671    30 roc_auc  binary         0.901 Preprocessor1_Model01
+##  9 Fold03  1671    30 sens     binary         0.826 Preprocessor1_Model01
+## 10 Fold03  1671    30 spec     binary         0.788 Preprocessor1_Model01
+## # ... with 390 more rows</code></pre>
+</div>
+<div id="exploring-tuning-results-3" class="section level1">
+<h1>Exploring tuning results</h1>
+<pre class="r"><code>titanic_rf_tuning %&gt;%
+  collect_metrics(summarize = FALSE) %&gt;%
+  filter(.metric == &#39;roc_auc&#39;) %&gt;%
+  group_by (id) %&gt;%
+  summarize( min_roc_auc = min(.estimate),
+             median_roc_auc = median(.estimate),
+             max_roc_auc = max(.estimate))</code></pre>
+<pre><code>##   min_roc_auc median_roc_auc max_roc_auc
+## 1   0.7714097      0.8534256   0.9525692</code></pre>
+</div>
+<div id="viewing-the-best-performing-model-1" class="section level1">
+<h1>Viewing the best performing model</h1>
+<pre class="r"><code>titanic_rf_tuning %&gt;%
+  show_best(metric = &#39;roc_auc&#39;, n =5)</code></pre>
+<pre><code>## # A tibble: 5 x 8
+##   trees min_n .metric .estimator  mean     n std_err .config              
+##   &lt;int&gt; &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;                
+## 1   314    37 roc_auc binary     0.860    10  0.0151 Preprocessor1_Model10
+## 2  1671    30 roc_auc binary     0.860    10  0.0144 Preprocessor1_Model01
+## 3  1488    33 roc_auc binary     0.859    10  0.0145 Preprocessor1_Model05
+## 4  1932    28 roc_auc binary     0.858    10  0.0145 Preprocessor1_Model04
+## 5   611    23 roc_auc binary     0.857    10  0.0151 Preprocessor1_Model07</code></pre>
+<p>Model 5 is the best model
+# Selecting the best model</p>
+<pre class="r"><code>titanic_best_rf_model &lt;- titanic_rf_tuning %&gt;%
+  select_best(metric = &#39;roc_auc&#39;)
+titanic_best_rf_model </code></pre>
+<pre><code>## # A tibble: 1 x 3
+##   trees min_n .config              
+##   &lt;int&gt; &lt;int&gt; &lt;chr&gt;                
+## 1   314    37 Preprocessor1_Model10</code></pre>
+<p>The model 5 are best performing model and hyper parameter values</p>
+</div>
+<div id="finalizing-the-workflow-1" class="section level1">
+<h1>Finalizing the workflow</h1>
+<pre class="r"><code>final_titanic_wkfl_rf &lt;- titanic_tune_wkfl_rf %&gt;%
+  finalize_workflow(titanic_best_rf_model)
+final_titanic_wkfl_rf</code></pre>
+<pre><code>## == Workflow ====================================================================
+## Preprocessor: Recipe
+## Model: rand_forest()
+## 
+## -- Preprocessor ----------------------------------------------------------------
+## 3 Recipe Steps
+## 
+## * step_corr()
+## * step_normalize()
+## * step_dummy()
+## 
+## -- Model -----------------------------------------------------------------------
+## Random Forest Model Specification (classification)
+## 
+## Main Arguments:
+##   trees = 314
+##   min_n = 37
+## 
+## Computational engine: ranger</code></pre>
+</div>
+<div id="model-fitting-2" class="section level1">
+<h1>Model fitting</h1>
+<pre class="r"><code>titanic_final_fit_rf &lt;- final_titanic_wkfl_rf %&gt;%
+  last_fit(split = titanic_split)
+titanic_final_fit_rf %&gt;%
+  collect_metrics()</code></pre>
+<pre><code>## # A tibble: 2 x 4
+##   .metric  .estimator .estimate .config             
+##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+## 1 accuracy binary         0.823 Preprocessor1_Model1
+## 2 roc_auc  binary         0.888 Preprocessor1_Model1</code></pre>
+<p>We can see that there is some improvement compared to what we got from without tuning model</p>
+<p>`</p>
+<pre class="r"><code>titanic_prediction_rf&lt;- titanic_final_fit_rf %&gt;%
+  collect_predictions()
+titanic_prediction_rf</code></pre>
+<pre><code>## # A tibble: 198 x 7
+##    id               .pred_0 .pred_1  .row .pred_class survived .config          
+##    &lt;chr&gt;              &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt; &lt;fct&gt;       &lt;fct&gt;    &lt;chr&gt;            
+##  1 train/test split  0.0828   0.917     9 1           1        Preprocessor1_Mo~
+##  2 train/test split  0.0952   0.905    11 1           1        Preprocessor1_Mo~
+##  3 train/test split  0.469    0.531    14 1           0        Preprocessor1_Mo~
+##  4 train/test split  0.0532   0.947    15 1           1        Preprocessor1_Mo~
+##  5 train/test split  0.654    0.346    18 0           1        Preprocessor1_Mo~
+##  6 train/test split  0.566    0.434    23 0           0        Preprocessor1_Mo~
+##  7 train/test split  0.0411   0.959    26 1           1        Preprocessor1_Mo~
+##  8 train/test split  0.0875   0.913    39 1           1        Preprocessor1_Mo~
+##  9 train/test split  0.0339   0.966    40 1           1        Preprocessor1_Mo~
+## 10 train/test split  0.575    0.425    42 0           1        Preprocessor1_Mo~
+## # ... with 188 more rows</code></pre>
+<pre class="r"><code>conf_mat(titanic_prediction_rf, truth = survived, estimate = .pred_class) %&gt;%
+  autoplot(type = &#39;heatmap&#39;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-104-1.png" width="672" /></p>
 </div>
