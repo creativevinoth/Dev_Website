@@ -33,7 +33,7 @@ titanic3 <- read.csv("titanic3.csv", na.strings = "")
 ```
 
 
-# SUmmary
+# Summary
 ```{r}
 summary(titanic3)
 ```
@@ -258,8 +258,204 @@ titanic3$discretized.fare = cut(titanic3$fare, c(0, 50, 100, 150, 200, 250, 300,
 ggplot(titanic3, aes(x = discretized.fare, fill = survived)) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
 ```
 
+# Data resampling
+```{r}
+titanic_split <- initial_split (titanic3, prop = 0.80, strata = survived)
+titanic_training <- titanic_split %>%
+  training()
+titanic_test <- titanic_split %>%
+  testing()
+```
 
 
+# Checking number of rows in training and test data
 
+```{r}
+nrow(titanic_training)
+nrow(titanic_test)
+```
+# Checking multicollinearity between numerical values in a training titanic data set
+```{r}
+titanic_training %>%
+  select_if(is.numeric) %>%
+  cor()
+```
+There is no multicolinearity between the independant variables
 
+# Model specification using decision tree
+```{r}
+titanic_dt_model<- decision_tree() %>%
+  set_engine('rpart') %>%
+  set_mode('classification')
+```
 
+# Future engineering
+This is the step to pre-processing of data
+```{r}
+titanic_recipe_dt <- recipe(survived ~ sex+ pclass + age + sibsp + parch + fare + embarked, data = titanic_training) %>%
+  step_corr(all_numeric(), threshold =0.8) %>%
+  step_normalize(all_numeric()) %>%
+  step_dummy(all_nominal(), -all_outcomes())
+titanic_recipe_dt
+```
+# Combining models and recipe
+```{r}
+titanic_wkfl_dt<- workflow() %>%
+  add_model(titanic_dt_model) %>%
+  add_recipe(titanic_recipe_dt)
+titanic_wkfl_dt
+```
+
+# Model fitting with workflow
+```{r}
+titanic_wkfl_fit_dt <- titanic_wkfl_dt %>%
+  last_fit(split = titanic_split)
+titanic_wkfl_fit_dt %>%
+  collect_metrics()
+```
+
+# Collecting predictions
+```{r}
+titanic_wkfl_preds_dt <- titanic_wkfl_fit_dt %>%
+  collect_predictions()
+titanic_wkfl_preds_dt
+```
+
+# Confusion matrix
+```{r}
+conf_mat(titanic_wkfl_preds_dt, truth = survived, estimate = .pred_class) %>%
+  autoplot(type = 'heatmap')
+```
+# Correct predictions
+True negative is 108 people, who did not survive. True positive is 56 people survived. 
+
+# Classification error
+False positive is 7 people, who are predicted as survived but actually dead. False negative is 27 people, who are predicted as dead but actually survived.
+
+More number of people died in Titanic
+
+# Exploring custom metrics
+```{r}
+titanic_metrics_dt <- metric_set(roc_auc, sens, spec, accuracy)
+titanic_wkfl_preds_dt %>%
+titanic_metrics_dt(truth = survived, estimate = .pred_class, .pred_1)
+```
+
+# Creating k-fold cross validation
+```{r}
+set.seed(212)
+titanic_folds_dt <- vfold_cv(titanic_training, v = 10, strata = survived)
+titanic_folds_dt
+```
+
+# Model training with cross validation
+```{r}
+titanic_rs_fit_dt <-titanic_wkfl_dt %>%
+  fit_resamples(resamples = titanic_folds_dt, metrics = titanic_metrics_dt)
+titanic_rs_fit_dt %>%
+  collect_metrics()
+```
+
+# Detailed cross_validation results
+```{r}
+titanic_rs_metrics_dt <-titanic_rs_fit_dt %>%
+  collect_metrics(summarize = FALSE)
+titanic_rs_metrics_dt 
+```
+
+# Summarizing cross validation results
+```{r}
+titanic_rs_metrics_dt %>%
+  group_by(.metric) %>%
+  summarize(min= min(.estimate),
+            median = median(.estimate),
+            max = max(.estimate),
+            sd = sd(.estimate))
+```
+
+# Hyper parameter tuning
+```{r}
+titanic_dt_tune_model <- decision_tree(cost_complexity = tune(), tree_depth = tune(), min_n = tune()) %>%
+  set_engine('rpart') %>%
+  set_mode('classification')
+titanic_dt_tune_model
+```
+
+# Creating tuning workflow
+```{r}
+titanic_tune_wkfl <- titanic_wkfl_dt %>%
+  update_model(titanic_dt_tune_model)
+titanic_tune_wkfl
+```
+
+# Identifying hyperparameters
+```{r}
+parameters(titanic_dt_tune_model)
+```
+
+# Generating random grid
+```{r}
+set.seed(224)
+titanic_dt_grid <- grid_random(parameters(titanic_dt_tune_model), size = 5)
+titanic_dt_grid
+```
+
+# Hyperparameter tuning with cross validation
+```{r}
+titanic_dt_tuning <- titanic_tune_wkfl %>%
+  tune_grid(resamples= titanic_folds_dt, grid = titanic_dt_grid, metrics = titanic_metrics_dt)
+titanic_dt_tuning
+```
+
+# Exploring tuning results
+```{r}
+titanic_dt_tuning %>%
+  collect_metrics()
+```
+
+# Detailed tuning results
+```{r}
+titanic_dt_tuning %>%
+  collect_metrics(summarize = FALSE)
+```
+
+# Exploring tuning results
+```{r}
+titanic_dt_tuning %>%
+  collect_metrics(summarize = FALSE) %>%
+  filter(.metric == 'roc_auc') %>%
+  group_by (id) %>%
+  summarize( min_roc_auc = min(.estimate),
+             median_roc_auc = median(.estimate),
+             max_roc_auc = max(.estimate))
+```
+
+# Viewing the best performing model
+```{r}
+titanic_dt_tuning %>%
+  show_best(metric = 'roc_auc', n =5)
+```
+Model 1 is the best model
+# Selecting the best model
+```{r}
+titanic_best_dt_model <- titanic_dt_tuning %>%
+  select_best(metric = 'roc_auc')
+titanic_best_dt_model 
+```
+The model 1 are best performing model and hyper parameter values
+
+# Finalizing the workflow
+```{r}
+final_titanic_wkfl_dt <- titanic_tune_wkfl %>%
+  finalize_workflow(titanic_best_dt_model)
+final_titanic_wkfl_dt
+```
+
+# Model fitting
+```{r}
+titanic_final_fit_dt <- final_titanic_wkfl_dt %>%
+  last_fit(split = titanic_split)
+titanic_final_fit_dt %>%
+  collect_metrics()
+```
+We can see that there is some improvement compared to what we got from without tuning model

@@ -6,7 +6,16 @@
     <description>Recent content in Posts on My website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 20 Nov 2021 00:00:00 +0000</lastBuildDate><atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 22 Nov 2021 00:00:00 +0000</lastBuildDate><atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Titanic Tree Based Model</title>
+      <link>/2021/11/22/titanic-tree-based-model/</link>
+      <pubDate>Mon, 22 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/2021/11/22/titanic-tree-based-model/</guid>
+      <description>SUmmarysummary(titanic3)## pclass survived name sex ## Min. :1.000 Min. :0.000 Length:1309 Length:1309 ## 1st Qu.:2.000 1st Qu.:0.000 Class :character Class :character ## Median :3.000 Median :0.000 Mode :character Mode :character ## Mean :2.295 Mean :0.382 ## 3rd Qu.:3.000 3rd Qu.:1.000 ## Max. :3.000 Max. :1.000 ## ## age sibsp parch ticket ## Min. : 0.17 Min. :0.0000 Min. :0.000 Length:1309 ## 1st Qu.:21.00 1st Qu.:0.0000 1st Qu.</description>
+    </item>
+    
     <item>
       <title>Tree based method</title>
       <link>/2021/11/20/tree-based-method/</link>
@@ -52,25 +61,6 @@ Linear model workflow with cross validation
 Bootstrap Method
 Observations and comments
 Executive summaryA professor is looking for an engagement ring. Before purchasing a diamond, he wants to ensure that the price paid for is fair enough.</description>
-    </item>
-    
-    <item>
-      <title>Bank</title>
-      <link>/2021/10/30/bank/</link>
-      <pubDate>Sat, 30 Oct 2021 00:00:00 +0000</pubDate>
-      
-      <guid>/2021/10/30/bank/</guid>
-      <description>The report of logistic regression on bank data set to answer if customer will subscribe term deposit or not
-Table of contentsExecutive summary
-Issues and Challanges
-Univariate analysis on metric and nonmetric data
-Bivariate analysis
-Logistic regression using tidymodels
-Workflow and model creation
-Manual logistic regression
-Observation and comments
-References
-Executive sumamryThe portuguese banking institution has a product term deposit. The data was collected in a direct marketing campaign based on phone calls.</description>
     </item>
     
   </channel>
