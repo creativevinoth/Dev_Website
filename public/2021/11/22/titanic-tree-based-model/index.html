@@ -62,7 +62,7 @@
 
   <article class="article">
     
-    <span class="article-duration">16 min read</span>
+    <span class="article-duration">25 min read</span>
     
 
     <h1 class="article-title">Titanic Tree Based Model</h1>
@@ -77,7 +77,7 @@
 
 
 <div id="summary" class="section level1">
-<h1>SUmmary</h1>
+<h1>Summary</h1>
 <pre class="r"><code>summary(titanic3)</code></pre>
 <pre><code>##      pclass         survived         name               sex           
 ##  Min.   :1.000   Min.   :0.000   Length:1309        Length:1309       
@@ -643,6 +643,415 @@ summary(fare_survived)</code></pre>
 <pre class="r"><code>titanic3$discretized.fare = cut(titanic3$fare, c(0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550))
 ggplot(titanic3, aes(x = discretized.fare, fill = survived)) + geom_bar(position = position_dodge())+geom_text(stat = &#39;count&#39;, aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)</code></pre>
 <p><img src="/2021/11/22/titanic-tree-based-model/index_files/figure-html/unnamed-chunk-40-1.png" width="672" /></p>
+</div>
+<div id="data-resampling" class="section level1">
+<h1>Data resampling</h1>
+<pre class="r"><code>titanic_split &lt;- initial_split (titanic3, prop = 0.80, strata = survived)
+titanic_training &lt;- titanic_split %&gt;%
+  training()
+titanic_test &lt;- titanic_split %&gt;%
+  testing()</code></pre>
+</div>
+<div id="checking-number-of-rows-in-training-and-test-data" class="section level1">
+<h1>Checking number of rows in training and test data</h1>
+<pre class="r"><code>nrow(titanic_training)</code></pre>
+<pre><code>## [1] 791</code></pre>
+<pre class="r"><code>nrow(titanic_test)</code></pre>
+<pre><code>## [1] 198</code></pre>
+</div>
+<div id="checking-multicollinearity-between-numerical-values-in-a-training-titanic-data-set" class="section level1">
+<h1>Checking multicollinearity between numerical values in a training titanic data set</h1>
+<pre class="r"><code>titanic_training %&gt;%
+  select_if(is.numeric) %&gt;%
+  cor()</code></pre>
+<pre><code>##               age      sibsp       parch      fare
+## age    1.00000000 -0.0592946 -0.05325892 0.1917420
+## sibsp -0.05929460  1.0000000  0.26170521 0.1770886
+## parch -0.05325892  0.2617052  1.00000000 0.2232772
+## fare   0.19174203  0.1770886  0.22327719 1.0000000</code></pre>
+<p>There is no multicolinearity between the independant variables</p>
+</div>
+<div id="model-specification-using-decision-tree" class="section level1">
+<h1>Model specification using decision tree</h1>
+<pre class="r"><code>titanic_dt_model&lt;- decision_tree() %&gt;%
+  set_engine(&#39;rpart&#39;) %&gt;%
+  set_mode(&#39;classification&#39;)</code></pre>
+</div>
+<div id="future-engineering" class="section level1">
+<h1>Future engineering</h1>
+<p>This is the step to pre-processing of data</p>
+<pre class="r"><code>titanic_recipe_dt &lt;- recipe(survived ~ sex+ pclass + age + sibsp + parch + fare + embarked, data = titanic_training) %&gt;%
+  step_corr(all_numeric(), threshold =0.8) %&gt;%
+  step_normalize(all_numeric()) %&gt;%
+  step_dummy(all_nominal(), -all_outcomes())
+titanic_recipe_dt</code></pre>
+<pre><code>## Recipe
+## 
+## Inputs:
+## 
+##       role #variables
+##    outcome          1
+##  predictor          7
+## 
+## Operations:
+## 
+## Correlation filter on all_numeric()
+## Centering and scaling for all_numeric()
+## Dummy variables from all_nominal(), -all_outcomes()</code></pre>
+</div>
+<div id="combining-models-and-recipe" class="section level1">
+<h1>Combining models and recipe</h1>
+<pre class="r"><code>titanic_wkfl_dt&lt;- workflow() %&gt;%
+  add_model(titanic_dt_model) %&gt;%
+  add_recipe(titanic_recipe_dt)
+titanic_wkfl_dt</code></pre>
+<pre><code>## == Workflow ====================================================================
+## Preprocessor: Recipe
+## Model: decision_tree()
+## 
+## -- Preprocessor ----------------------------------------------------------------
+## 3 Recipe Steps
+## 
+## * step_corr()
+## * step_normalize()
+## * step_dummy()
+## 
+## -- Model -----------------------------------------------------------------------
+## Decision Tree Model Specification (classification)
+## 
+## Computational engine: rpart</code></pre>
+</div>
+<div id="model-fitting-with-workflow" class="section level1">
+<h1>Model fitting with workflow</h1>
+<pre class="r"><code>titanic_wkfl_fit_dt &lt;- titanic_wkfl_dt %&gt;%
+  last_fit(split = titanic_split)
+titanic_wkfl_fit_dt %&gt;%
+  collect_metrics()</code></pre>
+<pre><code>## # A tibble: 2 x 4
+##   .metric  .estimator .estimate .config             
+##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+## 1 accuracy binary         0.768 Preprocessor1_Model1
+## 2 roc_auc  binary         0.777 Preprocessor1_Model1</code></pre>
+</div>
+<div id="collecting-predictions" class="section level1">
+<h1>Collecting predictions</h1>
+<pre class="r"><code>titanic_wkfl_preds_dt &lt;- titanic_wkfl_fit_dt %&gt;%
+  collect_predictions()
+titanic_wkfl_preds_dt</code></pre>
+<pre><code>## # A tibble: 198 x 7
+##    id               .pred_0 .pred_1  .row .pred_class survived .config          
+##    &lt;chr&gt;              &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt; &lt;fct&gt;       &lt;fct&gt;    &lt;chr&gt;            
+##  1 train/test split  0.0541   0.946     3 1           0        Preprocessor1_Mo~
+##  2 train/test split  0.0541   0.946     5 1           0        Preprocessor1_Mo~
+##  3 train/test split  0.831    0.169    10 0           0        Preprocessor1_Mo~
+##  4 train/test split  0.831    0.169    14 0           0        Preprocessor1_Mo~
+##  5 train/test split  0.831    0.169    24 0           1        Preprocessor1_Mo~
+##  6 train/test split  0.831    0.169    29 0           1        Preprocessor1_Mo~
+##  7 train/test split  0.0541   0.946    31 1           1        Preprocessor1_Mo~
+##  8 train/test split  0.0541   0.946    33 1           1        Preprocessor1_Mo~
+##  9 train/test split  0.0541   0.946    34 1           1        Preprocessor1_Mo~
+## 10 train/test split  0.831    0.169    36 0           0        Preprocessor1_Mo~
+## # ... with 188 more rows</code></pre>
+</div>
+<div id="confusion-matrix" class="section level1">
+<h1>Confusion matrix</h1>
+<pre class="r"><code>conf_mat(titanic_wkfl_preds_dt, truth = survived, estimate = .pred_class) %&gt;%
+  autoplot(type = &#39;heatmap&#39;)</code></pre>
+<p><img src="/2021/11/22/titanic-tree-based-model/index_files/figure-html/unnamed-chunk-49-1.png" width="672" />
+# Correct predictions
+True negative is 108 people, who did not survive. True positive is 56 people survived.</p>
+</div>
+<div id="classification-error" class="section level1">
+<h1>Classification error</h1>
+<p>False positive is 7 people, who are predicted as survived but actually dead. False negative is 27 people, who are predicted as dead but actually survived.</p>
+<p>More number of people died in Titanic</p>
+</div>
+<div id="exploring-custom-metrics" class="section level1">
+<h1>Exploring custom metrics</h1>
+<pre class="r"><code>titanic_metrics_dt &lt;- metric_set(roc_auc, sens, spec, accuracy)
+titanic_wkfl_preds_dt %&gt;%
+titanic_metrics_dt(truth = survived, estimate = .pred_class, .pred_1)</code></pre>
+<pre><code>## # A tibble: 4 x 3
+##   .metric  .estimator .estimate
+##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt;
+## 1 sens     binary         0.861
+## 2 spec     binary         0.639
+## 3 accuracy binary         0.768
+## 4 roc_auc  binary         0.223</code></pre>
+</div>
+<div id="creating-k-fold-cross-validation" class="section level1">
+<h1>Creating k-fold cross validation</h1>
+<pre class="r"><code>set.seed(212)
+titanic_folds_dt &lt;- vfold_cv(titanic_training, v = 10, strata = survived)
+titanic_folds_dt</code></pre>
+<pre><code>## #  10-fold cross-validation using stratification 
+## # A tibble: 10 x 2
+##    splits           id    
+##    &lt;list&gt;           &lt;chr&gt; 
+##  1 &lt;split [711/80]&gt; Fold01
+##  2 &lt;split [712/79]&gt; Fold02
+##  3 &lt;split [712/79]&gt; Fold03
+##  4 &lt;split [712/79]&gt; Fold04
+##  5 &lt;split [712/79]&gt; Fold05
+##  6 &lt;split [712/79]&gt; Fold06
+##  7 &lt;split [712/79]&gt; Fold07
+##  8 &lt;split [712/79]&gt; Fold08
+##  9 &lt;split [712/79]&gt; Fold09
+## 10 &lt;split [712/79]&gt; Fold10</code></pre>
+</div>
+<div id="model-training-with-cross-validation" class="section level1">
+<h1>Model training with cross validation</h1>
+<pre class="r"><code>titanic_rs_fit_dt &lt;-titanic_wkfl_dt %&gt;%
+  fit_resamples(resamples = titanic_folds_dt, metrics = titanic_metrics_dt)
+titanic_rs_fit_dt %&gt;%
+  collect_metrics()</code></pre>
+<pre><code>## # A tibble: 4 x 6
+##   .metric  .estimator  mean     n std_err .config             
+##   &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
+## 1 accuracy binary     0.810    10  0.0116 Preprocessor1_Model1
+## 2 roc_auc  binary     0.834    10  0.0125 Preprocessor1_Model1
+## 3 sens     binary     0.9      10  0.0205 Preprocessor1_Model1
+## 4 spec     binary     0.686    10  0.0242 Preprocessor1_Model1</code></pre>
+</div>
+<div id="detailed-cross_validation-results" class="section level1">
+<h1>Detailed cross_validation results</h1>
+<pre class="r"><code>titanic_rs_metrics_dt &lt;-titanic_rs_fit_dt %&gt;%
+  collect_metrics(summarize = FALSE)
+titanic_rs_metrics_dt </code></pre>
+<pre><code>## # A tibble: 40 x 5
+##    id     .metric  .estimator .estimate .config             
+##    &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+##  1 Fold01 sens     binary         0.826 Preprocessor1_Model1
+##  2 Fold01 spec     binary         0.647 Preprocessor1_Model1
+##  3 Fold01 accuracy binary         0.75  Preprocessor1_Model1
+##  4 Fold01 roc_auc  binary         0.788 Preprocessor1_Model1
+##  5 Fold02 sens     binary         0.978 Preprocessor1_Model1
+##  6 Fold02 spec     binary         0.727 Preprocessor1_Model1
+##  7 Fold02 accuracy binary         0.873 Preprocessor1_Model1
+##  8 Fold02 roc_auc  binary         0.900 Preprocessor1_Model1
+##  9 Fold03 sens     binary         0.826 Preprocessor1_Model1
+## 10 Fold03 spec     binary         0.697 Preprocessor1_Model1
+## # ... with 30 more rows</code></pre>
+</div>
+<div id="summarizing-cross-validation-results" class="section level1">
+<h1>Summarizing cross validation results</h1>
+<pre class="r"><code>titanic_rs_metrics_dt %&gt;%
+  group_by(.metric) %&gt;%
+  summarize(min= min(.estimate),
+            median = median(.estimate),
+            max = max(.estimate),
+            sd = sd(.estimate))</code></pre>
+<pre><code>##         min    median       max         sd
+## 1 0.5757576 0.8101266 0.9782609 0.09569488</code></pre>
+</div>
+<div id="hyper-parameter-tuning" class="section level1">
+<h1>Hyper parameter tuning</h1>
+<pre class="r"><code>titanic_dt_tune_model &lt;- decision_tree(cost_complexity = tune(), tree_depth = tune(), min_n = tune()) %&gt;%
+  set_engine(&#39;rpart&#39;) %&gt;%
+  set_mode(&#39;classification&#39;)
+titanic_dt_tune_model</code></pre>
+<pre><code>## Decision Tree Model Specification (classification)
+## 
+## Main Arguments:
+##   cost_complexity = tune()
+##   tree_depth = tune()
+##   min_n = tune()
+## 
+## Computational engine: rpart</code></pre>
+</div>
+<div id="creating-tuning-workflow" class="section level1">
+<h1>Creating tuning workflow</h1>
+<pre class="r"><code>titanic_tune_wkfl &lt;- titanic_wkfl_dt %&gt;%
+  update_model(titanic_dt_tune_model)
+titanic_tune_wkfl</code></pre>
+<pre><code>## == Workflow ====================================================================
+## Preprocessor: Recipe
+## Model: decision_tree()
+## 
+## -- Preprocessor ----------------------------------------------------------------
+## 3 Recipe Steps
+## 
+## * step_corr()
+## * step_normalize()
+## * step_dummy()
+## 
+## -- Model -----------------------------------------------------------------------
+## Decision Tree Model Specification (classification)
+## 
+## Main Arguments:
+##   cost_complexity = tune()
+##   tree_depth = tune()
+##   min_n = tune()
+## 
+## Computational engine: rpart</code></pre>
+</div>
+<div id="identifying-hyperparameters" class="section level1">
+<h1>Identifying hyperparameters</h1>
+<pre class="r"><code>parameters(titanic_dt_tune_model)</code></pre>
+<pre><code>## Collection of 3 parameters for tuning
+## 
+##       identifier            type    object
+##  cost_complexity cost_complexity nparam[+]
+##       tree_depth      tree_depth nparam[+]
+##            min_n           min_n nparam[+]</code></pre>
+</div>
+<div id="generating-random-grid" class="section level1">
+<h1>Generating random grid</h1>
+<pre class="r"><code>set.seed(224)
+titanic_dt_grid &lt;- grid_random(parameters(titanic_dt_tune_model), size = 5)
+titanic_dt_grid</code></pre>
+<pre><code>## # A tibble: 5 x 3
+##   cost_complexity tree_depth min_n
+##             &lt;dbl&gt;      &lt;int&gt; &lt;int&gt;
+## 1     0.000608             8    23
+## 2     0.0000191            1     7
+## 3     0.000000289          7    22
+## 4     0.0343              15    22
+## 5     0.0000747           12     8</code></pre>
+</div>
+<div id="hyperparameter-tuning-with-cross-validation" class="section level1">
+<h1>Hyperparameter tuning with cross validation</h1>
+<pre class="r"><code>titanic_dt_tuning &lt;- titanic_tune_wkfl %&gt;%
+  tune_grid(resamples= titanic_folds_dt, grid = titanic_dt_grid, metrics = titanic_metrics_dt)
+titanic_dt_tuning</code></pre>
+<pre><code>## # Tuning results
+## # 10-fold cross-validation using stratification 
+## # A tibble: 10 x 4
+##    splits           id     .metrics          .notes          
+##    &lt;list&gt;           &lt;chr&gt;  &lt;list&gt;            &lt;list&gt;          
+##  1 &lt;split [711/80]&gt; Fold01 &lt;tibble [20 x 7]&gt; &lt;tibble [0 x 1]&gt;
+##  2 &lt;split [712/79]&gt; Fold02 &lt;tibble [20 x 7]&gt; &lt;tibble [0 x 1]&gt;
+##  3 &lt;split [712/79]&gt; Fold03 &lt;tibble [20 x 7]&gt; &lt;tibble [0 x 1]&gt;
+##  4 &lt;split [712/79]&gt; Fold04 &lt;tibble [20 x 7]&gt; &lt;tibble [0 x 1]&gt;
+##  5 &lt;split [712/79]&gt; Fold05 &lt;tibble [20 x 7]&gt; &lt;tibble [0 x 1]&gt;
+##  6 &lt;split [712/79]&gt; Fold06 &lt;tibble [20 x 7]&gt; &lt;tibble [0 x 1]&gt;
+##  7 &lt;split [712/79]&gt; Fold07 &lt;tibble [20 x 7]&gt; &lt;tibble [0 x 1]&gt;
+##  8 &lt;split [712/79]&gt; Fold08 &lt;tibble [20 x 7]&gt; &lt;tibble [0 x 1]&gt;
+##  9 &lt;split [712/79]&gt; Fold09 &lt;tibble [20 x 7]&gt; &lt;tibble [0 x 1]&gt;
+## 10 &lt;split [712/79]&gt; Fold10 &lt;tibble [20 x 7]&gt; &lt;tibble [0 x 1]&gt;</code></pre>
+</div>
+<div id="exploring-tuning-results" class="section level1">
+<h1>Exploring tuning results</h1>
+<pre class="r"><code>titanic_dt_tuning %&gt;%
+  collect_metrics()</code></pre>
+<pre><code>## # A tibble: 20 x 9
+##    cost_complexity tree_depth min_n .metric  .estimator  mean     n std_err
+##              &lt;dbl&gt;      &lt;int&gt; &lt;int&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;
+##  1     0.000608             8    23 accuracy binary     0.791    10  0.0129
+##  2     0.000608             8    23 roc_auc  binary     0.864    10  0.0144
+##  3     0.000608             8    23 sens     binary     0.841    10  0.0195
+##  4     0.000608             8    23 spec     binary     0.722    10  0.0190
+##  5     0.0000191            1     7 accuracy binary     0.794    10  0.0151
+##  6     0.0000191            1     7 roc_auc  binary     0.781    10  0.0143
+##  7     0.0000191            1     7 sens     binary     0.861    10  0.0225
+##  8     0.0000191            1     7 spec     binary     0.701    10  0.0174
+##  9     0.000000289          7    22 accuracy binary     0.795    10  0.0116
+## 10     0.000000289          7    22 roc_auc  binary     0.853    10  0.0164
+## 11     0.000000289          7    22 sens     binary     0.867    10  0.0179
+## 12     0.000000289          7    22 spec     binary     0.695    10  0.0208
+## 13     0.0343              15    22 accuracy binary     0.812    10  0.0147
+## 14     0.0343              15    22 roc_auc  binary     0.802    10  0.0144
+## 15     0.0343              15    22 sens     binary     0.85     10  0.0204
+## 16     0.0343              15    22 spec     binary     0.758    10  0.0183
+## 17     0.0000747           12     8 accuracy binary     0.780    10  0.0173
+## 18     0.0000747           12     8 roc_auc  binary     0.836    10  0.0145
+## 19     0.0000747           12     8 sens     binary     0.824    10  0.0179
+## 20     0.0000747           12     8 spec     binary     0.719    10  0.0266
+## # ... with 1 more variable: .config &lt;chr&gt;</code></pre>
+</div>
+<div id="detailed-tuning-results" class="section level1">
+<h1>Detailed tuning results</h1>
+<pre class="r"><code>titanic_dt_tuning %&gt;%
+  collect_metrics(summarize = FALSE)</code></pre>
+<pre><code>## # A tibble: 200 x 8
+##    id     cost_complexity tree_depth min_n .metric  .estimator .estimate .config
+##    &lt;chr&gt;            &lt;dbl&gt;      &lt;int&gt; &lt;int&gt; &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;  
+##  1 Fold01        0.000608          8    23 sens     binary         0.804 Prepro~
+##  2 Fold01        0.000608          8    23 spec     binary         0.706 Prepro~
+##  3 Fold01        0.000608          8    23 accuracy binary         0.762 Prepro~
+##  4 Fold01        0.000608          8    23 roc_auc  binary         0.845 Prepro~
+##  5 Fold02        0.000608          8    23 sens     binary         0.957 Prepro~
+##  6 Fold02        0.000608          8    23 spec     binary         0.788 Prepro~
+##  7 Fold02        0.000608          8    23 accuracy binary         0.886 Prepro~
+##  8 Fold02        0.000608          8    23 roc_auc  binary         0.926 Prepro~
+##  9 Fold03        0.000608          8    23 sens     binary         0.848 Prepro~
+## 10 Fold03        0.000608          8    23 spec     binary         0.667 Prepro~
+## # ... with 190 more rows</code></pre>
+</div>
+<div id="exploring-tuning-results-1" class="section level1">
+<h1>Exploring tuning results</h1>
+<pre class="r"><code>titanic_dt_tuning %&gt;%
+  collect_metrics(summarize = FALSE) %&gt;%
+  filter(.metric == &#39;roc_auc&#39;) %&gt;%
+  group_by (id) %&gt;%
+  summarize( min_roc_auc = min(.estimate),
+             median_roc_auc = median(.estimate),
+             max_roc_auc = max(.estimate))</code></pre>
+<pre><code>##   min_roc_auc median_roc_auc max_roc_auc
+## 1   0.7039642       0.823946   0.9321476</code></pre>
+</div>
+<div id="viewing-the-best-performing-model" class="section level1">
+<h1>Viewing the best performing model</h1>
+<pre class="r"><code>titanic_dt_tuning %&gt;%
+  show_best(metric = &#39;roc_auc&#39;, n =5)</code></pre>
+<pre><code>## # A tibble: 5 x 9
+##   cost_complexity tree_depth min_n .metric .estimator  mean     n std_err
+##             &lt;dbl&gt;      &lt;int&gt; &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;
+## 1     0.000608             8    23 roc_auc binary     0.864    10  0.0144
+## 2     0.000000289          7    22 roc_auc binary     0.853    10  0.0164
+## 3     0.0000747           12     8 roc_auc binary     0.836    10  0.0145
+## 4     0.0343              15    22 roc_auc binary     0.802    10  0.0144
+## 5     0.0000191            1     7 roc_auc binary     0.781    10  0.0143
+## # ... with 1 more variable: .config &lt;chr&gt;</code></pre>
+<p>Model 1 is the best model
+# Selecting the best model</p>
+<pre class="r"><code>titanic_best_dt_model &lt;- titanic_dt_tuning %&gt;%
+  select_best(metric = &#39;roc_auc&#39;)
+titanic_best_dt_model </code></pre>
+<pre><code>## # A tibble: 1 x 4
+##   cost_complexity tree_depth min_n .config             
+##             &lt;dbl&gt;      &lt;int&gt; &lt;int&gt; &lt;chr&gt;               
+## 1        0.000608          8    23 Preprocessor1_Model1</code></pre>
+<p>The model 1 are best performing model and hyper parameter values</p>
+</div>
+<div id="finalizing-the-workflow" class="section level1">
+<h1>Finalizing the workflow</h1>
+<pre class="r"><code>final_titanic_wkfl_dt &lt;- titanic_tune_wkfl %&gt;%
+  finalize_workflow(titanic_best_dt_model)
+final_titanic_wkfl_dt</code></pre>
+<pre><code>## == Workflow ====================================================================
+## Preprocessor: Recipe
+## Model: decision_tree()
+## 
+## -- Preprocessor ----------------------------------------------------------------
+## 3 Recipe Steps
+## 
+## * step_corr()
+## * step_normalize()
+## * step_dummy()
+## 
+## -- Model -----------------------------------------------------------------------
+## Decision Tree Model Specification (classification)
+## 
+## Main Arguments:
+##   cost_complexity = 0.000608424596386352
+##   tree_depth = 8
+##   min_n = 23
+## 
+## Computational engine: rpart</code></pre>
+</div>
+<div id="model-fitting" class="section level1">
+<h1>Model fitting</h1>
+<pre class="r"><code>titanic_final_fit_dt &lt;- final_titanic_wkfl_dt %&gt;%
+  last_fit(split = titanic_split)
+titanic_final_fit_dt %&gt;%
+  collect_metrics()</code></pre>
+<pre><code>## # A tibble: 2 x 4
+##   .metric  .estimator .estimate .config             
+##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+## 1 accuracy binary         0.773 Preprocessor1_Model1
+## 2 roc_auc  binary         0.801 Preprocessor1_Model1</code></pre>
+<p>We can see that there is some improvement compared to what we got from without tuning model</p>
 </div>
 
     </div>
