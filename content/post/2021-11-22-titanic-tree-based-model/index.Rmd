@@ -33,19 +33,53 @@ library(ranger)
 titanic3 <- read.csv("titanic3.csv", na.strings = "")
 ```
 
+## A report to predict survivability in Titanic
+
+I use the decision tree and random forest method to predict the survivability
+
+## Table of contents
+
+Executive Summary
+
+Issues and Challenges
+
+Univariate analysis on metric and non metric data
+
+Bivariate analysis
+
+Best model using bootstrap and logistic regression
+
+Decision model
+
+Random forest model
+
+Observation and comments
+
+# Executive summary
+
+The Titanic sunk in 1912 after sideswiping an iceberg during its maiden voyage. I analysed the titanic3 data using decision tree and random forest to predict the survivability. I removed the variables body, cabin, name, ticket number, boat and home destination as it has more missing values and would not impact the survivability. The survived is the response variable that I try to find out. The variables age, fare, siblings or spouses aboard the Titanic (sibsp), parents and children aboard the Titanic (parcg) are numerical values. Sex is the nominal categorical value. Pclass is the ticket class, which is of ordinal categorical value. Embarked is a nominal categorical values. 
+
+The univariate anaysis was performed to remove the outliers. The box plot was used to visualize the outliers. Then, bivariate analysis was done to figure out if there is any correlation between dependant and independent variable and find out its significance. I performed feature engineering using tidy models to preporcess the data and used decision tree and random forest classification models to fit the model. I did re sampling using cross-validation to improve the model prediction and used confusion matric to validate the results. 
+
+There was a evident from the both the models that almost 60 percent of people did not survive and approximately only 40 percent of people survived. The accuracy level has been improved from 76% to 80% when we compare the decision tree model with random forest model.
+
+# Issues and Challanges
+
+The greatest challenge was to figure our which all the variables play a role in predicting the response variable, survived. There were many NA values in the titanic3 data, which i cleared it out before modelling. The pclass and survived was initially treated as integers by a system but it was a categorical values. I converted them as a factor before processing it into a model.
+
 
 # Summary
 ```{r}
 summary(titanic3)
 ```
-We can see above the NA values are in age, fare and body but character variable NA values are not given above. Hence, we use misssmap to visualize the NA values.
+We can see above the NA values are in age, fare and body but character variable NA values are not given above. Hence, we use misssmap fuction to visualize the NA values.
 
 # Cleaning and preparing the dataset
 
 ```{r}
 missmap(titanic3, col = c("black", "grey"))
 ```
-We can see many NA values for body, cabin, boat, home.dest and age and we can intuitively decide that body, Cabin, boat, home.dest will not impact the survival. Age also has some NA values but it is likely that it will impact the survival and we will remove the NA values. Though there is no NA for name and ticket number, we can intutively remove those as it will not impact survival
+We can see many NA values for body, cabin, boat, home.dest and age and we can intuitively decide that body, Cabin, boat, home.dest will not impact the survival. Age also has some NA values but it is likely that it will impact the survival and we will remove the NA values. Though there is no NA for name and ticket number, we can intuitively remove those as it will not impact the survival.  
 
 # Removing cabin, body, boat and home.dest
 ```{r}
@@ -58,43 +92,56 @@ titanic3 <- subset (titanic3, select = - ticket)
 
 ```
 
+I removed the cabin, body, boat, name, ticket number and home destination because it had many NA values and it would not help to predict the people who survived.
 
 # Dropping the missing values
 ```{r}
 titanic3 = na.omit(titanic3)
 ```
 
+The variable age had some missing values but it might play the potential role to predict the survivability. That is why i removed only those rows which had NA values to keep the age variable in our model to predict the response variable.
+
 # summary after removing NA
 ```{r}
 summary(titanic3)
 ```
+We can see above in the revised summary that there is no NA values. We get the minimum, 1st quartile, median, mean, 3rd quartile and maximum values of numerical values. We get the class type and length for the categorical values.
+
 # Descriptive Statistics
 ```{r}
 descr(titanic3)
 ```
+The above details gives the descriptive statistics for all the numerical variables.
+
 # Structure of the data
 ```{r}
 str(titanic3)
 ```
-pclass is the ticket class and it is ordinal categorical value but it is taken as integer. Survived is a nominal categorical value but taken as integer. Hence, I change both as a categorical values
+The above provides the structure of our data. pclass is the ticket class and it is ordinal categorical value but it is taken as integer. Survived is a nominal categorical value but taken as integer. Hence, I change both as a categorical values
 
 # Changing survived and pclass as categorical value
 ```{r}
 titanic3$survived = factor(titanic3$survived)
-titanic3$pclass = factor(titanic3$pclass, order=TRUE, levels = c(3, 2, 1))
+titanic3$pclass = factor(titanic3$pclass)
 ```
+The survived and pclass data type has been changed as a categorical value
 
 # Revised structure
 ```{r}
 str(titanic3)
 ```
+I recreated the structure of our data to make sure that all the variables are of correct data type before processing the model.
 
 # Univariate analysis on numerical data
+
+Let me analyze the numerical data first individually to find out its outliers and remove it.
 
 # Univariate analysis on age
 ```{r}
 descr(titanic3$age)
 ```
+The above descriptive statistics provides an indication that there is a huge standard deviation due to the average age is only 29.81 but the maximum age is 80. Let me visualize its outliers using box plot. The people travelled range between 0.17 and 80 years of age.
+
 # Boxplot of age and its outliers
 
 ```{r}
@@ -103,15 +150,20 @@ boxplot(titanic3$age, main = "Box plot of age", boxwex = 0.6)
 mtext(paste("Outliers: ", paste(age_outliers, collapse =", ")), cex = 0.6)
 age_outliers
 ```
+We can infer from the above box plot that age above 67 are outliers. 
+
 # Removal of outliers of age
 ```{r}
 titanic3 <- subset (titanic3, age < 67)
 ```
 
+I removed the age above 67 and updated the data set with the same name.
+
 # Univariate analysis on sibsp
 ```{r}
 descr(titanic3$sibsp)
 ```
+It can be seen from the above table that standard deviation is more than mean value due it its few values are outliers that are faw away from the average values.
 
 # Boxplot of sibsp and its outliers
 
@@ -121,16 +173,19 @@ boxplot(titanic3$sibsp, main = "Box plot of sibsp", boxwex = 0.6)
 mtext(paste("Outliers: ", paste(sibsp_outliers, collapse =", ")), cex = 0.6)
 sibsp_outliers
 ```
+The above box plot visualize us that actual interquartile ranges between o and 2. The rest values are outliers. The siblings or spouse of the traveled passengers has less than 2 with them mostly.
+
 # Removal of outliers of sibsp
 ```{r}
 titanic3 <- subset (titanic3, sibsp < 3)
 ```
-Removed siblings/ spouses greater than 3
+I Removed siblings/ spouses greater than 3.
 
 # Univariate analysis on parch
 ```{r}
 descr(titanic3$parch)
 ```
+It looks from the above statistics that people traveled without children or parents maximum except few traveled with them. The average is only 0.37 and we can see the 3rd quartile value is also 0 but the max value is 6. This implies that there is no uniformity in data. The below box plot will explain this visually better.
 
 # Boxplot of parch and its outliers
 
@@ -140,12 +195,14 @@ boxplot(titanic3$parch, main = "Box plot of parch", boxwex = 0.6)
 mtext(paste("Outliers: ", paste(parch_outliers, collapse =", ")), cex = 0.6)
 parch_outliers
 ```
-Though majority of the data are shown as outliers for parents and childern aboard the Titanic, i feel that they might influence the survival, Hence, I did not remove the outliers or the data
+Though majority of the data are shown as outliers for parents and children aboard the Titanic, I feel that they might influence the survival, Hence, I did not remove the outliers of the data.
 
 # Univariate analysis on fare
 ```{r}
 descr(titanic3$fare)
 ```
+It looks like that majority of people traveled were of economy travelers. The average fare is only $35.71 but the maximum fare is $512.33. That is the reason for high standard deviation of $54.98.
+
 # Boxplot of fare and its outliers
 
 ```{r}
@@ -154,24 +211,29 @@ boxplot(titanic3$fare, main = "Box plot of fare", boxwex = 0.6)
 mtext(paste("Outliers: ", paste(fare_outliers, collapse =", ")), cex = 0.6)
 fare_outliers
 ```
-Here, fare also has more outliers but I don't delete it and keep the file as it is and process further.
+Here, fare also has more outliers but I did not remove the outliers as it will reduce my data set very less. I keep the file as it is and process further.
 
 # UNivariate analysis on categorical value
+
+I analyzed the categorical values using frequency distribution to figure out least distribution among the distributed values.
 
 # Frequency distribution of pclass
 ```{r}
 tab1(titanic3$pclass, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of pclass", xlab ="pclass")
 ```
+Almost half the people traveled in Titanic were from third class ticke. The first and second class ticket passengers were almost equal.
 
 # Frequency distribution of survived
 ```{r}
 tab1(titanic3$survived, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of survived", xlab ="survived")
 ```
+The above the frequency distribution depicts that almost 60% of people did not survive and only around 40% of people survived.
 
 # Frequency distribution of sex
 ```{r}
 tab1(titanic3$sex, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of sex", xlab ="sex")
 ```
+The majority of people traveled in Titanic were male members with more than 60% percent between them. The female travelers were only less than 40%.
 
 # Frequency distribution of embarked
 Writing the embarked data in full words
@@ -181,83 +243,139 @@ titanic3$embarked[titanic3$embarked == "C" ] <-"Cherbourg"
 titanic3$embarked[titanic3$embarked == "Q" ] <-"Queenstown"
 
 ```
-
+I have assigned the full form of the the embarked location to explain better.
 
 ```{r}
 tab1(titanic3$embarked, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of embarked", xlab ="embarked")
 ```
+The above viz explains that the majority of people embarked from Southampton (735), followed by Cherbourg (210). The people embarked from Queenstown were very minimal (44).
 
 # Bivariate analysis to see the relationship between dependant and independant variable
+Here, I will analyze the relationship between response and explanatory variables.
 
 # Relationship between survived and pclass
 ```{r}
 pclass_survived = glm(survived~ pclass, data = titanic3, family = "binomial")
 summary(pclass_survived)
 ```
+The equation has significant model to predict the survivability.
 
 ```{r}
 ggplot(titanic3, aes(x = survived, fill = pclass)) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
 ```
+The above data viz explains that among the people did not survive, class 3 passengers were more in numbers (332), followed by class2 (145) and class1. The class1 passengers were only 98 in numbers. When we see the people survived, on the contrary, class 1 people survived a most (174). The class 2 and class 3 people survived were almost same in numbers (114 and 126 respectively) .
+
 
 # Relationship between survived and sex
 ```{r}
 sex_survived = glm(survived~ sex, data = titanic3, family = "binomial")
 summary(sex_survived)
 ```
+It is clear from the above regression that there is a relationship between survived and sex. The above equation is significant as well.
+
 
 ```{r}
 ggplot(titanic3, aes(x = survived, fill = sex)) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
 ```
+We can infer from the above bar chart that more number of male members around 490 did not survive compared to only 85 female members. On the other hand, male members (132) survived were only half of the female survived (282).
 
 # Relationship between survived and embarked
 ```{r}
 embarked_survived = glm(survived~ embarked, data = titanic3, family = "binomial")
 summary(embarked_survived)
 ```
+It is evident from the above regression that there is a significant relationship between survived and embarked.
+
 ```{r}
 ggplot(titanic3, aes(x = survived, fill = embarked)) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
 ```
+Between the survived and not survived, the people embarked from Southampton were the highest with people not survived was 466 and people survived were 269. The second most people survived and not survived were those who embarked from Cherbourg with survived numbers at 132 and not survived numbers at 78. The least impact for those who embarked from Queenstown as people did not survive were only 31 and survived people were 13 in numbers.
 
 # Relationship between survived and age
 ```{r}
 age_survived = glm(survived~ age, data = titanic3, family = "binomial")
 summary(age_survived)
 ```
+The age has some relationship with survival of Titanic though the intercept is not significant.
 
 ```{r}
 titanic3$discretized.age = cut(titanic3$age, c(0, 10, 20, 30, 40, 50, 60, 70))
 ggplot(titanic3, aes(x = discretized.age, fill = survived)) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
 ```
+The highest number of people survived and did not survive were from the age group of between 20 and 30 followed by age group 30 and 40, age group 10 and 20, age group 40 and 50, age group 50 and 60 and age group 60 and 70. While all the age group people have more numbers did not survive, on the contrary, the age group between 0 and 12 have more number of people survived than not survived.
 
 # Relationship between survived and sibsp
 ```{r}
 sibsp_survived = glm(survived~ sibsp, data = titanic3, family = "binomial")
 summary(sibsp_survived)
 ```
+There is a significant relationship between sibsp and survived
+
 ```{r}
 
 ggplot(titanic3, aes(x = sibsp, fill = survived)) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
 ```
+We can infer from the above bar chart that those who traveled without siblings or spouse were the highest numbers in both people who survived (424) and who did not survive (252) among others who traveled with different number of siblings. The people who traveled with one siblings or spouse has 131 numbers survived and 146 people not survived. At the last, those who travelled with 2 siblings or spouse had very less number in both survived (20) and not survived (16). 
 
 # Relationship between survived and parch
 ```{r}
 parch_survived = glm(survived~ parch, data = titanic3, family = "binomial")
 summary(parch_survived)
 ```
+The above equation has significant relationship between those who traveled with parents or children and survived.
+
 ```{r}
 ggplot(titanic3, aes(x = parch, fill = survived)) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
 ```
+The people who traveled alone without their parents or children had more death rate that is around 490 people who did not survive and around 264 people who did survive. On the contrary, those who traveled with one or 2 children and parent had more survival rate and less death rate compared to people traveled alone. Those who traveled with above 2 children or parent had very meagre number of people.
 
 # Relationship between survived and fare
 ```{r}
 fare_survived = glm(survived~ fare, data = titanic3, family = "binomial")
 summary(fare_survived)
 ```
+The above logistic regression explains that there is a significant relationship between fare and survived.
 
 ```{r}
 titanic3$discretized.fare = cut(titanic3$fare, c(0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550))
 ggplot(titanic3, aes(x = discretized.fare, fill = survived)) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
 ```
+The highest number of people did not survive when the fare ranged between 0 and $50. Though the numbers were quite less for fare greater than $50 compared to lowest fare, they had more number of people survived against people not survived.  
+
+
+# Full model logistic regression
+```{r}
+full_model_titanic = glm(survived ~ sex+ pclass + age + sibsp + parch + fare + embarked, family = "binomial", data = titanic3)
+summary(full_model_titanic)
+```
+# Backward Regression
+
+```{r}
+mod_step_titanic<- stepAIC(full_model_titanic, direction = 'backward', trace = FALSE)
+mod_step_titanic
+```
+
+# Bootstrap method
+Using bootstrap re sampling with replacement method to access the consistency predictors selected with stepwise
+```{r message = FALSE, warning = FALSE, echo = FALSE}
+library(bootStepAIC)
+```
+```{r}
+mod_boot_titanic<- boot.stepAIC(full_model_titanic, titanic3, B =50)
+```
+
+## Bootstrap summary
+
+```{r}
+print(mod_boot_titanic)
+```
+# Best model 
+```{r}
+best_bootmodel_titanic<- glm(formula = survived ~ sex + pclass + age + embarked, family = "binomial", 
+    data = titanic3)
+summary(best_bootmodel_titanic)
+```
+The above is the best and significant model to predict the survivability. The sex, pclass, age and embarked are the predictors that predict the survived. 
 
 # Data resampling
 ```{r}
@@ -268,6 +386,7 @@ titanic_test <- titanic_split %>%
   testing()
 ```
 
+I have taken 80:20 split for data sampling. I have made training data to fit the model and test the model using test set.
 
 # Checking number of rows in training and test data
 
@@ -275,15 +394,20 @@ titanic_test <- titanic_split %>%
 nrow(titanic_training)
 nrow(titanic_test)
 ```
+There are total 791 numbers of row in training data and 198 numbers of row in test data.
+
 # Checking multicollinearity between numerical values in a training titanic data set
 ```{r}
 titanic_training %>%
   select_if(is.numeric) %>%
   cor()
 ```
-There is no multicolinearity between the independant variables
+There is no multi-colinearity between the independent variables
 
-# Model specification using decision tree
+# Decision tree Model
+
+# Model specification
+
 ```{r}
 titanic_dt_model<- decision_tree() %>%
   set_engine('rpart') %>%
@@ -299,6 +423,7 @@ titanic_recipe_dt <- recipe(survived ~ sex+ pclass + age + sibsp + parch + fare 
   step_dummy(all_nominal(), -all_outcomes())
 titanic_recipe_dt
 ```
+There are 7 predictor variable and 1 outcome variable.
 
 # Recipe training
 ```{r}
@@ -306,12 +431,15 @@ titanic_recipe_prep_dt<- titanic_recipe_dt %>%
   prep(training = titanic_training)
 titanic_recipe_prep_dt
 ```
+I have prepared the training data set.
+
 # Preprocess training data
 ```{r}
 titanic_training_prep_dt <- titanic_recipe_prep_dt %>%
   bake (new_data = NULL)
 titanic_training_prep_dt
 ```
+I pre-processed the training data set.
 
 # Preprocess test data
 ```{r}
@@ -319,6 +447,7 @@ titanic_test_prep_dt <- titanic_recipe_prep_dt %>%
   bake (new_data = titanic_test)
 titanic_test_prep_dt
 ```
+I pre-processed the test data.
 
 # Model fitting
 ```{r}
@@ -326,17 +455,23 @@ titanic_fit_dt <- titanic_dt_model %>%
   fit(survived ~ ., data = titanic_training_prep_dt)
 titanic_fit_dt
 ```
+I have trained the training data set.
+
 # Predicting outcome variables
 
 ```{r}
 titanic_class_preds <- predict(titanic_fit_dt, new_data = titanic_test_prep_dt, type = "class")
 titanic_class_preds
 ```
+I predicted the outcome variable using test data set.
+
 # Estimated probabilities
 ```{r}
 titanic_prob_preds <- predict(titanic_fit_dt, new_data = titanic_test_prep_dt, type = "prob")
 titanic_prob_preds
 ```
+I predicted the estimated probabilities using test data set.
+
 # Combining results
 
 ```{r}
@@ -344,6 +479,7 @@ titanic_results <- titanic_test_prep_dt %>%
   bind_cols(titanic_class_preds, titanic_prob_preds)
 titanic_results
 ```
+I have combined the outcome and probabilities with test data set.
 
 # Assessing model fit using confusion matrix
 ```{r}
@@ -351,7 +487,7 @@ titanic_results %>%
   conf_mat(truth = survived, estimate = .pred_class) %>%
 autoplot(type = 'heatmap')
 ```
-
+The above is the confusion matrix of test data set. We can see that 100 is a true negative, which means that people did not survive. The true positive is only 56, those who survived. The false positive is 15, which means that it was predicted as people survived but actually not survived. The false negative is 27, which means that it was predicted as not survived but actually survived. 
 
 # Combining models and recipe
 ```{r}
@@ -360,6 +496,7 @@ titanic_wkfl_dt<- workflow() %>%
   add_recipe(titanic_recipe_dt)
 titanic_wkfl_dt
 ```
+I have combined the model and recipe.
 
 # Model fitting with workflow
 ```{r}
@@ -368,6 +505,7 @@ titanic_wkfl_fit_dt <- titanic_wkfl_dt %>%
 titanic_wkfl_fit_dt %>%
   collect_metrics()
 ```
+The accuracy of the model is 78% and the roc_auc is 81%.
 
 # Collecting predictions
 ```{r}
@@ -382,12 +520,12 @@ conf_mat(titanic_wkfl_preds_dt, truth = survived, estimate = .pred_class) %>%
   autoplot(type = 'heatmap')
 ```
 # Correct predictions
-True negative is 108 people, who did not survive. True positive is 56 people survived. 
+True negative is 100 people, who did not survive. True positive is 56 people survived. 
 
 # Classification error
-False positive is 7 people, who are predicted as survived but actually dead. False negative is 27 people, who are predicted as dead but actually survived.
+False positive is 15 people, who are predicted as survived but actually not survived. False negative is 27 people, who are predicted as dead but actually survived.
 
-More number of people died in Titanic
+More number of people not survived in Titanic
 
 # Exploring custom metrics
 ```{r}
@@ -395,6 +533,7 @@ titanic_metrics_dt <- metric_set(roc_auc, sens, spec, accuracy)
 titanic_wkfl_preds_dt %>%
 titanic_metrics_dt(truth = survived, estimate = .pred_class, .pred_1)
 ```
+The above are metrics to measure the model. The accuracy of the model is 78.78%
 
 # Creating k-fold cross validation
 ```{r}
@@ -402,6 +541,7 @@ set.seed(212)
 titanic_folds_dt <- vfold_cv(titanic_training, v = 10, strata = survived)
 titanic_folds_dt
 ```
+I re-sampled using 10 times k-fold cross validation. 
 
 # Model training with cross validation
 ```{r}
@@ -410,6 +550,7 @@ titanic_rs_fit_dt <-titanic_wkfl_dt %>%
 titanic_rs_fit_dt %>%
   collect_metrics()
 ```
+When i trained the model using k-fold cross validation, the accuracy of the model is increased to 81% This accuracy is better than normal model.
 
 # Detailed cross_validation results
 ```{r}
@@ -435,6 +576,7 @@ titanic_dt_tune_model <- decision_tree(cost_complexity = tune(), tree_depth = tu
   set_mode('classification')
 titanic_dt_tune_model
 ```
+I have tuned the model using hyper parameter.
 
 # Creating tuning workflow
 ```{r}
@@ -491,6 +633,7 @@ titanic_dt_tuning %>%
   show_best(metric = 'roc_auc', n =5)
 ```
 Model 1 is the best model
+
 # Selecting the best model
 ```{r}
 titanic_best_dt_model <- titanic_dt_tuning %>%
@@ -514,9 +657,8 @@ titanic_final_fit_dt %>%
   collect_metrics()
 
 ```
-We can see that there is some improvement compared to what we got from without tuning model
+The accuracy of the model is 76,77 %
 
-`
 ```{r}
 titanic_prediction<- titanic_final_fit_dt %>%
   collect_predictions()
@@ -527,21 +669,33 @@ titanic_prediction
 conf_mat(titanic_prediction, truth = survived, estimate = .pred_class) %>%
   autoplot(type = 'heatmap')
 ```
+# Correct predictions
+True negative is 98 people, who did not survive. True positive is 54 people survived. 
+
+# Classification error
+False positive is 17 people, who are predicted as survived but actually not survived. False negative is 29 people, who are predicted as dead but actually survived.
+
+More number of people not survived in Titanic
+
 
 # Random forest model
+I used random forest model here
+
 # Model specification using random forest
 ```{r}
 titanic_rf_model<- rand_forest(mtry =4,trees = 100, min_n =10) %>%
   set_engine('ranger') %>%
   set_mode('classification')
 ```
+I have used 100 trees to create a model using random forest
+
 # Training a forest
 ```{r}
 titanic_fit_rf <- titanic_rf_model %>%
   fit (survived ~ sex+ pclass + age + sibsp + parch + fare + embarked, data = titanic_training)
 titanic_fit_rf
 ```
-
+I have trained the model using random forest
 
 # Predicting outcome variables
 
@@ -549,11 +703,15 @@ titanic_fit_rf
 titanic_class_preds_rf <- predict(titanic_fit_rf, new_data = titanic_test, type = "class")
 titanic_class_preds_rf
 ```
+The above are predicted outcomes using test set
+
 # Estimated probabilities
 ```{r}
 titanic_prob_preds_rf <- predict(titanic_fit_rf, new_data = titanic_test, type = "prob")
 titanic_prob_preds_rf
 ```
+The above are the predicted probabilities using test data set.
+
 # Combining results
 
 ```{r}
@@ -561,6 +719,7 @@ titanic_results_rf <- titanic_test %>%
   bind_cols(titanic_class_preds_rf, titanic_prob_preds_rf)
 titanic_results_rf
 ```
+I have combined the predicted outcome and probabilities into the test data set.
 
 # Assessing model fit using confusion matrix
 ```{r}
@@ -568,7 +727,13 @@ titanic_results_rf %>%
   conf_mat(truth = survived, estimate = .pred_class) %>%
 autoplot(type = 'heatmap')
 ```
+# Correct predictions of test set
+True negative is 98 people, who did not survive. True positive is 60 people survived. 
 
+# Classification error of test set
+False positive is 17 people, who are predicted as survived but actually not survived. False negative is 23 people, who are predicted as dead but actually survived.
+
+More number of people not survived in Titanic
 
 # Combining models and recipe
 ```{r}
@@ -585,6 +750,7 @@ titanic_wkfl_fit_rf <- titanic_wkfl_rf %>%
 titanic_wkfl_fit_rf %>%
   collect_metrics()
 ```
+We can see here the accuracy of the random forest model is 80.30%, which is higher than accuracy of decision tree model.
 
 # Collecting predictions
 ```{r}
@@ -598,11 +764,11 @@ titanic_wkfl_preds_rf
 conf_mat(titanic_wkfl_preds_rf, truth = survived, estimate = .pred_class) %>%
   autoplot(type = 'heatmap')
 ```
-# Correct predictions
-True negative is 100 people, who did not survive. True positive is 61 people survived. 
+# Correct predictions on full model
+True negative is 100 people, who did not survive. True positive is 59 people survived. 
 
-# Classification error
-False positive is 15 people, who are predicted as survived but actually not survived. False negative is 22 people, who are predicted as not survived but actually survived.
+# Classification error on full model
+False positive is 15 people, who are predicted as survived but actually not survived. False negative is 24 people, who are predicted as not survived but actually survived.
 
 More number of people not survived in Titanic
 
@@ -619,6 +785,7 @@ set.seed(222)
 titanic_folds_rf <- vfold_cv(titanic_training, v = 10, strata = survived)
 titanic_folds_rf
 ```
+I have used 10 times k-fold cross validation to do re-sampling.
 
 # Model training with cross validation
 ```{r}
@@ -703,6 +870,7 @@ titanic_rf_tuning %>%
   show_best(metric = 'roc_auc', n =5)
 ```
 Model 6 is the best model
+
 # Selecting the best model
 ```{r}
 titanic_best_rf_model <- titanic_rf_tuning %>%
@@ -739,5 +907,28 @@ titanic_prediction_rf
 conf_mat(titanic_prediction_rf, truth = survived, estimate = .pred_class) %>%
   autoplot(type = 'heatmap')
 ```
+# Correct predictions on full model
+True negative is 101 people, who did not survive. True positive is 58 people survived. 
+
+# Classification error on full model
+False positive is 14 people, who are predicted as survived but actually not survived. False negative is 25 people, who are predicted as not survived but actually survived.
+
+More number of people not survived in Titanic
+
+# Observations and Comments
+
+1. The important determinants to predict the survived in Titanic data set are sex, pclass, age and embarked.
+
+2. Though the variables sibsp, parch and fare were significant in predicting survived individually, those failed to get significance as a full model.
+
+3. The character variables are assigned as a factor
+
+4. Cross validation and boot strapping are used for re-sampling technique.
+
+5. The accuracy and roc_auc is better in random forest model compared to decision tree model.
+
+6. Almost 60% of the people did not survive and approximately 40% of people only survived. 
+
+7. The first class travelers, female, children less than 10 years old, people aged between 20 and 30 and people embarked from Southampton were the major survivors in Titanic.
 
 
