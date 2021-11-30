@@ -6,7 +6,16 @@
     <description>Recent content on My website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 22 Nov 2021 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 30 Nov 2021 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Bank_Churn_Data</title>
+      <link>/2021/11/30/bank-churn-data/</link>
+      <pubDate>Tue, 30 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/2021/11/30/bank-churn-data/</guid>
+      <description>summary(Bank_Churn_Data)## RowNumber CustomerId CreditScore Geography ## Min. : 1 Min. :15565701 Min. :350.0 Length:10000 ## 1st Qu.: 2501 1st Qu.:15628528 1st Qu.:584.0 Class :character ## Median : 5000 Median :15690738 Median :652.0 Mode :character ## Mean : 5000 Mean :15690941 Mean :650.5 ## 3rd Qu.: 7500 3rd Qu.:15753234 3rd Qu.:718.0 ## Max. :10000 Max. :15815690 Max. :850.0 ## Gender Age Tenure Balance ## Length:10000 Min. :18.00 Min. : 0.</description>
+    </item>
+    
     <item>
       <title>Titanic Tree Based Model</title>
       <link>/2021/11/22/titanic-tree-based-model/</link>

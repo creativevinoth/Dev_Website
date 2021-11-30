@@ -1,0 +1,730 @@
+---
+title: Bank_Churn_Data
+author: ''
+date: '2021-11-30'
+slug: bank-churn-data
+categories: []
+tags: []
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<pre class="r"><code>summary(Bank_Churn_Data)</code></pre>
+<pre><code>##    RowNumber       CustomerId        CreditScore     Geography        
+##  Min.   :    1   Min.   :15565701   Min.   :350.0   Length:10000      
+##  1st Qu.: 2501   1st Qu.:15628528   1st Qu.:584.0   Class :character  
+##  Median : 5000   Median :15690738   Median :652.0   Mode  :character  
+##  Mean   : 5000   Mean   :15690941   Mean   :650.5                     
+##  3rd Qu.: 7500   3rd Qu.:15753234   3rd Qu.:718.0                     
+##  Max.   :10000   Max.   :15815690   Max.   :850.0                     
+##     Gender               Age            Tenure          Balance      
+##  Length:10000       Min.   :18.00   Min.   : 0.000   Min.   :     0  
+##  Class :character   1st Qu.:32.00   1st Qu.: 3.000   1st Qu.:     0  
+##  Mode  :character   Median :37.00   Median : 5.000   Median : 97199  
+##                     Mean   :38.92   Mean   : 5.013   Mean   : 76486  
+##                     3rd Qu.:44.00   3rd Qu.: 7.000   3rd Qu.:127644  
+##                     Max.   :92.00   Max.   :10.000   Max.   :250898  
+##  NumOfProducts    HasCrCard      IsActiveMember   EstimatedSalary 
+##  Min.   :1.00   Min.   :0.0000   Min.   :0.0000   Min.   :    12  
+##  1st Qu.:1.00   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.: 51002  
+##  Median :1.00   Median :1.0000   Median :1.0000   Median :100194  
+##  Mean   :1.53   Mean   :0.7055   Mean   :0.5151   Mean   :100090  
+##  3rd Qu.:2.00   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:149388  
+##  Max.   :4.00   Max.   :1.0000   Max.   :1.0000   Max.   :199992  
+##      Exited      
+##  Min.   :0.0000  
+##  1st Qu.:0.0000  
+##  Median :0.0000  
+##  Mean   :0.2037  
+##  3rd Qu.:0.0000  
+##  Max.   :1.0000</code></pre>
+<p>We can remove 2 variables rownumber and customerid as they are related to individual</p>
+<div id="removing-rownumber-and-customerid" class="section level1">
+<h1>Removing rownumber and customerid</h1>
+<pre class="r"><code>Bank_Churn_Data &lt;- subset (Bank_Churn_Data, select = - RowNumber)
+Bank_Churn_Data &lt;- subset (Bank_Churn_Data, select = - CustomerId)</code></pre>
+</div>
+<div id="structure-of-data" class="section level1">
+<h1>Structure of data</h1>
+<pre class="r"><code>str(Bank_Churn_Data)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    10000 obs. of  11 variables:
+##  $ CreditScore    : int  619 608 502 699 850 645 822 376 501 684 ...
+##  $ Geography      : chr  &quot;France&quot; &quot;Spain&quot; &quot;France&quot; &quot;France&quot; ...
+##  $ Gender         : chr  &quot;Female&quot; &quot;Female&quot; &quot;Female&quot; &quot;Female&quot; ...
+##  $ Age            : int  42 41 42 39 43 44 50 29 44 27 ...
+##  $ Tenure         : int  2 1 8 1 2 8 7 4 4 2 ...
+##  $ Balance        : int  0 83808 159661 0 125511 113756 0 115047 142051 134604 ...
+##  $ NumOfProducts  : int  1 1 3 2 1 2 2 4 2 1 ...
+##  $ HasCrCard      : int  1 0 1 0 1 1 1 1 0 1 ...
+##  $ IsActiveMember : int  1 1 0 0 1 0 1 0 1 1 ...
+##  $ EstimatedSalary: int  101349 112543 113932 93827 79084 149757 10063 119347 74941 71726 ...
+##  $ Exited         : int  1 0 1 0 0 1 0 1 0 0 ...</code></pre>
+<p>The exited, hascrcard and isactivemember are categorical value but wrongly taken as integer varaiable</p>
+</div>
+<div id="chaning-the-variable-from-int-to-character" class="section level1">
+<h1>Chaning the variable from int to character</h1>
+<pre class="r"><code>Bank_Churn_Data$HasCrCard = factor(Bank_Churn_Data$HasCrCard)
+Bank_Churn_Data$IsActiveMember = factor(Bank_Churn_Data$IsActiveMember)
+Bank_Churn_Data$Exited  = factor(Bank_Churn_Data$Exited )</code></pre>
+</div>
+<div id="descriptive-statistics" class="section level1">
+<h1>Descriptive statistics</h1>
+<pre class="r"><code>descr(Bank_Churn_Data)</code></pre>
+<pre><code>## Non-numerical variable(s) ignored: Geography, Gender, HasCrCard, IsActiveMember, Exited</code></pre>
+<pre><code>## Descriptive Statistics  
+## Bank_Churn_Data  
+## N: 10000  
+## 
+##                          Age     Balance   CreditScore   EstimatedSalary   NumOfProducts     Tenure
+## ----------------- ---------- ----------- ------------- ----------------- --------------- ----------
+##              Mean      38.92    76485.90        650.53         100090.24            1.53       5.01
+##           Std.Dev      10.49    62397.41         96.65          57510.49            0.58       2.89
+##               Min      18.00        0.00        350.00             12.00            1.00       0.00
+##                Q1      32.00        0.00        584.00          50993.00            1.00       3.00
+##            Median      37.00    97198.50        652.00         100193.50            1.00       5.00
+##                Q3      44.00   127646.00        718.00         149392.00            2.00       7.00
+##               Max      92.00   250898.00        850.00         199992.00            4.00      10.00
+##               MAD       8.90    69336.01         99.33          72941.70            0.00       2.97
+##               IQR      12.00   127644.00        134.00          98386.00            1.00       4.00
+##                CV       0.27        0.82          0.15              0.57            0.38       0.58
+##          Skewness       1.01       -0.14         -0.07              0.00            0.75       0.01
+##       SE.Skewness       0.02        0.02          0.02              0.02            0.02       0.02
+##          Kurtosis       1.39       -1.49         -0.43             -1.18            0.58      -1.17
+##           N.Valid   10000.00    10000.00      10000.00          10000.00        10000.00   10000.00
+##         Pct.Valid     100.00      100.00        100.00            100.00          100.00     100.00</code></pre>
+</div>
+<div id="revised-structure" class="section level1">
+<h1>Revised structure</h1>
+<pre class="r"><code>str(Bank_Churn_Data)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    10000 obs. of  11 variables:
+##  $ CreditScore    : int  619 608 502 699 850 645 822 376 501 684 ...
+##  $ Geography      : chr  &quot;France&quot; &quot;Spain&quot; &quot;France&quot; &quot;France&quot; ...
+##  $ Gender         : chr  &quot;Female&quot; &quot;Female&quot; &quot;Female&quot; &quot;Female&quot; ...
+##  $ Age            : int  42 41 42 39 43 44 50 29 44 27 ...
+##  $ Tenure         : int  2 1 8 1 2 8 7 4 4 2 ...
+##  $ Balance        : int  0 83808 159661 0 125511 113756 0 115047 142051 134604 ...
+##  $ NumOfProducts  : int  1 1 3 2 1 2 2 4 2 1 ...
+##  $ HasCrCard      : Factor w/ 2 levels &quot;0&quot;,&quot;1&quot;: 2 1 2 1 2 2 2 2 1 2 ...
+##  $ IsActiveMember : Factor w/ 2 levels &quot;0&quot;,&quot;1&quot;: 2 2 1 1 2 1 2 1 2 2 ...
+##  $ EstimatedSalary: int  101349 112543 113932 93827 79084 149757 10063 119347 74941 71726 ...
+##  $ Exited         : Factor w/ 2 levels &quot;0&quot;,&quot;1&quot;: 2 1 2 1 1 2 1 2 1 1 ...</code></pre>
+</div>
+<div id="univariate-analysis-on-numerical-data" class="section level1">
+<h1>Univariate analysis on numerical data</h1>
+</div>
+<div id="univariate-analysis-on-age" class="section level1">
+<h1>Univariate analysis on Age</h1>
+<pre class="r"><code>descr(Bank_Churn_Data$Age)</code></pre>
+<pre><code>## Descriptive Statistics  
+## Bank_Churn_Data$Age  
+## N: 10000  
+## 
+##                          Age
+## ----------------- ----------
+##              Mean      38.92
+##           Std.Dev      10.49
+##               Min      18.00
+##                Q1      32.00
+##            Median      37.00
+##                Q3      44.00
+##               Max      92.00
+##               MAD       8.90
+##               IQR      12.00
+##                CV       0.27
+##          Skewness       1.01
+##       SE.Skewness       0.02
+##          Kurtosis       1.39
+##           N.Valid   10000.00
+##         Pct.Valid     100.00</code></pre>
+</div>
+<div id="boxplot-of-age-and-its-outliers" class="section level1">
+<h1>Boxplot of age and its outliers</h1>
+<pre class="r"><code>Age_outliers_churn&lt;-boxplot.stats(Bank_Churn_Data$Age)$out
+boxplot(Bank_Churn_Data$Age, main = &quot;Box plot of age&quot;, boxwex = 0.6)
+mtext(paste(&quot;Outliers: &quot;, paste(Age_outliers_churn, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<pre class="r"><code>Age_outliers_churn</code></pre>
+<pre><code>##   [1] 66 75 65 73 65 72 67 67 79 80 68 75 66 66 70 63 72 64 64 70 67 82 63 69 65
+##  [26] 69 64 65 74 67 66 67 63 70 71 72 67 74 76 66 63 66 68 67 63 71 66 69 73 65
+##  [51] 66 64 69 64 77 74 65 70 67 69 67 74 69 74 74 64 63 63 70 74 65 72 77 66 65
+##  [76] 74 88 63 71 63 64 67 70 68 72 71 66 75 67 73 69 76 63 85 67 74 76 66 69 66
+## [101] 72 63 71 63 74 67 72 72 66 84 71 66 63 74 69 84 67 64 68 66 77 70 67 79 67
+## [126] 76 73 66 67 64 73 76 72 64 71 63 70 65 66 65 80 66 63 63 63 63 66 74 69 63
+## [151] 64 76 75 68 69 77 64 66 74 71 67 68 64 68 70 64 75 66 64 78 65 74 64 64 71
+## [176] 77 79 70 81 64 68 68 63 79 66 64 70 69 71 72 66 68 63 71 72 72 64 78 75 65
+## [201] 65 67 63 68 71 73 64 66 71 69 71 66 76 69 73 64 64 75 73 71 72 63 67 68 73
+## [226] 67 64 63 92 65 75 67 71 64 66 64 66 67 77 92 67 63 66 66 68 65 72 71 76 63
+## [251] 67 67 66 67 63 65 70 72 77 74 72 73 77 67 71 64 72 81 76 69 68 74 64 64 71
+## [276] 68 63 67 63 64 76 63 63 68 67 72 70 81 67 73 66 68 71 66 63 75 69 64 69 70
+## [301] 71 71 66 70 63 64 65 63 67 71 67 65 66 63 73 66 64 72 71 69 67 64 81 73 63
+## [326] 67 74 83 69 71 78 63 70 69 72 70 63 74 80 69 72 67 76 71 67 71 78 63 63 68
+## [351] 64 70 78 69 68 64 64 77 77</code></pre>
+<p>The above box plot shows that the age above 63 are outliers. so, we remove those values from the dataset</p>
+</div>
+<div id="removal-of-outliers-of-age" class="section level1">
+<h1>Removal of outliers of age</h1>
+<pre class="r"><code>Bank_Churn_Data &lt;- subset (Bank_Churn_Data, Age &lt; 63)</code></pre>
+</div>
+<div id="univariate-analysis-on-balance" class="section level1">
+<h1>Univariate analysis on Balance</h1>
+<pre class="r"><code>descr(Bank_Churn_Data$Balance)</code></pre>
+<pre><code>## Descriptive Statistics  
+## Bank_Churn_Data$Balance  
+## N: 9641  
+## 
+##                       Balance
+## ----------------- -----------
+##              Mean    76560.68
+##           Std.Dev    62401.70
+##               Min        0.00
+##                Q1        0.00
+##            Median    97318.00
+##                Q3   127660.00
+##               Max   250898.00
+##               MAD    69044.68
+##               IQR   127660.00
+##                CV        0.82
+##          Skewness       -0.14
+##       SE.Skewness        0.02
+##          Kurtosis       -1.49
+##           N.Valid     9641.00
+##         Pct.Valid      100.00</code></pre>
+</div>
+<div id="boxplot-of-balance-and-its-outliers" class="section level1">
+<h1>Boxplot of Balance and its outliers</h1>
+<pre class="r"><code>Balance_outliers_churn&lt;-boxplot.stats(Bank_Churn_Data$Balance)$out
+boxplot(Bank_Churn_Data$Balance, main = &quot;Box plot of Balance&quot;, boxwex = 0.6)
+mtext(paste(&quot;Outliers: &quot;, paste(Balance_outliers_churn, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<pre class="r"><code>Balance_outliers_churn</code></pre>
+<pre><code>## integer(0)</code></pre>
+<p>There are no outliers</p>
+</div>
+<div id="univariate-analysis-on-creditscore" class="section level1">
+<h1>Univariate analysis on CreditScore</h1>
+<pre class="r"><code>descr(Bank_Churn_Data$CreditScore)</code></pre>
+<pre><code>## Descriptive Statistics  
+## Bank_Churn_Data$CreditScore  
+## N: 9641  
+## 
+##                     CreditScore
+## ----------------- -------------
+##              Mean        650.29
+##           Std.Dev         96.69
+##               Min        350.00
+##                Q1        583.00
+##            Median        652.00
+##                Q3        717.00
+##               Max        850.00
+##               MAD         99.33
+##               IQR        134.00
+##                CV          0.15
+##          Skewness         -0.07
+##       SE.Skewness          0.02
+##          Kurtosis         -0.43
+##           N.Valid       9641.00
+##         Pct.Valid        100.00</code></pre>
+</div>
+<div id="boxplot-of-creditscore-and-its-outliers" class="section level1">
+<h1>Boxplot of CreditScore and its outliers</h1>
+<pre class="r"><code>CreditScore_outliers_churn&lt;-boxplot.stats(Bank_Churn_Data$CreditScore)$out
+boxplot(Bank_Churn_Data$CreditScore, main = &quot;Box plot of CreditScore&quot;, boxwex = 0.6)
+mtext(paste(&quot;Outliers: &quot;, paste(CreditScore_outliers_churn, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<pre class="r"><code>CreditScore_outliers_churn</code></pre>
+<pre><code>##  [1] 376 376 363 359 350 350 358 351 365 367 350 350 373 350</code></pre>
+<p>We can see that less than 376 credit score are outliers. So, we remove those values from the dataset.</p>
+</div>
+<div id="removal-of-outliers-of-creditscore" class="section level1">
+<h1>Removal of outliers of CreditScore</h1>
+<pre class="r"><code>Bank_Churn_Data &lt;- subset (Bank_Churn_Data, CreditScore &gt; 376)</code></pre>
+</div>
+<div id="univariate-analysis-on-estimatedsalary" class="section level1">
+<h1>Univariate analysis on EstimatedSalary</h1>
+<pre class="r"><code>descr(Bank_Churn_Data$EstimatedSalary)</code></pre>
+<pre><code>## Descriptive Statistics  
+## Bank_Churn_Data$EstimatedSalary  
+## N: 9627  
+## 
+##                     EstimatedSalary
+## ----------------- -----------------
+##              Mean         100121.62
+##           Std.Dev          57524.28
+##               Min             12.00
+##                Q1          51011.00
+##            Median         100187.00
+##                Q3         149458.00
+##               Max         199992.00
+##               MAD          72964.68
+##               IQR          98424.50
+##                CV              0.57
+##          Skewness              0.00
+##       SE.Skewness              0.02
+##          Kurtosis             -1.18
+##           N.Valid           9627.00
+##         Pct.Valid            100.00</code></pre>
+</div>
+<div id="boxplot-of-estimatedsalary-and-its-outliers" class="section level1">
+<h1>Boxplot of EstimatedSalary and its outliers</h1>
+<pre class="r"><code>EstimatedSalary_outliers_churn&lt;-boxplot.stats(Bank_Churn_Data$EstimatedSalary)$out
+boxplot(Bank_Churn_Data$EstimatedSalary, main = &quot;Box plot of EstimatedSalary&quot;, boxwex = 0.6)
+mtext(paste(&quot;Outliers: &quot;, paste(EstimatedSalary_outliers_churn, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<pre class="r"><code>EstimatedSalary_outliers_churn</code></pre>
+<pre><code>## integer(0)</code></pre>
+<p>There are no outliers</p>
+</div>
+<div id="univariate-analysis-on-numofproducts" class="section level1">
+<h1>Univariate analysis on NumOfProducts</h1>
+<pre class="r"><code>descr(Bank_Churn_Data$NumOfProducts)</code></pre>
+<pre><code>## Descriptive Statistics  
+## Bank_Churn_Data$NumOfProducts  
+## N: 9627  
+## 
+##                     NumOfProducts
+## ----------------- ---------------
+##              Mean            1.53
+##           Std.Dev            0.58
+##               Min            1.00
+##                Q1            1.00
+##            Median            1.00
+##                Q3            2.00
+##               Max            4.00
+##               MAD            0.00
+##               IQR            1.00
+##                CV            0.38
+##          Skewness            0.74
+##       SE.Skewness            0.02
+##          Kurtosis            0.58
+##           N.Valid         9627.00
+##         Pct.Valid          100.00</code></pre>
+</div>
+<div id="boxplot-of-numofproducts-and-its-outliers" class="section level1">
+<h1>Boxplot of NumOfProducts and its outliers</h1>
+<pre class="r"><code>NumOfProducts_outliers_churn&lt;-boxplot.stats(Bank_Churn_Data$NumOfProducts)$out
+boxplot(Bank_Churn_Data$NumOfProducts, main = &quot;Box plot of NumOfProducts&quot;, boxwex = 0.6)
+mtext(paste(&quot;Outliers: &quot;, paste(NumOfProducts_outliers_churn, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<pre class="r"><code>NumOfProducts_outliers_churn</code></pre>
+<pre><code>##  [1] 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4
+## [39] 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4</code></pre>
+<p>We can see that there are few people having 4 products and it is an outliers here. SO, we remove it from the dataset</p>
+</div>
+<div id="removal-of-outliers-of-numofproducts" class="section level1">
+<h1>Removal of outliers of NumOfProducts</h1>
+<pre class="r"><code>Bank_Churn_Data &lt;- subset (Bank_Churn_Data, NumOfProducts &lt; 4)</code></pre>
+</div>
+<div id="univariate-analysis-on-tenure" class="section level1">
+<h1>Univariate analysis on Tenure</h1>
+<pre class="r"><code>descr(Bank_Churn_Data$Tenure)</code></pre>
+<pre><code>## Descriptive Statistics  
+## Bank_Churn_Data$Tenure  
+## N: 9569  
+## 
+##                      Tenure
+## ----------------- ---------
+##              Mean      5.01
+##           Std.Dev      2.89
+##               Min      0.00
+##                Q1      3.00
+##            Median      5.00
+##                Q3      7.00
+##               Max     10.00
+##               MAD      2.97
+##               IQR      4.00
+##                CV      0.58
+##          Skewness      0.01
+##       SE.Skewness      0.03
+##          Kurtosis     -1.16
+##           N.Valid   9569.00
+##         Pct.Valid    100.00</code></pre>
+</div>
+<div id="boxplot-of-tenure-and-its-outliers" class="section level1">
+<h1>Boxplot of Tenure and its outliers</h1>
+<pre class="r"><code>Tenure_outliers_churn&lt;-boxplot.stats(Bank_Churn_Data$Tenure)$out
+boxplot(Bank_Churn_Data$Tenure, main = &quot;Box plot of Tenure&quot;, boxwex = 0.6)
+mtext(paste(&quot;Outliers: &quot;, paste(Tenure_outliers_churn, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<pre class="r"><code>Tenure_outliers_churn</code></pre>
+<pre><code>## integer(0)</code></pre>
+<p>There are no outliers for tenure</p>
+</div>
+<div id="univariate-analysis-on-categorical-values" class="section level1">
+<h1>Univariate analysis on categorical values</h1>
+<p>I analyzed the categorical values using frequency distribution to figure out least distribution among the distributed values.</p>
+</div>
+<div id="frequency-distribution-of-geography" class="section level1">
+<h1>Frequency distribution of Geography</h1>
+<pre class="r"><code>tab1(Bank_Churn_Data$Geography, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of Geography&quot;, xlab =&quot;Geography&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+<pre><code>## Bank_Churn_Data$Geography : 
+##         Frequency Percent Cum. percent
+## Spain        2373    24.8         24.8
+## Germany      2398    25.1         49.9
+## France       4798    50.1        100.0
+##   Total      9569   100.0        100.0</code></pre>
+</div>
+<div id="frequency-distribution-of-gender" class="section level1">
+<h1>Frequency distribution of Gender</h1>
+<pre class="r"><code>tab1(Bank_Churn_Data$Gender, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of Gender&quot;, xlab =&quot;Gender&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
+<pre><code>## Bank_Churn_Data$Gender : 
+##         Frequency Percent Cum. percent
+## Female       4332    45.3         45.3
+## Male         5237    54.7        100.0
+##   Total      9569   100.0        100.0</code></pre>
+<p>There are more people having account with bank compared to female members</p>
+</div>
+<div id="frequency-distribution-of-hascrcard" class="section level1">
+<h1>Frequency distribution of HasCrCard</h1>
+<pre class="r"><code>tab1(Bank_Churn_Data$HasCrCard, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of HasCrCard&quot;, xlab =&quot;HasCrCard&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
+<pre><code>## Bank_Churn_Data$HasCrCard : 
+##         Frequency Percent Cum. percent
+## 0            2821    29.5         29.5
+## 1            6748    70.5        100.0
+##   Total      9569   100.0        100.0</code></pre>
+<p>Around 70% of customers have a credit card with bank and only 30% of people without credit card</p>
+</div>
+<div id="frequency-distribution-of-isactivemember" class="section level1">
+<h1>Frequency distribution of IsActiveMember</h1>
+<pre class="r"><code>tab1(Bank_Churn_Data$IsActiveMember, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of IsActiveMember&quot;, xlab =&quot;IsActiveMember&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
+<pre><code>## Bank_Churn_Data$IsActiveMember : 
+##         Frequency Percent Cum. percent
+## 0            4749    49.6         49.6
+## 1            4820    50.4        100.0
+##   Total      9569   100.0        100.0</code></pre>
+<p>Almost 50% of customer are not actively making transaction in bank.</p>
+</div>
+<div id="frequency-distribution-of-exited" class="section level1">
+<h1>Frequency distribution of Exited</h1>
+<pre class="r"><code>tab1(Bank_Churn_Data$Exited , sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of Exited &quot;, xlab =&quot;Exited &quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
+<pre><code>## Bank_Churn_Data$Exited : 
+##         Frequency Percent Cum. percent
+## 1            1892    19.8         19.8
+## 0            7677    80.2        100.0
+##   Total      9569   100.0        100.0</code></pre>
+<p>We could see from the above frequency distribution that only 20% of customers was a loyal customer and approximately 80% of customers closed the bank account</p>
+</div>
+<div id="bivariate-analysis-to-see-the-relationship-between-dependant-and-independant-variable" class="section level1">
+<h1>Bivariate analysis to see the relationship between dependant and independant variable</h1>
+<p>Here, we will analyze the relationship between response and explanatory variables.</p>
+</div>
+<div id="relationship-between-exited-and-age" class="section level1">
+<h1>Relationship between Exited and Age</h1>
+<pre class="r"><code>Age_Exited = glm(Exited~ Age, data = Bank_Churn_Data, family = &quot;binomial&quot;)
+summary(Age_Exited)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Exited ~ Age, family = &quot;binomial&quot;, data = Bank_Churn_Data)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.5677  -0.6369  -0.4780  -0.3213   2.7153  
+## 
+## Coefficients:
+##              Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) -5.519707   0.137290  -40.20   &lt;2e-16 ***
+## Age          0.103265   0.003233   31.94   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 9515.9  on 9568  degrees of freedom
+## Residual deviance: 8334.7  on 9567  degrees of freedom
+## AIC: 8338.7
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<p>There is a significant relationship between age and exited</p>
+<pre class="r"><code>discretized.Age = cut(Bank_Churn_Data$Age, c(0, 10, 20, 30, 40, 50, 60,70))
+ggplot(Bank_Churn_Data, aes(x = discretized.Age , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = &#39;count&#39;, aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
+</div>
+<div id="relationship-between-exited-and-balance" class="section level1">
+<h1>Relationship between Exited and Balance</h1>
+<pre class="r"><code>Balance_Exited = glm(Exited~ Balance, data = Bank_Churn_Data, family = &quot;binomial&quot;)
+summary(Balance_Exited)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Exited ~ Balance, family = &quot;binomial&quot;, data = Bank_Churn_Data)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.8838  -0.7175  -0.5558  -0.5558   1.9718  
+## 
+## Coefficients:
+##               Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) -1.790e+00  4.535e-02  -39.46   &lt;2e-16 ***
+## Balance      4.745e-06  4.260e-07   11.14   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 9515.9  on 9568  degrees of freedom
+## Residual deviance: 9387.9  on 9567  degrees of freedom
+## AIC: 9391.9
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<p>There is a significant relationship between balance and exited</p>
+<pre class="r"><code>discretized.Balance = cut(Bank_Churn_Data$Balance, c(0, 50000, 100000, 150000, 200000, 250000, 300000))
+ggplot(Bank_Churn_Data, aes(x = discretized.Balance , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = &#39;count&#39;, aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-32-1.png" width="672" />
+######################################Have to check the above error</p>
+</div>
+<div id="relationship-between-exited-and-creditscore" class="section level1">
+<h1>Relationship between Exited and CreditScore</h1>
+<pre class="r"><code>CreditScore_Exited = glm(Exited~ CreditScore, data = Bank_Churn_Data, family = &quot;binomial&quot;)
+summary(Balance_Exited)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Exited ~ Balance, family = &quot;binomial&quot;, data = Bank_Churn_Data)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.8838  -0.7175  -0.5558  -0.5558   1.9718  
+## 
+## Coefficients:
+##               Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) -1.790e+00  4.535e-02  -39.46   &lt;2e-16 ***
+## Balance      4.745e-06  4.260e-07   11.14   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 9515.9  on 9568  degrees of freedom
+## Residual deviance: 9387.9  on 9567  degrees of freedom
+## AIC: 9391.9
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<p>The credit score is significant to predict the exited</p>
+<pre class="r"><code>discretized.CreditScore = cut(Bank_Churn_Data$CreditScore, c(0,400, 500, 600, 700, 800, 900))
+ggplot(Bank_Churn_Data, aes(x = discretized.CreditScore , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = &#39;count&#39;, aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-34-1.png" width="672" />
+We can infer from the above bar chart that more people are churned when the credit score is between 600 and 700.</p>
+</div>
+<div id="relationship-between-exited-and-estimatedsalary" class="section level1">
+<h1>Relationship between Exited and EstimatedSalary</h1>
+<pre class="r"><code>EstimatedSalary_Exited = glm(Exited~ EstimatedSalary, data = Bank_Churn_Data, family = &quot;binomial&quot;)
+summary(EstimatedSalary_Exited)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Exited ~ EstimatedSalary, family = &quot;binomial&quot;, 
+##     data = Bank_Churn_Data)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.6753  -0.6680  -0.6610  -0.6537   1.8178  
+## 
+## Coefficients:
+##                   Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)     -1.440e+00  5.182e-02 -27.779   &lt;2e-16 ***
+## EstimatedSalary  3.875e-07  4.463e-07   0.868    0.385    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 9515.9  on 9568  degrees of freedom
+## Residual deviance: 9515.2  on 9567  degrees of freedom
+## AIC: 9519.2
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<p>The coefficient of the estimated salary are not significant to predict the exited</p>
+<pre class="r"><code>discretized.EstimatedSalary = cut(Bank_Churn_Data$EstimatedSalary, c(0,40000, 80000, 120000, 160000, 200000))
+ggplot(Bank_Churn_Data, aes(x = discretized.EstimatedSalary , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = &#39;count&#39;, aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-36-1.png" width="672" />
+################################################### have to check the error</p>
+</div>
+<div id="relationship-between-exited-and-numofproducts" class="section level1">
+<h1>Relationship between Exited and NumOfProducts</h1>
+<pre class="r"><code>NumOfProducts_Exited = glm(Exited~ NumOfProducts, data = Bank_Churn_Data, family = &quot;binomial&quot;)
+summary(NumOfProducts_Exited)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Exited ~ NumOfProducts, family = &quot;binomial&quot;, data = Bank_Churn_Data)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.7401  -0.7401  -0.5848  -0.5848   2.1487  
+## 
+## Coefficients:
+##               Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)   -0.63043    0.07476  -8.433   &lt;2e-16 ***
+## NumOfProducts -0.52446    0.04935 -10.628   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 9515.9  on 9568  degrees of freedom
+## Residual deviance: 9398.0  on 9567  degrees of freedom
+## AIC: 9402
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<p>The number of bank products held by customers has a significant relationship to predict the customers exited</p>
+<pre class="r"><code>ggplot(Bank_Churn_Data, aes(x = NumOfProducts , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = &#39;count&#39;, aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-38-1.png" width="672" />
+The percentage of the churn rate for customer having 1 and 2 account having more churn rate comparedd to customer having 3 products</p>
+</div>
+<div id="relationship-between-exited-and-tenure" class="section level1">
+<h1>Relationship between Exited and Tenure</h1>
+<pre class="r"><code>Tenure_Exited = glm(Exited~ Tenure, data = Bank_Churn_Data, family = &quot;binomial&quot;)
+summary(Tenure_Exited)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Exited ~ Tenure, family = &quot;binomial&quot;, data = Bank_Churn_Data)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.6826  -0.6712  -0.6600  -0.6489   1.8285  
+## 
+## Coefficients:
+##              Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) -1.337962   0.050962 -26.254   &lt;2e-16 ***
+## Tenure      -0.012569   0.008891  -1.414    0.157    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 9515.9  on 9568  degrees of freedom
+## Residual deviance: 9513.9  on 9567  degrees of freedom
+## AIC: 9517.9
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<p>The coefficient of the tenure is not significant to predict the exited</p>
+<pre class="r"><code>ggplot(Bank_Churn_Data, aes(x = Tenure , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = &#39;count&#39;, aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-40-1.png" width="672" />
+It is surprising to see that 828 customer after having 7 years of relationship with bank, that was the highest churn numbers among different tenures.</p>
+</div>
+<div id="relationship-between-exited-and-geography" class="section level1">
+<h1>Relationship between Exited and Geography</h1>
+<pre class="r"><code>Geography_Exited = glm(Exited~ Geography, data = Bank_Churn_Data, family = &quot;binomial&quot;)
+summary(Geography_Exited)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Exited ~ Geography, family = &quot;binomial&quot;, data = Bank_Churn_Data)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.8717  -0.5950  -0.5826  -0.5826   1.9273  
+## 
+## Coefficients:
+##                  Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)      -1.68749    0.03978  -42.42   &lt;2e-16 ***
+## GeographyGermany  0.91572    0.05925   15.45   &lt;2e-16 ***
+## GeographySpain    0.04585    0.06843    0.67    0.503    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 9515.9  on 9568  degrees of freedom
+## Residual deviance: 9253.0  on 9566  degrees of freedom
+## AIC: 9259
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<p>There is no significant relationship between geography and exited due to some of the coefficients are not significant</p>
+<pre class="r"><code>ggplot(Bank_Churn_Data, aes(x = Geography , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = &#39;count&#39;, aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-42-1.png" width="672" />
+France has the highest churn rate of customers among others. Almost 85% of the customer closed the account.</p>
+</div>
+<div id="relationship-between-exited-and-gender" class="section level1">
+<h1>Relationship between Exited and Gender</h1>
+<pre class="r"><code>Gender_Exited = glm(Exited~ Gender, data = Bank_Churn_Data, family = &quot;binomial&quot;)
+summary(Gender_Exited)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Exited ~ Gender, family = &quot;binomial&quot;, data = Bank_Churn_Data)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.7467  -0.7467  -0.5905  -0.5905   1.9144  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) -1.13464    0.03541  -32.04   &lt;2e-16 ***
+## GenderMale  -0.52347    0.05172  -10.12   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 9515.9  on 9568  degrees of freedom
+## Residual deviance: 9412.7  on 9567  degrees of freedom
+## AIC: 9416.7
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<p>There is a significant relationship between gender and exited</p>
+<pre class="r"><code>ggplot(Bank_Churn_Data, aes(x = Gender , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = &#39;count&#39;, aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-44-1.png" width="672" /></p>
+<p>There is a highest churn rate with male customer with approximate churn percentage of 84% as against female churn rate of 75% approximately.</p>
+</div>
+<div id="relationship-between-exited-and-hascrcard" class="section level1">
+<h1>Relationship between Exited and HasCrCard</h1>
+<pre class="r"><code>HasCrCard_Exited = glm(Exited~ HasCrCard, data = Bank_Churn_Data, family = &quot;binomial&quot;)
+summary(HasCrCard_Exited)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Exited ~ HasCrCard, family = &quot;binomial&quot;, data = Bank_Churn_Data)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.6725  -0.6601  -0.6601  -0.6601   1.8060  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) -1.37130    0.04686 -29.264   &lt;2e-16 ***
+## HasCrCard1  -0.04170    0.05601  -0.745    0.457    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 9515.9  on 9568  degrees of freedom
+## Residual deviance: 9515.4  on 9567  degrees of freedom
+## AIC: 9519.4
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<p>There is no significant relationship between the customer having credit card and exited because of its coefficients are not significant.</p>
+<pre class="r"><code>ggplot(Bank_Churn_Data, aes(x = HasCrCard , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = &#39;count&#39;, aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-46-1.png" width="672" />
+Almost 80% of customers closed the account irrespective of customers having credit card or not.</p>
+</div>
+<div id="relationship-between-exited-and-isactivemember" class="section level1">
+<h1>Relationship between Exited and IsActiveMember</h1>
+<pre class="r"><code>IsActiveMember_Exited = glm(Exited~ IsActiveMember, data = Bank_Churn_Data, family = &quot;binomial&quot;)
+summary(IsActiveMember_Exited)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Exited ~ IsActiveMember, family = &quot;binomial&quot;, data = Bank_Churn_Data)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.7688  -0.7688  -0.5502  -0.5502   1.9813  
+## 
+## Coefficients:
+##                 Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)     -1.06769    0.03326   -32.1   &lt;2e-16 ***
+## IsActiveMember1 -0.74382    0.05315   -14.0   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 9515.9  on 9568  degrees of freedom
+## Residual deviance: 9313.0  on 9567  degrees of freedom
+## AIC: 9317
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<p>There is a significant relationship between IsActiveMember and Exited.</p>
+<pre class="r"><code>ggplot(Bank_Churn_Data, aes(x = IsActiveMember , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = &#39;count&#39;, aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-48-1.png" width="672" /></p>
+<p>It is surprising to notice that actively transacted customers(86%) have high percentage of churn rate against customers who have not transacted actively (75%)</p>
+</div>
