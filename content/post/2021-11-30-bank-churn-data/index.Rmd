@@ -1,0 +1,344 @@
+---
+title: Bank_Churn_Data
+author: ''
+date: '2021-11-30'
+slug: bank-churn-data
+categories: []
+tags: []
+---
+```{r message = FALSE, warning = FALSE, echo = FALSE}
+
+library(ggplot2)
+library(dplyr)
+library(data.table)
+library(tidyr)
+library(GGally)
+library(gapminder)
+library(tidyverse)
+library(pastecs)
+library(ggpubr)
+library(fastDummies)
+library(QuantPsyc)
+library(MASS)
+library(caret)
+library(leaps)
+library(summarytools)
+library(epiDisplay)
+library(tidymodels)
+library(Rmisc)
+library(Amelia)
+library(ranger)
+```
+
+```{r message = FALSE, warning = FALSE, echo = FALSE, include = FALSE}
+Bank_Churn_Data <- read.csv("Bank_Churn_Data.csv")
+```
+
+```{r}
+summary(Bank_Churn_Data)
+```
+
+We can remove 2 variables rownumber and customerid as they are related to individual
+
+# Removing rownumber and customerid
+```{r}
+Bank_Churn_Data <- subset (Bank_Churn_Data, select = - RowNumber)
+Bank_Churn_Data <- subset (Bank_Churn_Data, select = - CustomerId)
+```
+
+# Structure of data
+```{r}
+str(Bank_Churn_Data)
+```
+The exited, hascrcard and isactivemember are categorical value but wrongly taken as integer varaiable
+
+# Chaning the variable from int to character
+```{r}
+Bank_Churn_Data$HasCrCard = factor(Bank_Churn_Data$HasCrCard)
+Bank_Churn_Data$IsActiveMember = factor(Bank_Churn_Data$IsActiveMember)
+Bank_Churn_Data$Exited  = factor(Bank_Churn_Data$Exited )
+```
+
+# Descriptive statistics
+```{r}
+descr(Bank_Churn_Data)
+```
+# Revised structure
+```{r}
+str(Bank_Churn_Data)
+```
+# Univariate analysis on numerical data
+
+# Univariate analysis on Age
+```{r}
+descr(Bank_Churn_Data$Age)
+```
+
+# Boxplot of age and its outliers
+
+```{r}
+Age_outliers_churn<-boxplot.stats(Bank_Churn_Data$Age)$out
+boxplot(Bank_Churn_Data$Age, main = "Box plot of age", boxwex = 0.6)
+mtext(paste("Outliers: ", paste(Age_outliers_churn, collapse =", ")), cex = 0.6)
+Age_outliers_churn
+```
+The above box plot shows that the age above 63 are outliers. so, we remove those values from the dataset
+
+# Removal of outliers of age
+```{r}
+Bank_Churn_Data <- subset (Bank_Churn_Data, Age < 63)
+```
+
+# Univariate analysis on Balance
+```{r}
+descr(Bank_Churn_Data$Balance)
+```
+# Boxplot of Balance and its outliers
+
+```{r}
+Balance_outliers_churn<-boxplot.stats(Bank_Churn_Data$Balance)$out
+boxplot(Bank_Churn_Data$Balance, main = "Box plot of Balance", boxwex = 0.6)
+mtext(paste("Outliers: ", paste(Balance_outliers_churn, collapse =", ")), cex = 0.6)
+Balance_outliers_churn
+```
+There are no outliers
+
+# Univariate analysis on CreditScore
+```{r}
+descr(Bank_Churn_Data$CreditScore)
+```
+# Boxplot of CreditScore and its outliers
+```{r}
+CreditScore_outliers_churn<-boxplot.stats(Bank_Churn_Data$CreditScore)$out
+boxplot(Bank_Churn_Data$CreditScore, main = "Box plot of CreditScore", boxwex = 0.6)
+mtext(paste("Outliers: ", paste(CreditScore_outliers_churn, collapse =", ")), cex = 0.6)
+CreditScore_outliers_churn
+```
+We can see that less than 376 credit score are outliers. So, we remove those values from the dataset.
+
+# Removal of outliers of CreditScore
+```{r}
+Bank_Churn_Data <- subset (Bank_Churn_Data, CreditScore > 376)
+```
+
+# Univariate analysis on EstimatedSalary
+```{r}
+descr(Bank_Churn_Data$EstimatedSalary)
+```
+
+# Boxplot of EstimatedSalary and its outliers
+```{r}
+EstimatedSalary_outliers_churn<-boxplot.stats(Bank_Churn_Data$EstimatedSalary)$out
+boxplot(Bank_Churn_Data$EstimatedSalary, main = "Box plot of EstimatedSalary", boxwex = 0.6)
+mtext(paste("Outliers: ", paste(EstimatedSalary_outliers_churn, collapse =", ")), cex = 0.6)
+EstimatedSalary_outliers_churn
+```
+There are no outliers
+
+# Univariate analysis on NumOfProducts
+```{r}
+descr(Bank_Churn_Data$NumOfProducts)
+```
+
+# Boxplot of NumOfProducts and its outliers
+```{r}
+NumOfProducts_outliers_churn<-boxplot.stats(Bank_Churn_Data$NumOfProducts)$out
+boxplot(Bank_Churn_Data$NumOfProducts, main = "Box plot of NumOfProducts", boxwex = 0.6)
+mtext(paste("Outliers: ", paste(NumOfProducts_outliers_churn, collapse =", ")), cex = 0.6)
+NumOfProducts_outliers_churn
+```
+We can see that there are few people having 4 products and it is an outliers here. SO, we remove it from the dataset
+
+# Removal of outliers of NumOfProducts
+```{r}
+Bank_Churn_Data <- subset (Bank_Churn_Data, NumOfProducts < 4)
+```
+
+# Univariate analysis on Tenure
+```{r}
+descr(Bank_Churn_Data$Tenure)
+```
+
+# Boxplot of Tenure and its outliers
+```{r}
+Tenure_outliers_churn<-boxplot.stats(Bank_Churn_Data$Tenure)$out
+boxplot(Bank_Churn_Data$Tenure, main = "Box plot of Tenure", boxwex = 0.6)
+mtext(paste("Outliers: ", paste(Tenure_outliers_churn, collapse =", ")), cex = 0.6)
+Tenure_outliers_churn
+```
+There are no outliers for tenure
+
+# Univariate analysis on categorical values
+
+I analyzed the categorical values using frequency distribution to figure out least distribution among the distributed values.
+
+# Frequency distribution of Geography
+```{r}
+tab1(Bank_Churn_Data$Geography, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of Geography", xlab ="Geography")
+```
+
+# Frequency distribution of Gender
+```{r}
+tab1(Bank_Churn_Data$Gender, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of Gender", xlab ="Gender")
+```
+There are more people having account with bank compared to female members
+
+# Frequency distribution of HasCrCard
+
+```{r}
+tab1(Bank_Churn_Data$HasCrCard, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of HasCrCard", xlab ="HasCrCard")
+```
+
+Around 70% of customers have a credit card with bank and only 30% of people without credit card
+
+# Frequency distribution of IsActiveMember
+
+```{r}
+tab1(Bank_Churn_Data$IsActiveMember, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of IsActiveMember", xlab ="IsActiveMember")
+```
+Almost 50% of customer are not actively making transaction in bank. 
+
+# Frequency distribution of Exited 
+```{r}
+tab1(Bank_Churn_Data$Exited , sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of Exited ", xlab ="Exited ")
+```
+We could see from the above frequency distribution that only 20% of customers was a loyal customer and approximately 80% of customers closed the bank account
+
+# Bivariate analysis to see the relationship between dependant and independant variable
+Here, we will analyze the relationship between response and explanatory variables.
+
+
+# Relationship between Exited and Age
+```{r}
+Age_Exited = glm(Exited~ Age, data = Bank_Churn_Data, family = "binomial")
+summary(Age_Exited)
+```
+There is a significant relationship between age and exited
+
+```{r}
+discretized.Age = cut(Bank_Churn_Data$Age, c(0, 10, 20, 30, 40, 50, 60,70))
+ggplot(Bank_Churn_Data, aes(x = discretized.Age , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
+```
+
+# Relationship between Exited and Balance
+```{r}
+Balance_Exited = glm(Exited~ Balance, data = Bank_Churn_Data, family = "binomial")
+summary(Balance_Exited)
+```
+There is a significant relationship between balance and exited
+
+```{r}
+discretized.Balance = cut(Bank_Churn_Data$Balance, c(0, 50000, 100000, 150000, 200000, 250000, 300000))
+ggplot(Bank_Churn_Data, aes(x = discretized.Balance , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
+```
+######################################Have to check the above error
+
+# Relationship between Exited and CreditScore
+```{r}
+CreditScore_Exited = glm(Exited~ CreditScore, data = Bank_Churn_Data, family = "binomial")
+summary(Balance_Exited)
+```
+The credit score is significant to predict the exited
+
+```{r}
+discretized.CreditScore = cut(Bank_Churn_Data$CreditScore, c(0,400, 500, 600, 700, 800, 900))
+ggplot(Bank_Churn_Data, aes(x = discretized.CreditScore , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
+```
+We can infer from the above bar chart that more people are churned when the credit score is between 600 and 700.
+
+# Relationship between Exited and EstimatedSalary
+```{r}
+EstimatedSalary_Exited = glm(Exited~ EstimatedSalary, data = Bank_Churn_Data, family = "binomial")
+summary(EstimatedSalary_Exited)
+```
+The coefficient of the estimated salary are not significant to predict the exited
+
+
+```{r}
+discretized.EstimatedSalary = cut(Bank_Churn_Data$EstimatedSalary, c(0,40000, 80000, 120000, 160000, 200000))
+ggplot(Bank_Churn_Data, aes(x = discretized.EstimatedSalary , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
+```
+################################################### have to check the error
+
+# Relationship between Exited and NumOfProducts
+```{r}
+NumOfProducts_Exited = glm(Exited~ NumOfProducts, data = Bank_Churn_Data, family = "binomial")
+summary(NumOfProducts_Exited)
+```
+The number of bank products held by customers has a significant relationship to predict the customers exited
+
+```{r}
+ggplot(Bank_Churn_Data, aes(x = NumOfProducts , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
+```
+The percentage of the churn rate for customer having 1 and 2 account having more churn rate comparedd to customer having 3 products
+
+# Relationship between Exited and Tenure
+```{r}
+Tenure_Exited = glm(Exited~ Tenure, data = Bank_Churn_Data, family = "binomial")
+summary(Tenure_Exited)
+```
+The coefficient of the tenure is not significant to predict the exited
+
+```{r}
+ggplot(Bank_Churn_Data, aes(x = Tenure , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
+```
+It is surprising to see that 828 customer after having 7 years of relationship with bank, that was the highest churn numbers among different tenures.
+
+# Relationship between Exited and Geography
+
+```{r}
+Geography_Exited = glm(Exited~ Geography, data = Bank_Churn_Data, family = "binomial")
+summary(Geography_Exited)
+```
+
+There is no significant relationship between geography and exited due to some of the coefficients are not significant
+
+
+```{r}
+ggplot(Bank_Churn_Data, aes(x = Geography , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
+```
+France has the highest churn rate of customers among others. Almost 85% of the customer closed the account.
+
+# Relationship between Exited and Gender
+
+```{r}
+Gender_Exited = glm(Exited~ Gender, data = Bank_Churn_Data, family = "binomial")
+summary(Gender_Exited)
+```
+There is a significant relationship between gender and exited
+
+```{r}
+ggplot(Bank_Churn_Data, aes(x = Gender , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
+```
+
+There is a highest churn rate with male customer with approximate churn percentage of 84% as against female churn rate of 75% approximately.
+
+# Relationship between Exited and HasCrCard
+
+```{r}
+HasCrCard_Exited = glm(Exited~ HasCrCard, data = Bank_Churn_Data, family = "binomial")
+summary(HasCrCard_Exited)
+```
+There is no significant relationship between the customer having credit card and exited because of its coefficients are not significant.
+
+```{r}
+ggplot(Bank_Churn_Data, aes(x = HasCrCard , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
+```
+Almost 80% of customers closed the account irrespective of customers having credit card or not.
+
+# Relationship between Exited and IsActiveMember
+
+```{r}
+IsActiveMember_Exited = glm(Exited~ IsActiveMember, data = Bank_Churn_Data, family = "binomial")
+summary(IsActiveMember_Exited)
+```
+There is a significant relationship between IsActiveMember and Exited.
+
+```{r}
+ggplot(Bank_Churn_Data, aes(x = IsActiveMember , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
+```
+
+It is surprising to notice that actively transacted customers(86%) have high percentage of churn rate against customers who have not transacted actively (75%)
+
+
+
