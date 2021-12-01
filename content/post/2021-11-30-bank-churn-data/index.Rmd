@@ -340,5 +340,352 @@ ggplot(Bank_Churn_Data, aes(x = IsActiveMember , fill = Exited )) + geom_bar(pos
 
 It is surprising to notice that actively transacted customers(86%) have high percentage of churn rate against customers who have not transacted actively (75%)
 
+# Full model logistic regression
+```{r}
+full_model_bank_churn = glm(Exited ~ ., family = "binomial", data = Bank_Churn_Data)
+summary(full_model_bank_churn)
+```
+# Backward Regression
+
+```{r}
+mod_step_bank_churn<- stepAIC(full_model_bank_churn, direction = 'backward', trace = FALSE)
+mod_step_bank_churn
+```
+# Bootstrap method
+Using bootstrap re sampling with replacement method to access the consistency predictors selected with stepwise
+```{r message = FALSE, warning = FALSE, echo = FALSE}
+library(bootStepAIC)
+```
+```{r}
+mod_boot_bank_churn<- boot.stepAIC(full_model_bank_churn, Bank_Churn_Data, B =50)
+```
+
+## Bootstrap summary
+
+```{r}
+print(mod_boot_bank_churn)
+```
+
+# Best model by backward and bootstrap method
+```{r}
+best_bootmodel_bank_churn<- glm(formula = Exited ~ Geography + Gender + Age + Tenure + Balance + NumOfProducts + 
+    IsActiveMember, family = "binomial", 
+    data = Bank_Churn_Data)
+summary(best_bootmodel_bank_churn) 
+```
+We could see in the above selected bootstrap and stepwise regression model that some of the coefficients such as geography and tenure are not significant. SO to get better significant model, geography and tenure are to be removed.
+
+# Best model after many iterations
+```{r}
+bestmodel<- glm(formula = Exited ~  Gender + Age + Balance + NumOfProducts + 
+    IsActiveMember, family = "binomial", 
+    data = Bank_Churn_Data)
+summary(bestmodel)
+```
+The above is the best model after many iterations as all the coefficients are 99.9% significant to predict the response variable exited. 
+
+# Data resampling
+```{r}
+bank_churn_split <- initial_split (Bank_Churn_Data, prop = 0.80, strata = Exited)
+bank_churn_training <- bank_churn_split %>%
+  training()
+bank_churn_test <- bank_churn_split %>%
+  testing()
+```
+
+We have taken 80:20 split for data sampling. We have made training data to fit the model and test the model using test set.
+
+# Checking number of rows in training and test data
+
+```{r}
+nrow(bank_churn_training)
+nrow(bank_churn_test)
+```
+There are total 7654 numbers of row in training data and 1915 numbers of row in test data.
+
+# Checking multicollinearity between numerical values in a training bank churn data set
+```{r}
+bank_churn_training %>%
+  select_if(is.numeric) %>%
+  cor()
+```
+
+There is no multi-colinearity between the independent numeric variables.
 
 
+# Future engineering
+This is the step to pre-processing of data
+```{r}
+bank_churn_recipe <- recipe(Exited ~ ., data = bank_churn_training) %>%
+  step_corr(all_numeric(), threshold =0.8) %>%
+  step_normalize(all_numeric()) %>%
+  step_dummy(all_nominal(), -all_outcomes())
+bank_churn_recipe
+```
+There are 10 predictor variable and 1 outcome variable.
+
+# Recipe training
+```{r}
+bank_churn_recipe_prep<- bank_churn_recipe %>%
+  prep(training = bank_churn_training)
+bank_churn_recipe_prep
+```
+We have prepared the training data set.
+
+# Preprocess training data
+```{r}
+bank_churn_training_prep <- bank_churn_recipe_prep %>%
+  bake (new_data = NULL)
+bank_churn_training_prep
+```
+We have pre-processed the training data set.
+
+# Preprocess test data
+```{r}
+bank_churn_test_prep <- bank_churn_recipe_prep %>%
+  bake (new_data = bank_churn_test)
+bank_churn_test_prep
+```
+
+We pre-processed the test data.
+
+# Machine learning models using random forest
+```{r}
+bank_churn_rf_model<- rand_forest(mtry =4,trees = 100, min_n =10) %>%
+  set_engine('ranger') %>%
+  set_mode('classification')
+```
+We have used 100 trees to create a model using random forest
+
+# Training a forest
+```{r}
+bank_churn_fit_rf <- bank_churn_rf_model %>%
+  fit (Exited ~ ., data = bank_churn_training_prep)
+bank_churn_fit_rf
+```
+
+# Predicting outcome variables
+
+```{r}
+bank_churn_class_preds_rf <- predict(bank_churn_fit_rf, new_data = bank_churn_test_prep, type = "class")
+bank_churn_class_preds_rf
+```
+
+The above are predicted outcomes using test set
+
+# Estimated probabilities
+```{r}
+bank_churn_prob_preds_rf <- predict(bank_churn_fit_rf, new_data = bank_churn_test_prep, type = "prob")
+bank_churn_prob_preds_rf
+```
+
+The above are the predicted probabilities using test data set.
+
+
+# Combining results
+
+```{r}
+bank_churn_results_rf <- bank_churn_test_prep %>%
+  bind_cols(bank_churn_class_preds_rf, bank_churn_prob_preds_rf)
+bank_churn_results_rf
+```
+We have combined the predicted outcome and probabilities into the preprocessed test data set.
+
+# Assessing model fit using confusion matrix
+```{r}
+bank_churn_results_rf %>%
+  conf_mat(truth = Exited, estimate = .pred_class) %>%
+autoplot(type = 'heatmap')
+```
+
+# Correct predictions of test set
+True negative is 1468 customers, who churned. True positive is 157 people, who was a loyal customer and did not churn. 
+
+# Classification error of test set
+False positive is 68 people, who are predicted as not churned but actually churned. False negative is 222 people, who are predicted as churned but actually not churned and was loyal to bank.
+
+# Combining models and recipe
+```{r}
+bank_churn_wkfl_rf<- workflow() %>%
+  add_model(bank_churn_rf_model) %>%
+  add_recipe(bank_churn_recipe)
+bank_churn_wkfl_rf
+```
+
+# Model fitting with workflow
+```{r}
+bank_churn_wkfl_fit_rf <- bank_churn_wkfl_rf %>%
+  last_fit(split = bank_churn_split)
+bank_churn_wkfl_fit_rf %>%
+  collect_metrics()
+```
+
+We can see here the accuracy of the random forest model is 85.27% and roc_auc is 84.86%
+
+# Collecting predictions
+```{r}
+bank_churn_wkfl_preds_rf <- bank_churn_wkfl_fit_rf %>%
+  collect_predictions()
+bank_churn_wkfl_preds_rf
+```
+# Confusion matrix
+```{r}
+conf_mat(bank_churn_wkfl_preds_rf, truth = Exited, estimate = .pred_class) %>%
+  autoplot(type = 'heatmap')
+```
+We could that there is a reduction in both false positive and negative.
+
+# Exploring custom metrics
+```{r}
+bank_churn_metrics_rf <- metric_set(roc_auc, sens, spec, accuracy)
+bank_churn_wkfl_preds_rf %>%
+bank_churn_metrics_rf(truth = Exited, estimate = .pred_class, .pred_1)
+```
+# Creating k-fold cross validation
+```{r}
+set.seed(222)
+bank_churn_folds_rf <- vfold_cv(bank_churn_training, v = 10, strata = Exited)
+bank_churn_folds_rf
+```
+We have used 10 times k-fold cross validation to do re-sampling.
+
+# Model training with cross validation
+```{r}
+bank_churn_rs_fit_rf <-bank_churn_wkfl_rf %>%
+  fit_resamples(resamples = bank_churn_folds_rf, metrics = bank_churn_metrics_rf)
+bank_churn_rs_fit_rf %>%
+  collect_metrics()
+```
+
+
+We can see above that accuracy of the model is improved to 86.30% from 85.27% and roc-auc is also improved to 85.10% from 84.86% using k-fold cross validation
+
+
+# Detailed cross_validation results
+```{r}
+bank_churn_rs_metrics_rf <-bank_churn_rs_fit_rf %>%
+  collect_metrics(summarize = FALSE)
+bank_churn_rs_metrics_rf 
+```
+
+
+
+# Summarizing cross validation results
+```{r}
+bank_churn_rs_metrics_rf %>%
+  group_by(.metric) %>%
+  summarize(min= min(.estimate),
+            median = median(.estimate),
+            max = max(.estimate),
+            sd = sd(.estimate))
+```
+
+# Hyper parameter tuning
+```{r}
+bank_churn_rf_tune_model <- rand_forest(mtry = tune(), trees = tune(), min_n = tune()) %>%
+  set_engine('ranger') %>%
+  set_mode('classification')
+bank_churn_rf_tune_model
+```
+# Creating tuning workflow
+```{r}
+bank_churn_tune_wkfl_rf <- bank_churn_wkfl_rf %>%
+  update_model(bank_churn_rf_tune_model)
+bank_churn_tune_wkfl_rf
+```
+
+
+# Identifying hyperparameters
+```{r}
+parameters(bank_churn_rf_tune_model)
+```
+# Hyperparameter tuning with cross validation
+```{r}
+bank_churn_rf_tuning <- bank_churn_tune_wkfl_rf %>%
+  tune_grid(resamples= bank_churn_folds_rf,  metrics = bank_churn_metrics_rf)
+bank_churn_rf_tuning
+```                                                                                                                                                               
+
+
+
+# Exploring tuning results
+```{r}
+bank_churn_rf_tuning %>%
+  collect_metrics()
+```
+
+# Detailed tuning results
+```{r}
+bank_churn_rf_tuning %>%
+  collect_metrics(summarize = FALSE)
+```
+
+# Exploring tuning results
+```{r}
+bank_churn_rf_tuning %>%
+  collect_metrics(summarize = FALSE) %>%
+  filter(.metric == 'roc_auc') %>%
+  group_by (id) %>%
+  summarize( min_roc_auc = min(.estimate),
+             median_roc_auc = median(.estimate),
+             max_roc_auc = max(.estimate))
+```
+
+# Viewing the best performing model
+```{r}
+bank_churn_rf_tuning %>%
+  show_best(metric = 'roc_auc', n =5)
+```
+
+Model 8 is the best model
+
+# Selecting the best model
+```{r}
+bank_churn_best_rf_model <- bank_churn_rf_tuning %>%
+  select_best(metric = 'roc_auc')
+bank_churn_best_rf_model 
+```
+
+The best parameters are mtry is 4, trees is 1848 and min_n is 31 and the best model is Preprocessor1_Model08
+
+# Finalizing the workflow
+```{r}
+final_bank_churn_wkfl_rf <- bank_churn_tune_wkfl_rf %>%
+  finalize_workflow(bank_churn_best_rf_model)
+final_bank_churn_wkfl_rf
+```
+
+
+# Model fitting
+```{r}
+bank_churn_final_fit_rf <- final_bank_churn_wkfl_rf %>%
+  last_fit(split = bank_churn_split)
+bank_churn_final_fit_rf %>%
+  collect_metrics()
+
+```
+
+
+We can see above that accuracy and roc-auc (87.05% & 87.99% respectively) are improved compared to the model without tuning. 
+
+# collecting predictions
+```{r}
+bank_churn_prediction_rf<- bank_churn_final_fit_rf %>%
+  collect_predictions()
+bank_churn_prediction_rf
+```
+
+
+```{r}
+conf_mat(bank_churn_prediction_rf, truth = Exited, estimate = .pred_class) %>%
+  autoplot(type = 'heatmap')
+```
+
+
+# Correct predictions of test set
+True negative is 1485 customers, who churned. True positive is 182 people, who was a loyal customer and did not churn. 
+
+# Classification error of test set
+False positive is 51 people, who are predicted as not churned but actually churned. False negative is 197 people, who are predicted as churned but actually not churned and was loyal to bank.
+
+Almost 80% of the customers churned

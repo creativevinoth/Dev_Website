@@ -29,7 +29,7 @@ library(SIBER)
 
 
 ```{r message = FALSE, warning = FALSE, echo = FALSE, include = FALSE}
-bank <- read.csv("D:/Vinoth peronal/UNB/STUDY/Fall 2021/Business analytics/Dev_Website/content/post/2021-10-30-my-first-post/bank.csv")
+bank <- read.csv("D:/Vinoth peronal/UNB/STUDY/Fall 2021/Business analytics/Dev_Website/content/post/2021-11-11-bank-updated/bank.csv")
 ```
 
 The report of logistic regression on bank data set to answer if customer will subscribe term deposit or not
