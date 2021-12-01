@@ -809,11 +809,11 @@ mod_step_bank_churn</code></pre>
 ## Geography       100
 ## IsActiveMember  100
 ## NumOfProducts   100
-## Balance          88
-## Tenure           60
-## CreditScore      44
-## EstimatedSalary  38
-## HasCrCard        14
+## Balance          94
+## Tenure           52
+## EstimatedSalary  34
+## CreditScore      32
+## HasCrCard        26
 ## 
 ## Coefficients Sign
 ##                   + (%)  - (%)
@@ -821,13 +821,13 @@ mod_step_bank_churn</code></pre>
 ## Balance          100.00   0.00
 ## EstimatedSalary  100.00   0.00
 ## GeographyGermany 100.00   0.00
-## GeographySpain    70.00  30.00
-## HasCrCard1        42.86  57.14
+## GeographySpain    60.00  40.00
+## HasCrCard1        15.38  84.62
+## Tenure             3.85  96.15
 ## CreditScore        0.00 100.00
 ## GenderMale         0.00 100.00
 ## IsActiveMember1    0.00 100.00
 ## NumOfProducts      0.00 100.00
-## Tenure             0.00 100.00
 ## 
 ## Stat Significance
 ##                     (%)
@@ -836,12 +836,12 @@ mod_step_bank_churn</code></pre>
 ## GeographyGermany 100.00
 ## IsActiveMember1  100.00
 ## NumOfProducts    100.00
-## Balance           86.36
-## Tenure            63.33
-## CreditScore       45.45
-## HasCrCard1        42.86
-## EstimatedSalary   42.11
-## GeographySpain    10.00
+## Balance           78.72
+## Tenure            57.69
+## EstimatedSalary   52.94
+## HasCrCard1        38.46
+## CreditScore       31.25
+## GeographySpain     4.00
 ## 
 ## 
 ## The stepAIC() for the original data-set gave
@@ -975,20 +975,20 @@ bank_churn_test &lt;- bank_churn_split %&gt;%
 <pre class="r"><code>bank_churn_training %&gt;%
   select_if(is.numeric) %&gt;%
   cor()</code></pre>
-<pre><code>##                   CreditScore           Age        Tenure       Balance
-## CreditScore      1.0000000000 -0.0005626469  0.0002274911  0.0007726393
-## Age             -0.0005626469  1.0000000000 -0.0123786627  0.0468639241
-## Tenure           0.0002274911 -0.0123786627  1.0000000000 -0.0161014336
-## Balance          0.0007726393  0.0468639241 -0.0161014336  1.0000000000
-## NumOfProducts    0.0075203453 -0.0528727927  0.0168500890 -0.3315702852
-## EstimatedSalary -0.0015708436 -0.0093230263  0.0108652084 -0.0035422861
+<pre><code>##                  CreditScore          Age       Tenure      Balance
+## CreditScore      1.000000000 -0.009034436  0.004726331  0.008529413
+## Age             -0.009034436  1.000000000 -0.006376678  0.036952339
+## Tenure           0.004726331 -0.006376678  1.000000000 -0.014975603
+## Balance          0.008529413  0.036952339 -0.014975603  1.000000000
+## NumOfProducts    0.006012924 -0.054173474  0.011957078 -0.330258453
+## EstimatedSalary  0.002161754 -0.003510769  0.017125291  0.019975431
 ##                 NumOfProducts EstimatedSalary
-## CreditScore       0.007520345    -0.001570844
-## Age              -0.052872793    -0.009323026
-## Tenure            0.016850089     0.010865208
-## Balance          -0.331570285    -0.003542286
-## NumOfProducts     1.000000000     0.024464746
-## EstimatedSalary   0.024464746     1.000000000</code></pre>
+## CreditScore       0.006012924     0.002161754
+## Age              -0.054173474    -0.003510769
+## Tenure            0.011957078     0.017125291
+## Balance          -0.330258453     0.019975431
+## NumOfProducts     1.000000000     0.016048706
+## EstimatedSalary   0.016048706     1.000000000</code></pre>
 <p>There is no multi-colinearity between the independent numeric variables.</p>
 </div>
 <div id="future-engineering" class="section level1">
@@ -1042,18 +1042,18 @@ bank_churn_recipe_prep</code></pre>
   bake (new_data = NULL)
 bank_churn_training_prep</code></pre>
 <pre><code>## # A tibble: 7,654 x 12
-##    CreditScore    Age    Tenure Balance NumOfProducts EstimatedSalary Exited
-##          &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt; &lt;fct&gt; 
-##  1      -0.451  0.379 -1.38       0.112        -0.940           0.214 0     
-##  2       0.494  0.151 -1.38      -1.23          0.878          -0.112 0     
-##  3       2.06   0.606 -1.04       0.781        -0.940          -0.368 0     
-##  4       1.77   1.40   0.692     -1.23          0.878          -1.57  0     
-##  5      -1.56   0.720 -0.345      1.05          0.878          -0.440 0     
-##  6       0.339 -1.21  -1.04       0.927        -0.940          -0.496 0     
-##  7      -1.60  -1.56  -0.691     -1.23          0.878          -0.415 0     
-##  8      -1.06  -1.44   0.000542  -1.23          0.878           1.58  0     
-##  9      -0.170 -0.304  0.692     -1.23          0.878          -0.596 0     
-## 10      -0.368  0.834 -0.691      1.06          0.878          -0.625 0     
+##    CreditScore    Age  Tenure Balance NumOfProducts EstimatedSalary Exited
+##          &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt; &lt;fct&gt; 
+##  1      -0.440  0.365 -1.40     0.121        -0.942           0.218 0     
+##  2       2.08   0.592 -1.05     0.789        -0.942          -0.362 0     
+##  3       1.79   1.39   0.684   -1.22          0.878          -1.56  0     
+##  4      -1.55   0.706 -0.359    1.05          0.878          -0.434 0     
+##  5       0.352 -1.22  -1.05     0.934        -0.942          -0.490 0     
+##  6      -1.27  -0.769  0.336    0.413         0.878          -0.343 0     
+##  7      -1.60  -1.56  -0.706   -1.22          0.878          -0.409 0     
+##  8      -1.82  -0.429  1.73    -1.22          0.878          -1.28  0     
+##  9      -1.05  -1.45  -0.0114  -1.22          0.878           1.58  0     
+## 10      -1.05  -1.56   1.38    -1.22          0.878          -1.49  0     
 ## # ... with 7,644 more rows, and 5 more variables: Geography_Germany &lt;dbl&gt;,
 ## #   Geography_Spain &lt;dbl&gt;, Gender_Male &lt;dbl&gt;, HasCrCard_X1 &lt;dbl&gt;,
 ## #   IsActiveMember_X1 &lt;dbl&gt;</code></pre>
@@ -1065,22 +1065,216 @@ bank_churn_training_prep</code></pre>
   bake (new_data = bank_churn_test)
 bank_churn_test_prep</code></pre>
 <pre><code>## # A tibble: 1,915 x 12
-##    CreditScore    Age Tenure Balance NumOfProducts EstimatedSalary Exited
-##          &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt; &lt;fct&gt; 
-##  1      -1.28  -0.759  0.346   0.404         0.878          -0.349 0     
-##  2      -1.82  -0.418  1.73   -1.23          0.878          -1.29  0     
-##  3       0.775 -1.56   0.346  -1.23          0.878          -0.792 0     
-##  4      -0.160 -0.646  1.04   -1.23          0.878           0.666 0     
-##  5      -0.773 -1.44  -0.691  -1.23          0.878           0.422 0     
-##  6      -1.83   0.834 -1.73    0.921        -0.940          -1.26  1     
-##  7      -1.68  -0.759 -0.691   1.10         -0.940           0.240 0     
-##  8      -1.86   0.265 -0.345  -1.23         -0.940          -0.523 0     
-##  9       1.90   1.29  -1.04    0.875        -0.940           1.64  1     
-## 10       1.29  -0.646 -0.345   0.523         0.878           0.457 0     
+##    CreditScore     Age  Tenure Balance NumOfProducts EstimatedSalary Exited
+##          &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt; &lt;fct&gt; 
+##  1       0.509  0.139  -1.40    -1.22          0.878          -0.107 0     
+##  2      -0.158 -0.315   0.684   -1.22          0.878          -0.591 0     
+##  3      -0.356  0.819  -0.706    1.07          0.878          -0.619 0     
+##  4       0.196  0.933  -0.706   -1.22          0.878          -1.59  0     
+##  5       2.04   0.0251 -0.0114  -1.22         -0.942           1.52  0     
+##  6      -0.617  0.139  -0.706   -1.22          2.70            0.703 1     
+##  7      -1.86   0.252  -0.359   -1.22         -0.942          -0.518 0     
+##  8       0.259 -1.90    1.03     0.354        -0.942          -1.42  0     
+##  9      -1.37  -0.202   1.38    -1.22          0.878           0.792 0     
+## 10       0.884 -1.90   -1.40     1.64          0.878          -1.35  0     
 ## # ... with 1,905 more rows, and 5 more variables: Geography_Germany &lt;dbl&gt;,
 ## #   Geography_Spain &lt;dbl&gt;, Gender_Male &lt;dbl&gt;, HasCrCard_X1 &lt;dbl&gt;,
 ## #   IsActiveMember_X1 &lt;dbl&gt;</code></pre>
 <p>We pre-processed the test data.</p>
+</div>
+<div id="machine-learning-models-using-logistic-regression" class="section level1">
+<h1>Machine learning models using logistic regression</h1>
+<p>I specify the logistic regression model here</p>
+<pre class="r"><code>bank_churn_logistic_model&lt;- logistic_reg() %&gt;%
+  set_engine(&#39;glm&#39;) %&gt;%
+  set_mode(&#39;classification&#39;)</code></pre>
+</div>
+<div id="model-fitting" class="section level1">
+<h1>Model fitting</h1>
+<pre class="r"><code>bank_churn_logistic_fit &lt;- bank_churn_logistic_model %&gt;%
+  fit(Exited ~ ., data = bank_churn_training_prep)
+bank_churn_logistic_fit</code></pre>
+<pre><code>## parsnip model object
+## 
+## Fit time:  31ms 
+## 
+## Call:  stats::glm(formula = Exited ~ ., family = stats::binomial, data = data)
+## 
+## Coefficients:
+##       (Intercept)        CreditScore                Age             Tenure  
+##          -1.13800           -0.02816            0.92855           -0.02567  
+##           Balance      NumOfProducts    EstimatedSalary  Geography_Germany  
+##           0.09149           -0.22079            0.04218            0.78251  
+##   Geography_Spain        Gender_Male       HasCrCard_X1  IsActiveMember_X1  
+##          -0.02083           -0.52846           -0.09930           -0.92568  
+## 
+## Degrees of Freedom: 7653 Total (i.e. Null);  7642 Residual
+## Null Deviance:       7611 
+## Residual Deviance: 6178  AIC: 6202</code></pre>
+</div>
+<div id="predicting-outcome-categories" class="section level1">
+<h1>Predicting outcome categories</h1>
+<pre class="r"><code>bank_churn_logistic_class_preds &lt;- predict (bank_churn_logistic_fit, new_data = bank_churn_test_prep, type =&quot;class&quot;)
+bank_churn_logistic_class_preds</code></pre>
+<pre><code>## # A tibble: 1,915 x 1
+##    .pred_class
+##    &lt;fct&gt;      
+##  1 0          
+##  2 0          
+##  3 0          
+##  4 0          
+##  5 0          
+##  6 0          
+##  7 0          
+##  8 0          
+##  9 0          
+## 10 0          
+## # ... with 1,905 more rows</code></pre>
+<p>The above .pred class is the outcome of our results. That is if the customer will churn or not. The number o means churn and 1 means no churn.</p>
+</div>
+<div id="estimated-probabilities" class="section level1">
+<h1>Estimated probabilities</h1>
+<pre class="r"><code>bank_churn_logistic_prob_preds &lt;- predict (bank_churn_logistic_fit, new_data = bank_churn_test_prep, type =&quot;prob&quot;)
+bank_churn_logistic_prob_preds</code></pre>
+<pre><code>## # A tibble: 1,915 x 2
+##    .pred_0 .pred_1
+##      &lt;dbl&gt;   &lt;dbl&gt;
+##  1   0.785  0.215 
+##  2   0.944  0.0562
+##  3   0.758  0.242 
+##  4   0.890  0.110 
+##  5   0.885  0.115 
+##  6   0.855  0.145 
+##  7   0.805  0.195 
+##  8   0.946  0.0543
+##  9   0.955  0.0453
+## 10   0.957  0.0433
+## # ... with 1,905 more rows</code></pre>
+<p>The above prediction are the probabilities of outcome occurrences.</p>
+</div>
+<div id="combining-results" class="section level1">
+<h1>Combining results</h1>
+<pre class="r"><code>bank_churn_logistic_results &lt;- bank_churn_test_prep %&gt;%
+  bind_cols(bank_churn_logistic_class_preds, bank_churn_logistic_prob_preds)
+bank_churn_logistic_results</code></pre>
+<pre><code>## # A tibble: 1,915 x 15
+##    CreditScore     Age  Tenure Balance NumOfProducts EstimatedSalary Exited
+##          &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt; &lt;fct&gt; 
+##  1       0.509  0.139  -1.40    -1.22          0.878          -0.107 0     
+##  2      -0.158 -0.315   0.684   -1.22          0.878          -0.591 0     
+##  3      -0.356  0.819  -0.706    1.07          0.878          -0.619 0     
+##  4       0.196  0.933  -0.706   -1.22          0.878          -1.59  0     
+##  5       2.04   0.0251 -0.0114  -1.22         -0.942           1.52  0     
+##  6      -0.617  0.139  -0.706   -1.22          2.70            0.703 1     
+##  7      -1.86   0.252  -0.359   -1.22         -0.942          -0.518 0     
+##  8       0.259 -1.90    1.03     0.354        -0.942          -1.42  0     
+##  9      -1.37  -0.202   1.38    -1.22          0.878           0.792 0     
+## 10       0.884 -1.90   -1.40     1.64          0.878          -1.35  0     
+## # ... with 1,905 more rows, and 8 more variables: Geography_Germany &lt;dbl&gt;,
+## #   Geography_Spain &lt;dbl&gt;, Gender_Male &lt;dbl&gt;, HasCrCard_X1 &lt;dbl&gt;,
+## #   IsActiveMember_X1 &lt;dbl&gt;, .pred_class &lt;fct&gt;, .pred_0 &lt;dbl&gt;, .pred_1 &lt;dbl&gt;</code></pre>
+</div>
+<div id="assessing-the-model-fit-using-confusion-matrix" class="section level1">
+<h1>Assessing the model fit using Confusion matrix</h1>
+<pre class="r"><code>bank_churn_logistic_results %&gt;%
+  conf_mat(truth = Exited, estimate = .pred_class) %&gt;%
+  autoplot(type = &#39;heatmap&#39;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-68-1.png" width="672" />
+# Correct predictions of test set
+True negative is 1483 customers, who churned. True positive is 120 people, who was a loyal customer and did not churn.</p>
+</div>
+<div id="classification-error-of-test-set" class="section level1">
+<h1>Classification error of test set</h1>
+<p>False positive is 53 people, who are predicted as not churned but actually churned. False negative is 2259 people, who are predicted as churned but actually not churned and was loyal to bank.</p>
+</div>
+<div id="creating-workflow" class="section level1">
+<h1>Creating workflow</h1>
+<pre class="r"><code>bank_churn_logistic_wkfl&lt;- workflow() %&gt;%
+add_model(bank_churn_logistic_model) %&gt;%
+add_recipe(bank_churn_recipe)
+bank_churn_logistic_wkfl</code></pre>
+<pre><code>## == Workflow ====================================================================
+## Preprocessor: Recipe
+## Model: logistic_reg()
+## 
+## -- Preprocessor ----------------------------------------------------------------
+## 3 Recipe Steps
+## 
+## * step_corr()
+## * step_normalize()
+## * step_dummy()
+## 
+## -- Model -----------------------------------------------------------------------
+## Logistic Regression Model Specification (classification)
+## 
+## Computational engine: glm</code></pre>
+<p>We have given instruction above in the model that to check the correlation for all numeric variables and keep the threshold limit as 0.8. We have also given instruction in the model to normalize all the numeric variables and set dummy to all nominal or character variables except the outcome variables because outcome is a character variable.</p>
+</div>
+<div id="train-the-workflow" class="section level1">
+<h1>Train the workflow</h1>
+<pre class="r"><code>bank_churn_logistic__wkfl_fit &lt;- bank_churn_logistic_wkfl %&gt;%
+  last_fit( split = bank_churn_split)
+bank_churn_logistic__wkfl_fit</code></pre>
+<pre><code>## # Resampling results
+## # Manual resampling 
+## # A tibble: 1 x 6
+##   splits              id               .metrics  .notes   .predictions .workflow
+##   &lt;list&gt;              &lt;chr&gt;            &lt;list&gt;    &lt;list&gt;   &lt;list&gt;       &lt;list&gt;   
+## 1 &lt;split [7654/1915]&gt; train/test split &lt;tibble ~ &lt;tibble~ &lt;tibble [1,~ &lt;workflo~</code></pre>
+</div>
+<div id="calculating-performance-metrics-on-test-data" class="section level1">
+<h1>Calculating performance metrics on test data</h1>
+<pre class="r"><code>bank_churn_logistic__wkfl_fit %&gt;%
+   collect_metrics() </code></pre>
+<pre><code>## # A tibble: 2 x 4
+##   .metric  .estimator .estimate .config             
+##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+## 1 accuracy binary         0.837 Preprocessor1_Model1
+## 2 roc_auc  binary         0.804 Preprocessor1_Model1</code></pre>
+<p>The accuracy of the logistic regression model is 83.71% and roc-auc is 81,63%</p>
+</div>
+<div id="collecting-predictions" class="section level1">
+<h1>collecting predictions</h1>
+<pre class="r"><code>bank_churn_logistic_wkfl_fit_results&lt;- bank_churn_logistic__wkfl_fit %&gt;%
+  collect_predictions()
+bank_churn_logistic_wkfl_fit_results</code></pre>
+<pre><code>## # A tibble: 1,915 x 7
+##    id               .pred_0 .pred_1  .row .pred_class Exited .config            
+##    &lt;chr&gt;              &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt; &lt;fct&gt;       &lt;fct&gt;  &lt;chr&gt;              
+##  1 train/test split   0.785  0.215      4 0           0      Preprocessor1_Mode~
+##  2 train/test split   0.944  0.0562    14 0           0      Preprocessor1_Mode~
+##  3 train/test split   0.758  0.242     15 0           0      Preprocessor1_Mode~
+##  4 train/test split   0.890  0.110     23 0           0      Preprocessor1_Mode~
+##  5 train/test split   0.885  0.115     24 0           0      Preprocessor1_Mode~
+##  6 train/test split   0.855  0.145     30 0           1      Preprocessor1_Mode~
+##  7 train/test split   0.805  0.195     40 0           0      Preprocessor1_Mode~
+##  8 train/test split   0.946  0.0543    68 0           0      Preprocessor1_Mode~
+##  9 train/test split   0.955  0.0453    72 0           0      Preprocessor1_Mode~
+## 10 train/test split   0.957  0.0433    73 0           0      Preprocessor1_Mode~
+## # ... with 1,905 more rows</code></pre>
+</div>
+<div id="creating-custom-metrics" class="section level1">
+<h1>Creating custom metrics</h1>
+<pre class="r"><code>bank_churn_logistic_metrics &lt;- metric_set(roc_auc,sens,spec,accuracy)
+bank_churn_logistic_metrics</code></pre>
+<pre><code>## # A tibble: 4 x 3
+##   metric   class        direction
+##   &lt;chr&gt;    &lt;chr&gt;        &lt;chr&gt;    
+## 1 roc_auc  prob_metric  maximize 
+## 2 sens     class_metric maximize 
+## 3 spec     class_metric maximize 
+## 4 accuracy class_metric maximize</code></pre>
+<pre class="r"><code>bank_churn_logistic_wkfl_fit_results %&gt;%
+ bank_churn_logistic_metrics(truth = Exited, estimate = .pred_class, .pred_1)</code></pre>
+<pre><code>## # A tibble: 4 x 3
+##   .metric  .estimator .estimate
+##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt;
+## 1 sens     binary         0.975
+## 2 spec     binary         0.274
+## 3 accuracy binary         0.837
+## 4 roc_auc  binary         0.196</code></pre>
+<p>The above are the metrics using logistic regression.</p>
+<p>Let us develop random forest model and compare against logistic to see which model is more accuracte</p>
 </div>
 <div id="machine-learning-models-using-random-forest" class="section level1">
 <h1>Machine learning models using random forest</h1>
@@ -1096,7 +1290,7 @@ bank_churn_test_prep</code></pre>
 bank_churn_fit_rf</code></pre>
 <pre><code>## parsnip model object
 ## 
-## Fit time:  860ms 
+## Fit time:  920ms 
 ## Ranger result
 ## 
 ## Call:
@@ -1110,7 +1304,7 @@ bank_churn_fit_rf</code></pre>
 ## Target node size:                 10 
 ## Variable importance mode:         none 
 ## Splitrule:                        gini 
-## OOB prediction error (Brier s.):  0.1069227</code></pre>
+## OOB prediction error (Brier s.):  0.107031</code></pre>
 </div>
 <div id="predicting-outcome-variables" class="section level1">
 <h1>Predicting outcome variables</h1>
@@ -1124,52 +1318,52 @@ bank_churn_class_preds_rf</code></pre>
 ##  3 0          
 ##  4 0          
 ##  5 0          
-##  6 0          
+##  6 1          
 ##  7 0          
 ##  8 0          
-##  9 1          
+##  9 0          
 ## 10 0          
 ## # ... with 1,905 more rows</code></pre>
 <p>The above are predicted outcomes using test set</p>
 </div>
-<div id="estimated-probabilities" class="section level1">
+<div id="estimated-probabilities-1" class="section level1">
 <h1>Estimated probabilities</h1>
 <pre class="r"><code>bank_churn_prob_preds_rf &lt;- predict(bank_churn_fit_rf, new_data = bank_churn_test_prep, type = &quot;prob&quot;)
 bank_churn_prob_preds_rf</code></pre>
 <pre><code>## # A tibble: 1,915 x 2
 ##    .pred_0 .pred_1
 ##      &lt;dbl&gt;   &lt;dbl&gt;
-##  1   0.949 0.0512 
-##  2   0.956 0.0441 
-##  3   0.969 0.0312 
-##  4   0.996 0.00374
-##  5   0.999 0.00125
-##  6   0.588 0.412  
-##  7   0.948 0.0518 
-##  8   0.673 0.327  
-##  9   0.403 0.597  
-## 10   0.918 0.0815 
+##  1   0.834 0.166  
+##  2   0.957 0.0433 
+##  3   0.829 0.171  
+##  4   0.975 0.0250 
+##  5   0.726 0.274  
+##  6   0.394 0.606  
+##  7   0.612 0.388  
+##  8   0.855 0.145  
+##  9   0.991 0.00916
+## 10   0.885 0.115  
 ## # ... with 1,905 more rows</code></pre>
 <p>The above are the predicted probabilities using test data set.</p>
 </div>
-<div id="combining-results" class="section level1">
+<div id="combining-results-1" class="section level1">
 <h1>Combining results</h1>
 <pre class="r"><code>bank_churn_results_rf &lt;- bank_churn_test_prep %&gt;%
   bind_cols(bank_churn_class_preds_rf, bank_churn_prob_preds_rf)
 bank_churn_results_rf</code></pre>
 <pre><code>## # A tibble: 1,915 x 15
-##    CreditScore    Age Tenure Balance NumOfProducts EstimatedSalary Exited
-##          &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt; &lt;fct&gt; 
-##  1      -1.28  -0.759  0.346   0.404         0.878          -0.349 0     
-##  2      -1.82  -0.418  1.73   -1.23          0.878          -1.29  0     
-##  3       0.775 -1.56   0.346  -1.23          0.878          -0.792 0     
-##  4      -0.160 -0.646  1.04   -1.23          0.878           0.666 0     
-##  5      -0.773 -1.44  -0.691  -1.23          0.878           0.422 0     
-##  6      -1.83   0.834 -1.73    0.921        -0.940          -1.26  1     
-##  7      -1.68  -0.759 -0.691   1.10         -0.940           0.240 0     
-##  8      -1.86   0.265 -0.345  -1.23         -0.940          -0.523 0     
-##  9       1.90   1.29  -1.04    0.875        -0.940           1.64  1     
-## 10       1.29  -0.646 -0.345   0.523         0.878           0.457 0     
+##    CreditScore     Age  Tenure Balance NumOfProducts EstimatedSalary Exited
+##          &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt; &lt;fct&gt; 
+##  1       0.509  0.139  -1.40    -1.22          0.878          -0.107 0     
+##  2      -0.158 -0.315   0.684   -1.22          0.878          -0.591 0     
+##  3      -0.356  0.819  -0.706    1.07          0.878          -0.619 0     
+##  4       0.196  0.933  -0.706   -1.22          0.878          -1.59  0     
+##  5       2.04   0.0251 -0.0114  -1.22         -0.942           1.52  0     
+##  6      -0.617  0.139  -0.706   -1.22          2.70            0.703 1     
+##  7      -1.86   0.252  -0.359   -1.22         -0.942          -0.518 0     
+##  8       0.259 -1.90    1.03     0.354        -0.942          -1.42  0     
+##  9      -1.37  -0.202   1.38    -1.22          0.878           0.792 0     
+## 10       0.884 -1.90   -1.40     1.64          0.878          -1.35  0     
 ## # ... with 1,905 more rows, and 8 more variables: Geography_Germany &lt;dbl&gt;,
 ## #   Geography_Spain &lt;dbl&gt;, Gender_Male &lt;dbl&gt;, HasCrCard_X1 &lt;dbl&gt;,
 ## #   IsActiveMember_X1 &lt;dbl&gt;, .pred_class &lt;fct&gt;, .pred_0 &lt;dbl&gt;, .pred_1 &lt;dbl&gt;</code></pre>
@@ -1180,13 +1374,14 @@ bank_churn_results_rf</code></pre>
 <pre class="r"><code>bank_churn_results_rf %&gt;%
   conf_mat(truth = Exited, estimate = .pred_class) %&gt;%
 autoplot(type = &#39;heatmap&#39;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-68-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-80-1.png" width="672" />
+The above random forest model fit is better than logistic model fit</p>
 </div>
 <div id="correct-predictions-of-test-set" class="section level1">
 <h1>Correct predictions of test set</h1>
 <p>True negative is 1468 customers, who churned. True positive is 157 people, who was a loyal customer and did not churn.</p>
 </div>
-<div id="classification-error-of-test-set" class="section level1">
+<div id="classification-error-of-test-set-1" class="section level1">
 <h1>Classification error of test set</h1>
 <p>False positive is 68 people, who are predicted as not churned but actually churned. False negative is 222 people, who are predicted as churned but actually not churned and was loyal to bank.</p>
 </div>
@@ -1226,11 +1421,11 @@ bank_churn_wkfl_fit_rf %&gt;%
 <pre><code>## # A tibble: 2 x 4
 ##   .metric  .estimator .estimate .config             
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-## 1 accuracy binary         0.866 Preprocessor1_Model1
-## 2 roc_auc  binary         0.862 Preprocessor1_Model1</code></pre>
-<p>We can see here the accuracy of the random forest model is 85.27% and roc_auc is 84.86%</p>
+## 1 accuracy binary         0.863 Preprocessor1_Model1
+## 2 roc_auc  binary         0.855 Preprocessor1_Model1</code></pre>
+<p>We can see here the accuracy of the random forest model is 85.27% and roc_auc is 84.86%, which are better than logistic` model accuracy (83.71%) and roc_auc (81.63%).</p>
 </div>
-<div id="collecting-predictions" class="section level1">
+<div id="collecting-predictions-1" class="section level1">
 <h1>Collecting predictions</h1>
 <pre class="r"><code>bank_churn_wkfl_preds_rf &lt;- bank_churn_wkfl_fit_rf %&gt;%
   collect_predictions()
@@ -1238,23 +1433,23 @@ bank_churn_wkfl_preds_rf</code></pre>
 <pre><code>## # A tibble: 1,915 x 7
 ##    id               .pred_0 .pred_1  .row .pred_class Exited .config            
 ##    &lt;chr&gt;              &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt; &lt;fct&gt;       &lt;fct&gt;  &lt;chr&gt;              
-##  1 train/test split   0.965 0.0349     10 0           0      Preprocessor1_Mode~
-##  2 train/test split   0.955 0.0448     12 0           0      Preprocessor1_Mode~
-##  3 train/test split   0.977 0.0229     19 0           0      Preprocessor1_Mode~
-##  4 train/test split   0.985 0.0148     21 0           0      Preprocessor1_Mode~
-##  5 train/test split   0.999 0.00125    25 0           0      Preprocessor1_Mode~
-##  6 train/test split   0.641 0.359      35 0           1      Preprocessor1_Mode~
-##  7 train/test split   0.972 0.0279     36 0           0      Preprocessor1_Mode~
-##  8 train/test split   0.646 0.354      40 0           0      Preprocessor1_Mode~
-##  9 train/test split   0.411 0.589      43 1           1      Preprocessor1_Mode~
-## 10 train/test split   0.925 0.0750     45 0           0      Preprocessor1_Mode~
+##  1 train/test split   0.869  0.131      4 0           0      Preprocessor1_Mode~
+##  2 train/test split   0.981  0.0192    14 0           0      Preprocessor1_Mode~
+##  3 train/test split   0.819  0.181     15 0           0      Preprocessor1_Mode~
+##  4 train/test split   0.971  0.029     23 0           0      Preprocessor1_Mode~
+##  5 train/test split   0.718  0.282     24 0           0      Preprocessor1_Mode~
+##  6 train/test split   0.368  0.632     30 1           1      Preprocessor1_Mode~
+##  7 train/test split   0.614  0.386     40 0           0      Preprocessor1_Mode~
+##  8 train/test split   0.832  0.168     68 0           0      Preprocessor1_Mode~
+##  9 train/test split   0.984  0.0157    72 0           0      Preprocessor1_Mode~
+## 10 train/test split   0.870  0.130     73 0           0      Preprocessor1_Mode~
 ## # ... with 1,905 more rows</code></pre>
 </div>
 <div id="confusion-matrix" class="section level1">
 <h1>Confusion matrix</h1>
 <pre class="r"><code>conf_mat(bank_churn_wkfl_preds_rf, truth = Exited, estimate = .pred_class) %&gt;%
   autoplot(type = &#39;heatmap&#39;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-72-1.png" width="672" />
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-84-1.png" width="672" />
 We could that there is a reduction in both false positive and negative.</p>
 </div>
 <div id="exploring-custom-metrics" class="section level1">
@@ -1265,10 +1460,10 @@ bank_churn_metrics_rf(truth = Exited, estimate = .pred_class, .pred_1)</code></p
 <pre><code>## # A tibble: 4 x 3
 ##   .metric  .estimator .estimate
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt;
-## 1 sens     binary         0.964
-## 2 spec     binary         0.470
-## 3 accuracy binary         0.866
-## 4 roc_auc  binary         0.138</code></pre>
+## 1 sens     binary         0.965
+## 2 spec     binary         0.449
+## 3 accuracy binary         0.863
+## 4 roc_auc  binary         0.145</code></pre>
 </div>
 <div id="creating-k-fold-cross-validation" class="section level1">
 <h1>Creating k-fold cross validation</h1>
@@ -1289,6 +1484,7 @@ bank_churn_folds_rf</code></pre>
 ##  8 &lt;split [6889/765]&gt; Fold08
 ##  9 &lt;split [6889/765]&gt; Fold09
 ## 10 &lt;split [6889/765]&gt; Fold10</code></pre>
+<p>Since random forest model is better than logistic model for prediction in terms of its accuracy and roc-auc, We take the random forest model to do cross validation and hyper parameter tuning to further increase the prediction accuracy.</p>
 <p>We have used 10 times k-fold cross validation to do re-sampling.</p>
 </div>
 <div id="model-training-with-cross-validation" class="section level1">
@@ -1300,10 +1496,10 @@ bank_churn_rs_fit_rf %&gt;%
 <pre><code>## # A tibble: 4 x 6
 ##   .metric  .estimator  mean     n std_err .config             
 ##   &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
-## 1 accuracy binary     0.863    10 0.00240 Preprocessor1_Model1
-## 2 roc_auc  binary     0.845    10 0.00797 Preprocessor1_Model1
-## 3 sens     binary     0.964    10 0.00226 Preprocessor1_Model1
-## 4 spec     binary     0.450    10 0.0118  Preprocessor1_Model1</code></pre>
+## 1 accuracy binary     0.862    10 0.00392 Preprocessor1_Model1
+## 2 roc_auc  binary     0.852    10 0.00630 Preprocessor1_Model1
+## 3 sens     binary     0.963    10 0.00171 Preprocessor1_Model1
+## 4 spec     binary     0.451    10 0.0158  Preprocessor1_Model1</code></pre>
 <p>We can see above that accuracy of the model is improved to 86.30% from 85.27% and roc-auc is also improved to 85.10% from 84.86% using k-fold cross validation</p>
 </div>
 <div id="detailed-cross_validation-results" class="section level1">
@@ -1314,16 +1510,16 @@ bank_churn_rs_metrics_rf </code></pre>
 <pre><code>## # A tibble: 40 x 5
 ##    id     .metric  .estimator .estimate .config             
 ##    &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-##  1 Fold01 sens     binary         0.971 Preprocessor1_Model1
-##  2 Fold01 spec     binary         0.401 Preprocessor1_Model1
-##  3 Fold01 accuracy binary         0.858 Preprocessor1_Model1
-##  4 Fold01 roc_auc  binary         0.825 Preprocessor1_Model1
-##  5 Fold02 sens     binary         0.972 Preprocessor1_Model1
-##  6 Fold02 spec     binary         0.441 Preprocessor1_Model1
-##  7 Fold02 accuracy binary         0.867 Preprocessor1_Model1
-##  8 Fold02 roc_auc  binary         0.877 Preprocessor1_Model1
-##  9 Fold03 sens     binary         0.956 Preprocessor1_Model1
-## 10 Fold03 spec     binary         0.474 Preprocessor1_Model1
+##  1 Fold01 sens     binary         0.964 Preprocessor1_Model1
+##  2 Fold01 spec     binary         0.447 Preprocessor1_Model1
+##  3 Fold01 accuracy binary         0.862 Preprocessor1_Model1
+##  4 Fold01 roc_auc  binary         0.842 Preprocessor1_Model1
+##  5 Fold02 sens     binary         0.963 Preprocessor1_Model1
+##  6 Fold02 spec     binary         0.434 Preprocessor1_Model1
+##  7 Fold02 accuracy binary         0.858 Preprocessor1_Model1
+##  8 Fold02 roc_auc  binary         0.857 Preprocessor1_Model1
+##  9 Fold03 sens     binary         0.961 Preprocessor1_Model1
+## 10 Fold03 spec     binary         0.520 Preprocessor1_Model1
 ## # ... with 30 more rows</code></pre>
 </div>
 <div id="summarizing-cross-validation-results" class="section level1">
@@ -1334,8 +1530,8 @@ bank_churn_rs_metrics_rf </code></pre>
             median = median(.estimate),
             max = max(.estimate),
             sd = sd(.estimate))</code></pre>
-<pre><code>##         min    median       max       sd
-## 1 0.4013158 0.8583557 0.9723127 0.199923</code></pre>
+<pre><code>##        min    median       max        sd
+## 1 0.384106 0.8571115 0.9723127 0.2002619</code></pre>
 </div>
 <div id="hyper-parameter-tuning" class="section level1">
 <h1>Hyper parameter tuning</h1>
@@ -1422,16 +1618,16 @@ bank_churn_tune_wkfl_rf</code></pre>
 <pre><code>## # A tibble: 40 x 9
 ##     mtry trees min_n .metric  .estimator  mean     n std_err .config            
 ##    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;              
-##  1     6   374    30 accuracy binary     0.862    10 0.00257 Preprocessor1_Mode~
-##  2     6   374    30 roc_auc  binary     0.848    10 0.00769 Preprocessor1_Mode~
-##  3     6   374    30 sens     binary     0.965    10 0.00248 Preprocessor1_Mode~
-##  4     6   374    30 spec     binary     0.444    10 0.0122  Preprocessor1_Mode~
-##  5     6  1474    21 accuracy binary     0.863    10 0.00259 Preprocessor1_Mode~
-##  6     6  1474    21 roc_auc  binary     0.848    10 0.00782 Preprocessor1_Mode~
-##  7     6  1474    21 sens     binary     0.965    10 0.00211 Preprocessor1_Mode~
-##  8     6  1474    21 spec     binary     0.449    10 0.0119  Preprocessor1_Mode~
-##  9    10  1621    33 accuracy binary     0.861    10 0.00211 Preprocessor1_Mode~
-## 10    10  1621    33 roc_auc  binary     0.846    10 0.00746 Preprocessor1_Mode~
+##  1     6   374    30 accuracy binary     0.863    10 0.00382 Preprocessor1_Mode~
+##  2     6   374    30 roc_auc  binary     0.854    10 0.00594 Preprocessor1_Mode~
+##  3     6   374    30 sens     binary     0.963    10 0.00171 Preprocessor1_Mode~
+##  4     6   374    30 spec     binary     0.459    10 0.0145  Preprocessor1_Mode~
+##  5     6  1474    21 accuracy binary     0.863    10 0.00392 Preprocessor1_Mode~
+##  6     6  1474    21 roc_auc  binary     0.853    10 0.00596 Preprocessor1_Mode~
+##  7     6  1474    21 sens     binary     0.961    10 0.00194 Preprocessor1_Mode~
+##  8     6  1474    21 spec     binary     0.464    10 0.0148  Preprocessor1_Mode~
+##  9    10  1621    33 accuracy binary     0.861    10 0.00412 Preprocessor1_Mode~
+## 10    10  1621    33 roc_auc  binary     0.850    10 0.00604 Preprocessor1_Mode~
 ## # ... with 30 more rows</code></pre>
 </div>
 <div id="detailed-tuning-results" class="section level1">
@@ -1441,16 +1637,16 @@ bank_churn_tune_wkfl_rf</code></pre>
 <pre><code>## # A tibble: 400 x 8
 ##    id      mtry trees min_n .metric  .estimator .estimate .config              
 ##    &lt;chr&gt;  &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;                
-##  1 Fold01     6   374    30 sens     binary         0.967 Preprocessor1_Model01
-##  2 Fold01     6   374    30 spec     binary         0.434 Preprocessor1_Model01
-##  3 Fold01     6   374    30 accuracy binary         0.862 Preprocessor1_Model01
-##  4 Fold01     6   374    30 roc_auc  binary         0.831 Preprocessor1_Model01
-##  5 Fold02     6   374    30 sens     binary         0.972 Preprocessor1_Model01
-##  6 Fold02     6   374    30 spec     binary         0.480 Preprocessor1_Model01
-##  7 Fold02     6   374    30 accuracy binary         0.875 Preprocessor1_Model01
-##  8 Fold02     6   374    30 roc_auc  binary         0.884 Preprocessor1_Model01
-##  9 Fold03     6   374    30 sens     binary         0.953 Preprocessor1_Model01
-## 10 Fold03     6   374    30 spec     binary         0.441 Preprocessor1_Model01
+##  1 Fold01     6   374    30 sens     binary         0.964 Preprocessor1_Model01
+##  2 Fold01     6   374    30 spec     binary         0.454 Preprocessor1_Model01
+##  3 Fold01     6   374    30 accuracy binary         0.863 Preprocessor1_Model01
+##  4 Fold01     6   374    30 roc_auc  binary         0.847 Preprocessor1_Model01
+##  5 Fold02     6   374    30 sens     binary         0.963 Preprocessor1_Model01
+##  6 Fold02     6   374    30 spec     binary         0.447 Preprocessor1_Model01
+##  7 Fold02     6   374    30 accuracy binary         0.860 Preprocessor1_Model01
+##  8 Fold02     6   374    30 roc_auc  binary         0.855 Preprocessor1_Model01
+##  9 Fold03     6   374    30 sens     binary         0.961 Preprocessor1_Model01
+## 10 Fold03     6   374    30 spec     binary         0.493 Preprocessor1_Model01
 ## # ... with 390 more rows</code></pre>
 </div>
 <div id="exploring-tuning-results-1" class="section level1">
@@ -1463,7 +1659,7 @@ bank_churn_tune_wkfl_rf</code></pre>
              median_roc_auc = median(.estimate),
              max_roc_auc = max(.estimate))</code></pre>
 <pre><code>##   min_roc_auc median_roc_auc max_roc_auc
-## 1   0.7856958      0.8499418   0.8847184</code></pre>
+## 1   0.7982721      0.8542885   0.8870289</code></pre>
 </div>
 <div id="viewing-the-best-performing-model" class="section level1">
 <h1>Viewing the best performing model</h1>
@@ -1472,11 +1668,11 @@ bank_churn_tune_wkfl_rf</code></pre>
 <pre><code>## # A tibble: 5 x 9
 ##    mtry trees min_n .metric .estimator  mean     n std_err .config              
 ##   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;                
-## 1     4   839    37 roc_auc binary     0.851    10 0.00798 Preprocessor1_Model06
-## 2     3   427    17 roc_auc binary     0.850    10 0.00810 Preprocessor1_Model05
-## 3     3  1969    11 roc_auc binary     0.850    10 0.00829 Preprocessor1_Model07
-## 4     6   374    30 roc_auc binary     0.848    10 0.00769 Preprocessor1_Model01
-## 5     6  1474    21 roc_auc binary     0.848    10 0.00782 Preprocessor1_Model02</code></pre>
+## 1     4   839    37 roc_auc binary     0.856    10 0.00602 Preprocessor1_Model06
+## 2     3   427    17 roc_auc binary     0.854    10 0.00625 Preprocessor1_Model05
+## 3     3  1969    11 roc_auc binary     0.854    10 0.00611 Preprocessor1_Model07
+## 4     6   374    30 roc_auc binary     0.854    10 0.00594 Preprocessor1_Model01
+## 5     6  1474    21 roc_auc binary     0.853    10 0.00596 Preprocessor1_Model02</code></pre>
 <p>Model 8 is the best model</p>
 </div>
 <div id="selecting-the-best-model" class="section level1">
@@ -1516,7 +1712,7 @@ final_bank_churn_wkfl_rf</code></pre>
 ## 
 ## Computational engine: ranger</code></pre>
 </div>
-<div id="model-fitting" class="section level1">
+<div id="model-fitting-1" class="section level1">
 <h1>Model fitting</h1>
 <pre class="r"><code>bank_churn_final_fit_rf &lt;- final_bank_churn_wkfl_rf %&gt;%
   last_fit(split = bank_churn_split)
@@ -1525,11 +1721,11 @@ bank_churn_final_fit_rf %&gt;%
 <pre><code>## # A tibble: 2 x 4
 ##   .metric  .estimator .estimate .config             
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-## 1 accuracy binary         0.870 Preprocessor1_Model1
-## 2 roc_auc  binary         0.871 Preprocessor1_Model1</code></pre>
+## 1 accuracy binary         0.869 Preprocessor1_Model1
+## 2 roc_auc  binary         0.858 Preprocessor1_Model1</code></pre>
 <p>We can see above that accuracy and roc-auc (87.05% &amp; 87.99% respectively) are improved compared to the model without tuning.</p>
 </div>
-<div id="collecting-predictions-1" class="section level1">
+<div id="collecting-predictions-2" class="section level1">
 <h1>collecting predictions</h1>
 <pre class="r"><code>bank_churn_prediction_rf&lt;- bank_churn_final_fit_rf %&gt;%
   collect_predictions()
@@ -1537,26 +1733,26 @@ bank_churn_prediction_rf</code></pre>
 <pre><code>## # A tibble: 1,915 x 7
 ##    id               .pred_0 .pred_1  .row .pred_class Exited .config            
 ##    &lt;chr&gt;              &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt; &lt;fct&gt;       &lt;fct&gt;  &lt;chr&gt;              
-##  1 train/test split   0.953 0.0472     10 0           0      Preprocessor1_Mode~
-##  2 train/test split   0.954 0.0460     12 0           0      Preprocessor1_Mode~
-##  3 train/test split   0.976 0.0236     19 0           0      Preprocessor1_Mode~
-##  4 train/test split   0.984 0.0158     21 0           0      Preprocessor1_Mode~
-##  5 train/test split   0.994 0.00576    25 0           0      Preprocessor1_Mode~
-##  6 train/test split   0.564 0.436      35 0           1      Preprocessor1_Mode~
-##  7 train/test split   0.954 0.0461     36 0           0      Preprocessor1_Mode~
-##  8 train/test split   0.681 0.319      40 0           0      Preprocessor1_Mode~
-##  9 train/test split   0.414 0.586      43 1           1      Preprocessor1_Mode~
-## 10 train/test split   0.906 0.0943     45 0           0      Preprocessor1_Mode~
+##  1 train/test split   0.903  0.0971     4 0           0      Preprocessor1_Mode~
+##  2 train/test split   0.958  0.0420    14 0           0      Preprocessor1_Mode~
+##  3 train/test split   0.792  0.208     15 0           0      Preprocessor1_Mode~
+##  4 train/test split   0.954  0.0458    23 0           0      Preprocessor1_Mode~
+##  5 train/test split   0.733  0.267     24 0           0      Preprocessor1_Mode~
+##  6 train/test split   0.380  0.620     30 1           1      Preprocessor1_Mode~
+##  7 train/test split   0.646  0.354     40 0           0      Preprocessor1_Mode~
+##  8 train/test split   0.860  0.140     68 0           0      Preprocessor1_Mode~
+##  9 train/test split   0.987  0.0127    72 0           0      Preprocessor1_Mode~
+## 10 train/test split   0.861  0.139     73 0           0      Preprocessor1_Mode~
 ## # ... with 1,905 more rows</code></pre>
 <pre class="r"><code>conf_mat(bank_churn_prediction_rf, truth = Exited, estimate = .pred_class) %&gt;%
   autoplot(type = &#39;heatmap&#39;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-90-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-102-1.png" width="672" /></p>
 </div>
 <div id="correct-predictions-of-test-set-1" class="section level1">
 <h1>Correct predictions of test set</h1>
 <p>True negative is 1485 customers, who churned. True positive is 182 people, who was a loyal customer and did not churn.</p>
 </div>
-<div id="classification-error-of-test-set-1" class="section level1">
+<div id="classification-error-of-test-set-2" class="section level1">
 <h1>Classification error of test set</h1>
 <p>False positive is 51 people, who are predicted as not churned but actually churned. False negative is 197 people, who are predicted as churned but actually not churned and was loyal to bank.</p>
 <p>Almost 80% of the customers churned</p>
