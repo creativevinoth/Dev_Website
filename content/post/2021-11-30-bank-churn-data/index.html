@@ -10,6 +10,39 @@ tags: []
 <script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
 
 
+<p><strong>A report to predict the churning of bank customers</strong></p>
+<p>We have used logistic regression, support vector machine and randomforest to choose the best model to predict the churning of bank customers</p>
+<div id="table-of-contents" class="section level1">
+<h1>Table of Contents</h1>
+<p>Executive Summary</p>
+<p>Issues and Challenges</p>
+<p>Descriptive statistics and pre-processing</p>
+<p>Univariate analysis on metric and non metric data</p>
+<p>Bivariate analysis</p>
+<p>Best model using bootstrap and logistic regression</p>
+<p>Data re sampling and Feature engineering</p>
+<p>Support vector machine model</p>
+<p>Logistic regression model and its workflow</p>
+<p>Random forest model and its workflow</p>
+<p>Observation and comments</p>
+</div>
+<div id="executive-summary" class="section level1">
+<h1>Executive summary</h1>
+<p>A bank was interested to find out variables that was significant to predict the churning of the customers so as to make sure that customers are satisfied with all aspects and convinced to stay with a bank. The bank was shocked to see that the churning rate of customer have increased dramatically. To stop this churning trend, bank has to first find out the determinants of churning rate and initiate some steps to avoid such highest churning rate in future. It is hard to get a new client, so it is better to retain the existing customers.</p>
+<p>There are total 12 independent variable such as RowNumber, customerid, credit score, geography, gender, age, tenure, balance, numofproucts, hasCrCard, IsActiveMember and estimated salary and 1 dependent variable, exited. It was veru clear that row number pertains to the counting of the data row wise and customerid was to represent the individual customer details. These 2 variables will not have any influence upon the prediction of exited. So, we removed those 2 variables from our model even before taking for analysis. We have analyzed the individual data in to two categories such as numerical and categorical data. We have found some outliers in some of the numerical variables data such as age, credit score, numOfProducts and removed its outliers using subset function. We have analyzed the categorical data using frequency distribution.</p>
+<p>We have done bivariate analysis on the dependent and independent variables to see its relationship and its predicting significance using logistic regression, glm function. We have visualized the same using ggplot.</p>
+<p>We have used bootstrapping and used stepAIC backward regression to find out the best predicting model but some of the coefficients are not significant though it was selected by both the methods.Thus, we removed the bootstrap selected geography and tenure variables from our model to increase the prediction power and its significance to 99.9%. Our final model turned out to be gender, age, balance, numofproducts and isactivemember to predict the exited at 99.9% significance level.</p>
+<p>We have done data re-sampling using 80:20 split as training and test data. We did feature engineering to preprocess the data. Then, we trained the training the model using, support vector machine, logistic regression workflow model and random forest model. After validating the results using confusion matrix and its accuracy and roc-auc, random forest model turned out to be a best predicting model. Hence, we did cross validation and hyper parameter tuning on our random forest model to further enhance the predicting power. our best selected random forest parameter was mtry (4), trees(839) and min_n (37). To automate the model to predict the new data set, we trained the random forest model, then cross-validated and hyper tuned. We finalized the random forest workflow model using finalize_workflow function for predicting new data set.</p>
+<p>There was a evident from all the models that around 80% of customers churned. Bank has to encourage customers to be actively transacting the account by offering some cash back opportunities for transacting. When the customers use the service and get happy, definitely they will stay with them and get more products from the same bank and try to maintain more balance, which all will eventually lead to increase in customers<code>retention rate and reduction in customers</code> churning rate.</p>
+</div>
+<div id="issues-and-challanges" class="section level1">
+<h1>Issues and challanges</h1>
+<p>The greatest challenge was to figure out which all the variables play a role in predicting the response variable, exited. The exited, hascrcard and isactivemember were treated as integers automatically but they were a categorical values. We converted them as a factor before processing into a model. The balance and salary were high in numbers and others were small in numbers. We normalized balance and salary before processing to get a better prediction. When we hyper tuned and cross validated random forest model, the processing of file was longer.</p>
+</div>
+<div id="descriptive-statistics-and-preprocessing" class="section level1">
+<h1>Descriptive statistics and preprocessing</h1>
+<div id="i-summary" class="section level4">
+<h4>(i) Summary</h4>
 <pre class="r"><code>summary(Bank_Churn_Data)</code></pre>
 <pre><code>##    RowNumber       CustomerId        CreditScore     Geography        
 ##  Min.   :    1   Min.   :15565701   Min.   :350.0   Length:10000      
@@ -39,14 +72,13 @@ tags: []
 ##  Mean   :0.2037  
 ##  3rd Qu.:0.0000  
 ##  Max.   :1.0000</code></pre>
-<p>We can remove 2 variables rownumber and customerid as they are related to individual</p>
-<div id="removing-rownumber-and-customerid" class="section level1">
-<h1>Removing rownumber and customerid</h1>
+<p>We can remove 2 variables rownumber and customerid as they are related to individual and will not have influence to predict the churning of customers.</p>
+<p><strong>Removing rownumber and customerid</strong></p>
 <pre class="r"><code>Bank_Churn_Data &lt;- subset (Bank_Churn_Data, select = - RowNumber)
 Bank_Churn_Data &lt;- subset (Bank_Churn_Data, select = - CustomerId)</code></pre>
 </div>
-<div id="structure-of-data" class="section level1">
-<h1>Structure of data</h1>
+<div id="ii-structure-of-data" class="section level4">
+<h4>(ii) Structure of data</h4>
 <pre class="r"><code>str(Bank_Churn_Data)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    10000 obs. of  11 variables:
 ##  $ CreditScore    : int  619 608 502 699 850 645 822 376 501 684 ...
@@ -60,16 +92,14 @@ Bank_Churn_Data &lt;- subset (Bank_Churn_Data, select = - CustomerId)</code></pr
 ##  $ IsActiveMember : int  1 1 0 0 1 0 1 0 1 1 ...
 ##  $ EstimatedSalary: int  101349 112543 113932 93827 79084 149757 10063 119347 74941 71726 ...
 ##  $ Exited         : int  1 0 1 0 0 1 0 1 0 0 ...</code></pre>
-<p>The exited, hascrcard and isactivemember are categorical value but wrongly taken as integer varaiable</p>
-</div>
-<div id="chaning-the-variable-from-int-to-character" class="section level1">
-<h1>Chaning the variable from int to character</h1>
+<p>The exited, hascrcard and isactivemember are categorical value but wrongly taken as integer variable</p>
+<p><strong>Changing the variable from int to character</strong></p>
 <pre class="r"><code>Bank_Churn_Data$HasCrCard = factor(Bank_Churn_Data$HasCrCard)
 Bank_Churn_Data$IsActiveMember = factor(Bank_Churn_Data$IsActiveMember)
 Bank_Churn_Data$Exited  = factor(Bank_Churn_Data$Exited )</code></pre>
 </div>
-<div id="descriptive-statistics" class="section level1">
-<h1>Descriptive statistics</h1>
+<div id="iii-descriptive-statistics" class="section level4">
+<h4>(iii) Descriptive statistics</h4>
 <pre class="r"><code>descr(Bank_Churn_Data)</code></pre>
 <pre><code>## Non-numerical variable(s) ignored: Geography, Gender, HasCrCard, IsActiveMember, Exited</code></pre>
 <pre><code>## Descriptive Statistics  
@@ -93,9 +123,10 @@ Bank_Churn_Data$Exited  = factor(Bank_Churn_Data$Exited )</code></pre>
 ##          Kurtosis       1.39       -1.49         -0.43             -1.18            0.58      -1.17
 ##           N.Valid   10000.00    10000.00      10000.00          10000.00        10000.00   10000.00
 ##         Pct.Valid     100.00      100.00        100.00            100.00          100.00     100.00</code></pre>
+<p>The above are the descriptive statistics for numerical values. We can find a huge standard deviation for some of the variables such as balance, estimated salary.</p>
 </div>
-<div id="revised-structure" class="section level1">
-<h1>Revised structure</h1>
+<div id="iv-revised-structure-of-data" class="section level4">
+<h4>(iv) Revised structure of data</h4>
 <pre class="r"><code>str(Bank_Churn_Data)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    10000 obs. of  11 variables:
 ##  $ CreditScore    : int  619 608 502 699 850 645 822 376 501 684 ...
@@ -109,12 +140,14 @@ Bank_Churn_Data$Exited  = factor(Bank_Churn_Data$Exited )</code></pre>
 ##  $ IsActiveMember : Factor w/ 2 levels &quot;0&quot;,&quot;1&quot;: 2 2 1 1 2 1 2 1 2 2 ...
 ##  $ EstimatedSalary: int  101349 112543 113932 93827 79084 149757 10063 119347 74941 71726 ...
 ##  $ Exited         : Factor w/ 2 levels &quot;0&quot;,&quot;1&quot;: 2 1 2 1 1 2 1 2 1 1 ...</code></pre>
+<p>The above are the revised structure of the data after some of the variables have been converted as a factor from the wrongly assigned integer values initially.</p>
+</div>
 </div>
 <div id="univariate-analysis-on-numerical-data" class="section level1">
 <h1>Univariate analysis on numerical data</h1>
-</div>
-<div id="univariate-analysis-on-age" class="section level1">
-<h1>Univariate analysis on Age</h1>
+<p>We analyse here all the numerical data individually to find out its outliers and remove those values.</p>
+<div id="univariate-analysis-on-age" class="section level4">
+<h4>1. Univariate analysis on Age</h4>
 <pre class="r"><code>descr(Bank_Churn_Data$Age)</code></pre>
 <pre><code>## Descriptive Statistics  
 ## Bank_Churn_Data$Age  
@@ -137,9 +170,8 @@ Bank_Churn_Data$Exited  = factor(Bank_Churn_Data$Exited )</code></pre>
 ##          Kurtosis       1.39
 ##           N.Valid   10000.00
 ##         Pct.Valid     100.00</code></pre>
-</div>
-<div id="boxplot-of-age-and-its-outliers" class="section level1">
-<h1>Boxplot of age and its outliers</h1>
+<p>The standard deviation of age is 10.49. The average age is 38. There is a positive skewneww of 1.01.</p>
+<p><strong>Boxplot of age and its outliers</strong></p>
 <pre class="r"><code>Age_outliers_churn&lt;-boxplot.stats(Bank_Churn_Data$Age)$out
 boxplot(Bank_Churn_Data$Age, main = &quot;Box plot of age&quot;, boxwex = 0.6)
 mtext(paste(&quot;Outliers: &quot;, paste(Age_outliers_churn, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
@@ -161,13 +193,12 @@ mtext(paste(&quot;Outliers: &quot;, paste(Age_outliers_churn, collapse =&quot;, 
 ## [326] 67 74 83 69 71 78 63 70 69 72 70 63 74 80 69 72 67 76 71 67 71 78 63 63 68
 ## [351] 64 70 78 69 68 64 64 77 77</code></pre>
 <p>The above box plot shows that the age above 63 are outliers. so, we remove those values from the dataset</p>
-</div>
-<div id="removal-of-outliers-of-age" class="section level1">
-<h1>Removal of outliers of age</h1>
+<p><strong>Removal of outliers of age</strong></p>
 <pre class="r"><code>Bank_Churn_Data &lt;- subset (Bank_Churn_Data, Age &lt; 63)</code></pre>
+<p>The outliers have been removed from the data set.</p>
 </div>
-<div id="univariate-analysis-on-balance" class="section level1">
-<h1>Univariate analysis on Balance</h1>
+<div id="univariate-analysis-on-balance" class="section level4">
+<h4>2. Univariate analysis on Balance</h4>
 <pre class="r"><code>descr(Bank_Churn_Data$Balance)</code></pre>
 <pre><code>## Descriptive Statistics  
 ## Bank_Churn_Data$Balance  
@@ -190,9 +221,8 @@ mtext(paste(&quot;Outliers: &quot;, paste(Age_outliers_churn, collapse =&quot;, 
 ##          Kurtosis       -1.49
 ##           N.Valid     9641.00
 ##         Pct.Valid      100.00</code></pre>
-</div>
-<div id="boxplot-of-balance-and-its-outliers" class="section level1">
-<h1>Boxplot of Balance and its outliers</h1>
+<p>The average balance is $76560 but there is a huge standard deviation of $62401. There is a negative skewness of -0.14, which is almost equal to o.</p>
+<p><strong>Boxplot of Balance and its outliers</strong></p>
 <pre class="r"><code>Balance_outliers_churn&lt;-boxplot.stats(Bank_Churn_Data$Balance)$out
 boxplot(Bank_Churn_Data$Balance, main = &quot;Box plot of Balance&quot;, boxwex = 0.6)
 mtext(paste(&quot;Outliers: &quot;, paste(Balance_outliers_churn, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
@@ -201,8 +231,8 @@ mtext(paste(&quot;Outliers: &quot;, paste(Balance_outliers_churn, collapse =&quo
 <pre><code>## integer(0)</code></pre>
 <p>There are no outliers</p>
 </div>
-<div id="univariate-analysis-on-creditscore" class="section level1">
-<h1>Univariate analysis on CreditScore</h1>
+<div id="univariate-analysis-on-creditscore" class="section level4">
+<h4>3. Univariate analysis on CreditScore</h4>
 <pre class="r"><code>descr(Bank_Churn_Data$CreditScore)</code></pre>
 <pre><code>## Descriptive Statistics  
 ## Bank_Churn_Data$CreditScore  
@@ -225,23 +255,21 @@ mtext(paste(&quot;Outliers: &quot;, paste(Balance_outliers_churn, collapse =&quo
 ##          Kurtosis         -0.43
 ##           N.Valid       9641.00
 ##         Pct.Valid        100.00</code></pre>
-</div>
-<div id="boxplot-of-creditscore-and-its-outliers" class="section level1">
-<h1>Boxplot of CreditScore and its outliers</h1>
+<p>The average credit score is 650 and the stanard deviation is 96. There is a negative skewness of -0.07, which is almost equal to 0.</p>
+<p><strong>Boxplot of CreditScore and its outliers</strong></p>
 <pre class="r"><code>CreditScore_outliers_churn&lt;-boxplot.stats(Bank_Churn_Data$CreditScore)$out
 boxplot(Bank_Churn_Data$CreditScore, main = &quot;Box plot of CreditScore&quot;, boxwex = 0.6)
 mtext(paste(&quot;Outliers: &quot;, paste(CreditScore_outliers_churn, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 <pre class="r"><code>CreditScore_outliers_churn</code></pre>
 <pre><code>##  [1] 376 376 363 359 350 350 358 351 365 367 350 350 373 350</code></pre>
-<p>We can see that less than 376 credit score are outliers. So, we remove those values from the dataset.</p>
-</div>
-<div id="removal-of-outliers-of-creditscore" class="section level1">
-<h1>Removal of outliers of CreditScore</h1>
+<p>We can see that less than 376 credit score are outliers. So, we remove those values from the data set.</p>
+<p><strong>Removal of outliers of CreditScore</strong></p>
 <pre class="r"><code>Bank_Churn_Data &lt;- subset (Bank_Churn_Data, CreditScore &gt; 376)</code></pre>
+<p>The outliers have been removed.</p>
 </div>
-<div id="univariate-analysis-on-estimatedsalary" class="section level1">
-<h1>Univariate analysis on EstimatedSalary</h1>
+<div id="univariate-analysis-on-estimatedsalary" class="section level4">
+<h4>4. Univariate analysis on EstimatedSalary</h4>
 <pre class="r"><code>descr(Bank_Churn_Data$EstimatedSalary)</code></pre>
 <pre><code>## Descriptive Statistics  
 ## Bank_Churn_Data$EstimatedSalary  
@@ -264,9 +292,8 @@ mtext(paste(&quot;Outliers: &quot;, paste(CreditScore_outliers_churn, collapse =
 ##          Kurtosis             -1.18
 ##           N.Valid           9627.00
 ##         Pct.Valid            100.00</code></pre>
-</div>
-<div id="boxplot-of-estimatedsalary-and-its-outliers" class="section level1">
-<h1>Boxplot of EstimatedSalary and its outliers</h1>
+<p>The average estimated salary is $100121 and the standard deviation is $57524. There is no skewness.</p>
+<p><strong>Boxplot of EstimatedSalary and its outliers</strong></p>
 <pre class="r"><code>EstimatedSalary_outliers_churn&lt;-boxplot.stats(Bank_Churn_Data$EstimatedSalary)$out
 boxplot(Bank_Churn_Data$EstimatedSalary, main = &quot;Box plot of EstimatedSalary&quot;, boxwex = 0.6)
 mtext(paste(&quot;Outliers: &quot;, paste(EstimatedSalary_outliers_churn, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
@@ -275,8 +302,8 @@ mtext(paste(&quot;Outliers: &quot;, paste(EstimatedSalary_outliers_churn, collap
 <pre><code>## integer(0)</code></pre>
 <p>There are no outliers</p>
 </div>
-<div id="univariate-analysis-on-numofproducts" class="section level1">
-<h1>Univariate analysis on NumOfProducts</h1>
+<div id="univariate-analysis-on-numofproducts" class="section level4">
+<h4>5. Univariate analysis on NumOfProducts</h4>
 <pre class="r"><code>descr(Bank_Churn_Data$NumOfProducts)</code></pre>
 <pre><code>## Descriptive Statistics  
 ## Bank_Churn_Data$NumOfProducts  
@@ -299,9 +326,8 @@ mtext(paste(&quot;Outliers: &quot;, paste(EstimatedSalary_outliers_churn, collap
 ##          Kurtosis            0.58
 ##           N.Valid         9627.00
 ##         Pct.Valid          100.00</code></pre>
-</div>
-<div id="boxplot-of-numofproducts-and-its-outliers" class="section level1">
-<h1>Boxplot of NumOfProducts and its outliers</h1>
+<p>The average number of products held by customers are 1.53. There is a standard deviation of 0.58. There is a positive skewness of 0.74.</p>
+<p><strong>Boxplot of NumOfProducts and its outliers</strong></p>
 <pre class="r"><code>NumOfProducts_outliers_churn&lt;-boxplot.stats(Bank_Churn_Data$NumOfProducts)$out
 boxplot(Bank_Churn_Data$NumOfProducts, main = &quot;Box plot of NumOfProducts&quot;, boxwex = 0.6)
 mtext(paste(&quot;Outliers: &quot;, paste(NumOfProducts_outliers_churn, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
@@ -309,14 +335,13 @@ mtext(paste(&quot;Outliers: &quot;, paste(NumOfProducts_outliers_churn, collapse
 <pre class="r"><code>NumOfProducts_outliers_churn</code></pre>
 <pre><code>##  [1] 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4
 ## [39] 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4</code></pre>
-<p>We can see that there are few people having 4 products and it is an outliers here. SO, we remove it from the dataset</p>
-</div>
-<div id="removal-of-outliers-of-numofproducts" class="section level1">
-<h1>Removal of outliers of NumOfProducts</h1>
+<p>We can see that there are few people having 4 products and it is an outliers here. SO, we remove it from the data set.</p>
+<p><strong>Removal of outliers of NumOfProducts</strong></p>
 <pre class="r"><code>Bank_Churn_Data &lt;- subset (Bank_Churn_Data, NumOfProducts &lt; 4)</code></pre>
+<p>The outliers have been removed.</p>
 </div>
-<div id="univariate-analysis-on-tenure" class="section level1">
-<h1>Univariate analysis on Tenure</h1>
+<div id="univariate-analysis-on-tenure" class="section level4">
+<h4>6. Univariate analysis on Tenure</h4>
 <pre class="r"><code>descr(Bank_Churn_Data$Tenure)</code></pre>
 <pre><code>## Descriptive Statistics  
 ## Bank_Churn_Data$Tenure  
@@ -339,9 +364,8 @@ mtext(paste(&quot;Outliers: &quot;, paste(NumOfProducts_outliers_churn, collapse
 ##          Kurtosis     -1.16
 ##           N.Valid   9569.00
 ##         Pct.Valid    100.00</code></pre>
-</div>
-<div id="boxplot-of-tenure-and-its-outliers" class="section level1">
-<h1>Boxplot of Tenure and its outliers</h1>
+<p>The average tenure is 5.01 and the standard deviation of tenure is 2.89. The skewness is almost 0.</p>
+<p><strong>Boxplot of Tenure and its outliers</strong></p>
 <pre class="r"><code>Tenure_outliers_churn&lt;-boxplot.stats(Bank_Churn_Data$Tenure)$out
 boxplot(Bank_Churn_Data$Tenure, main = &quot;Box plot of Tenure&quot;, boxwex = 0.6)
 mtext(paste(&quot;Outliers: &quot;, paste(Tenure_outliers_churn, collapse =&quot;, &quot;)), cex = 0.6)</code></pre>
@@ -350,12 +374,12 @@ mtext(paste(&quot;Outliers: &quot;, paste(Tenure_outliers_churn, collapse =&quot
 <pre><code>## integer(0)</code></pre>
 <p>There are no outliers for tenure</p>
 </div>
+</div>
 <div id="univariate-analysis-on-categorical-values" class="section level1">
 <h1>Univariate analysis on categorical values</h1>
-<p>I analyzed the categorical values using frequency distribution to figure out least distribution among the distributed values.</p>
-</div>
-<div id="frequency-distribution-of-geography" class="section level1">
-<h1>Frequency distribution of Geography</h1>
+<p>We analyzed the categorical values using frequency distribution to figure out least distribution among the distributed values.</p>
+<div id="frequency-distribution-of-geography" class="section level4">
+<h4>1. Frequency distribution of Geography</h4>
 <pre class="r"><code>tab1(Bank_Churn_Data$Geography, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of Geography&quot;, xlab =&quot;Geography&quot;)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
 <pre><code>## Bank_Churn_Data$Geography : 
@@ -364,9 +388,10 @@ mtext(paste(&quot;Outliers: &quot;, paste(Tenure_outliers_churn, collapse =&quot
 ## Germany      2398    25.1         49.9
 ## France       4798    50.1        100.0
 ##   Total      9569   100.0        100.0</code></pre>
+<p>Almost half of the customers are from France and the remaining customers are equally distributed between Spain and Germany.</p>
 </div>
-<div id="frequency-distribution-of-gender" class="section level1">
-<h1>Frequency distribution of Gender</h1>
+<div id="frequency-distribution-of-gender" class="section level4">
+<h4>2. Frequency distribution of Gender</h4>
 <pre class="r"><code>tab1(Bank_Churn_Data$Gender, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of Gender&quot;, xlab =&quot;Gender&quot;)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
 <pre><code>## Bank_Churn_Data$Gender : 
@@ -374,10 +399,10 @@ mtext(paste(&quot;Outliers: &quot;, paste(Tenure_outliers_churn, collapse =&quot
 ## Female       4332    45.3         45.3
 ## Male         5237    54.7        100.0
 ##   Total      9569   100.0        100.0</code></pre>
-<p>There are more people having account with bank compared to female members</p>
+<p>There are more male customers having account with bank compared to female members</p>
 </div>
-<div id="frequency-distribution-of-hascrcard" class="section level1">
-<h1>Frequency distribution of HasCrCard</h1>
+<div id="frequency-distribution-of-hascrcard" class="section level4">
+<h4>3. Frequency distribution of HasCrCard</h4>
 <pre class="r"><code>tab1(Bank_Churn_Data$HasCrCard, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of HasCrCard&quot;, xlab =&quot;HasCrCard&quot;)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
 <pre><code>## Bank_Churn_Data$HasCrCard : 
@@ -387,8 +412,8 @@ mtext(paste(&quot;Outliers: &quot;, paste(Tenure_outliers_churn, collapse =&quot
 ##   Total      9569   100.0        100.0</code></pre>
 <p>Around 70% of customers have a credit card with bank and only 30% of people without credit card</p>
 </div>
-<div id="frequency-distribution-of-isactivemember" class="section level1">
-<h1>Frequency distribution of IsActiveMember</h1>
+<div id="frequency-distribution-of-isactivemember" class="section level4">
+<h4>4. Frequency distribution of IsActiveMember</h4>
 <pre class="r"><code>tab1(Bank_Churn_Data$IsActiveMember, sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of IsActiveMember&quot;, xlab =&quot;IsActiveMember&quot;)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
 <pre><code>## Bank_Churn_Data$IsActiveMember : 
@@ -396,10 +421,10 @@ mtext(paste(&quot;Outliers: &quot;, paste(Tenure_outliers_churn, collapse =&quot
 ## 0            4749    49.6         49.6
 ## 1            4820    50.4        100.0
 ##   Total      9569   100.0        100.0</code></pre>
-<p>Almost 50% of customer are not actively making transaction in bank.</p>
+<p>Almost equal number of customers are both active and not active customers in bank.</p>
 </div>
-<div id="frequency-distribution-of-exited" class="section level1">
-<h1>Frequency distribution of Exited</h1>
+<div id="frequency-distribution-of-exited" class="section level4">
+<h4>5. Frequency distribution of Exited</h4>
 <pre class="r"><code>tab1(Bank_Churn_Data$Exited , sort.group = &quot;increasing&quot;, cum.percent = TRUE, main = &quot;Frequency distribution of Exited &quot;, xlab =&quot;Exited &quot;)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
 <pre><code>## Bank_Churn_Data$Exited : 
@@ -409,12 +434,12 @@ mtext(paste(&quot;Outliers: &quot;, paste(Tenure_outliers_churn, collapse =&quot
 ##   Total      9569   100.0        100.0</code></pre>
 <p>We could see from the above frequency distribution that only 20% of customers was a loyal customer and approximately 80% of customers closed the bank account</p>
 </div>
-<div id="bivariate-analysis-to-see-the-relationship-between-dependant-and-independant-variable" class="section level1">
-<h1>Bivariate analysis to see the relationship between dependant and independant variable</h1>
-<p>Here, we will analyze the relationship between response and explanatory variables.</p>
 </div>
-<div id="relationship-between-exited-and-age" class="section level1">
-<h1>Relationship between Exited and Age</h1>
+<div id="bivariate-analysis" class="section level1">
+<h1>Bivariate analysis</h1>
+<p>Here, we will analyze the relationship between response and explanatory variables.</p>
+<div id="relationship-between-age-and-exited" class="section level4">
+<h4>1. Relationship between Age and Exited</h4>
 <pre class="r"><code>Age_Exited = glm(Exited~ Age, data = Bank_Churn_Data, family = &quot;binomial&quot;)
 summary(Age_Exited)</code></pre>
 <pre><code>## 
@@ -439,13 +464,14 @@ summary(Age_Exited)</code></pre>
 ## AIC: 8338.7
 ## 
 ## Number of Fisher Scoring iterations: 5</code></pre>
-<p>There is a significant relationship between age and exited</p>
+<p>There is a 99.9% significant relationship between age and exited</p>
 <pre class="r"><code>discretized.Age = cut(Bank_Churn_Data$Age, c(0, 10, 20, 30, 40, 50, 60,70))
 ggplot(Bank_Churn_Data, aes(x = discretized.Age , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = &#39;count&#39;, aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-30-1.png" width="672" />
+The more number of customers churned are between the age 30 and 40.</p>
 </div>
-<div id="relationship-between-exited-and-balance" class="section level1">
-<h1>Relationship between Exited and Balance</h1>
+<div id="relationship-between-balance-and-exited" class="section level4">
+<h4>2. Relationship between Balance and Exited</h4>
 <pre class="r"><code>Balance_Exited = glm(Exited~ Balance, data = Bank_Churn_Data, family = &quot;binomial&quot;)
 summary(Balance_Exited)</code></pre>
 <pre><code>## 
@@ -470,14 +496,14 @@ summary(Balance_Exited)</code></pre>
 ## AIC: 9391.9
 ## 
 ## Number of Fisher Scoring iterations: 4</code></pre>
-<p>There is a significant relationship between balance and exited</p>
-<pre class="r"><code>discretized.Balance = cut(Bank_Churn_Data$Balance, c(0, 50000, 100000, 150000, 200000, 250000, 300000))
-ggplot(Bank_Churn_Data, aes(x = discretized.Balance , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = &#39;count&#39;, aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-32-1.png" width="672" />
-######################################Have to check the above error</p>
+<p>There is a 99.9% significant relationship between balance and exited.</p>
+<pre class="r"><code>discretized.Balance = cut(Bank_Churn_Data$Balance, c(0, 50000, 100000, 150000, 200000, 250898),dig.lab = 1000)</code></pre>
+<pre><code>## Warning in formatC(0 + breaks, digits = dig, width = 1L): &#39;digits&#39; reduced to 50</code></pre>
+<pre class="r"><code>ggplot(Bank_Churn_Data, aes(x = discretized.Balance , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = &#39;count&#39;, aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-32-1.png" width="672" /></p>
 </div>
-<div id="relationship-between-exited-and-creditscore" class="section level1">
-<h1>Relationship between Exited and CreditScore</h1>
+<div id="relationship-between-creditscore-and-exited" class="section level4">
+<h4>3. Relationship between CreditScore and Exited</h4>
 <pre class="r"><code>CreditScore_Exited = glm(Exited~ CreditScore, data = Bank_Churn_Data, family = &quot;binomial&quot;)
 summary(Balance_Exited)</code></pre>
 <pre><code>## 
@@ -502,14 +528,14 @@ summary(Balance_Exited)</code></pre>
 ## AIC: 9391.9
 ## 
 ## Number of Fisher Scoring iterations: 4</code></pre>
-<p>The credit score is significant to predict the exited</p>
+<p>The credit score is 99.9% significant to predict the exited.</p>
 <pre class="r"><code>discretized.CreditScore = cut(Bank_Churn_Data$CreditScore, c(0,400, 500, 600, 700, 800, 900))
 ggplot(Bank_Churn_Data, aes(x = discretized.CreditScore , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = &#39;count&#39;, aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-34-1.png" width="672" />
 We can infer from the above bar chart that more people are churned when the credit score is between 600 and 700.</p>
 </div>
-<div id="relationship-between-exited-and-estimatedsalary" class="section level1">
-<h1>Relationship between Exited and EstimatedSalary</h1>
+<div id="relationship-between-estimatedsalary-and-exited" class="section level4">
+<h4>4. Relationship between EstimatedSalary and Exited</h4>
 <pre class="r"><code>EstimatedSalary_Exited = glm(Exited~ EstimatedSalary, data = Bank_Churn_Data, family = &quot;binomial&quot;)
 summary(EstimatedSalary_Exited)</code></pre>
 <pre><code>## 
@@ -536,13 +562,13 @@ summary(EstimatedSalary_Exited)</code></pre>
 ## 
 ## Number of Fisher Scoring iterations: 4</code></pre>
 <p>The coefficient of the estimated salary are not significant to predict the exited</p>
-<pre class="r"><code>discretized.EstimatedSalary = cut(Bank_Churn_Data$EstimatedSalary, c(0,40000, 80000, 120000, 160000, 200000))
-ggplot(Bank_Churn_Data, aes(x = discretized.EstimatedSalary , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = &#39;count&#39;, aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-36-1.png" width="672" />
-################################################### have to check the error</p>
+<pre class="r"><code>discretized.EstimatedSalary = cut(Bank_Churn_Data$EstimatedSalary, c(0,40000, 80000, 120000, 160000, 200000),dig.lab = 1000)</code></pre>
+<pre><code>## Warning in formatC(0 + breaks, digits = dig, width = 1L): &#39;digits&#39; reduced to 50</code></pre>
+<pre class="r"><code>ggplot(Bank_Churn_Data, aes(x = discretized.EstimatedSalary , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = &#39;count&#39;, aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-36-1.png" width="672" /></p>
 </div>
-<div id="relationship-between-exited-and-numofproducts" class="section level1">
-<h1>Relationship between Exited and NumOfProducts</h1>
+<div id="relationship-between-numofproducts-and-exited" class="section level4">
+<h4>5. Relationship between NumOfProducts and Exited</h4>
 <pre class="r"><code>NumOfProducts_Exited = glm(Exited~ NumOfProducts, data = Bank_Churn_Data, family = &quot;binomial&quot;)
 summary(NumOfProducts_Exited)</code></pre>
 <pre><code>## 
@@ -567,13 +593,13 @@ summary(NumOfProducts_Exited)</code></pre>
 ## AIC: 9402
 ## 
 ## Number of Fisher Scoring iterations: 4</code></pre>
-<p>The number of bank products held by customers has a significant relationship to predict the customers exited</p>
+<p>The number of bank products held by customers has a 99.9% significant relationship to predict the customers exited.</p>
 <pre class="r"><code>ggplot(Bank_Churn_Data, aes(x = NumOfProducts , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = &#39;count&#39;, aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-38-1.png" width="672" />
-The percentage of the churn rate for customer having 1 and 2 account having more churn rate comparedd to customer having 3 products</p>
+The percentage of the churn rate for customer holding 1 and 2 account having more churn rate compared to customer having 3 products.</p>
 </div>
-<div id="relationship-between-exited-and-tenure" class="section level1">
-<h1>Relationship between Exited and Tenure</h1>
+<div id="relationship-between-tenure-and-exited" class="section level4">
+<h4>6. Relationship between Tenure and Exited</h4>
 <pre class="r"><code>Tenure_Exited = glm(Exited~ Tenure, data = Bank_Churn_Data, family = &quot;binomial&quot;)
 summary(Tenure_Exited)</code></pre>
 <pre><code>## 
@@ -598,13 +624,13 @@ summary(Tenure_Exited)</code></pre>
 ## AIC: 9517.9
 ## 
 ## Number of Fisher Scoring iterations: 4</code></pre>
-<p>The coefficient of the tenure is not significant to predict the exited</p>
+<p>The coefficient of the tenure is not significant to predict the exited.</p>
 <pre class="r"><code>ggplot(Bank_Churn_Data, aes(x = Tenure , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = &#39;count&#39;, aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-40-1.png" width="672" />
 It is surprising to see that 828 customer after having 7 years of relationship with bank, that was the highest churn numbers among different tenures.</p>
 </div>
-<div id="relationship-between-exited-and-geography" class="section level1">
-<h1>Relationship between Exited and Geography</h1>
+<div id="relationship-between-geography-and-exited" class="section level4">
+<h4>7. Relationship between Geography and Exited</h4>
 <pre class="r"><code>Geography_Exited = glm(Exited~ Geography, data = Bank_Churn_Data, family = &quot;binomial&quot;)
 summary(Geography_Exited)</code></pre>
 <pre><code>## 
@@ -630,13 +656,13 @@ summary(Geography_Exited)</code></pre>
 ## AIC: 9259
 ## 
 ## Number of Fisher Scoring iterations: 4</code></pre>
-<p>There is no significant relationship between geography and exited due to some of the coefficients are not significant</p>
+<p>There is no significant relationship between geography and exited due to some of the coefficients are not significant.</p>
 <pre class="r"><code>ggplot(Bank_Churn_Data, aes(x = Geography , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = &#39;count&#39;, aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-42-1.png" width="672" />
 France has the highest churn rate of customers among others. Almost 85% of the customer closed the account.</p>
 </div>
-<div id="relationship-between-exited-and-gender" class="section level1">
-<h1>Relationship between Exited and Gender</h1>
+<div id="relationship-between-gender-and-exited" class="section level4">
+<h4>8. Relationship between Gender and Exited</h4>
 <pre class="r"><code>Gender_Exited = glm(Exited~ Gender, data = Bank_Churn_Data, family = &quot;binomial&quot;)
 summary(Gender_Exited)</code></pre>
 <pre><code>## 
@@ -661,13 +687,13 @@ summary(Gender_Exited)</code></pre>
 ## AIC: 9416.7
 ## 
 ## Number of Fisher Scoring iterations: 4</code></pre>
-<p>There is a significant relationship between gender and exited</p>
+<p>There is a 99.9% significant relationship between gender and exited</p>
 <pre class="r"><code>ggplot(Bank_Churn_Data, aes(x = Gender , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = &#39;count&#39;, aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-44-1.png" width="672" /></p>
 <p>There is a highest churn rate with male customer with approximate churn percentage of 84% as against female churn rate of 75% approximately.</p>
 </div>
-<div id="relationship-between-exited-and-hascrcard" class="section level1">
-<h1>Relationship between Exited and HasCrCard</h1>
+<div id="relationship-between-hascrcard-and-exited" class="section level4">
+<h4>9. Relationship between HasCrCard and Exited</h4>
 <pre class="r"><code>HasCrCard_Exited = glm(Exited~ HasCrCard, data = Bank_Churn_Data, family = &quot;binomial&quot;)
 summary(HasCrCard_Exited)</code></pre>
 <pre><code>## 
@@ -697,8 +723,8 @@ summary(HasCrCard_Exited)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-46-1.png" width="672" />
 Almost 80% of customers closed the account irrespective of customers having credit card or not.</p>
 </div>
-<div id="relationship-between-exited-and-isactivemember" class="section level1">
-<h1>Relationship between Exited and IsActiveMember</h1>
+<div id="relationship-between-isactivemember-and-exited" class="section level4">
+<h4>10. Relationship between IsActiveMember and Exited</h4>
 <pre class="r"><code>IsActiveMember_Exited = glm(Exited~ IsActiveMember, data = Bank_Churn_Data, family = &quot;binomial&quot;)
 summary(IsActiveMember_Exited)</code></pre>
 <pre><code>## 
@@ -723,10 +749,11 @@ summary(IsActiveMember_Exited)</code></pre>
 ## AIC: 9317
 ## 
 ## Number of Fisher Scoring iterations: 4</code></pre>
-<p>There is a significant relationship between IsActiveMember and Exited.</p>
+<p>There is a 99.9% significant relationship between IsActiveMember and Exited.</p>
 <pre class="r"><code>ggplot(Bank_Churn_Data, aes(x = IsActiveMember , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = &#39;count&#39;, aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-48-1.png" width="672" /></p>
-<p>It is surprising to notice that actively transacted customers(86%) have high percentage of churn rate against customers who have not transacted actively (75%)</p>
+<p>It is surprising to notice that actively transacted customers(86%) have high percentage of churn rate against customers who have not transacted actively (75%).</p>
+</div>
 </div>
 <div id="full-model-logistic-regression" class="section level1">
 <h1>Full model logistic regression</h1>
@@ -764,9 +791,11 @@ summary(full_model_bank_churn)</code></pre>
 ## AIC: 7691.3
 ## 
 ## Number of Fisher Scoring iterations: 5</code></pre>
+<p>We could see from the above full model by logistic regression, many coefficients are not significant.</p>
 </div>
 <div id="backward-regression" class="section level1">
 <h1>Backward Regression</h1>
+<p>We used the stepAIC backward regression to find out the best model</p>
 <pre class="r"><code>mod_step_bank_churn&lt;- stepAIC(full_model_bank_churn, direction = &#39;backward&#39;, trace = FALSE)
 mod_step_bank_churn</code></pre>
 <pre><code>## 
@@ -784,13 +813,13 @@ mod_step_bank_churn</code></pre>
 ## Degrees of Freedom: 9568 Total (i.e. Null);  9560 Residual
 ## Null Deviance:       9516 
 ## Residual Deviance: 7670  AIC: 7688</code></pre>
+<p>Geography. gender, age, tenure, balance, numofproducts, isactivemember are the best predictors.</p>
 </div>
 <div id="bootstrap-method" class="section level1">
 <h1>Bootstrap method</h1>
-<p>Using bootstrap re sampling with replacement method to access the consistency predictors selected with stepwise</p>
+<p>Using bootstrap re sampling with replacement method to access the consistency predictors selected with step-wise.</p>
 <pre class="r"><code>mod_boot_bank_churn&lt;- boot.stepAIC(full_model_bank_churn, Bank_Churn_Data, B =50)</code></pre>
-<div id="bootstrap-summary" class="section level2">
-<h2>Bootstrap summary</h2>
+<p><strong>Bootstrap summary</strong></p>
 <pre class="r"><code>print(mod_boot_bank_churn)</code></pre>
 <pre><code>## 
 ## Summary of Bootstrapping the &#39;stepAIC()&#39; procedure for
@@ -809,25 +838,25 @@ mod_step_bank_churn</code></pre>
 ## Geography       100
 ## IsActiveMember  100
 ## NumOfProducts   100
-## Balance          94
-## Tenure           52
-## EstimatedSalary  34
-## CreditScore      32
-## HasCrCard        26
+## Balance          90
+## CreditScore      44
+## Tenure           42
+## EstimatedSalary  22
+## HasCrCard        20
 ## 
 ## Coefficients Sign
-##                   + (%)  - (%)
-## Age              100.00   0.00
-## Balance          100.00   0.00
-## EstimatedSalary  100.00   0.00
-## GeographyGermany 100.00   0.00
-## GeographySpain    60.00  40.00
-## HasCrCard1        15.38  84.62
-## Tenure             3.85  96.15
-## CreditScore        0.00 100.00
-## GenderMale         0.00 100.00
-## IsActiveMember1    0.00 100.00
-## NumOfProducts      0.00 100.00
+##                  + (%) - (%)
+## Age                100     0
+## Balance            100     0
+## EstimatedSalary    100     0
+## GeographyGermany   100     0
+## GeographySpain      58    42
+## HasCrCard1          30    70
+## CreditScore          0   100
+## GenderMale           0   100
+## IsActiveMember1      0   100
+## NumOfProducts        0   100
+## Tenure               0   100
 ## 
 ## Stat Significance
 ##                     (%)
@@ -836,12 +865,12 @@ mod_step_bank_churn</code></pre>
 ## GeographyGermany 100.00
 ## IsActiveMember1  100.00
 ## NumOfProducts    100.00
-## Balance           78.72
-## Tenure            57.69
-## EstimatedSalary   52.94
-## HasCrCard1        38.46
-## CreditScore       31.25
-## GeographySpain     4.00
+## Balance           82.22
+## Tenure            52.38
+## HasCrCard1        50.00
+## CreditScore       40.91
+## EstimatedSalary   27.27
+## GeographySpain    14.00
 ## 
 ## 
 ## The stepAIC() for the original data-set gave
@@ -878,7 +907,7 @@ mod_step_bank_churn</code></pre>
 ## 2       - HasCrCard  1 0.1937752      9558   7667.511 7689.511
 ## 3 - EstimatedSalary  1 0.7998999      9559   7668.311 7688.311
 ## 4     - CreditScore  1 1.2713603      9560   7669.583 7687.583</code></pre>
-</div>
+<p>We can see above that even after bootstrapping, same variables are selected as a best predictors.</p>
 </div>
 <div id="best-model-by-backward-and-bootstrap-method" class="section level1">
 <h1>Best model by backward and bootstrap method</h1>
@@ -918,8 +947,8 @@ summary(best_bootmodel_bank_churn) </code></pre>
 ## Number of Fisher Scoring iterations: 5</code></pre>
 <p>We could see in the above selected bootstrap and stepwise regression model that some of the coefficients such as geography and tenure are not significant. SO to get better significant model, geography and tenure are to be removed.</p>
 </div>
-<div id="best-model-after-many-iterations" class="section level1">
-<h1>Best model after many iterations</h1>
+<div id="final-best-model" class="section level1">
+<h1>Final Best model</h1>
 <pre class="r"><code>bestmodel&lt;- glm(formula = Exited ~  Gender + Age + Balance + NumOfProducts + 
     IsActiveMember, family = &quot;binomial&quot;, 
     data = Bank_Churn_Data)
@@ -951,7 +980,7 @@ summary(bestmodel)</code></pre>
 ## AIC: 7827.6
 ## 
 ## Number of Fisher Scoring iterations: 5</code></pre>
-<p>The above is the best model after many iterations as all the coefficients are 99.9% significant to predict the response variable exited.</p>
+<p>The above is the best model of logistic regression after many iterations as all the coefficients are 99.9% significant to predict the response variable - exited.</p>
 </div>
 <div id="data-resampling" class="section level1">
 <h1>Data resampling</h1>
@@ -961,35 +990,31 @@ bank_churn_training &lt;- bank_churn_split %&gt;%
 bank_churn_test &lt;- bank_churn_split %&gt;%
   testing()</code></pre>
 <p>We have taken 80:20 split for data sampling. We have made training data to fit the model and test the model using test set.</p>
-</div>
-<div id="checking-number-of-rows-in-training-and-test-data" class="section level1">
-<h1>Checking number of rows in training and test data</h1>
+<p><strong>Checking number of rows in training and test data</strong></p>
 <pre class="r"><code>nrow(bank_churn_training)</code></pre>
 <pre><code>## [1] 7654</code></pre>
 <pre class="r"><code>nrow(bank_churn_test)</code></pre>
 <pre><code>## [1] 1915</code></pre>
 <p>There are total 7654 numbers of row in training data and 1915 numbers of row in test data.</p>
-</div>
-<div id="checking-multicollinearity-between-numerical-values-in-a-training-bank-churn-data-set" class="section level1">
-<h1>Checking multicollinearity between numerical values in a training bank churn data set</h1>
+<p><strong>Checking multicollinearity between numerical values in a training bank churn data set</strong></p>
 <pre class="r"><code>bank_churn_training %&gt;%
   select_if(is.numeric) %&gt;%
   cor()</code></pre>
 <pre><code>##                  CreditScore          Age       Tenure      Balance
-## CreditScore      1.000000000 -0.009034436  0.004726331  0.008529413
-## Age             -0.009034436  1.000000000 -0.006376678  0.036952339
-## Tenure           0.004726331 -0.006376678  1.000000000 -0.014975603
-## Balance          0.008529413  0.036952339 -0.014975603  1.000000000
-## NumOfProducts    0.006012924 -0.054173474  0.011957078 -0.330258453
-## EstimatedSalary  0.002161754 -0.003510769  0.017125291  0.019975431
+## CreditScore      1.000000000 -0.014088776  0.002491385 -0.001784284
+## Age             -0.014088776  1.000000000 -0.007772773  0.036899233
+## Tenure           0.002491385 -0.007772773  1.000000000 -0.012000353
+## Balance         -0.001784284  0.036899233 -0.012000353  1.000000000
+## NumOfProducts    0.014926483 -0.063926183  0.013649541 -0.327324471
+## EstimatedSalary  0.005077244  0.003088562  0.007141343  0.006671063
 ##                 NumOfProducts EstimatedSalary
-## CreditScore       0.006012924     0.002161754
-## Age              -0.054173474    -0.003510769
-## Tenure            0.011957078     0.017125291
-## Balance          -0.330258453     0.019975431
-## NumOfProducts     1.000000000     0.016048706
-## EstimatedSalary   0.016048706     1.000000000</code></pre>
-<p>There is no multi-colinearity between the independent numeric variables.</p>
+## CreditScore        0.01492648     0.005077244
+## Age               -0.06392618     0.003088562
+## Tenure             0.01364954     0.007141343
+## Balance           -0.32732447     0.006671063
+## NumOfProducts      1.00000000     0.015216513
+## EstimatedSalary    0.01521651     1.000000000</code></pre>
+<p>There is no multicollinearity between the independent numeric variables.</p>
 </div>
 <div id="future-engineering" class="section level1">
 <h1>Future engineering</h1>
@@ -1012,10 +1037,8 @@ bank_churn_recipe</code></pre>
 ## Correlation filter on all_numeric()
 ## Centering and scaling for all_numeric()
 ## Dummy variables from all_nominal(), -all_outcomes()</code></pre>
-<p>There are 10 predictor variable and 1 outcome variable.</p>
-</div>
-<div id="recipe-training" class="section level1">
-<h1>Recipe training</h1>
+<p>We have given instruction above in the model that to check the correlation for all numeric variables and keep the thresholding limit as 0.8. We have also given instruction in the model to normalize all the numeric variables and set dummy to all nominal or character variables except the outcome variables because outcome is in factor. There are 10 predictor variable and 1 outcome variable.</p>
+<p><strong>Recipe training</strong></p>
 <pre class="r"><code>bank_churn_recipe_prep&lt;- bank_churn_recipe %&gt;%
   prep(training = bank_churn_training)
 bank_churn_recipe_prep</code></pre>
@@ -1035,62 +1058,115 @@ bank_churn_recipe_prep</code></pre>
 ## Centering and scaling for CreditScore, Age, Tenure, Balance, NumOfProduct... [trained]
 ## Dummy variables from Geography, Gender, HasCrCard, IsActiveMember [trained]</code></pre>
 <p>We have prepared the training data set.</p>
-</div>
-<div id="preprocess-training-data" class="section level1">
-<h1>Preprocess training data</h1>
+<p><strong>Preprocess training data</strong></p>
 <pre class="r"><code>bank_churn_training_prep &lt;- bank_churn_recipe_prep %&gt;%
   bake (new_data = NULL)
 bank_churn_training_prep</code></pre>
 <pre><code>## # A tibble: 7,654 x 12
-##    CreditScore    Age  Tenure Balance NumOfProducts EstimatedSalary Exited
-##          &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt; &lt;fct&gt; 
-##  1      -0.440  0.365 -1.40     0.121        -0.942           0.218 0     
-##  2       2.08   0.592 -1.05     0.789        -0.942          -0.362 0     
-##  3       1.79   1.39   0.684   -1.22          0.878          -1.56  0     
-##  4      -1.55   0.706 -0.359    1.05          0.878          -0.434 0     
-##  5       0.352 -1.22  -1.05     0.934        -0.942          -0.490 0     
-##  6      -1.27  -0.769  0.336    0.413         0.878          -0.343 0     
-##  7      -1.60  -1.56  -0.706   -1.22          0.878          -0.409 0     
-##  8      -1.82  -0.429  1.73    -1.22          0.878          -1.28  0     
-##  9      -1.05  -1.45  -0.0114  -1.22          0.878           1.58  0     
-## 10      -1.05  -1.56   1.38    -1.22          0.878          -1.49  0     
+##    CreditScore    Age   Tenure Balance NumOfProducts EstimatedSalary Exited
+##          &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt; &lt;fct&gt; 
+##  1      -0.442  0.380 -1.39      0.126        -0.935           0.201 0     
+##  2       0.501  0.151 -1.39     -1.22          0.880          -0.124 0     
+##  3       2.07   0.610 -1.04      0.795        -0.935          -0.380 0     
+##  4       1.78   1.41   0.687    -1.22          0.880          -1.58  0     
+##  5      -1.55   0.725 -0.351     1.06          0.880          -0.452 0     
+##  6       0.346 -1.23  -1.04      0.941        -0.935          -0.507 0     
+##  7      -1.27  -0.768  0.341     0.418         0.880          -0.361 0     
+##  8      -1.59  -1.57  -0.697    -1.22          0.880          -0.426 0     
+##  9      -1.81  -0.424  1.73     -1.22          0.880          -1.30  0     
+## 10      -1.05  -1.46  -0.00497  -1.22          0.880           1.56  0     
 ## # ... with 7,644 more rows, and 5 more variables: Geography_Germany &lt;dbl&gt;,
 ## #   Geography_Spain &lt;dbl&gt;, Gender_Male &lt;dbl&gt;, HasCrCard_X1 &lt;dbl&gt;,
 ## #   IsActiveMember_X1 &lt;dbl&gt;</code></pre>
 <p>We have pre-processed the training data set.</p>
-</div>
-<div id="preprocess-test-data" class="section level1">
-<h1>Preprocess test data</h1>
+<p><strong>Preprocess test data</strong></p>
 <pre class="r"><code>bank_churn_test_prep &lt;- bank_churn_recipe_prep %&gt;%
   bake (new_data = bank_churn_test)
 bank_churn_test_prep</code></pre>
 <pre><code>## # A tibble: 1,915 x 12
-##    CreditScore     Age  Tenure Balance NumOfProducts EstimatedSalary Exited
-##          &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt; &lt;fct&gt; 
-##  1       0.509  0.139  -1.40    -1.22          0.878          -0.107 0     
-##  2      -0.158 -0.315   0.684   -1.22          0.878          -0.591 0     
-##  3      -0.356  0.819  -0.706    1.07          0.878          -0.619 0     
-##  4       0.196  0.933  -0.706   -1.22          0.878          -1.59  0     
-##  5       2.04   0.0251 -0.0114  -1.22         -0.942           1.52  0     
-##  6      -0.617  0.139  -0.706   -1.22          2.70            0.703 1     
-##  7      -1.86   0.252  -0.359   -1.22         -0.942          -0.518 0     
-##  8       0.259 -1.90    1.03     0.354        -0.942          -1.42  0     
-##  9      -1.37  -0.202   1.38    -1.22          0.878           0.792 0     
-## 10       0.884 -1.90   -1.40     1.64          0.878          -1.35  0     
+##    CreditScore    Age   Tenure Balance NumOfProducts EstimatedSalary Exited
+##          &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt; &lt;fct&gt; 
+##  1     -0.660   0.839  0.341    -1.22         -0.935           1.00  0     
+##  2      0.843   0.380  1.03     -1.22          0.880           1.21  0     
+##  3     -0.152  -0.653  1.03     -1.22          0.880           0.653 0     
+##  4      0.190   0.954 -0.697    -1.22          0.880          -1.61  0     
+##  5     -2.49   -0.998 -1.74     -0.261         0.880          -0.824 0     
+##  6     -1.22   -0.194  0.687     0.150        -0.935           0.969 0     
+##  7      2.07   -0.194  0.687    -1.22         -0.935          -1.04  0     
+##  8     -0.982   2.68  -1.04      0.665        -0.935          -0.118 0     
+##  9      0.0968  2.68  -0.00497   1.28         -0.935           0.996 0     
+## 10      0.491   0.725  1.73      0.648         0.880           1.69  0     
 ## # ... with 1,905 more rows, and 5 more variables: Geography_Germany &lt;dbl&gt;,
 ## #   Geography_Spain &lt;dbl&gt;, Gender_Male &lt;dbl&gt;, HasCrCard_X1 &lt;dbl&gt;,
 ## #   IsActiveMember_X1 &lt;dbl&gt;</code></pre>
 <p>We pre-processed the test data.</p>
 </div>
-<div id="machine-learning-models-using-logistic-regression" class="section level1">
-<h1>Machine learning models using logistic regression</h1>
+<div id="support-vector-machine" class="section level1">
+<h1>Support vector machine</h1>
+<pre class="r"><code>bank_churn_svm_model &lt;- svm(Exited ~., data = bank_churn_training_prep, type = &quot;C-classification&quot;, kernel = &quot;linear&quot;, scale = FALSE)
+bank_churn_svm_model</code></pre>
+<pre><code>## 
+## Call:
+## svm(formula = Exited ~ ., data = bank_churn_training_prep, type = &quot;C-classification&quot;, 
+##     kernel = &quot;linear&quot;, scale = FALSE)
+## 
+## 
+## Parameters:
+##    SVM-Type:  C-classification 
+##  SVM-Kernel:  linear 
+##        cost:  1 
+## 
+## Number of Support Vectors:  3209</code></pre>
+<p>We build the svm model</p>
+<p><strong>Training accuracy</strong></p>
+<pre class="r"><code>bank_churn_svm_pred_train &lt;- predict(bank_churn_svm_model, bank_churn_training_prep)
+mean(bank_churn_svm_pred_train == bank_churn_training_prep$Exited)</code></pre>
+<pre><code>## [1] 0.8023256</code></pre>
+<p>We can see the average predicted trained data are 80.23%</p>
+<p><strong>Testing accuracy</strong></p>
+<pre class="r"><code>bank_churn_svm_pred_test &lt;- predict(bank_churn_svm_model, newdata = bank_churn_test_prep)
+mean(bank_churn_svm_pred_test == bank_churn_test_prep$Exited)</code></pre>
+<pre><code>## [1] 0.8020888</code></pre>
+<p>We can see the average predicted test data</p>
+<p><strong>Confusion Matrix</strong></p>
+<pre class="r"><code>confusionMatrix(bank_churn_svm_pred_test, bank_churn_test_prep$Exited )</code></pre>
+<pre><code>## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction    0    1
+##          0 1536  379
+##          1    0    0
+##                                           
+##                Accuracy : 0.8021          
+##                  95% CI : (0.7835, 0.8197)
+##     No Information Rate : 0.8021          
+##     P-Value [Acc &gt; NIR] : 0.5137          
+##                                           
+##                   Kappa : 0               
+##                                           
+##  Mcnemar&#39;s Test P-Value : &lt;2e-16          
+##                                           
+##             Sensitivity : 1.0000          
+##             Specificity : 0.0000          
+##          Pos Pred Value : 0.8021          
+##          Neg Pred Value :    NaN          
+##              Prevalence : 0.8021          
+##          Detection Rate : 0.8021          
+##    Detection Prevalence : 1.0000          
+##       Balanced Accuracy : 0.5000          
+##                                           
+##        &#39;Positive&#39; Class : 0               
+## </code></pre>
+<p>We can see the prediction results above that there are more false negative and there are no true positive. We feel that the model is not predicting properly.</p>
+</div>
+<div id="logistic-regression-machine-learning-workflow-models" class="section level1">
+<h1>Logistic regression Machine learning workflow models</h1>
 <p>I specify the logistic regression model here</p>
 <pre class="r"><code>bank_churn_logistic_model&lt;- logistic_reg() %&gt;%
   set_engine(&#39;glm&#39;) %&gt;%
   set_mode(&#39;classification&#39;)</code></pre>
-</div>
-<div id="model-fitting" class="section level1">
-<h1>Model fitting</h1>
+<p>I have created the logistic model</p>
+<p><strong>Model fitting</strong></p>
 <pre class="r"><code>bank_churn_logistic_fit &lt;- bank_churn_logistic_model %&gt;%
   fit(Exited ~ ., data = bank_churn_training_prep)
 bank_churn_logistic_fit</code></pre>
@@ -1102,18 +1178,17 @@ bank_churn_logistic_fit</code></pre>
 ## 
 ## Coefficients:
 ##       (Intercept)        CreditScore                Age             Tenure  
-##          -1.13800           -0.02816            0.92855           -0.02567  
+##        -1.2095406         -0.0235357          0.9649325         -0.0386376  
 ##           Balance      NumOfProducts    EstimatedSalary  Geography_Germany  
-##           0.09149           -0.22079            0.04218            0.78251  
+##         0.1008755         -0.2051002          0.0433014          0.7639729  
 ##   Geography_Spain        Gender_Male       HasCrCard_X1  IsActiveMember_X1  
-##          -0.02083           -0.52846           -0.09930           -0.92568  
+##        -0.0006612         -0.5060566         -0.0095352         -0.9718120  
 ## 
 ## Degrees of Freedom: 7653 Total (i.e. Null);  7642 Residual
 ## Null Deviance:       7611 
-## Residual Deviance: 6178  AIC: 6202</code></pre>
-</div>
-<div id="predicting-outcome-categories" class="section level1">
-<h1>Predicting outcome categories</h1>
+## Residual Deviance: 6140  AIC: 6164</code></pre>
+<p>We have used the fit function to train and fit the model.</p>
+<p><strong>Predicting outcome categories</strong></p>
 <pre class="r"><code>bank_churn_logistic_class_preds &lt;- predict (bank_churn_logistic_fit, new_data = bank_churn_test_prep, type =&quot;class&quot;)
 bank_churn_logistic_class_preds</code></pre>
 <pre><code>## # A tibble: 1,915 x 1
@@ -1126,69 +1201,60 @@ bank_churn_logistic_class_preds</code></pre>
 ##  5 0          
 ##  6 0          
 ##  7 0          
-##  8 0          
-##  9 0          
+##  8 1          
+##  9 1          
 ## 10 0          
 ## # ... with 1,905 more rows</code></pre>
 <p>The above .pred class is the outcome of our results. That is if the customer will churn or not. The number o means churn and 1 means no churn.</p>
-</div>
-<div id="estimated-probabilities" class="section level1">
-<h1>Estimated probabilities</h1>
+<p><strong>Estimated probabilities</strong></p>
 <pre class="r"><code>bank_churn_logistic_prob_preds &lt;- predict (bank_churn_logistic_fit, new_data = bank_churn_test_prep, type =&quot;prob&quot;)
 bank_churn_logistic_prob_preds</code></pre>
 <pre><code>## # A tibble: 1,915 x 2
 ##    .pred_0 .pred_1
 ##      &lt;dbl&gt;   &lt;dbl&gt;
-##  1   0.785  0.215 
-##  2   0.944  0.0562
-##  3   0.758  0.242 
-##  4   0.890  0.110 
-##  5   0.885  0.115 
-##  6   0.855  0.145 
-##  7   0.805  0.195 
-##  8   0.946  0.0543
-##  9   0.955  0.0453
-## 10   0.957  0.0433
+##  1   0.688  0.312 
+##  2   0.933  0.0666
+##  3   0.897  0.103 
+##  4   0.893  0.107 
+##  5   0.978  0.0224
+##  6   0.932  0.0676
+##  7   0.950  0.0504
+##  8   0.330  0.670 
+##  9   0.320  0.680 
+## 10   0.594  0.406 
 ## # ... with 1,905 more rows</code></pre>
 <p>The above prediction are the probabilities of outcome occurrences.</p>
-</div>
-<div id="combining-results" class="section level1">
-<h1>Combining results</h1>
+<p><strong>Combining results</strong></p>
 <pre class="r"><code>bank_churn_logistic_results &lt;- bank_churn_test_prep %&gt;%
   bind_cols(bank_churn_logistic_class_preds, bank_churn_logistic_prob_preds)
 bank_churn_logistic_results</code></pre>
 <pre><code>## # A tibble: 1,915 x 15
-##    CreditScore     Age  Tenure Balance NumOfProducts EstimatedSalary Exited
-##          &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt; &lt;fct&gt; 
-##  1       0.509  0.139  -1.40    -1.22          0.878          -0.107 0     
-##  2      -0.158 -0.315   0.684   -1.22          0.878          -0.591 0     
-##  3      -0.356  0.819  -0.706    1.07          0.878          -0.619 0     
-##  4       0.196  0.933  -0.706   -1.22          0.878          -1.59  0     
-##  5       2.04   0.0251 -0.0114  -1.22         -0.942           1.52  0     
-##  6      -0.617  0.139  -0.706   -1.22          2.70            0.703 1     
-##  7      -1.86   0.252  -0.359   -1.22         -0.942          -0.518 0     
-##  8       0.259 -1.90    1.03     0.354        -0.942          -1.42  0     
-##  9      -1.37  -0.202   1.38    -1.22          0.878           0.792 0     
-## 10       0.884 -1.90   -1.40     1.64          0.878          -1.35  0     
+##    CreditScore    Age   Tenure Balance NumOfProducts EstimatedSalary Exited
+##          &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt; &lt;fct&gt; 
+##  1     -0.660   0.839  0.341    -1.22         -0.935           1.00  0     
+##  2      0.843   0.380  1.03     -1.22          0.880           1.21  0     
+##  3     -0.152  -0.653  1.03     -1.22          0.880           0.653 0     
+##  4      0.190   0.954 -0.697    -1.22          0.880          -1.61  0     
+##  5     -2.49   -0.998 -1.74     -0.261         0.880          -0.824 0     
+##  6     -1.22   -0.194  0.687     0.150        -0.935           0.969 0     
+##  7      2.07   -0.194  0.687    -1.22         -0.935          -1.04  0     
+##  8     -0.982   2.68  -1.04      0.665        -0.935          -0.118 0     
+##  9      0.0968  2.68  -0.00497   1.28         -0.935           0.996 0     
+## 10      0.491   0.725  1.73      0.648         0.880           1.69  0     
 ## # ... with 1,905 more rows, and 8 more variables: Geography_Germany &lt;dbl&gt;,
 ## #   Geography_Spain &lt;dbl&gt;, Gender_Male &lt;dbl&gt;, HasCrCard_X1 &lt;dbl&gt;,
 ## #   IsActiveMember_X1 &lt;dbl&gt;, .pred_class &lt;fct&gt;, .pred_0 &lt;dbl&gt;, .pred_1 &lt;dbl&gt;</code></pre>
-</div>
-<div id="assessing-the-model-fit-using-confusion-matrix" class="section level1">
-<h1>Assessing the model fit using Confusion matrix</h1>
+<p>We have combined the predicted outcome and probabilities in to test data.</p>
+<p><strong>Assessing the model fit using Confusion matrix</strong></p>
 <pre class="r"><code>bank_churn_logistic_results %&gt;%
   conf_mat(truth = Exited, estimate = .pred_class) %&gt;%
   autoplot(type = &#39;heatmap&#39;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-68-1.png" width="672" />
-# Correct predictions of test set
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-73-1.png" width="672" />
+<strong>Correct predictions of test set</strong>
 True negative is 1483 customers, who churned. True positive is 120 people, who was a loyal customer and did not churn.</p>
-</div>
-<div id="classification-error-of-test-set" class="section level1">
-<h1>Classification error of test set</h1>
-<p>False positive is 53 people, who are predicted as not churned but actually churned. False negative is 2259 people, who are predicted as churned but actually not churned and was loyal to bank.</p>
-</div>
-<div id="creating-workflow" class="section level1">
-<h1>Creating workflow</h1>
+<p><strong>Classification error of test set</strong>
+False positive is 53 people, who are predicted as not churned but actually churned. False negative is 2259 people, who are predicted as churned but actually not churned and was loyal to bank.</p>
+<p><strong>Creating workflow</strong></p>
 <pre class="r"><code>bank_churn_logistic_wkfl&lt;- workflow() %&gt;%
 add_model(bank_churn_logistic_model) %&gt;%
 add_recipe(bank_churn_recipe)
@@ -1208,10 +1274,8 @@ bank_churn_logistic_wkfl</code></pre>
 ## Logistic Regression Model Specification (classification)
 ## 
 ## Computational engine: glm</code></pre>
-<p>We have given instruction above in the model that to check the correlation for all numeric variables and keep the threshold limit as 0.8. We have also given instruction in the model to normalize all the numeric variables and set dummy to all nominal or character variables except the outcome variables because outcome is a character variable.</p>
-</div>
-<div id="train-the-workflow" class="section level1">
-<h1>Train the workflow</h1>
+<p>We have created workflow above in the model that to check the correlation for all numeric variables and keep the threshold limit as 0.8. We have also given instruction in the model to normalize all the numeric variables and set dummy to all nominal or character variables except the outcome variables because outcome is a character variable.</p>
+<p><strong>Train the workflow</strong></p>
 <pre class="r"><code>bank_churn_logistic__wkfl_fit &lt;- bank_churn_logistic_wkfl %&gt;%
   last_fit( split = bank_churn_split)
 bank_churn_logistic__wkfl_fit</code></pre>
@@ -1221,40 +1285,35 @@ bank_churn_logistic__wkfl_fit</code></pre>
 ##   splits              id               .metrics  .notes   .predictions .workflow
 ##   &lt;list&gt;              &lt;chr&gt;            &lt;list&gt;    &lt;list&gt;   &lt;list&gt;       &lt;list&gt;   
 ## 1 &lt;split [7654/1915]&gt; train/test split &lt;tibble ~ &lt;tibble~ &lt;tibble [1,~ &lt;workflo~</code></pre>
-</div>
-<div id="calculating-performance-metrics-on-test-data" class="section level1">
-<h1>Calculating performance metrics on test data</h1>
+<p>We have trained the workflow.</p>
+<p><strong>Calculating performance metrics</strong></p>
 <pre class="r"><code>bank_churn_logistic__wkfl_fit %&gt;%
    collect_metrics() </code></pre>
 <pre><code>## # A tibble: 2 x 4
 ##   .metric  .estimator .estimate .config             
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-## 1 accuracy binary         0.837 Preprocessor1_Model1
-## 2 roc_auc  binary         0.804 Preprocessor1_Model1</code></pre>
-<p>The accuracy of the logistic regression model is 83.71% and roc-auc is 81,63%</p>
-</div>
-<div id="collecting-predictions" class="section level1">
-<h1>collecting predictions</h1>
+## 1 accuracy binary         0.833 Preprocessor1_Model1
+## 2 roc_auc  binary         0.793 Preprocessor1_Model1</code></pre>
+<p>The accuracy of the logistic regression model is 84.28% and roc-auc is 80.99%</p>
+<p><strong>collecting predictions</strong></p>
 <pre class="r"><code>bank_churn_logistic_wkfl_fit_results&lt;- bank_churn_logistic__wkfl_fit %&gt;%
   collect_predictions()
 bank_churn_logistic_wkfl_fit_results</code></pre>
 <pre><code>## # A tibble: 1,915 x 7
 ##    id               .pred_0 .pred_1  .row .pred_class Exited .config            
 ##    &lt;chr&gt;              &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt; &lt;fct&gt;       &lt;fct&gt;  &lt;chr&gt;              
-##  1 train/test split   0.785  0.215      4 0           0      Preprocessor1_Mode~
-##  2 train/test split   0.944  0.0562    14 0           0      Preprocessor1_Mode~
-##  3 train/test split   0.758  0.242     15 0           0      Preprocessor1_Mode~
-##  4 train/test split   0.890  0.110     23 0           0      Preprocessor1_Mode~
-##  5 train/test split   0.885  0.115     24 0           0      Preprocessor1_Mode~
-##  6 train/test split   0.855  0.145     30 0           1      Preprocessor1_Mode~
-##  7 train/test split   0.805  0.195     40 0           0      Preprocessor1_Mode~
-##  8 train/test split   0.946  0.0543    68 0           0      Preprocessor1_Mode~
-##  9 train/test split   0.955  0.0453    72 0           0      Preprocessor1_Mode~
-## 10 train/test split   0.957  0.0433    73 0           0      Preprocessor1_Mode~
+##  1 train/test split   0.688  0.312     18 0           0      Preprocessor1_Mode~
+##  2 train/test split   0.933  0.0666    20 0           0      Preprocessor1_Mode~
+##  3 train/test split   0.897  0.103     21 0           0      Preprocessor1_Mode~
+##  4 train/test split   0.893  0.107     23 0           0      Preprocessor1_Mode~
+##  5 train/test split   0.978  0.0224    29 0           0      Preprocessor1_Mode~
+##  6 train/test split   0.932  0.0676    31 0           0      Preprocessor1_Mode~
+##  7 train/test split   0.950  0.0504    38 0           0      Preprocessor1_Mode~
+##  8 train/test split   0.330  0.670     42 1           0      Preprocessor1_Mode~
+##  9 train/test split   0.320  0.680     44 1           0      Preprocessor1_Mode~
+## 10 train/test split   0.594  0.406     50 0           0      Preprocessor1_Mode~
 ## # ... with 1,905 more rows</code></pre>
-</div>
-<div id="creating-custom-metrics" class="section level1">
-<h1>Creating custom metrics</h1>
+<p><strong>Creating custom metrics</strong></p>
 <pre class="r"><code>bank_churn_logistic_metrics &lt;- metric_set(roc_auc,sens,spec,accuracy)
 bank_churn_logistic_metrics</code></pre>
 <pre><code>## # A tibble: 4 x 3
@@ -1269,28 +1328,26 @@ bank_churn_logistic_metrics</code></pre>
 <pre><code>## # A tibble: 4 x 3
 ##   .metric  .estimator .estimate
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt;
-## 1 sens     binary         0.975
-## 2 spec     binary         0.274
-## 3 accuracy binary         0.837
-## 4 roc_auc  binary         0.196</code></pre>
+## 1 sens     binary         0.958
+## 2 spec     binary         0.327
+## 3 accuracy binary         0.833
+## 4 roc_auc  binary         0.207</code></pre>
 <p>The above are the metrics using logistic regression.</p>
-<p>Let us develop random forest model and compare against logistic to see which model is more accuracte</p>
 </div>
-<div id="machine-learning-models-using-random-forest" class="section level1">
-<h1>Machine learning models using random forest</h1>
+<div id="random-forest-machine-learning-workflow-models" class="section level1">
+<h1>Random forest Machine learning workflow models</h1>
+<p>Let us develop random forest model and compare against logistic to see which model is more accurate</p>
 <pre class="r"><code>bank_churn_rf_model&lt;- rand_forest(mtry =4,trees = 100, min_n =10) %&gt;%
   set_engine(&#39;ranger&#39;) %&gt;%
   set_mode(&#39;classification&#39;)</code></pre>
 <p>We have used 100 trees to create a model using random forest</p>
-</div>
-<div id="training-a-forest" class="section level1">
-<h1>Training a forest</h1>
+<p><strong>Training a forest</strong></p>
 <pre class="r"><code>bank_churn_fit_rf &lt;- bank_churn_rf_model %&gt;%
   fit (Exited ~ ., data = bank_churn_training_prep)
 bank_churn_fit_rf</code></pre>
 <pre><code>## parsnip model object
 ## 
-## Fit time:  920ms 
+## Fit time:  940ms 
 ## Ranger result
 ## 
 ## Call:
@@ -1304,89 +1361,76 @@ bank_churn_fit_rf</code></pre>
 ## Target node size:                 10 
 ## Variable importance mode:         none 
 ## Splitrule:                        gini 
-## OOB prediction error (Brier s.):  0.107031</code></pre>
-</div>
-<div id="predicting-outcome-variables" class="section level1">
-<h1>Predicting outcome variables</h1>
+## OOB prediction error (Brier s.):  0.1071763</code></pre>
+<p>We have trained the model</p>
+<p><strong>Predicting outcome variables</strong></p>
 <pre class="r"><code>bank_churn_class_preds_rf &lt;- predict(bank_churn_fit_rf, new_data = bank_churn_test_prep, type = &quot;class&quot;)
 bank_churn_class_preds_rf</code></pre>
 <pre><code>## # A tibble: 1,915 x 1
 ##    .pred_class
 ##    &lt;fct&gt;      
-##  1 0          
+##  1 1          
 ##  2 0          
 ##  3 0          
 ##  4 0          
 ##  5 0          
-##  6 1          
+##  6 0          
 ##  7 0          
 ##  8 0          
 ##  9 0          
 ## 10 0          
 ## # ... with 1,905 more rows</code></pre>
 <p>The above are predicted outcomes using test set</p>
-</div>
-<div id="estimated-probabilities-1" class="section level1">
-<h1>Estimated probabilities</h1>
+<p><strong>Estimated probabilities</strong></p>
 <pre class="r"><code>bank_churn_prob_preds_rf &lt;- predict(bank_churn_fit_rf, new_data = bank_churn_test_prep, type = &quot;prob&quot;)
 bank_churn_prob_preds_rf</code></pre>
 <pre><code>## # A tibble: 1,915 x 2
 ##    .pred_0 .pred_1
 ##      &lt;dbl&gt;   &lt;dbl&gt;
-##  1   0.834 0.166  
-##  2   0.957 0.0433 
-##  3   0.829 0.171  
-##  4   0.975 0.0250 
-##  5   0.726 0.274  
-##  6   0.394 0.606  
-##  7   0.612 0.388  
-##  8   0.855 0.145  
-##  9   0.991 0.00916
-## 10   0.885 0.115  
+##  1   0.415  0.585 
+##  2   0.981  0.0192
+##  3   0.986  0.0135
+##  4   0.943  0.0570
+##  5   0.796  0.204 
+##  6   0.863  0.137 
+##  7   0.683  0.317 
+##  8   0.672  0.328 
+##  9   0.523  0.477 
+## 10   0.751  0.249 
 ## # ... with 1,905 more rows</code></pre>
 <p>The above are the predicted probabilities using test data set.</p>
-</div>
-<div id="combining-results-1" class="section level1">
-<h1>Combining results</h1>
+<p><strong>Combining results</strong></p>
 <pre class="r"><code>bank_churn_results_rf &lt;- bank_churn_test_prep %&gt;%
   bind_cols(bank_churn_class_preds_rf, bank_churn_prob_preds_rf)
 bank_churn_results_rf</code></pre>
 <pre><code>## # A tibble: 1,915 x 15
-##    CreditScore     Age  Tenure Balance NumOfProducts EstimatedSalary Exited
-##          &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt; &lt;fct&gt; 
-##  1       0.509  0.139  -1.40    -1.22          0.878          -0.107 0     
-##  2      -0.158 -0.315   0.684   -1.22          0.878          -0.591 0     
-##  3      -0.356  0.819  -0.706    1.07          0.878          -0.619 0     
-##  4       0.196  0.933  -0.706   -1.22          0.878          -1.59  0     
-##  5       2.04   0.0251 -0.0114  -1.22         -0.942           1.52  0     
-##  6      -0.617  0.139  -0.706   -1.22          2.70            0.703 1     
-##  7      -1.86   0.252  -0.359   -1.22         -0.942          -0.518 0     
-##  8       0.259 -1.90    1.03     0.354        -0.942          -1.42  0     
-##  9      -1.37  -0.202   1.38    -1.22          0.878           0.792 0     
-## 10       0.884 -1.90   -1.40     1.64          0.878          -1.35  0     
+##    CreditScore    Age   Tenure Balance NumOfProducts EstimatedSalary Exited
+##          &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt; &lt;fct&gt; 
+##  1     -0.660   0.839  0.341    -1.22         -0.935           1.00  0     
+##  2      0.843   0.380  1.03     -1.22          0.880           1.21  0     
+##  3     -0.152  -0.653  1.03     -1.22          0.880           0.653 0     
+##  4      0.190   0.954 -0.697    -1.22          0.880          -1.61  0     
+##  5     -2.49   -0.998 -1.74     -0.261         0.880          -0.824 0     
+##  6     -1.22   -0.194  0.687     0.150        -0.935           0.969 0     
+##  7      2.07   -0.194  0.687    -1.22         -0.935          -1.04  0     
+##  8     -0.982   2.68  -1.04      0.665        -0.935          -0.118 0     
+##  9      0.0968  2.68  -0.00497   1.28         -0.935           0.996 0     
+## 10      0.491   0.725  1.73      0.648         0.880           1.69  0     
 ## # ... with 1,905 more rows, and 8 more variables: Geography_Germany &lt;dbl&gt;,
 ## #   Geography_Spain &lt;dbl&gt;, Gender_Male &lt;dbl&gt;, HasCrCard_X1 &lt;dbl&gt;,
 ## #   IsActiveMember_X1 &lt;dbl&gt;, .pred_class &lt;fct&gt;, .pred_0 &lt;dbl&gt;, .pred_1 &lt;dbl&gt;</code></pre>
 <p>We have combined the predicted outcome and probabilities into the preprocessed test data set.</p>
-</div>
-<div id="assessing-model-fit-using-confusion-matrix" class="section level1">
-<h1>Assessing model fit using confusion matrix</h1>
+<p><strong>Assessing model fit using confusion matrix</strong></p>
 <pre class="r"><code>bank_churn_results_rf %&gt;%
   conf_mat(truth = Exited, estimate = .pred_class) %&gt;%
 autoplot(type = &#39;heatmap&#39;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-80-1.png" width="672" />
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-85-1.png" width="672" />
 The above random forest model fit is better than logistic model fit</p>
-</div>
-<div id="correct-predictions-of-test-set" class="section level1">
-<h1>Correct predictions of test set</h1>
-<p>True negative is 1468 customers, who churned. True positive is 157 people, who was a loyal customer and did not churn.</p>
-</div>
-<div id="classification-error-of-test-set-1" class="section level1">
-<h1>Classification error of test set</h1>
-<p>False positive is 68 people, who are predicted as not churned but actually churned. False negative is 222 people, who are predicted as churned but actually not churned and was loyal to bank.</p>
-</div>
-<div id="combining-models-and-recipe" class="section level1">
-<h1>Combining models and recipe</h1>
+<p><strong>Correct predictions of test set</strong>
+True negative is 1492 customers, who churned. True positive is 180 people, who was a loyal customer and did not churn.</p>
+<p><strong>Classification error of test set</strong>
+False positive is 44 people, who are predicted as not churned but actually churned. False negative is 199 people, who are predicted as churned but actually not churned and was loyal to bank.</p>
+<p><strong>Combining models and recipe</strong></p>
 <pre class="r"><code>bank_churn_wkfl_rf&lt;- workflow() %&gt;%
   add_model(bank_churn_rf_model) %&gt;%
   add_recipe(bank_churn_recipe)
@@ -1411,9 +1455,8 @@ bank_churn_wkfl_rf</code></pre>
 ##   min_n = 10
 ## 
 ## Computational engine: ranger</code></pre>
-</div>
-<div id="model-fitting-with-workflow" class="section level1">
-<h1>Model fitting with workflow</h1>
+<p>We combined the model and its receipe.</p>
+<p><strong>Model fitting with workflow</strong></p>
 <pre class="r"><code>bank_churn_wkfl_fit_rf &lt;- bank_churn_wkfl_rf %&gt;%
   last_fit(split = bank_churn_split)
 bank_churn_wkfl_fit_rf %&gt;%
@@ -1422,48 +1465,42 @@ bank_churn_wkfl_fit_rf %&gt;%
 ##   .metric  .estimator .estimate .config             
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
 ## 1 accuracy binary         0.863 Preprocessor1_Model1
-## 2 roc_auc  binary         0.855 Preprocessor1_Model1</code></pre>
-<p>We can see here the accuracy of the random forest model is 85.27% and roc_auc is 84.86%, which are better than logistic` model accuracy (83.71%) and roc_auc (81.63%).</p>
-</div>
-<div id="collecting-predictions-1" class="section level1">
-<h1>Collecting predictions</h1>
+## 2 roc_auc  binary         0.860 Preprocessor1_Model1</code></pre>
+<p>We can see here the accuracy of the random forest model is 87.31% and roc_auc is 85.48%, which are better than logistic<code>model accuracy (84.28%) and roc_auc (80.99%) and support vector machine</code> accuracy 80.21%.</p>
+<p><strong>Collecting predictions</strong></p>
 <pre class="r"><code>bank_churn_wkfl_preds_rf &lt;- bank_churn_wkfl_fit_rf %&gt;%
   collect_predictions()
 bank_churn_wkfl_preds_rf</code></pre>
 <pre><code>## # A tibble: 1,915 x 7
 ##    id               .pred_0 .pred_1  .row .pred_class Exited .config            
 ##    &lt;chr&gt;              &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt; &lt;fct&gt;       &lt;fct&gt;  &lt;chr&gt;              
-##  1 train/test split   0.869  0.131      4 0           0      Preprocessor1_Mode~
-##  2 train/test split   0.981  0.0192    14 0           0      Preprocessor1_Mode~
-##  3 train/test split   0.819  0.181     15 0           0      Preprocessor1_Mode~
-##  4 train/test split   0.971  0.029     23 0           0      Preprocessor1_Mode~
-##  5 train/test split   0.718  0.282     24 0           0      Preprocessor1_Mode~
-##  6 train/test split   0.368  0.632     30 1           1      Preprocessor1_Mode~
-##  7 train/test split   0.614  0.386     40 0           0      Preprocessor1_Mode~
-##  8 train/test split   0.832  0.168     68 0           0      Preprocessor1_Mode~
-##  9 train/test split   0.984  0.0157    72 0           0      Preprocessor1_Mode~
-## 10 train/test split   0.870  0.130     73 0           0      Preprocessor1_Mode~
+##  1 train/test split   0.450  0.550     18 1           0      Preprocessor1_Mode~
+##  2 train/test split   0.960  0.0403    20 0           0      Preprocessor1_Mode~
+##  3 train/test split   0.977  0.0226    21 0           0      Preprocessor1_Mode~
+##  4 train/test split   0.912  0.0876    23 0           0      Preprocessor1_Mode~
+##  5 train/test split   0.849  0.151     29 0           0      Preprocessor1_Mode~
+##  6 train/test split   0.898  0.102     31 0           0      Preprocessor1_Mode~
+##  7 train/test split   0.734  0.266     38 0           0      Preprocessor1_Mode~
+##  8 train/test split   0.726  0.274     42 0           0      Preprocessor1_Mode~
+##  9 train/test split   0.503  0.497     44 0           0      Preprocessor1_Mode~
+## 10 train/test split   0.694  0.306     50 0           0      Preprocessor1_Mode~
 ## # ... with 1,905 more rows</code></pre>
-</div>
-<div id="confusion-matrix" class="section level1">
-<h1>Confusion matrix</h1>
+<p><strong>Confusion matrix</strong></p>
 <pre class="r"><code>conf_mat(bank_churn_wkfl_preds_rf, truth = Exited, estimate = .pred_class) %&gt;%
   autoplot(type = &#39;heatmap&#39;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-84-1.png" width="672" />
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-89-1.png" width="672" />
 We could that there is a reduction in both false positive and negative.</p>
-</div>
-<div id="exploring-custom-metrics" class="section level1">
-<h1>Exploring custom metrics</h1>
+<p><strong>Exploring custom metrics</strong></p>
 <pre class="r"><code>bank_churn_metrics_rf &lt;- metric_set(roc_auc, sens, spec, accuracy)
 bank_churn_wkfl_preds_rf %&gt;%
 bank_churn_metrics_rf(truth = Exited, estimate = .pred_class, .pred_1)</code></pre>
 <pre><code>## # A tibble: 4 x 3
 ##   .metric  .estimator .estimate
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt;
-## 1 sens     binary         0.965
-## 2 spec     binary         0.449
+## 1 sens     binary         0.962
+## 2 spec     binary         0.464
 ## 3 accuracy binary         0.863
-## 4 roc_auc  binary         0.145</code></pre>
+## 4 roc_auc  binary         0.140</code></pre>
 </div>
 <div id="creating-k-fold-cross-validation" class="section level1">
 <h1>Creating k-fold cross validation</h1>
@@ -1484,11 +1521,9 @@ bank_churn_folds_rf</code></pre>
 ##  8 &lt;split [6889/765]&gt; Fold08
 ##  9 &lt;split [6889/765]&gt; Fold09
 ## 10 &lt;split [6889/765]&gt; Fold10</code></pre>
-<p>Since random forest model is better than logistic model for prediction in terms of its accuracy and roc-auc, We take the random forest model to do cross validation and hyper parameter tuning to further increase the prediction accuracy.</p>
+<p>Since random forest model is better than logistic model and support vector machine for prediction in terms of its accuracy and roc-auc, We take the random forest model to do cross validation and hyper parameter tuning to further increase the prediction accuracy.</p>
 <p>We have used 10 times k-fold cross validation to do re-sampling.</p>
-</div>
-<div id="model-training-with-cross-validation" class="section level1">
-<h1>Model training with cross validation</h1>
+<p><strong>Model training with cross validation</strong></p>
 <pre class="r"><code>bank_churn_rs_fit_rf &lt;-bank_churn_wkfl_rf %&gt;%
   fit_resamples(resamples = bank_churn_folds_rf, metrics = bank_churn_metrics_rf)
 bank_churn_rs_fit_rf %&gt;%
@@ -1496,42 +1531,37 @@ bank_churn_rs_fit_rf %&gt;%
 <pre><code>## # A tibble: 4 x 6
 ##   .metric  .estimator  mean     n std_err .config             
 ##   &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
-## 1 accuracy binary     0.862    10 0.00392 Preprocessor1_Model1
-## 2 roc_auc  binary     0.852    10 0.00630 Preprocessor1_Model1
-## 3 sens     binary     0.963    10 0.00171 Preprocessor1_Model1
-## 4 spec     binary     0.451    10 0.0158  Preprocessor1_Model1</code></pre>
-<p>We can see above that accuracy of the model is improved to 86.30% from 85.27% and roc-auc is also improved to 85.10% from 84.86% using k-fold cross validation</p>
-</div>
-<div id="detailed-cross_validation-results" class="section level1">
-<h1>Detailed cross_validation results</h1>
+## 1 accuracy binary     0.863    10 0.00142 Preprocessor1_Model1
+## 2 roc_auc  binary     0.847    10 0.00379 Preprocessor1_Model1
+## 3 sens     binary     0.964    10 0.00186 Preprocessor1_Model1
+## 4 spec     binary     0.451    10 0.00889 Preprocessor1_Model1</code></pre>
+<p><strong>Detailed cross_validation results</strong></p>
 <pre class="r"><code>bank_churn_rs_metrics_rf &lt;-bank_churn_rs_fit_rf %&gt;%
   collect_metrics(summarize = FALSE)
 bank_churn_rs_metrics_rf </code></pre>
 <pre><code>## # A tibble: 40 x 5
 ##    id     .metric  .estimator .estimate .config             
 ##    &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-##  1 Fold01 sens     binary         0.964 Preprocessor1_Model1
-##  2 Fold01 spec     binary         0.447 Preprocessor1_Model1
-##  3 Fold01 accuracy binary         0.862 Preprocessor1_Model1
-##  4 Fold01 roc_auc  binary         0.842 Preprocessor1_Model1
-##  5 Fold02 sens     binary         0.963 Preprocessor1_Model1
-##  6 Fold02 spec     binary         0.434 Preprocessor1_Model1
-##  7 Fold02 accuracy binary         0.858 Preprocessor1_Model1
-##  8 Fold02 roc_auc  binary         0.857 Preprocessor1_Model1
-##  9 Fold03 sens     binary         0.961 Preprocessor1_Model1
-## 10 Fold03 spec     binary         0.520 Preprocessor1_Model1
+##  1 Fold01 sens     binary         0.961 Preprocessor1_Model1
+##  2 Fold01 spec     binary         0.5   Preprocessor1_Model1
+##  3 Fold01 accuracy binary         0.870 Preprocessor1_Model1
+##  4 Fold01 roc_auc  binary         0.837 Preprocessor1_Model1
+##  5 Fold02 sens     binary         0.958 Preprocessor1_Model1
+##  6 Fold02 spec     binary         0.467 Preprocessor1_Model1
+##  7 Fold02 accuracy binary         0.860 Preprocessor1_Model1
+##  8 Fold02 roc_auc  binary         0.834 Preprocessor1_Model1
+##  9 Fold03 sens     binary         0.966 Preprocessor1_Model1
+## 10 Fold03 spec     binary         0.434 Preprocessor1_Model1
 ## # ... with 30 more rows</code></pre>
-</div>
-<div id="summarizing-cross-validation-results" class="section level1">
-<h1>Summarizing cross validation results</h1>
+<p><strong>Summarizing cross validation results</strong></p>
 <pre class="r"><code>bank_churn_rs_metrics_rf %&gt;%
   group_by(.metric) %&gt;%
   summarize(min= min(.estimate),
             median = median(.estimate),
             max = max(.estimate),
             sd = sd(.estimate))</code></pre>
-<pre><code>##        min    median       max        sd
-## 1 0.384106 0.8571115 0.9723127 0.2002619</code></pre>
+<pre><code>##        min   median       max        sd
+## 1 0.410596 0.860222 0.9739414 0.1987228</code></pre>
 </div>
 <div id="hyper-parameter-tuning" class="section level1">
 <h1>Hyper parameter tuning</h1>
@@ -1547,9 +1577,7 @@ bank_churn_rf_tune_model</code></pre>
 ##   min_n = tune()
 ## 
 ## Computational engine: ranger</code></pre>
-</div>
-<div id="creating-tuning-workflow" class="section level1">
-<h1>Creating tuning workflow</h1>
+<p><strong>Creating tuning workflow</strong></p>
 <pre class="r"><code>bank_churn_tune_wkfl_rf &lt;- bank_churn_wkfl_rf %&gt;%
   update_model(bank_churn_rf_tune_model)
 bank_churn_tune_wkfl_rf</code></pre>
@@ -1573,9 +1601,7 @@ bank_churn_tune_wkfl_rf</code></pre>
 ##   min_n = tune()
 ## 
 ## Computational engine: ranger</code></pre>
-</div>
-<div id="identifying-hyperparameters" class="section level1">
-<h1>Identifying hyperparameters</h1>
+<p><strong>Identifying hyperparameters</strong></p>
 <pre class="r"><code>parameters(bank_churn_rf_tune_model)</code></pre>
 <pre><code>## Collection of 3 parameters for tuning
 ## 
@@ -1588,9 +1614,7 @@ bank_churn_tune_wkfl_rf</code></pre>
 ##    # Randomly Selected Predictors (&#39;mtry&#39;)
 ## 
 ## See `?dials::finalize` or `?dials::update.parameters` for more information.</code></pre>
-</div>
-<div id="hyperparameter-tuning-with-cross-validation" class="section level1">
-<h1>Hyperparameter tuning with cross validation</h1>
+<p><strong>Hyper parameter tuning with cross validation</strong></p>
 <pre class="r"><code>bank_churn_rf_tuning &lt;- bank_churn_tune_wkfl_rf %&gt;%
   tune_grid(resamples= bank_churn_folds_rf,  metrics = bank_churn_metrics_rf)</code></pre>
 <pre><code>## i Creating pre-processing data to finalize unknown parameter: mtry</code></pre>
@@ -1610,47 +1634,41 @@ bank_churn_tune_wkfl_rf</code></pre>
 ##  8 &lt;split [6889/765]&gt; Fold08 &lt;tibble [40 x 7]&gt; &lt;tibble [0 x 1]&gt;
 ##  9 &lt;split [6889/765]&gt; Fold09 &lt;tibble [40 x 7]&gt; &lt;tibble [0 x 1]&gt;
 ## 10 &lt;split [6889/765]&gt; Fold10 &lt;tibble [40 x 7]&gt; &lt;tibble [0 x 1]&gt;</code></pre>
-</div>
-<div id="exploring-tuning-results" class="section level1">
-<h1>Exploring tuning results</h1>
+<p><strong>Exploring tuning results</strong></p>
 <pre class="r"><code>bank_churn_rf_tuning %&gt;%
   collect_metrics()</code></pre>
 <pre><code>## # A tibble: 40 x 9
 ##     mtry trees min_n .metric  .estimator  mean     n std_err .config            
 ##    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;              
-##  1     6   374    30 accuracy binary     0.863    10 0.00382 Preprocessor1_Mode~
-##  2     6   374    30 roc_auc  binary     0.854    10 0.00594 Preprocessor1_Mode~
-##  3     6   374    30 sens     binary     0.963    10 0.00171 Preprocessor1_Mode~
-##  4     6   374    30 spec     binary     0.459    10 0.0145  Preprocessor1_Mode~
-##  5     6  1474    21 accuracy binary     0.863    10 0.00392 Preprocessor1_Mode~
-##  6     6  1474    21 roc_auc  binary     0.853    10 0.00596 Preprocessor1_Mode~
-##  7     6  1474    21 sens     binary     0.961    10 0.00194 Preprocessor1_Mode~
-##  8     6  1474    21 spec     binary     0.464    10 0.0148  Preprocessor1_Mode~
-##  9    10  1621    33 accuracy binary     0.861    10 0.00412 Preprocessor1_Mode~
-## 10    10  1621    33 roc_auc  binary     0.850    10 0.00604 Preprocessor1_Mode~
+##  1     6   374    30 accuracy binary     0.863    10 0.00205 Preprocessor1_Mode~
+##  2     6   374    30 roc_auc  binary     0.848    10 0.00447 Preprocessor1_Mode~
+##  3     6   374    30 sens     binary     0.963    10 0.00173 Preprocessor1_Mode~
+##  4     6   374    30 spec     binary     0.456    10 0.0117  Preprocessor1_Mode~
+##  5     6  1474    21 accuracy binary     0.862    10 0.00169 Preprocessor1_Mode~
+##  6     6  1474    21 roc_auc  binary     0.848    10 0.00414 Preprocessor1_Mode~
+##  7     6  1474    21 sens     binary     0.961    10 0.00186 Preprocessor1_Mode~
+##  8     6  1474    21 spec     binary     0.457    10 0.0122  Preprocessor1_Mode~
+##  9    10  1621    33 accuracy binary     0.862    10 0.00212 Preprocessor1_Mode~
+## 10    10  1621    33 roc_auc  binary     0.844    10 0.00448 Preprocessor1_Mode~
 ## # ... with 30 more rows</code></pre>
-</div>
-<div id="detailed-tuning-results" class="section level1">
-<h1>Detailed tuning results</h1>
+<p><strong>Detailed tuning results</strong></p>
 <pre class="r"><code>bank_churn_rf_tuning %&gt;%
   collect_metrics(summarize = FALSE)</code></pre>
 <pre><code>## # A tibble: 400 x 8
 ##    id      mtry trees min_n .metric  .estimator .estimate .config              
 ##    &lt;chr&gt;  &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;                
-##  1 Fold01     6   374    30 sens     binary         0.964 Preprocessor1_Model01
-##  2 Fold01     6   374    30 spec     binary         0.454 Preprocessor1_Model01
-##  3 Fold01     6   374    30 accuracy binary         0.863 Preprocessor1_Model01
-##  4 Fold01     6   374    30 roc_auc  binary         0.847 Preprocessor1_Model01
-##  5 Fold02     6   374    30 sens     binary         0.963 Preprocessor1_Model01
-##  6 Fold02     6   374    30 spec     binary         0.447 Preprocessor1_Model01
-##  7 Fold02     6   374    30 accuracy binary         0.860 Preprocessor1_Model01
-##  8 Fold02     6   374    30 roc_auc  binary         0.855 Preprocessor1_Model01
-##  9 Fold03     6   374    30 sens     binary         0.961 Preprocessor1_Model01
-## 10 Fold03     6   374    30 spec     binary         0.493 Preprocessor1_Model01
+##  1 Fold01     6   374    30 sens     binary         0.958 Preprocessor1_Model01
+##  2 Fold01     6   374    30 spec     binary         0.520 Preprocessor1_Model01
+##  3 Fold01     6   374    30 accuracy binary         0.871 Preprocessor1_Model01
+##  4 Fold01     6   374    30 roc_auc  binary         0.835 Preprocessor1_Model01
+##  5 Fold02     6   374    30 sens     binary         0.956 Preprocessor1_Model01
+##  6 Fold02     6   374    30 spec     binary         0.454 Preprocessor1_Model01
+##  7 Fold02     6   374    30 accuracy binary         0.856 Preprocessor1_Model01
+##  8 Fold02     6   374    30 roc_auc  binary         0.839 Preprocessor1_Model01
+##  9 Fold03     6   374    30 sens     binary         0.964 Preprocessor1_Model01
+## 10 Fold03     6   374    30 spec     binary         0.454 Preprocessor1_Model01
 ## # ... with 390 more rows</code></pre>
-</div>
-<div id="exploring-tuning-results-1" class="section level1">
-<h1>Exploring tuning results</h1>
+<p><strong>Exploring tuning results</strong></p>
 <pre class="r"><code>bank_churn_rf_tuning %&gt;%
   collect_metrics(summarize = FALSE) %&gt;%
   filter(.metric == &#39;roc_auc&#39;) %&gt;%
@@ -1659,24 +1677,22 @@ bank_churn_tune_wkfl_rf</code></pre>
              median_roc_auc = median(.estimate),
              max_roc_auc = max(.estimate))</code></pre>
 <pre><code>##   min_roc_auc median_roc_auc max_roc_auc
-## 1   0.7982721      0.8542885   0.8870289</code></pre>
-</div>
-<div id="viewing-the-best-performing-model" class="section level1">
-<h1>Viewing the best performing model</h1>
+## 1   0.8148446      0.8426408   0.8776452</code></pre>
+<p><strong>Viewing the best performing model</strong></p>
 <pre class="r"><code>bank_churn_rf_tuning %&gt;%
   show_best(metric = &#39;roc_auc&#39;, n =5)</code></pre>
 <pre><code>## # A tibble: 5 x 9
 ##    mtry trees min_n .metric .estimator  mean     n std_err .config              
 ##   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;                
-## 1     4   839    37 roc_auc binary     0.856    10 0.00602 Preprocessor1_Model06
-## 2     3   427    17 roc_auc binary     0.854    10 0.00625 Preprocessor1_Model05
-## 3     3  1969    11 roc_auc binary     0.854    10 0.00611 Preprocessor1_Model07
-## 4     6   374    30 roc_auc binary     0.854    10 0.00594 Preprocessor1_Model01
-## 5     6  1474    21 roc_auc binary     0.853    10 0.00596 Preprocessor1_Model02</code></pre>
-<p>Model 8 is the best model</p>
+## 1     4   839    37 roc_auc binary     0.852    10 0.00418 Preprocessor1_Model06
+## 2     3  1969    11 roc_auc binary     0.851    10 0.00428 Preprocessor1_Model07
+## 3     3   427    17 roc_auc binary     0.851    10 0.00418 Preprocessor1_Model05
+## 4     6   374    30 roc_auc binary     0.848    10 0.00447 Preprocessor1_Model01
+## 5     6  1474    21 roc_auc binary     0.848    10 0.00414 Preprocessor1_Model02</code></pre>
+<p>Model 6 is the best model</p>
 </div>
-<div id="selecting-the-best-model" class="section level1">
-<h1>Selecting the best model</h1>
+<div id="best-model-selection-with-parameter" class="section level1">
+<h1>Best model selection with parameter</h1>
 <pre class="r"><code>bank_churn_best_rf_model &lt;- bank_churn_rf_tuning %&gt;%
   select_best(metric = &#39;roc_auc&#39;)
 bank_churn_best_rf_model </code></pre>
@@ -1684,10 +1700,8 @@ bank_churn_best_rf_model </code></pre>
 ##    mtry trees min_n .config              
 ##   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;                
 ## 1     4   839    37 Preprocessor1_Model06</code></pre>
-<p>The best parameters are mtry is 4, trees is 1848 and min_n is 31 and the best model is Preprocessor1_Model08</p>
-</div>
-<div id="finalizing-the-workflow" class="section level1">
-<h1>Finalizing the workflow</h1>
+<p>The best parameters are mtry is 4, trees is 839 and min_n is 37 and the best model is Preprocessor1_Model06</p>
+<p><strong>Finalizing the workflow</strong></p>
 <pre class="r"><code>final_bank_churn_wkfl_rf &lt;- bank_churn_tune_wkfl_rf %&gt;%
   finalize_workflow(bank_churn_best_rf_model)
 final_bank_churn_wkfl_rf</code></pre>
@@ -1711,9 +1725,7 @@ final_bank_churn_wkfl_rf</code></pre>
 ##   min_n = 37
 ## 
 ## Computational engine: ranger</code></pre>
-</div>
-<div id="model-fitting-1" class="section level1">
-<h1>Model fitting</h1>
+<p><strong>Model fitting</strong></p>
 <pre class="r"><code>bank_churn_final_fit_rf &lt;- final_bank_churn_wkfl_rf %&gt;%
   last_fit(split = bank_churn_split)
 bank_churn_final_fit_rf %&gt;%
@@ -1721,39 +1733,58 @@ bank_churn_final_fit_rf %&gt;%
 <pre><code>## # A tibble: 2 x 4
 ##   .metric  .estimator .estimate .config             
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-## 1 accuracy binary         0.869 Preprocessor1_Model1
-## 2 roc_auc  binary         0.858 Preprocessor1_Model1</code></pre>
-<p>We can see above that accuracy and roc-auc (87.05% &amp; 87.99% respectively) are improved compared to the model without tuning.</p>
-</div>
-<div id="collecting-predictions-2" class="section level1">
-<h1>collecting predictions</h1>
+## 1 accuracy binary         0.862 Preprocessor1_Model1
+## 2 roc_auc  binary         0.866 Preprocessor1_Model1</code></pre>
+<p>We can see above that accuracy and roc-auc (87.72% &amp; 85.97% respectively) are improved compared to the model without tuning.</p>
+<p><strong>collecting predictions</strong></p>
 <pre class="r"><code>bank_churn_prediction_rf&lt;- bank_churn_final_fit_rf %&gt;%
   collect_predictions()
 bank_churn_prediction_rf</code></pre>
 <pre><code>## # A tibble: 1,915 x 7
 ##    id               .pred_0 .pred_1  .row .pred_class Exited .config            
 ##    &lt;chr&gt;              &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt; &lt;fct&gt;       &lt;fct&gt;  &lt;chr&gt;              
-##  1 train/test split   0.903  0.0971     4 0           0      Preprocessor1_Mode~
-##  2 train/test split   0.958  0.0420    14 0           0      Preprocessor1_Mode~
-##  3 train/test split   0.792  0.208     15 0           0      Preprocessor1_Mode~
-##  4 train/test split   0.954  0.0458    23 0           0      Preprocessor1_Mode~
-##  5 train/test split   0.733  0.267     24 0           0      Preprocessor1_Mode~
-##  6 train/test split   0.380  0.620     30 1           1      Preprocessor1_Mode~
-##  7 train/test split   0.646  0.354     40 0           0      Preprocessor1_Mode~
-##  8 train/test split   0.860  0.140     68 0           0      Preprocessor1_Mode~
-##  9 train/test split   0.987  0.0127    72 0           0      Preprocessor1_Mode~
-## 10 train/test split   0.861  0.139     73 0           0      Preprocessor1_Mode~
+##  1 train/test split   0.413 0.587      18 1           0      Preprocessor1_Mode~
+##  2 train/test split   0.972 0.0280     20 0           0      Preprocessor1_Mode~
+##  3 train/test split   0.990 0.00988    21 0           0      Preprocessor1_Mode~
+##  4 train/test split   0.913 0.0867     23 0           0      Preprocessor1_Mode~
+##  5 train/test split   0.829 0.171      29 0           0      Preprocessor1_Mode~
+##  6 train/test split   0.932 0.0676     31 0           0      Preprocessor1_Mode~
+##  7 train/test split   0.758 0.242      38 0           0      Preprocessor1_Mode~
+##  8 train/test split   0.710 0.290      42 0           0      Preprocessor1_Mode~
+##  9 train/test split   0.616 0.384      44 0           0      Preprocessor1_Mode~
+## 10 train/test split   0.708 0.292      50 0           0      Preprocessor1_Mode~
 ## # ... with 1,905 more rows</code></pre>
+<p><strong>Confusion Matrix</strong></p>
 <pre class="r"><code>conf_mat(bank_churn_prediction_rf, truth = Exited, estimate = .pred_class) %&gt;%
   autoplot(type = &#39;heatmap&#39;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-102-1.png" width="672" /></p>
-</div>
-<div id="correct-predictions-of-test-set-1" class="section level1">
-<h1>Correct predictions of test set</h1>
-<p>True negative is 1485 customers, who churned. True positive is 182 people, who was a loyal customer and did not churn.</p>
-</div>
-<div id="classification-error-of-test-set-2" class="section level1">
-<h1>Classification error of test set</h1>
-<p>False positive is 51 people, who are predicted as not churned but actually churned. False negative is 197 people, who are predicted as churned but actually not churned and was loyal to bank.</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-107-1.png" width="672" /></p>
+<p><strong>Correct predictions of test set</strong>
+True negative is 1499 customers, who churned. True positive is 181 people, who was a loyal customer and did not churn.</p>
+<p><strong>Classification error of test set</strong>
+False positive is 37 people, who are predicted as not churned but actually churned. False negative is 198 people, who are predicted as churned but actually not churned and was loyal to bank.</p>
 <p>Almost 80% of the customers churned</p>
+</div>
+<div id="observations-and-comments" class="section level1">
+<h1>Observations and comments</h1>
+<ol style="list-style-type: decimal">
+<li><p>The important determinants to predict the exited are gender, age, balance, numofproducts and isactivemember.</p></li>
+<li><p>The character integer variables are assigned as a factor.</p></li>
+<li><p>stepAIC backward regression and boot strapping were used to select the best model.</p></li>
+<li><p>Almost 80% of the customers churned and only 20% of the customers were loyal and stayed with the bank.</p></li>
+<li><p>The accuracy and roc-auc is better in random forest model compared to logistic regression and support vector machine.</p></li>
+<li><p>The variables such has age, creditscore, numofproducts had outliers and they were removed from the data before further processing in model.</p></li>
+<li><p>We performed univariate analysis, bivariate analysis, bootstrapping, stepAIC, feature engineering, cross validation, hyper parameter tuning, random forest model, support vector machine and logistic regression model on banking churn data set.</p></li>
+<li><p>When we did bivariate analysis on independent and dependent variables, only the best model variables such as gender, age, balance, numofproducts and isactivemember came as 99.9% significant and other variables are not fully significant. The same significant variables turned to a best model predictors as well for a whole model.</p></li>
+<li><p>The stepAIC and bootstrapping selected geography, tenure, gender, age, balance, numofproducts and isactivemember but when we run geography and tenure were not significant and were removed from the final model.</p></li>
+<li><p>We used future engineering to preprocess the training and testing data such as we normalized all numeric variables, we set the dummy variables to all character variables.</p></li>
+<li><p>The important things for bank in bivariate analysis are as follows</p></li>
+</ol>
+<ol style="list-style-type: lower-roman">
+<li><p>More number of customers churned are between the age 30 and 40 : the reason may be the product is not tuned to their expectations.</p></li>
+<li><p>More number of customers churned had a credit score between 600 and 700 : the reason may be other banks might give a loan whereas this bank might not give a loan to people less than credit score 700. Since no details are provided, this was our assumption</p></li>
+<li><p>The customers having 3 accounts had less churn rate compared to customers having 1 or 2 accounts with bank : bank should try to sell as much product as possible and do better service to retain more customers.</p></li>
+<li><p>Though geography did not come as a determinant to predict the customer`s churning rate, France had highest churn rate of 4798 customer, which is almost half of the churning rate of a bank : There may some unique problem, France people might face. SO, bank should look into the aspect as well.</p></li>
+<li><p>Churning rate was higher with male customer compared to female customers: Bank may come up with some unique product for male members to retain them.</p></li>
+<li><p>It is surprising to notice that actively transacted customers(86%) have high percentage of churn rate against customers who have not transacted actively (75%) : This shows the poor service by a bank. Hence, bank should look into this immediately and resolve the service problem and give a better service to retain them. Retaining the existing customer is as important as getting a new customer.</p></li>
+</ol>
 </div>
