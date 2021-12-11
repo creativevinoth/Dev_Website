@@ -36,72 +36,81 @@ Bank_Churn_Data <- read.csv("Bank_Churn_Data.csv")
 
 **A report to predict the churning of bank customers**
 
-We have used logistic regression, support vector machine and randomforest to choose the best model to predict the churning of bank customers
 
 # Table of Contents
 
-Executive Summary
+1.  Executive Summary
 
-Issues and Challenges
+2.  Issues and Challenges
 
-Descriptive statistics and pre-processing
+3.  Descriptive Statistics and Pre-processing
 
-Univariate analysis on metric and non metric data
+4.  Univariate Analysis on Metric Data
 
-Bivariate analysis
+5.  Univariate Analysis on Categorical Values
 
-Best model using bootstrap and logistic regression
+6.  Bivariate Analysis
 
-Data re sampling and Feature engineering
+7.  Data Re-sampling and Feature Engineering
 
-Support vector machine model
+8.  Logistic Regression Model 
 
-Logistic regression model and its workflow
+9.  Modelling with the Tidy Model Ecosystem
 
-Random forest model and its workflow
+10. Support Vector Machine Model  
 
-Observation and comments
+11. Logistic Regression Model (Tidy Workflow Version)
 
-# Executive summary
+12. Random Forest Models
+
+13. Creating *k*-Fold Cross Validation
+
+14. Hyper Parameter Tuning
+
+15. Best Model Selection with Parameters
+
+16. Model Comparison
+
+17. Observations and Comments
+
+# 1. Executive summary
 
 A bank was interested to find out variables that was significant to predict the churning of the customers so as to make sure that customers are satisfied with all aspects and convinced to stay with a bank. The bank was shocked to see that the churning rate of customer have increased dramatically. To stop this churning trend, bank has to first find out the determinants of churning rate and initiate some steps to avoid such highest churning rate in future. It is hard to get a new client, so it is better to retain the existing customers.
 
-There are total 12 independent variable such as RowNumber, customerid, credit score, geography, gender, age, tenure, balance, numofproucts, hasCrCard, IsActiveMember and estimated salary  and 1 dependent variable, exited. It was veru clear that row number pertains to the counting of the data row wise and customerid was to represent the individual customer details. These 2 variables will not have any influence upon the prediction of exited. So, we removed those 2 variables from our model even before taking for analysis. We have analyzed the individual data in to two categories such as numerical and categorical data. We have found some outliers in some of the numerical variables data such as age, credit score, numOfProducts and removed its outliers using subset function. We have analyzed the categorical data using frequency distribution. 
+There are total 12 independent variable such as *RowNumber*, *Customerid*, *CreditScore*, *Geography*, *Gender*, *Age*, *Tenure*, *Balance*, *NumOfProucts*, *HasCrCard*, *IsActiveMember* and *EstimatedSalary*  and 1 dependent variable, *Exited*. It is clear that variable *RowNumber* pertains to the counting of the data row wise and *CustomerId* was to represent the individual customer details. These 2 variables will not have any influence upon the prediction of *Exited*. Hence, we removed those 2 variables from our analysis. Individual data were analyzed in two categories, namely  numerical and categorical data. We found outliers in some of the numerical observations, such as *Age*, *CreditScore*, *NumOfProducts* and removed them using subset function. Categorical variables were analyzed using frequency distribution. 
 
-We have done bivariate analysis on the dependent and independent variables to see its relationship and its predicting significance using logistic regression, glm function. We have visualized the same using ggplot.
+We have used bootstrapping and stepAIC backward regression to find out the best predicting model. Variables *Geography* and *Tenure* resulted with non-significant coefficients, and were removed from our model to increase the prediction power and its significance to 99.9%. Our final model turned out to be *Gender*, *Age*, *Balance*, *NumOfProducts* and *IsActiveMember* to predict *Exited* at 99.9% significance level.
 
-We have used bootstrapping and used stepAIC backward regression to find out the best predicting model but some of the coefficients are not significant though it was selected by both the methods.Thus, we removed the bootstrap selected geography and tenure variables from our model to increase the prediction power and its significance to 99.9%. Our final model turned out to be gender, age, balance, numofproducts and isactivemember to predict the exited at 99.9% significance level.
+We have done data re-sampling using 80:20 split as training and test data. We did feature engineering to preprocess the data. Then, we built different prediction models using Support Vector Machine (SVM), Logistic Regression (LR), and Random Forest (RF). After out-of-sample validation, RF turned out to be the best predicting model. Thus, we did cross validation and hyper parameter tuning on the latter model to further enhance the predicting power. Our best selected RF parameter set was mtry (4), trees (839), and min_n (37). 
 
-We have done data re-sampling using 80:20 split as training and test data. We did feature engineering to preprocess the data. Then, we trained the training the model using, support vector machine, logistic regression workflow model and random forest model. After validating the results using confusion matrix and its accuracy and roc-auc, random forest model turned out to be a best predicting model. Hence, we did cross validation and hyper parameter tuning on our random forest model to further enhance the predicting power. our best selected random forest parameter was mtry (4), trees(839) and min_n (37). To automate the model to predict the new data set, we trained the random forest model, then cross-validated and hyper tuned. We finalized the random forest workflow model using finalize_workflow function for predicting new data set.
-
-There was a evident from all the models that around 80% of customers churned. Bank has to encourage customers to be actively transacting the account by offering some cash back opportunities for transacting. When the customers use the service and get happy, definitely they will stay with them and get more products from the same bank and try to maintain more balance, which all will eventually lead to increase in customers` retention rate and reduction in customers` churning rate.
+It was a evident that, from all trained models, around 80% of customers churned. Therefore, the Bank should encourage customers to be actively transacting the account by offering  cash back opportunities per transaction. When the customers use the service and get satisfied, they will remain loyal, get more products from the bank, and maintain more balance, which eventually will lead to increase in customers' retention rate and reduction in customers' churning rate.
 
 
-# Issues and challanges
+# 2. Issues and challenges
 
-The greatest challenge was to figure out which all the variables play a role in predicting the response variable, exited. The exited, hascrcard and isactivemember were treated as integers automatically but they were a categorical values. We converted them as a factor before processing into a model. The balance and salary were high in numbers and others were small in numbers. We normalized balance and salary before processing to get a better prediction. When we hyper tuned and cross validated random forest model, the processing of file was longer. 
+The greatest challenge in this project was to figure out which variables play a role in predicting the response variable. 
+There were a number of issues. For example, variables *Exited*, *HasCrCard* and *IsActiveMember* were treated automatically as integers although they were categorical values. We converted them to factors before their processing in the model. Also, we noticed that variables like *Balance* and *Salary* were high in numbers, whereas others were small. To fix this, we normalized *Balance* and *Salary* before processing to get a better prediction. Furthermore, when we hyper tuned and cross validated RF model, the time processing was longer. 
 
 
-# Descriptive statistics and preprocessing
+# 3. Descriptive Statistics and Preprocessing
 
-#### (i) Summary
+#### A) Summary
 ```{r}
 summary(Bank_Churn_Data)
 ```
 
-We can remove 2 variables rownumber and customerid as they are related to individual and will not have influence to predict the churning of customers.
+We removed variables *RowNumber* and *CustomerId* as they are related to individuals and will not have influence to predict the churning of customers:
 
-**Removing rownumber and customerid**
 ```{r}
 Bank_Churn_Data <- subset (Bank_Churn_Data, select = - RowNumber)
 Bank_Churn_Data <- subset (Bank_Churn_Data, select = - CustomerId)
 ```
 
-#### (ii) Structure of data
+#### B) Structure of data
 ```{r}
 str(Bank_Churn_Data)
 ```
-The exited, hascrcard and isactivemember are categorical value but wrongly taken as integer variable
+The variables *Exited*, *HasCrCard*, and *IsActiveMember* are categorical values, and hence they were converted to characters.
 
 **Changing the variable from int to character**
 ```{r}
@@ -110,27 +119,27 @@ Bank_Churn_Data$IsActiveMember = factor(Bank_Churn_Data$IsActiveMember)
 Bank_Churn_Data$Exited  = factor(Bank_Churn_Data$Exited )
 ```
 
-#### (iii) Descriptive statistics
+#### C) Descriptive statistics
 ```{r}
 descr(Bank_Churn_Data)
 ```
-The above are the descriptive statistics for numerical values. We can find a huge standard deviation for some of the variables such as balance, estimated salary.
+The above are the descriptive statistics for numerical values. We can find a huge standard deviation for some of the variables such as *Balance* and *EstimatedSalary*.
 
-#### (iv) Revised structure of data
+#### D) Revised structure of data
 ```{r}
 str(Bank_Churn_Data)
 ```
 The above are the revised structure of the data after some of the variables have been converted as a factor from the wrongly assigned integer values initially.
 
-# Univariate analysis on numerical data
+# 4. Univariate Analysis on Numerical Data
 
-We analyse here all the numerical data individually to find out its outliers and remove those values.
+We analyse here all the numerical data individually to find out potential outliers and remove those values.
 
-#### 1. Univariate analysis on Age
+#### A) Univariate analysis on *Age*
 ```{r}
 descr(Bank_Churn_Data$Age)
 ```
-The standard deviation of age is 10.49. The average age is 38. There is a positive skewneww of 1.01.
+Variable *Age* ranges from 18 to 92, with a median of 37. The average is 38, with a standard deviation of 10.49. This variable exhibits a positive skewness of 1.01.
 
 **Boxplot of age and its outliers**
 
@@ -140,19 +149,19 @@ boxplot(Bank_Churn_Data$Age, main = "Box plot of age", boxwex = 0.6)
 mtext(paste("Outliers: ", paste(Age_outliers_churn, collapse =", ")), cex = 0.6)
 Age_outliers_churn
 ```
-The above box plot shows that the age above 63 are outliers. so, we remove those values from the dataset
+The above box plot shows several *Age* values (> 63) above the the upper quartile, which can be conseidered as outliers. Hence, we removed those values from the dataset
 
 **Removal of outliers of age**
 ```{r}
 Bank_Churn_Data <- subset (Bank_Churn_Data, Age < 63)
 ```
-The outliers have been removed from the data set.
 
-#### 2. Univariate analysis on Balance
+
+#### B) Univariate analysis on *Balance*
 ```{r}
 descr(Bank_Churn_Data$Balance)
 ```
-The average balance is $76560 but there is a huge standard deviation of $62401. There is a negative skewness of -0.14, which is almost equal to o.
+The variable *Balance* ranges from $0 to $250,898, with a median of $97,318. Its average is $76,560, with a huge standard deviation of $6,2401. There is a negative skewness of -0.14, which is almost equal to 0.
 
 **Boxplot of Balance and its outliers**
 
@@ -162,13 +171,13 @@ boxplot(Bank_Churn_Data$Balance, main = "Box plot of Balance", boxwex = 0.6)
 mtext(paste("Outliers: ", paste(Balance_outliers_churn, collapse =", ")), cex = 0.6)
 Balance_outliers_churn
 ```
-There are no outliers
+No outliers were detected in th boxplot.
 
-#### 3. Univariate analysis on CreditScore
+#### C) Univariate analysis on *CreditScore*
 ```{r}
 descr(Bank_Churn_Data$CreditScore)
 ```
-The average credit score is 650 and the stanard deviation is 96. There is a negative skewness of -0.07, which is almost equal to 0.
+The average of *CreditScore* is 650, with a standard deviation of 96. It ranges between 350 and 850, with a median of 652. There is a negative skewness of -0.07, which is almost equal to 0.
 
 **Boxplot of CreditScore and its outliers**
 ```{r}
@@ -177,19 +186,19 @@ boxplot(Bank_Churn_Data$CreditScore, main = "Box plot of CreditScore", boxwex = 
 mtext(paste("Outliers: ", paste(CreditScore_outliers_churn, collapse =", ")), cex = 0.6)
 CreditScore_outliers_churn
 ```
-We can see that less than 376 credit score are outliers. So, we remove those values from the data set.
+From the above boxplot, it can be noticed that  values less than 376 of correspond to outliers. Hence, we removed those values from the data set.
 
 **Removal of outliers of CreditScore**
 ```{r}
 Bank_Churn_Data <- subset (Bank_Churn_Data, CreditScore > 376)
 ```
-The outliers have been removed.
 
-#### 4. Univariate analysis on EstimatedSalary
+
+#### D) Univariate analysis on *EstimatedSalary*
 ```{r}
 descr(Bank_Churn_Data$EstimatedSalary)
 ```
-The average estimated salary is $100121 and the standard deviation  is $57524. There is no skewness. 
+The average of *EstimatedSalary* is $100,121, with a standard deviation of $57524. This variable ranges from $11.58 to $199,002, with a median of $100,187. There is no skewness. 
 
 **Boxplot of EstimatedSalary and its outliers**
 ```{r}
@@ -198,34 +207,34 @@ boxplot(Bank_Churn_Data$EstimatedSalary, main = "Box plot of EstimatedSalary", b
 mtext(paste("Outliers: ", paste(EstimatedSalary_outliers_churn, collapse =", ")), cex = 0.6)
 EstimatedSalary_outliers_churn
 ```
-There are no outliers
+No outliers were detected in variable *EstimatedSalary*
 
-#### 5. Univariate analysis on NumOfProducts
+#### E) Univariate analysis on *NumOfProducts*
 ```{r}
 descr(Bank_Churn_Data$NumOfProducts)
 ```
-The average number of products held by customers are 1.53. There is a standard deviation of 0.58. There is a positive skewness of 0.74. 
+The average number of products held by customers is 1.53. There is a standard deviation of 0.58. This variable ranges between 1 and 4, with a median of 1. There is a positive skewness of 0.74. 
 
-**Boxplot of NumOfProducts and its outliers**
+**Boxplot of *NumOfProducts* and its outliers**
 ```{r}
 NumOfProducts_outliers_churn<-boxplot.stats(Bank_Churn_Data$NumOfProducts)$out
 boxplot(Bank_Churn_Data$NumOfProducts, main = "Box plot of NumOfProducts", boxwex = 0.6)
 mtext(paste("Outliers: ", paste(NumOfProducts_outliers_churn, collapse =", ")), cex = 0.6)
 NumOfProducts_outliers_churn
 ```
-We can see that there are few people having 4 products and it is an outliers here. SO, we remove it from the data set.
+Observe that there are few people having 4 products and, therefore, can be considered  as outliers. We removed them from the data set.
 
 **Removal of outliers of NumOfProducts**
 ```{r}
 Bank_Churn_Data <- subset (Bank_Churn_Data, NumOfProducts < 4)
 ```
-The outliers have been removed.
 
-#### 6. Univariate analysis on Tenure
+
+#### F) Univariate analysis on *Tenure*
 ```{r}
 descr(Bank_Churn_Data$Tenure)
 ```
-The average tenure is 5.01 and the standard deviation of tenure is 2.89. The skewness is almost 0.
+The variable ranges from 0 to 10, with a median of 5. The average value of *Tenure* is 5.01 and its standard deviation is 2.89. The skewness is almost 0.
 
 **Boxplot of Tenure and its outliers**
 ```{r}
@@ -234,68 +243,69 @@ boxplot(Bank_Churn_Data$Tenure, main = "Box plot of Tenure", boxwex = 0.6)
 mtext(paste("Outliers: ", paste(Tenure_outliers_churn, collapse =", ")), cex = 0.6)
 Tenure_outliers_churn
 ```
-There are no outliers for tenure
+No outliers were detected in this variable.
 
-# Univariate analysis on categorical values
+# 5. Univariate Analysis on Categorical Values
 
-We analyzed the categorical values using frequency distribution to figure out least distribution among the distributed values.
+We analyzed the categorical values using frequency distribution to figure out the distribution among their factors.
 
-#### 1. Frequency distribution of Geography
+#### A) Frequency distribution of *Geography*
 ```{r}
 tab1(Bank_Churn_Data$Geography, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of Geography", xlab ="Geography")
 ```
-Almost half of the customers are from France and the remaining customers are equally distributed between Spain and Germany. 
+Almost half of the customers (4798) are from France. The remaining customers are equally distributed between Spain and Germany. 
 
-#### 2. Frequency distribution of Gender
+#### B) Frequency distribution of *Gender*
 ```{r}
 tab1(Bank_Churn_Data$Gender, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of Gender", xlab ="Gender")
 ```
-There are more male customers having account with bank compared to female members
+There more male customers (54%) having account with bank compared to female members.
 
-#### 3. Frequency distribution of HasCrCard
+#### C) Frequency distribution of *HasCrCard*
 
 ```{r}
 tab1(Bank_Churn_Data$HasCrCard, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of HasCrCard", xlab ="HasCrCard")
 ```
 
-Around 70% of customers have a credit card with bank and only 30% of people without credit card
+Around 70% of customers have a credit card with the bank and only 30% of people without credit card.
 
-#### 4. Frequency distribution of IsActiveMember
+#### D) Frequency distribution of *IsActiveMember*
 
 ```{r}
 tab1(Bank_Churn_Data$IsActiveMember, sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of IsActiveMember", xlab ="IsActiveMember")
 ```
 Almost equal number of customers are both active and not active customers in bank. 
 
-#### 5. Frequency distribution of Exited 
+#### E) Frequency distribution of Exited 
 ```{r}
 tab1(Bank_Churn_Data$Exited , sort.group = "increasing", cum.percent = TRUE, main = "Frequency distribution of Exited ", xlab ="Exited ")
 ```
-We could see from the above frequency distribution that only 20% of customers was a loyal customer and approximately 80% of customers closed the bank account
+Notice that, from the above frequency distribution, only 20% of customers remained loyal to the bank, whereas approximately 80% of customers closed the bank account.
 
-# Bivariate analysis
+# 6. Bivariate Analysis
 Here, we will analyze the relationship between response and explanatory variables.
 
 
-#### 1. Relationship between Age and Exited
+#### A) Relationship between *Age* and *Exited*
 ```{r}
 Age_Exited = glm(Exited~ Age, data = Bank_Churn_Data, family = "binomial")
 summary(Age_Exited)
 ```
-There is a 99.9% significant relationship between age and exited
+There is a 99.999% significant relationship between *Age* and response variable *Exited*. 
 
 ```{r}
 discretized.Age = cut(Bank_Churn_Data$Age, c(0, 10, 20, 30, 40, 50, 60,70))
 ggplot(Bank_Churn_Data, aes(x = discretized.Age , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
 ```
-The more number of customers churned are between the age 30 and 40. 
 
-#### 2. Relationship between Balance and Exited
+From the above plot, it can be observed that most of the churn customers are between 30 and 40 years old. 
+
+#### B) Relationship between *Balance* and *Exited*
 ```{r}
 Balance_Exited = glm(Exited~ Balance, data = Bank_Churn_Data, family = "binomial")
 summary(Balance_Exited)
 ```
-There is a 99.9% significant relationship between balance and exited.
+There is a 99.999% significant relationship between *Balance* and *Exited*.
 
 ```{r}
 discretized.Balance = cut(Bank_Churn_Data$Balance, c(0, 50000, 100000, 150000, 200000, 250898),dig.lab = 1000)
@@ -303,28 +313,29 @@ ggplot(Bank_Churn_Data, aes(x = discretized.Balance , fill = Exited )) + geom_ba
 ```
 
 
-#### 3. Relationship between CreditScore and Exited
+#### C) Relationship between *CreditScore* and *Exited*
 ```{r}
 CreditScore_Exited = glm(Exited~ CreditScore, data = Bank_Churn_Data, family = "binomial")
 summary(Balance_Exited)
 ```
-The credit score is 99.9% significant to predict the exited.
+Variable *CreditScore* is 99.999% significant to predict  *Exited*.
 
 ```{r}
 discretized.CreditScore = cut(Bank_Churn_Data$CreditScore, c(0,400, 500, 600, 700, 800, 900))
 ggplot(Bank_Churn_Data, aes(x = discretized.CreditScore , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
 ```
-We can infer from the above bar chart that more people are churned when the credit score is between 600 and 700.
 
-#### 4. Relationship between EstimatedSalary and Exited
+From the above bar chart, we can infer that that more people are churned when *CreditScore* is between 600 and 700.
+
+#### D) Relationship between *EstimatedSalary* and *Exited*
 ```{r}
 EstimatedSalary_Exited = glm(Exited~ EstimatedSalary, data = Bank_Churn_Data, family = "binomial")
 summary(EstimatedSalary_Exited)
 ```
-The coefficient of the estimated salary are not significant to predict the exited
+The coefficient of the *EstimatedSalary* is not significant to predict *Exited*.
 
 
-```{r}
+```{r warning=FALSE}
 discretized.EstimatedSalary = cut(Bank_Churn_Data$EstimatedSalary, c(0,40000, 80000, 120000, 160000, 200000),dig.lab = 1000)
 ggplot(Bank_Churn_Data, aes(x = discretized.EstimatedSalary , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
 
@@ -332,137 +343,96 @@ ggplot(Bank_Churn_Data, aes(x = discretized.EstimatedSalary , fill = Exited )) +
 ```
 
 
-#### 5. Relationship between NumOfProducts and Exited
+#### E) Relationship between *NumOfProducts* and *Exited*
 ```{r}
 NumOfProducts_Exited = glm(Exited~ NumOfProducts, data = Bank_Churn_Data, family = "binomial")
 summary(NumOfProducts_Exited)
 ```
-The number of bank products held by customers has a 99.9% significant relationship to predict the customers exited.
+The number of bank products held by customers has a 99.999% significant relationship to predict the customers exited.
 
 ```{r}
 ggplot(Bank_Churn_Data, aes(x = NumOfProducts , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
 ```
-The percentage of the churn rate for customer holding 1 and 2 account having more churn rate compared to customer having 3 products.
 
-#### 6. Relationship between Tenure and Exited
+The percentage of churn rate for customers holding 1 or 2 accounts tend to have more churn rate, compared to those customers having 3 products.
+
+#### F) Relationship between *Tenure* and *Exited*
 ```{r}
 Tenure_Exited = glm(Exited~ Tenure, data = Bank_Churn_Data, family = "binomial")
 summary(Tenure_Exited)
 ```
-The coefficient of the tenure is not significant to predict the exited.
+The coefficient of *Tenure* is not significant to predict *Exited*.
 
 ```{r}
 ggplot(Bank_Churn_Data, aes(x = Tenure , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
 ```
-It is surprising to see that 828 customer after having 7 years of relationship with bank, that was the highest churn numbers among different tenures.
 
-#### 7. Relationship between Geography and Exited
+It is surprising to see that 828 customers, after having 7 years of relationship with bank, was the highest churn number among different tenures.
+
+#### G) Relationship between *Geography* and *Exited*
 
 ```{r}
 Geography_Exited = glm(Exited~ Geography, data = Bank_Churn_Data, family = "binomial")
 summary(Geography_Exited)
 ```
 
-There is no significant relationship between geography and exited due to some of the coefficients are not significant.
+There is no significant relationship between factor *Geography$Spain* and *Exited* since its coefficient is not significant.
 
 
 ```{r}
 ggplot(Bank_Churn_Data, aes(x = Geography , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
 ```
-France has the highest churn rate of customers among others. Almost 85% of the customer closed the account.
 
-#### 8. Relationship between Gender and Exited
+From the plot above, It can be noticed that France has the highest churn rate of customers, with almost 85% of the customers that closed the account.
+
+#### H) Relationship between *Gender* and *Exited*
 
 ```{r}
 Gender_Exited = glm(Exited~ Gender, data = Bank_Churn_Data, family = "binomial")
 summary(Gender_Exited)
 ```
-There is a 99.9% significant relationship between gender and exited
+There is a 99.9% significant relationship between factor *Gender$male* and *Exited*.
 
 ```{r}
 ggplot(Bank_Churn_Data, aes(x = Gender , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
 ```
 
-There is a highest churn rate with male customer with approximate churn percentage of 84% as against female churn rate of 75% approximately.
+Observe that male customers have a higher churn rate (84%), than female customers (75% approximately).
 
-#### 9. Relationship between HasCrCard and Exited
+#### I) Relationship between *HasCrCard* and *Exited*
 
 ```{r}
 HasCrCard_Exited = glm(Exited~ HasCrCard, data = Bank_Churn_Data, family = "binomial")
 summary(HasCrCard_Exited)
 ```
-There is no significant relationship between the customer having credit card and exited because of its coefficients are not significant.
+
+There is no significant relationship between a customer having credit card and variable *Exited*.
 
 ```{r}
 ggplot(Bank_Churn_Data, aes(x = HasCrCard , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
 ```
-Almost 80% of customers closed the account irrespective of customers having credit card or not.
 
-#### 10. Relationship between IsActiveMember and Exited
+Notice that almost 80% of customers closed the account irrespective of customers having credit card or not.
+
+#### J) Relationship between *IsActiveMember* and *Exited*
 
 ```{r}
 IsActiveMember_Exited = glm(Exited~ IsActiveMember, data = Bank_Churn_Data, family = "binomial")
 summary(IsActiveMember_Exited)
 ```
-There is a 99.9% significant relationship between IsActiveMember and Exited.
+
+There is a 99.999% significant relationship between *IsActiveMember* and *Exited*.
 
 ```{r}
 ggplot(Bank_Churn_Data, aes(x = IsActiveMember , fill = Exited )) + geom_bar(position = position_dodge())+geom_text(stat = 'count', aes(label = stat(count)), position = position_dodge(width =1), vjust = -0.4)
 ```
 
-It is surprising to notice that actively transacted customers(86%) have high percentage of churn rate against customers who have not transacted actively (75%).
+It is surprising to notice that actively transacted customers (86%) have a higher churn rate than customers who have not transacted actively (75%).
 
-# Full model logistic regression
-```{r}
-full_model_bank_churn = glm(Exited ~ ., family = "binomial", data = Bank_Churn_Data)
-summary(full_model_bank_churn)
-```
-We could see from the above full model by logistic regression, many coefficients are not significant.
+# 7. Data Resampling 
 
-# Backward Regression
-We used the stepAIC backward regression to find out the best model
+The bank_churn dataset was used for the training and testing of the predictive models. The dataset was randomly partitioned into two subsets, the training set, which contains 80% of the observations, and the testing set, which contains the remaining 20%.
 
-```{r}
-mod_step_bank_churn<- stepAIC(full_model_bank_churn, direction = 'backward', trace = FALSE)
-mod_step_bank_churn
-```
-Geography. gender, age, tenure, balance, numofproducts, isactivemember are the best predictors.
-
-# Bootstrap method
-Using bootstrap re sampling with replacement method to access the consistency predictors selected with step-wise.
-```{r message = FALSE, warning = FALSE, echo = FALSE}
-library(bootStepAIC)
-```
-```{r}
-mod_boot_bank_churn<- boot.stepAIC(full_model_bank_churn, Bank_Churn_Data, B =50)
-```
-
-**Bootstrap summary**
-
-```{r}
-print(mod_boot_bank_churn)
-```
-We can see above that even after bootstrapping, same variables are selected as a best predictors.
-
-# Best model by backward and bootstrap method
-```{r}
-best_bootmodel_bank_churn<- glm(formula = Exited ~ Geography + Gender + Age + Tenure + Balance + NumOfProducts + 
-    IsActiveMember, family = "binomial", 
-    data = Bank_Churn_Data)
-summary(best_bootmodel_bank_churn) 
-```
-We could see in the above selected bootstrap and stepwise regression model that some of the coefficients such as geography and tenure are not significant. SO to get better significant model, geography and tenure are to be removed.
-
-# Final Best model
-```{r}
-bestmodel<- glm(formula = Exited ~  Gender + Age + Balance + NumOfProducts + 
-    IsActiveMember, family = "binomial", 
-    data = Bank_Churn_Data)
-summary(bestmodel)
-```
-The above is the best model of logistic regression after many iterations as all the coefficients are 99.9% significant to predict the response variable - exited. 
-
-# Data resampling
 ```{r}
 bank_churn_split <- initial_split (Bank_Churn_Data, prop = 0.80, strata = Exited)
 bank_churn_training <- bank_churn_split %>%
@@ -471,7 +441,6 @@ bank_churn_test <- bank_churn_split %>%
   testing()
 ```
 
-We have taken 80:20 split for data sampling. We have made training data to fit the model and test the model using test set.
 
 **Checking number of rows in training and test data**
 
@@ -479,7 +448,8 @@ We have taken 80:20 split for data sampling. We have made training data to fit t
 nrow(bank_churn_training)
 nrow(bank_churn_test)
 ```
-There are total 7654 numbers of row in training data and 1915 numbers of row in test data.
+
+In total, there are 7654 observations in the training data set and 1915 observations in test data.
 
 **Checking multicollinearity between numerical values in a training bank churn data set**
 ```{r}
@@ -488,11 +458,127 @@ bank_churn_training %>%
   cor()
 ```
 
-There is no multicollinearity between the independent numeric variables.
+From the correlation matrix above, it can be noticed that there is no multicollinearity between the independent numeric variables. Just variables  *Balance* and *NumOfProducts* presented a small negative correlation (-0-3258), but not large enough to drop one of the variables from the model.
 
 
-# Future engineering
-This is the step to pre-processing of data
+
+# 8. Logistic Regression Model
+
+In this section,  we build our logistic regression model using the training dataset. This first approach considers all independent variables.
+
+```{r}
+full_model_bank_churn = glm(Exited ~ ., family = "binomial", data = bank_churn_training)
+summary(full_model_bank_churn)
+```
+
+The coefficients of the fitted model can be seen above. Observe that many of them are not significant (i.e., *CreditScore*, *Tenure*, and *HasCrCard1*, among others). Hence, the model can be further refined.
+
+#### A) Backward Regression
+
+Here we used step AIC backward regression to find out the best model. 
+
+```{r}
+mod_step_bank_churn<- stepAIC(full_model_bank_churn, direction = 'backward', trace = FALSE)
+mod_step_bank_churn
+```
+
+Observe that variables *CreditScore*, *Tenure*, and *HasCrCard1*
+were discarded from the model, whereas *Geography$Germany* *Geography$France*, *Gender$Male*, and *Age*, among others, are the best predictors.
+
+#### B) Bootstrap method
+
+Now, we use bootstrap resampling with replacement method to access the consistency predictors selected with step-wise. The number of bootstrap estimates was set to 50.
+
+```{r message = FALSE, warning = FALSE, echo = FALSE}
+library(bootStepAIC)
+```
+```{r}
+mod_boot_bank_churn<- boot.stepAIC(full_model_bank_churn, bank_churn_training, B =50)
+```
+
+**Bootstrap summary**
+
+```{r}
+print(mod_boot_bank_churn)
+```
+
+From the results above, we can notice that, even after bootstrapping, the same variables were selected as the best predictors.
+
+#### C) Best model by backward and bootstrap methods
+
+The selected variables by backward and bootstrap methods were joined to fit a new model.
+
+```{r}
+best_bootmodel_bank_churn<- glm(formula = Exited ~ Geography + Gender + Age + Tenure + Balance + NumOfProducts + 
+    IsActiveMember, family = "binomial", 
+    data = bank_churn_training)
+summary(best_bootmodel_bank_churn) 
+```
+
+From the results above, we can see that some of the coefficients, such as *Geography$Spain* and *Tenure* are not significant. Therefore, to improve our model, these variables were removed.
+
+#### D) Final Best model
+
+The final logistic regression model is the following:
+
+```{r}
+bestmodel<- glm(formula = Exited ~  Gender + Age + Balance + NumOfProducts + 
+    IsActiveMember, family = "binomial", 
+    data = bank_churn_training)
+summary(bestmodel)
+```
+
+The best model includes variables *Gender$Male*, *Age*, *Balance*, *NumOfproducts*, and *IsActiveMember1*.  Notice that all the coefficients are 99.999% significant to predict the response variable *Exited*. 
+
+#### E) Test bestmodel
+
+Here, we verify the performance results of the best model on the out-of-sample testing set.
+
+
+```{r warning=FALSE}
+library(PRROC)
+test.pred <- predict(bestmodel,type = "response", newdata = bank_churn_test)
+summary(test.pred)
+bank_churn_test$prob <- test.pred
+test.pred.default <- factor(ifelse(bank_churn_test$prob>=0.5,"Yes","No"))
+test.actual.default <- factor(ifelse(bank_churn_test$Exited ==1,"Yes","No"))
+table(test.actual.default,test.pred.default)
+test.conf <- confusionMatrix(test.pred.default,test.actual.default,positive = "Yes")
+#test.conf
+perform.fn <- function(cutoff){
+  pred.default <- factor(ifelse(test.pred>=cutoff,"Yes","No"))
+  conf <- confusionMatrix(pred.default,test.actual.default,positive = "Yes")
+  acc <- conf$overall[1]
+  sens <- conf$byClass[1]
+  spec <- conf$byClass[2]
+  out <- t(as.matrix(c(sens,spec,acc)))
+  colnames(out) <- c("sensitivity","specificity", "accuracy")
+  return(out)
+}
+s <- seq(0.01,1, length = 100)
+OUT <- matrix(0,100,3)
+for(i in 1:100){
+  OUT[i,] = perform.fn(s[i])
+}
+diff <- abs(OUT[,1]-OUT[,2])
+cutoff <- s[which(diff ==min(diff))]
+cutoff #cutoff = 0.19
+test.cuttoff.default <- factor(ifelse(test.pred>=cutoff,"Yes","No"))
+conf.final <- confusionMatrix(test.cuttoff.default,test.actual.default,positive = "Yes")
+conf.final
+roc.glm <- roc.curve(test.actual.default, test.cuttoff.default,curve=TRUE)
+plot(roc.glm)
+```
+
+Observe the confusion matrix shown above. In total, 1405 (out of 1915) customers were predicted correctly if they exited or not from the bank. In general, the performance of the best logistic regression model is acceptable in terms of accuracy (0.7337), specificity (0.7305), and sensitivity (0.7467). Unfortunately, in terms of ROC AUC score, the achieved performance is far from ideal, with a score of 0.4169. 
+
+
+# 9. Feature engineering: Modelling with the Tidymodel Ecosystem
+
+We used the tidymodel ecosystem to standardized the workflow of all our models, and make easier the hyper-parameter tuning and performance comparison among them. 
+
+The first step was to pre-processing of data:
+
 ```{r}
 bank_churn_recipe <- recipe(Exited ~ ., data = bank_churn_training) %>%
   step_corr(all_numeric(), threshold =0.8) %>%
@@ -500,7 +586,8 @@ bank_churn_recipe <- recipe(Exited ~ ., data = bank_churn_training) %>%
   step_dummy(all_nominal(), -all_outcomes())
 bank_churn_recipe
 ```
-We have given instruction above in the model that to check the correlation for all numeric variables and keep the thresholding limit as 0.8. We have also given instruction in the model to normalize all the numeric variables and set dummy to all nominal or character variables except the outcome variables because outcome is in factor. There are 10 predictor variable and 1 outcome variable.
+
+The instructions above create a recipe to check the correlation for all numeric variables and keep the thresholding limit equal to 0.8. We have also instructed the model to normalize all numeric variables and set as dummy all nominal or character variables except the outcome variable, because outcome is in factor. There are 10 predictor variables and 1 outcome variable.
 
 **Recipe training**
 ```{r}
@@ -508,7 +595,8 @@ bank_churn_recipe_prep<- bank_churn_recipe %>%
   prep(training = bank_churn_training)
 bank_churn_recipe_prep
 ```
-We have prepared the training data set.
+
+With the instruction above we prepared the training data set.
 
 **Preprocess training data**
 ```{r}
@@ -516,6 +604,7 @@ bank_churn_training_prep <- bank_churn_recipe_prep %>%
   bake (new_data = NULL)
 bank_churn_training_prep
 ```
+
 We have pre-processed the training data set.
 
 **Preprocess test data**
@@ -525,9 +614,12 @@ bank_churn_test_prep <- bank_churn_recipe_prep %>%
 bank_churn_test_prep
 ```
 
-We pre-processed the test data.
+Finally, we pre-processed the test data. Now we can continue with the development of our prediction models.
 
-# Support vector machine
+
+# 10. Support Vector Machine Model
+
+In this section,  we build our support vector machine model using the training dataset. This approach considers all independent variables and a linear kernel as parameter.
 
 ```{r message = FALSE, warning = FALSE, echo = FALSE}
 
@@ -539,7 +631,7 @@ library(e1071)
 bank_churn_svm_model <- svm(Exited ~., data = bank_churn_training_prep, type = "C-classification", kernel = "linear", scale = FALSE)
 bank_churn_svm_model
 ```
-We build the svm model
+
 
 **Training accuracy**
 ```{r}
@@ -547,7 +639,8 @@ bank_churn_svm_pred_train <- predict(bank_churn_svm_model, bank_churn_training_p
 mean(bank_churn_svm_pred_train == bank_churn_training_prep$Exited)
 
 ```
-We can see the average predicted trained data are 80.23%
+
+The SVM model achieved an in-sample accuracy of 80.23%.
 
 **Testing accuracy**
 ```{r}
@@ -556,23 +649,37 @@ mean(bank_churn_svm_pred_test == bank_churn_test_prep$Exited)
 
 
 ```
-We can see the average predicted test data
+
+As expected, the out-of-sample performance of the SVM model is little bit lower than that of the in-sample performance. The average predicted accuracy in the test data was of 0.802.
 
 **Confusion Matrix**
 ```{r}
 confusionMatrix(bank_churn_svm_pred_test, bank_churn_test_prep$Exited )
 ```
 
-We can see the prediction results above that there are more false negative and there are no true positive. We feel that the model is not predicting properly.
+From the confusion matrix shown above, we can see that, in total, 1536 customers (out of 1915) were predicted correctly in that they exited the bank. This makes a sensitivity of 100%. On the contrary, the specificity was of 0%, lowering the overall accuracy to 0.8021.  
 
-# Logistic regression Machine learning workflow models
-I specify the logistic regression model here
+
+**ROC Curve**
+```{r}
+roc.svm <- roc.curve(bank_churn_test_prep$Exited,bank_churn_svm_pred_test, curve=TRUE)
+plot(roc.svm)
+```
+
+Of course, the specificity performance largely affected the ROC AUC score, achieving a total of 0.5989.
+
+
+# 11. Logistic Regression Model  (Tidy workflow version)
+
+In this section,  we rebuild our logistic regression model
+under the tidy ecosystem. The model is fitted using the training dataset, and all independent variables.
+
 ```{r}
 bank_churn_logistic_model<- logistic_reg() %>%
   set_engine('glm') %>%
   set_mode('classification')
 ```
-I have created the logistic model
+
 
 **Model fitting**
 
@@ -581,7 +688,8 @@ bank_churn_logistic_fit <- bank_churn_logistic_model %>%
   fit(Exited ~ ., data = bank_churn_training_prep)
 bank_churn_logistic_fit
 ```
-We have used the fit function to train and fit the model.
+
+Observed that the selected independent variables are the same to those selected in Section 8.
 
 **Predicting outcome categories**
 
@@ -590,7 +698,7 @@ bank_churn_logistic_class_preds <- predict (bank_churn_logistic_fit, new_data = 
 bank_churn_logistic_class_preds
 ```
 
-The above .pred class is the outcome of our results. That is if the customer will churn or not. The number o means churn and 1 means no churn.
+The above .pred class is the outcome of our results. That is if the customer will churn or not. The number o means churn and 1 means no churn. 
 
 **Estimated probabilities**
 
@@ -598,6 +706,7 @@ The above .pred class is the outcome of our results. That is if the customer wil
 bank_churn_logistic_prob_preds <- predict (bank_churn_logistic_fit, new_data = bank_churn_test_prep, type ="prob")
 bank_churn_logistic_prob_preds
 ```
+
 The above prediction are the probabilities of outcome occurrences.
 
 
@@ -618,11 +727,12 @@ bank_churn_logistic_results %>%
   conf_mat(truth = Exited, estimate = .pred_class) %>%
   autoplot(type = 'heatmap')
 ```
+
 **Correct predictions of test set**
-True negative is 1483 customers, who churned. True positive is 120 people, who was a loyal customer and did not churn. 
+From the confusion matrix above, we observe that 1484 customers, who churned, were correctly classified (True Negatives). The number of True Positives is 120, all of these customers were  loyal customer and did not churn. 
 
 **Classification error of test set**
-False positive is 53 people, who are predicted as not churned but actually churned. False negative is 2259 people, who are predicted as churned but actually not churned and was loyal to bank.
+The number of False Positives is 52 customers, who were predicted as not churned but actually churned. The number of False Negatives is 2259 people, who are predicted as churned but actually not churned and were loyal to bank.
 
 **Creating workflow**
 
@@ -642,7 +752,7 @@ bank_churn_logistic__wkfl_fit <- bank_churn_logistic_wkfl %>%
   last_fit( split = bank_churn_split)
 bank_churn_logistic__wkfl_fit
 ```
-We have trained the workflow.
+Above we trained the corresponding workflow.
 
 **Calculating performance metrics**
 
@@ -667,22 +777,26 @@ bank_churn_logistic_metrics <- metric_set(roc_auc,sens,spec,accuracy)
 bank_churn_logistic_metrics
 ```
 
+We created a set of metrics to compare our models: ROC AUC score, sensitivity, specificity, and accuracy.
+
 ```{r}
 bank_churn_logistic_wkfl_fit_results %>%
  bank_churn_logistic_metrics(truth = Exited, estimate = .pred_class, .pred_1)
 ```
-The above are the metrics using logistic regression.
+
+The table above shows the calculated metrics using logistic regression. The model achieved a sensitivity of 0.966 but a very low score in specificity (0.298), which largely affected its ROC AUC score (0.183).
 
 
-# Random forest Machine learning workflow models
+# 12. Random Forest Models
 
-Let us develop random forest model and compare against logistic to see which model is more accurate
+In this section we develop a Random Forest Model for the prediction of customer churn. The parameters used were the following. The number of trees was set to 100,  the smallest node size allowed was set to 10, and the number of predictors seen at each node was set to 4.
+
 ```{r}
 bank_churn_rf_model<- rand_forest(mtry =4,trees = 100, min_n =10) %>%
   set_engine('ranger') %>%
   set_mode('classification')
 ```
-We have used 100 trees to create a model using random forest
+
 
 **Training a forest**
 ```{r}
@@ -690,7 +804,7 @@ bank_churn_fit_rf <- bank_churn_rf_model %>%
   fit (Exited ~ ., data = bank_churn_training_prep)
 bank_churn_fit_rf
 ```
-We have trained the model
+We considered all independent variables for model fitting.
 
 **Predicting outcome variables**
 
@@ -699,7 +813,7 @@ bank_churn_class_preds_rf <- predict(bank_churn_fit_rf, new_data = bank_churn_te
 bank_churn_class_preds_rf
 ```
 
-The above are predicted outcomes using test set
+The table above shows a sample of predicted outcomes using the independent set. 
 
 **Estimated probabilities**
 ```{r}
@@ -707,7 +821,7 @@ bank_churn_prob_preds_rf <- predict(bank_churn_fit_rf, new_data = bank_churn_tes
 bank_churn_prob_preds_rf
 ```
 
-The above are the predicted probabilities using test data set.
+The table above shows the corresponding predicted probabilities using the test data set.
 
 
 **Combining results**
@@ -717,7 +831,7 @@ bank_churn_results_rf <- bank_churn_test_prep %>%
   bind_cols(bank_churn_class_preds_rf, bank_churn_prob_preds_rf)
 bank_churn_results_rf
 ```
-We have combined the predicted outcome and probabilities into the preprocessed test data set.
+The procedure above combined the predicted outcomes and their  probabilities into the preprocessed test data set.
 
 **Assessing model fit using confusion matrix**
 ```{r}
@@ -725,13 +839,13 @@ bank_churn_results_rf %>%
   conf_mat(truth = Exited, estimate = .pred_class) %>%
 autoplot(type = 'heatmap')
 ```
-The above random forest model fit  is better than logistic model fit
+
 
 **Correct predictions of test set**
-True negative is 1492 customers, who churned. True positive is 180 people, who was a loyal customer and did not churn. 
+The total of True Negatives is 1472, that is, the number of  customers who churned. True positive is 170 people, who was a loyal customer and did not churn. 
 
 **Classification error of test set**
-False positive is 44 people, who are predicted as not churned but actually churned. False negative is 199 people, who are predicted as churned but actually not churned and was loyal to bank.
+In total, 64 people were predicted as not churned, but actually churned (False Positives). Also, 209 people were predicted as churned, but actually did not churn and were loyal to bank (False Negatives).
 
 **Combining models and recipe**
 ```{r}
@@ -740,7 +854,7 @@ bank_churn_wkfl_rf<- workflow() %>%
   add_recipe(bank_churn_recipe)
 bank_churn_wkfl_rf
 ```
-We combined the model and its receipe.
+We combined the model and its recipe.
 
 **Model fitting with workflow**
 ```{r}
@@ -750,7 +864,11 @@ bank_churn_wkfl_fit_rf %>%
   collect_metrics()
 ```
 
-We can see here the accuracy of the random forest model is 87.31% and roc_auc is 85.48%, which are better than logistic` model accuracy (84.28%) and roc_auc (80.99%) and support vector machine` accuracy 80.21%.
+** Performance comparison among RF, LG, and SVM models **
+
+The table above shows some performance metrics of the RF model on the testing set. RF model achieved an accuracy of 85.37% and a ROC AUC score of 85.48%. Compared to the Logistic Regression Model, which obtained an accuracy of 83.4% and a ROC AUC score of 81.7%, it is clear that RF model slightly outperformed it in both metrics. Also, we can see that RF model achieves a much better performance than SVM model, since the latter model reported an accuracy of 80.21% and a ROC AUC score of 59.89%.
+For this reason, we selected RF model for further refinements. 
+
 
 **Collecting predictions**
 ```{r}
@@ -763,7 +881,7 @@ bank_churn_wkfl_preds_rf
 conf_mat(bank_churn_wkfl_preds_rf, truth = Exited, estimate = .pred_class) %>%
   autoplot(type = 'heatmap')
 ```
-We could that there is a reduction in both false positive and negative.
+We could observe a slight reduction in both False Positives and False Negatives.
 
 **Exploring custom metrics**
 ```{r}
@@ -771,15 +889,16 @@ bank_churn_metrics_rf <- metric_set(roc_auc, sens, spec, accuracy)
 bank_churn_wkfl_preds_rf %>%
 bank_churn_metrics_rf(truth = Exited, estimate = .pred_class, .pred_1)
 ```
-# Creating k-fold cross validation
+# 13. Creating *k*-Fold Cross Validation
+
+We tried to improve the RF model fitting using cross validation with 10 folds. since observations of response variable *Exited* were imbalanced, we decided to balance its distribution by using the "strata" argument which causes the random sampling to be conducted within the stratification variable. This parameter ensures that the number of data points in the training data is equivalent to the proportions in the original data set. We used 10 folds as input parameter.
+
 ```{r}
 set.seed(222)
 bank_churn_folds_rf <- vfold_cv(bank_churn_training, v = 10, strata = Exited)
 bank_churn_folds_rf
 ```
-Since random forest model is better than logistic model and support vector machine for prediction in terms of its accuracy and roc-auc, We take the random forest model to do cross validation and hyper parameter tuning to further increase the prediction accuracy.
 
-We have used 10 times k-fold cross validation to do re-sampling.
 
 **Model training with cross validation**
 ```{r}
@@ -789,7 +908,7 @@ bank_churn_rs_fit_rf %>%
   collect_metrics()
 ```
 
-
+The cross-validation training resulted in an average accuracy of 0.861, an average sensitivity of 0.447, an average specificity of 0.447, and an average ROC AUC score of 0.848.
 
 **Detailed cross_validation results**
 ```{r}
@@ -810,7 +929,11 @@ bank_churn_rs_metrics_rf %>%
             sd = sd(.estimate))
 ```
 
-# Hyper parameter tuning
+# 14. Hyper Parameter Tuning
+
+In addition to using a fixed set of Random Forest parameters during the training process, we also performed parameter tuning to find the optimal set. In particular, we considered 3 parameters that aim at controlling the model's complexity: the number of trees (*tree*), the smallest node size allowed (*min_n*), and the number of predictors seen at each node (*mtry*). Four different metrics were considered: accuracy, sensitivity, specificity, and the area under the ROC curve. The latter was used to select the best model. We show below all the technical pipeline to perform hyper parameter tuning.
+
+
 ```{r}
 bank_churn_rf_tune_model <- rand_forest(mtry = tune(), trees = tune(), min_n = tune()) %>%
   set_engine('ranger') %>%
@@ -843,6 +966,7 @@ bank_churn_rf_tuning
 bank_churn_rf_tuning %>%
   collect_metrics()
 ```
+The table above shows a sample of the different combinations tested during the process. 
 
 **Detailed tuning results**
 ```{r}
@@ -861,22 +985,28 @@ bank_churn_rf_tuning %>%
              max_roc_auc = max(.estimate))
 ```
 
+As mentioned earlier, optimal RF parameters were selected based on their ROC AUC score. The minimum ROC AUC score found during the process was of 0.791, the median was of 0.849, and the maximum score was of 0.876.
+
 **Viewing the best performing model**
 ```{r}
 bank_churn_rf_tuning %>%
   show_best(metric = 'roc_auc', n =5)
 ```
 
-Model 6 is the best model
+The best parameter set  for the RF model was *mtry* = 4, *trees* = 839, and *min_n* = 37, with an average ROC AUC score of 0.852 and a standard deviation of 0.00620. The best model is Preprocessor1_Model06.
 
-# Best model selection with parameter
+# 15. Best Model Selection with Parameter
+
+In this section we train and test our best model, and compare its performance against the Logistic Regression and Support Vector Machine models. 
+
 ```{r}
 bank_churn_best_rf_model <- bank_churn_rf_tuning %>%
   select_best(metric = 'roc_auc')
 bank_churn_best_rf_model 
 ```
 
-The best parameters are mtry is 4, trees is 839 and min_n is 37 and the best model is Preprocessor1_Model06
+The table above shows the best set of parameters found.
+
 
 **Finalizing the workflow**
 ```{r}
@@ -896,7 +1026,7 @@ bank_churn_final_fit_rf %>%
 ```
 
 
-We can see above that accuracy and roc-auc (87.72% & 85.97% respectively) are improved compared to the model without tuning. 
+We can see above that accuracy and ROC AUC score (85.9% & 86.8%, respectively) are improved compared to the model without tuning. 
 
 **collecting predictions**
 ```{r}
@@ -911,50 +1041,79 @@ conf_mat(bank_churn_prediction_rf, truth = Exited, estimate = .pred_class) %>%
   autoplot(type = 'heatmap')
 ```
 
-
 **Correct predictions of test set**
-True negative is 1499 customers, who churned. True positive is 181 people, who was a loyal customer and did not churn. 
+The number of True Negatives is 1485 customers, who churned. Furthermore, the number of True Positives is 160 people, who were loyal customers and did not churn. 
 
 **Classification error of test set**
-False positive is 37 people, who are predicted as not churned but actually churned. False negative is 198 people, who are predicted as churned but actually not churned and was loyal to bank.
+The number of False Positives is 51 customers, who were predicted as not churned but actually churned. Also, the number of False Negatives is 198. Such customers were predicted as churned but actually did not churn and remained loyal to the bank.
 
 Almost 80% of the customers churned
 
-# Observations and comments
 
-1. The important determinants to predict the exited are gender, age, balance, numofproducts and isactivemember.
+**ROC Curve**
+```{r}
+roc.rf <- roc.curve(bank_churn_test_prep$Exited, bank_churn_prediction_rf$.pred_class, curve=TRUE)
+plot(roc.rf)
+```
 
-2. The character integer variables are assigned as a factor.
 
-3. stepAIC backward regression and boot strapping were used to select the best model.
 
-4. Almost 80% of the customers churned and only 20% of the customers were loyal and stayed with the bank.
+# 16. Model Comparison
 
-5. The accuracy and roc-auc is better in random forest model compared to logistic regression and support vector machine.
+The ROC curves for the Random Forest, Support Vector Machine, and Logistic Regression Models are presented below. Among all models, Logistic Regression achieved the worst performance. The performance of Random Forest and SVM resulted similar in this regard, but when considering the other metrics, RF outperforms SVM. 
 
-6. The variables such has age, creditscore, numofproducts had outliers and they were removed from the data before further processing in model.
+```{r}
+plot(roc.rf)
+plot(roc.svm)
+plot(roc.glm)
+```
 
-7. We performed univariate analysis, bivariate analysis, bootstrapping, stepAIC, feature engineering, cross validation, hyper parameter tuning, random forest model, support vector machine and logistic regression model on banking churn data set.
+# 17. Observations and Comments
 
-8. When we did bivariate analysis on independent and dependent variables, only the best model variables such as gender, age, balance, numofproducts and isactivemember came as 99.9% significant and other variables are not fully significant. The same significant variables turned to a best model predictors as well for a whole model.
+a) The important determinants to predict *Exited* are *Gender*, *Age*, *Balance*, *NumOfProducts* and *IsActiveMember*.
 
-9. The stepAIC and bootstrapping selected geography, tenure, gender, age, balance, numofproducts and isactivemember but when we run geography and tenure were not significant and were removed from the final model.
+b) The character integer variables were assigned as factors.
 
-10. We used future engineering to preprocess the training and testing data such as we normalized all numeric variables, we set the dummy variables to all character variables.
+c) stepAIC backward regression and boot strapping were used to select the best model.
 
-11. The important things for bank in bivariate analysis are as follows
+d) Almost 80% of the customers churned and only 20% of the customers were loyal and stayed with the bank.
 
-   (i) More number of customers churned are between the age 30 and 40 : the reason may be the product is not tuned to their expectations.
+e) The accuracy and ROC AUC score is better in Random Forest model compared to Logistic Regression and Support Vector Machine.
+
+f) Variables such as *Age*, *CreditScore*, *NumOfProducts* had some outliers and were removed from the data before further processing in model.
+
+g) We performed univariate analysis, bivariate analysis, bootstrapping, stepAIC, feature engineering, cross validation, hyper parameter tuning, random forest model, support vector machine, and logistic regression model on banking churn data set.
+
+h) When we did bivariate analysis on independent and dependent variables. Only the best model variables such as *Gender*, *Age*, *Balance*, *NumOfProducts* and *IsActiveMember* came as 99.9% significant and other variables are not fully significant. The same significant variables turned to a best model predictors as well for a whole model.
+
+i) The stepAIC and bootstrapping selected *Geography*, *Tenure*, *Gender*, *Age*, *Balance*, *NumOfProducts* and *IsActiveMember* but when we run *Geography* and *Tenure* resulted not significant, and therefore were removed from the final model.
+
+j) We used future engineering to preprocess the training and testing data such as we normalized all numeric variables and set dummy variables to all character variables.
+
+k) Some important things for bank in bivariate analysis are the following:
+
+   (i) The group of customers that mostly churned are between 30 and 40 years old. The reason for this might be that the product is not tuned to their expectations.
    
-  (ii) More number of customers churned had a credit score between 600 and 700 : the reason may be other banks might give a loan whereas this bank might not give a loan to people less than credit score 700. Since no details are provided, this was our assumption
+  (ii) More customers who churned had a credit score between 600 and 700. The reason could be that other banks might lend money easier to this people, whereas this bank might not give a loan to people with less than 700 in credit score. Since no details are provided, this was our assumption.
   
-  (iii) The customers having 3 accounts had less churn rate compared to customers having 1 or 2 accounts with bank : bank should try to sell as much product as possible and do better service to retain more customers.
+  (iii) The customers having 3 accounts had less churn rate compared to customers having 1 or 2 accounts with bank. As a recommendation, the bank should try to sell as much product as possible and do better service to retain more customers.
   
-  (iv) Though geography did not come as a determinant to predict the customer`s churning rate, France had highest churn rate of 4798 customer, which is almost half of the churning rate of a bank : There may some unique problem, France people might face. SO, bank should look into the aspect as well.
+  (iv) Though geography did not come as a determinant to predict the customer`s churning rate, France had the highest churn rate of 4798 customers, which is almost half of the churning rate of the bank.
   
-  (v) Churning rate was higher with male customer compared to female customers: Bank may come up with some unique product for male members to retain them.
+  (v) Churning rate was higher with male customers than with female customers. The Bank should come up with some unique product for male members to retain them.
   
-  (vi) It is surprising to notice that actively transacted customers(86%) have high percentage of churn rate against customers who have not transacted actively (75%) : This shows the poor service by a bank. Hence, bank should look into this immediately and resolve the service problem and give a better service to retain them. Retaining the existing customer is as important as getting a new customer.
+  (vi) It is surprising to notice that actively transacted customers(86%) have high percentage of churn rate against customers who have not transacted actively (75%). This shows the poor service provided by the bank. Hence, bank should look into this immediately and resolve the service problem and give a better service to retain them. Retaining the existing customer is as important as getting a new customer.
+
+
+
+
+
+
+
+
+
+
+
 
 
 
