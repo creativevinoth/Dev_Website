@@ -530,7 +530,7 @@ summary(bestmodel)
 
 The best model includes variables *Gender$Male*, *Age*, *Balance*, *NumOfproducts*, and *IsActiveMember1*.  Notice that all the coefficients are 99.999% significant to predict the response variable *Exited*. 
 
-#### E) Test bestmodel
+#### E) Cut-off value and  Test bestmodel
 
 Here, we verify the performance results of the best model on the out-of-sample testing set.
 
@@ -554,23 +554,45 @@ perform.fn <- function(cutoff){
   out <- t(as.matrix(c(sens,spec,acc)))
   colnames(out) <- c("sensitivity","specificity", "accuracy")
   return(out)
+  summary(test.pred)
 }
 s <- seq(0.01,1, length = 100)
 OUT <- matrix(0,100,3)
 for(i in 1:100){
   OUT[i,] = perform.fn(s[i])
 }
+
+plot(s, OUT[,1], xlab = "Cutoff", ylab = "Sens/Spec/Acc", cex.lab = 1.5, cex.aux = 1.5, ylim =c(0,1), type = "l", lwd =2, axes = FALSE, col =2)
+axis(1, seq(0,1, length = 5), seq(0,1, length = 5), cex.lab = 1.5)
+axis(2, seq(0,1, length = 5), seq(0,1, length = 5), cex.lab = 1.5)
+lines(s, OUT[,2], col = "darkgreen", lwd = 2)
+lines(s, OUT[,3], col = 4, lwd = 2)
+box()
+legend(0.5, 1, col = c(2, "darkgreen", 4, "darkred"), lwd = c(2,2,2,2), c("Sensitivity", "Specificity","Accuracy"))
+
 diff <- abs(OUT[,1]-OUT[,2])
 cutoff <- s[which(diff ==min(diff))]
-cutoff #cutoff = 0.19
+cutoff 
 test.cuttoff.default <- factor(ifelse(test.pred>=cutoff,"Yes","No"))
 conf.final <- confusionMatrix(test.cuttoff.default,test.actual.default,positive = "Yes")
 conf.final
-roc.glm <- roc.curve(test.actual.default, test.cuttoff.default,curve=TRUE)
+
+table(test.actual.default, test.cuttoff.default)
+acc <- conf.final$overall[1]
+sens <- conf.final$byClass[1]
+spec <- conf.final$byClass[2]
+
+acc
+
+sens
+
+spec
+
+roc.glm <- roc.curve(test.actual.default, test.cuttoff.default, curve = TRUE)
 plot(roc.glm)
 ```
 
-Observe the confusion matrix shown above. In total, 1405 (out of 1915) customers were predicted correctly if they exited or not from the bank. In general, the performance of the best logistic regression model is acceptable in terms of accuracy (0.7337), specificity (0.7305), and sensitivity (0.7467). Unfortunately, in terms of ROC AUC score, the achieved performance is far from ideal, with a score of 0.4169. 
+Observe the confusion matrix shown above. In total, 1405 (out of 1915) customers were predicted correctly if they exited or not from the bank. In general, the performance of the best logistic regression model is acceptable in terms of accuracy (70%), specificity (70%), and sensitivity (70%) with a cut off value of 19% . Unfortunately, in terms of ROC AUC score, the achieved performance is far from ideal, with a score of 41%. 
 
 
 # 9. Feature engineering: Modelling with the Tidymodel Ecosystem
@@ -628,14 +650,14 @@ library(e1071)
 ```
 
 ```{r}
-bank_churn_svm_model <- svm(Exited ~., data = bank_churn_training_prep, type = "C-classification", kernel = "linear", scale = FALSE)
+bank_churn_svm_model <- svm(Exited ~., data = bank_churn_training, type = "C-classification", kernel = "linear", scale = FALSE)
 bank_churn_svm_model
 ```
 
 
 **Training accuracy**
 ```{r}
-bank_churn_svm_pred_train <- predict(bank_churn_svm_model, bank_churn_training_prep)
+bank_churn_svm_pred_train <- predict(bank_churn_svm_model, bank_churn_training)
 mean(bank_churn_svm_pred_train == bank_churn_training_prep$Exited)
 
 ```
@@ -644,7 +666,7 @@ The SVM model achieved an in-sample accuracy of 80.23%.
 
 **Testing accuracy**
 ```{r}
-bank_churn_svm_pred_test <- predict(bank_churn_svm_model, newdata = bank_churn_test_prep)
+bank_churn_svm_pred_test <- predict(bank_churn_svm_model, newdata = bank_churn_test)
 mean(bank_churn_svm_pred_test == bank_churn_test_prep$Exited)
 
 
@@ -654,10 +676,63 @@ As expected, the out-of-sample performance of the SVM model is little bit lower 
 
 **Confusion Matrix**
 ```{r}
-confusionMatrix(bank_churn_svm_pred_test, bank_churn_test_prep$Exited )
+confusionMatrix(bank_churn_svm_pred_test, bank_churn_test$Exited )
 ```
 
-From the confusion matrix shown above, we can see that, in total, 1536 customers (out of 1915) were predicted correctly in that they exited the bank. This makes a sensitivity of 100%. On the contrary, the specificity was of 0%, lowering the overall accuracy to 0.8021.  
+From the confusion matrix shown above, we can see that accuracy is 79%,  sensitivity 97.2%, but very low specificity is 6.5%.
+
+
+#### A) Cut-off value and Test bestmodel
+```{r warning=FALSE}
+library(PRROC)
+test.svm.pred <- predict(bank_churn_svm_model,type = "C-classification", newdata = bank_churn_test)
+summary(test.svm.pred)
+bank_churn_test$prob <- test.svm.pred
+test.svm.pred.default <- factor(ifelse(bank_churn_test$prob>=0.5,"Yes","No"))
+test.svm.actual.default <- factor(ifelse(bank_churn_test$Exited ==1,"Yes","No"))
+table(test.svm.pred.default, test.svm.actual.default)
+
+
+
+#test.conf
+perform.svm.fn <- function(cutoff){
+  pred.svm.default <- factor(ifelse(test.svm.pred>=cutoff,"Yes","No"))
+
+  conf<- confusionMatrix(test.svm.actual.default,pred.svm.default,positive = "Yes")
+  acc<- conf$overall[1]
+  sens<- conf$byClass[1]
+  spec<- conf$byClass[2]
+  out_svm<- t(as.matrix(c(sens,spec,acc)))
+  colnames(out_svm) <- c("sensitivity","specificity", "accuracy")
+  return(out_svm)
+  summary(test.svm.pred)
+}
+s<- seq(0.01,1, length = 100)
+out_svm<- matrix(0,100,3)
+for(i in 1:100){
+  out_svm[i,] = perform.fn(s[i])
+}
+
+plot(s, out_svm[,1], xlab = "Cutoff", ylab = "Sens/Spec/Acc", cex.lab = 1.5, cex.aux = 1.5, ylim =c(0,1), type = "l", lwd =2, axes = FALSE, col =2)
+axis(1, seq(0,1, length = 5), seq(0,1, length = 5), cex.lab = 1.5)
+axis(2, seq(0,1, length = 5), seq(0,1, length = 5), cex.lab = 1.5)
+lines(s, out_svm[,2], col = "darkgreen", lwd = 2)
+lines(s, out_svm[,3], col = 4, lwd = 2)
+box()
+legend(0.5, 1, col = c(2, "darkgreen", 4, "darkred"), lwd = c(2,2,2,2), c("Sensitivity", "Specificity","Accuracy"))
+
+diff.svm <- abs(out_svm[,1]-out_svm[,2])
+cutoff_svm<- s[which(diff ==min(diff))]
+cutoff_svm
+test.svm.cuttoff.default <- factor(ifelse(test.svm.pred>=cutoff,"Yes","No"))
+
+
+table(test.svm.cuttoff.default, test.svm.actual.default)
+  
+
+
+
+```
 
 
 **ROC Curve**
@@ -773,7 +848,7 @@ bank_churn_logistic_wkfl_fit_results
 **Creating custom metrics**
 
 ```{r}
-bank_churn_logistic_metrics <- metric_set(roc_auc,sens,spec,accuracy)
+bank_churn_logistic_metrics <- metric_set(roc_auc,yardstick::sens,yardstick::spec,accuracy)
 bank_churn_logistic_metrics
 ```
 
@@ -788,6 +863,79 @@ The table above shows the calculated metrics using logistic regression. The mode
 
 
 # 12. Random Forest Models
+
+```{r message = FALSE, warning = FALSE, echo = FALSE}
+library(randomForest)
+rf<- randomForest(Exited ~., data = bank_churn_training, proximity = F, do.trace =T, mtry =5)
+```
+
+#### A) Cut-off value and  Test bestmodel
+
+```{r warning=FALSE}
+library(PRROC)
+test.rf.pred <- predict(rf,type = "prob", newdata = bank_churn_test)
+test_cutoff_default_rf <- factor(ifelse(test.rf.pred[,2]>=0.5, "Yes", "No"))
+
+
+table(bank_churn_test$Exited, test_cutoff_default_rf )
+
+
+#test.conf
+perform.fn_rf <- function(cutoff){
+  predicted_response_rf <- as.factor(ifelse(test.rf.pred[,2]>=cutoff,"Yes","No"))
+  conf_rf<- confusionMatrix(predicted_response_rf,test_cutoff_default_rf,positive = "Yes")
+  
+  acc <- conf_rf$overall[1]
+  sens <- conf_rf$byClass[1]
+  spec <- conf_rf$byClass[2]
+  out_rf <- t(as.matrix(c(sens,spec,acc)))
+  colnames(out_rf) <- c("sensitivity","specificity", "accuracy")
+  return(out_rf)
+ 
+}
+s <- seq(0.01,1, length = 100)
+out_rf <- matrix(0,100,3)
+for(i in 1:100){
+  out_rf[i,] = perform.fn_rf(s[i])
+}
+
+plot(s, out_rf[,1], xlab = "Cutoff", ylab = "Sens/Spec/Acc", cex.lab = 1.5, cex.aux = 1.5, ylim =c(0,1), type = "l", lwd =2, axes = FALSE, col =2)
+axis(1, seq(0,1, length = 5), seq(0,1, length = 5), cex.lab = 1.5)
+axis(2, seq(0,1, length = 5), seq(0,1, length = 5), cex.lab = 1.5)
+lines(s, out_rf[,2], col = "darkgreen", lwd = 2)
+lines(s, out_rf[,3], col = 4, lwd = 2)
+box()
+legend(0.5, 1, col = c(2, "darkgreen", 4, "darkred"), lwd = c(2,2,2,2), c("Sensitivity", "Specificity","Accuracy"))
+
+diff <- abs(out_rf[,1]-out_rf[,2])
+cutoff_rf <- s[which(diff ==min(diff))]
+cutoff_rf
+
+predicted_response_rf_new <- factor(ifelse(test.rf.pred[,2]>=cutoff_rf,"Yes","No"))
+confusion_matrix_rf_new<- confusionMatrix(predicted_response_rf_new,test_cutoff_default_rf,positive = "Yes")
+
+acc <- confusion_matrix_rf_new$overall[1]
+sens <- confusion_matrix_rf_new$byClass[1]
+spec <- confusion_matrix_rf_new$byClass[2]
+
+acc
+
+sens
+
+spec
+
+
+```
+The cut-off value is 50%.The accuracy, sensitivity and specificity are 1. This is the best results compared with logistic regression and support vector machine.
+
+**Roc curve**
+
+```{r}
+roc.rf1 <- roc.curve(test.actual.default, test_cutoff_default_rf, curve = TRUE)
+plot(roc.rf1)
+```
+The roc-curve of random forest model is 53.2%
+
 
 In this section we develop a Random Forest Model for the prediction of customer churn. The parameters used were the following. The number of trees was set to 100,  the smallest node size allowed was set to 10, and the number of predictors seen at each node was set to 4.
 
@@ -842,10 +990,10 @@ autoplot(type = 'heatmap')
 
 
 **Correct predictions of test set**
-The total of True Negatives is 1472, that is, the number of  customers who churned. True positive is 170 people, who was a loyal customer and did not churn. 
+The total of True Negatives is 1463, that is, the number of  customers who churned. True positive is 177 people, who was a loyal customer and did not churn. 
 
 **Classification error of test set**
-In total, 64 people were predicted as not churned, but actually churned (False Positives). Also, 209 people were predicted as churned, but actually did not churn and were loyal to bank (False Negatives).
+In total, 73 people were predicted as not churned, but actually churned (False Positives). Also, 204 people were predicted as churned, but actually did not churn and were loyal to bank (False Negatives).
 
 **Combining models and recipe**
 ```{r}
@@ -864,7 +1012,7 @@ bank_churn_wkfl_fit_rf %>%
   collect_metrics()
 ```
 
-** Performance comparison among RF, LG, and SVM models **
+**Performance comparison among RF, LG, and SVM models**
 
 The table above shows some performance metrics of the RF model on the testing set. RF model achieved an accuracy of 85.37% and a ROC AUC score of 85.48%. Compared to the Logistic Regression Model, which obtained an accuracy of 83.4% and a ROC AUC score of 81.7%, it is clear that RF model slightly outperformed it in both metrics. Also, we can see that RF model achieves a much better performance than SVM model, since the latter model reported an accuracy of 80.21% and a ROC AUC score of 59.89%.
 For this reason, we selected RF model for further refinements. 
@@ -885,7 +1033,7 @@ We could observe a slight reduction in both False Positives and False Negatives.
 
 **Exploring custom metrics**
 ```{r}
-bank_churn_metrics_rf <- metric_set(roc_auc, sens, spec, accuracy)
+bank_churn_metrics_rf <- metric_set(roc_auc, yardstick::sens, yardstick::spec, accuracy)
 bank_churn_wkfl_preds_rf %>%
 bank_churn_metrics_rf(truth = Exited, estimate = .pred_class, .pred_1)
 ```
@@ -1026,7 +1174,7 @@ bank_churn_final_fit_rf %>%
 ```
 
 
-We can see above that accuracy and ROC AUC score (85.9% & 86.8%, respectively) are improved compared to the model without tuning. 
+We can see above that accuracy and ROC AUC score (86.3% & 85.3%, respectively) are improved compared to the model without tuning. 
 
 **collecting predictions**
 ```{r}
@@ -1042,10 +1190,10 @@ conf_mat(bank_churn_prediction_rf, truth = Exited, estimate = .pred_class) %>%
 ```
 
 **Correct predictions of test set**
-The number of True Negatives is 1485 customers, who churned. Furthermore, the number of True Positives is 160 people, who were loyal customers and did not churn. 
+The number of True Negatives is 1482 customers, who churned. Furthermore, the number of True Positives is 171 people, who were loyal customers and did not churn. 
 
 **Classification error of test set**
-The number of False Positives is 51 customers, who were predicted as not churned but actually churned. Also, the number of False Negatives is 198. Such customers were predicted as churned but actually did not churn and remained loyal to the bank.
+The number of False Positives is 54 customers, who were predicted as not churned but actually churned. Also, the number of False Negatives is 208. Such customers were predicted as churned but actually did not churn and remained loyal to the bank.
 
 Almost 80% of the customers churned
 
@@ -1055,16 +1203,25 @@ Almost 80% of the customers churned
 roc.rf <- roc.curve(bank_churn_test_prep$Exited, bank_churn_prediction_rf$.pred_class, curve=TRUE)
 plot(roc.rf)
 ```
-
+The roc-auc has improved and now is 54%
 
 
 # 16. Model Comparison
 
 The ROC curves for the Random Forest, Support Vector Machine, and Logistic Regression Models are presented below. Among all models, Logistic Regression achieved the worst performance. The performance of Random Forest and SVM resulted similar in this regard, but when considering the other metrics, RF outperforms SVM. 
 
+#### A) ROC curve plot of random forest model
 ```{r}
 plot(roc.rf)
+```
+#### B) ROC curve plot of SVM model
+```{r}
 plot(roc.svm)
+
+```
+
+#### C) ROC curve plot of logistic model
+```{r}
 plot(roc.glm)
 ```
 
@@ -1078,7 +1235,7 @@ c) stepAIC backward regression and boot strapping were used to select the best m
 
 d) Almost 80% of the customers churned and only 20% of the customers were loyal and stayed with the bank.
 
-e) The accuracy and ROC AUC score is better in Random Forest model compared to Logistic Regression and Support Vector Machine.
+e) The accuracy, sensitivity and specificity are better in Random Forest model compared to Logistic Regression and Support Vector Machine though ROC AUC score is slightly better in SVM model.
 
 f) Variables such as *Age*, *CreditScore*, *NumOfProducts* had some outliers and were removed from the data before further processing in model.
 

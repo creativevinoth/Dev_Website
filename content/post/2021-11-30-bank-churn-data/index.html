@@ -775,20 +775,20 @@ bank_churn_test &lt;- bank_churn_split %&gt;%
 <pre class="r"><code>bank_churn_training %&gt;%
   select_if(is.numeric) %&gt;%
   cor()</code></pre>
-<pre><code>##                  CreditScore          Age       Tenure     Balance
-## CreditScore      1.000000000 -0.010439075  0.005528187  0.00638176
-## Age             -0.010439075  1.000000000 -0.016719180  0.03909519
-## Tenure           0.005528187 -0.016719180  1.000000000 -0.01241406
-## Balance          0.006381760  0.039095194 -0.012414060  1.00000000
-## NumOfProducts    0.001334755 -0.057946209  0.025865173 -0.33671877
-## EstimatedSalary -0.004195070 -0.005558931  0.007699537  0.01764078
+<pre><code>##                  CreditScore           Age       Tenure      Balance
+## CreditScore      1.000000000 -1.409731e-02  0.006624589  0.002980709
+## Age             -0.014097308  1.000000e+00 -0.011427309  0.036411308
+## Tenure           0.006624589 -1.142731e-02  1.000000000 -0.020880106
+## Balance          0.002980709  3.641131e-02 -0.020880106  1.000000000
+## NumOfProducts    0.014931772 -5.620306e-02  0.023404263 -0.335245584
+## EstimatedSalary  0.006783452  7.698704e-05  0.007358602  0.014579815
 ##                 NumOfProducts EstimatedSalary
-## CreditScore       0.001334755    -0.004195070
-## Age              -0.057946209    -0.005558931
-## Tenure            0.025865173     0.007699537
-## Balance          -0.336718772     0.017640775
-## NumOfProducts     1.000000000     0.012330067
-## EstimatedSalary   0.012330067     1.000000000</code></pre>
+## CreditScore        0.01493177    6.783452e-03
+## Age               -0.05620306    7.698704e-05
+## Tenure             0.02340426    7.358602e-03
+## Balance           -0.33524558    1.457982e-02
+## NumOfProducts      1.00000000    1.732889e-02
+## EstimatedSalary    0.01732889    1.000000e+00</code></pre>
 <p>From the correlation matrix above, it can be noticed that there is no multicollinearity between the independent numeric variables. Just variables <em>Balance</em> and <em>NumOfProducts</em> presented a small negative correlation (-0-3258), but not large enough to drop one of the variables from the model.</p>
 </div>
 <div id="logistic-regression-model" class="section level1">
@@ -802,30 +802,30 @@ summary(full_model_bank_churn)</code></pre>
 ## 
 ## Deviance Residuals: 
 ##     Min       1Q   Median       3Q      Max  
-## -2.1458  -0.6246  -0.4154  -0.2311   3.1577  
+## -2.2052  -0.6210  -0.4100  -0.2282   3.2306  
 ## 
 ## Coefficients:
 ##                    Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept)      -4.418e+00  3.104e-01 -14.233  &lt; 2e-16 ***
-## CreditScore      -5.475e-04  3.344e-04  -1.637  0.10165    
-## GeographyGermany  7.995e-01  8.061e-02   9.918  &lt; 2e-16 ***
-## GeographySpain    4.067e-02  8.249e-02   0.493  0.62202    
-## GenderMale       -5.351e-01  6.449e-02  -8.297  &lt; 2e-16 ***
-## Age               1.077e-01  3.848e-03  27.987  &lt; 2e-16 ***
-## Tenure           -1.827e-02  1.105e-02  -1.653  0.09840 .  
-## Balance           1.757e-06  6.133e-07   2.864  0.00418 ** 
-## NumOfProducts    -3.833e-01  6.110e-02  -6.273 3.54e-10 ***
-## HasCrCard1       -2.886e-02  6.985e-02  -0.413  0.67946    
-## IsActiveMember1  -9.256e-01  6.690e-02 -13.836  &lt; 2e-16 ***
-## EstimatedSalary   4.163e-07  5.612e-07   0.742  0.45818    
+## (Intercept)      -4.689e+00  3.119e-01 -15.033  &lt; 2e-16 ***
+## CreditScore      -2.364e-04  3.363e-04  -0.703   0.4821    
+## GeographyGermany  8.655e-01  8.110e-02  10.671  &lt; 2e-16 ***
+## GeographySpain    4.870e-02  8.348e-02   0.583   0.5596    
+## GenderMale       -4.894e-01  6.470e-02  -7.564 3.92e-14 ***
+## Age               1.089e-01  3.875e-03  28.116  &lt; 2e-16 ***
+## Tenure           -2.209e-02  1.117e-02  -1.977   0.0481 *  
+## Balance           1.192e-06  6.189e-07   1.926   0.0541 .  
+## NumOfProducts    -3.888e-01  6.105e-02  -6.369 1.91e-10 ***
+## HasCrCard1        5.357e-03  7.083e-02   0.076   0.9397    
+## IsActiveMember1  -9.543e-01  6.734e-02 -14.172  &lt; 2e-16 ***
+## EstimatedSalary   8.136e-07  5.638e-07   1.443   0.1490    
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
 ##     Null deviance: 7610.5  on 7653  degrees of freedom
-## Residual deviance: 6170.4  on 7642  degrees of freedom
-## AIC: 6194.4
+## Residual deviance: 6126.0  on 7642  degrees of freedom
+## AIC: 6150
 ## 
 ## Number of Fisher Scoring iterations: 5</code></pre>
 <p>The coefficients of the fitted model can be seen above. Observe that many of them are not significant (i.e., <em>CreditScore</em>, <em>Tenure</em>, and <em>HasCrCard1</em>, among others). Hence, the model can be further refined.</p>
@@ -835,21 +835,21 @@ summary(full_model_bank_churn)</code></pre>
 <pre class="r"><code>mod_step_bank_churn&lt;- stepAIC(full_model_bank_churn, direction = &#39;backward&#39;, trace = FALSE)
 mod_step_bank_churn</code></pre>
 <pre><code>## 
-## Call:  glm(formula = Exited ~ CreditScore + Geography + Gender + Age + 
-##     Tenure + Balance + NumOfProducts + IsActiveMember, family = &quot;binomial&quot;, 
+## Call:  glm(formula = Exited ~ Geography + Gender + Age + Tenure + Balance + 
+##     NumOfProducts + IsActiveMember + EstimatedSalary, family = &quot;binomial&quot;, 
 ##     data = bank_churn_training)
 ## 
 ## Coefficients:
-##      (Intercept)       CreditScore  GeographyGermany    GeographySpain  
-##       -4.396e+00        -5.498e-04         8.001e-01         4.150e-02  
-##       GenderMale               Age            Tenure           Balance  
-##       -5.363e-01         1.077e-01        -1.816e-02         1.766e-06  
-##    NumOfProducts   IsActiveMember1  
-##       -3.828e-01        -9.259e-01  
+##      (Intercept)  GeographyGermany    GeographySpain        GenderMale  
+##       -4.840e+00         8.644e-01         4.796e-02        -4.892e-01  
+##              Age            Tenure           Balance     NumOfProducts  
+##        1.090e-01        -2.207e-02         1.196e-06        -3.889e-01  
+##  IsActiveMember1   EstimatedSalary  
+##       -9.557e-01         8.153e-07  
 ## 
 ## Degrees of Freedom: 7653 Total (i.e. Null);  7644 Residual
 ## Null Deviance:       7611 
-## Residual Deviance: 6171  AIC: 6191</code></pre>
+## Residual Deviance: 6127  AIC: 6147</code></pre>
 <p>Observe that variables <em>CreditScore</em>, <em>Tenure</em>, and <em>HasCrCard1</em>
 were discarded from the model, whereas <em>Geography<span class="math inline">\(Germany* *Geography\)</span>France</em>, <em>Gender$Male</em>, and <em>Age</em>, among others, are the best predictors.</p>
 </div>
@@ -876,11 +876,11 @@ were discarded from the model, whereas <em>Geography<span class="math inline">\(
 ## Geography       100
 ## IsActiveMember  100
 ## NumOfProducts   100
-## Balance          84
-## CreditScore      60
-## Tenure           56
-## HasCrCard        26
-## EstimatedSalary  24
+## Tenure           72
+## Balance          70
+## EstimatedSalary  52
+## CreditScore      20
+## HasCrCard        12
 ## 
 ## Coefficients Sign
 ##                   + (%)  - (%)
@@ -888,9 +888,9 @@ were discarded from the model, whereas <em>Geography<span class="math inline">\(
 ## Balance          100.00   0.00
 ## EstimatedSalary  100.00   0.00
 ## GeographyGermany 100.00   0.00
-## GeographySpain    62.00  38.00
-## HasCrCard1        15.38  84.62
-## CreditScore        0.00 100.00
+## GeographySpain    88.00  12.00
+## HasCrCard1        66.67  33.33
+## CreditScore       20.00  80.00
 ## GenderMale         0.00 100.00
 ## IsActiveMember1    0.00 100.00
 ## NumOfProducts      0.00 100.00
@@ -903,31 +903,31 @@ were discarded from the model, whereas <em>Geography<span class="math inline">\(
 ## GeographyGermany 100.00
 ## IsActiveMember1  100.00
 ## NumOfProducts    100.00
-## Balance           88.10
-## CreditScore       66.67
-## Tenure            57.14
-## HasCrCard1        53.85
-## EstimatedSalary   50.00
-## GeographySpain     6.00
+## EstimatedSalary   69.23
+## Balance           65.71
+## Tenure            61.11
+## CreditScore       50.00
+## GeographySpain    18.00
+## HasCrCard1        16.67
 ## 
 ## 
 ## The stepAIC() for the original data-set gave
 ## 
-## Call:  glm(formula = Exited ~ CreditScore + Geography + Gender + Age + 
-##     Tenure + Balance + NumOfProducts + IsActiveMember, family = &quot;binomial&quot;, 
+## Call:  glm(formula = Exited ~ Geography + Gender + Age + Tenure + Balance + 
+##     NumOfProducts + IsActiveMember + EstimatedSalary, family = &quot;binomial&quot;, 
 ##     data = bank_churn_training)
 ## 
 ## Coefficients:
-##      (Intercept)       CreditScore  GeographyGermany    GeographySpain  
-##       -4.396e+00        -5.498e-04         8.001e-01         4.150e-02  
-##       GenderMale               Age            Tenure           Balance  
-##       -5.363e-01         1.077e-01        -1.816e-02         1.766e-06  
-##    NumOfProducts   IsActiveMember1  
-##       -3.828e-01        -9.259e-01  
+##      (Intercept)  GeographyGermany    GeographySpain        GenderMale  
+##       -4.840e+00         8.644e-01         4.796e-02        -4.892e-01  
+##              Age            Tenure           Balance     NumOfProducts  
+##        1.090e-01        -2.207e-02         1.196e-06        -3.889e-01  
+##  IsActiveMember1   EstimatedSalary  
+##       -9.557e-01         8.153e-07  
 ## 
 ## Degrees of Freedom: 7653 Total (i.e. Null);  7644 Residual
 ## Null Deviance:       7611 
-## Residual Deviance: 6171  AIC: 6191
+## Residual Deviance: 6127  AIC: 6147
 ## 
 ## Stepwise Model Path 
 ## Analysis of Deviance Table
@@ -937,14 +937,14 @@ were discarded from the model, whereas <em>Geography<span class="math inline">\(
 ##     NumOfProducts + HasCrCard + IsActiveMember + EstimatedSalary
 ## 
 ## Final Model:
-## Exited ~ CreditScore + Geography + Gender + Age + Tenure + Balance + 
-##     NumOfProducts + IsActiveMember
+## Exited ~ Geography + Gender + Age + Tenure + Balance + NumOfProducts + 
+##     IsActiveMember + EstimatedSalary
 ## 
 ## 
-##                Step Df  Deviance Resid. Df Resid. Dev      AIC
-## 1                                     7642   6170.443 6194.443
-## 2       - HasCrCard  1 0.1704562      7643   6170.613 6192.613
-## 3 - EstimatedSalary  1 0.5492079      7644   6171.163 6191.163</code></pre>
+##            Step Df    Deviance Resid. Df Resid. Dev      AIC
+## 1                                   7642   6126.009 6150.009
+## 2   - HasCrCard  1 0.005721044      7643   6126.015 6148.015
+## 3 - CreditScore  1 0.493993964      7644   6126.509 6146.509</code></pre>
 <p>From the results above, we can notice that, even after bootstrapping, the same variables were selected as the best predictors.</p>
 </div>
 <div id="c-best-model-by-backward-and-bootstrap-methods" class="section level4">
@@ -961,27 +961,27 @@ summary(best_bootmodel_bank_churn) </code></pre>
 ## 
 ## Deviance Residuals: 
 ##     Min       1Q   Median       3Q      Max  
-## -2.1723  -0.6266  -0.4163  -0.2311   3.1848  
+## -2.1927  -0.6219  -0.4108  -0.2280   3.2184  
 ## 
 ## Coefficients:
 ##                    Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept)      -4.756e+00  2.067e-01 -23.010  &lt; 2e-16 ***
-## GeographyGermany  7.991e-01  8.054e-02   9.921  &lt; 2e-16 ***
-## GeographySpain    3.925e-02  8.246e-02   0.476  0.63408    
-## GenderMale       -5.346e-01  6.445e-02  -8.295  &lt; 2e-16 ***
-## Age               1.078e-01  3.847e-03  28.010  &lt; 2e-16 ***
-## Tenure           -1.835e-02  1.105e-02  -1.661  0.09671 .  
-## Balance           1.772e-06  6.131e-07   2.890  0.00386 ** 
-## NumOfProducts    -3.813e-01  6.107e-02  -6.244 4.27e-10 ***
-## IsActiveMember1  -9.286e-01  6.685e-02 -13.890  &lt; 2e-16 ***
+## (Intercept)      -4.761e+00  2.084e-01 -22.847  &lt; 2e-16 ***
+## GeographyGermany  8.646e-01  8.105e-02  10.668  &lt; 2e-16 ***
+## GeographySpain    4.748e-02  8.345e-02   0.569   0.5694    
+## GenderMale       -4.900e-01  6.468e-02  -7.576 3.56e-14 ***
+## Age               1.089e-01  3.873e-03  28.127  &lt; 2e-16 ***
+## Tenure           -2.173e-02  1.116e-02  -1.947   0.0516 .  
+## Balance           1.212e-06  6.187e-07   1.958   0.0502 .  
+## NumOfProducts    -3.870e-01  6.102e-02  -6.341 2.28e-10 ***
+## IsActiveMember1  -9.570e-01  6.729e-02 -14.222  &lt; 2e-16 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
 ##     Null deviance: 7610.5  on 7653  degrees of freedom
-## Residual deviance: 6173.9  on 7645  degrees of freedom
-## AIC: 6191.9
+## Residual deviance: 6128.6  on 7645  degrees of freedom
+## AIC: 6146.6
 ## 
 ## Number of Fisher Scoring iterations: 5</code></pre>
 <p>From the results above, we can see that some of the coefficients, such as <em>Geography$Spain</em> and <em>Tenure</em> are not significant. Therefore, to improve our model, these variables were removed.</p>
@@ -1000,44 +1000,44 @@ summary(bestmodel)</code></pre>
 ## 
 ## Deviance Residuals: 
 ##     Min       1Q   Median       3Q      Max  
-## -1.9421  -0.6394  -0.4275  -0.2378   3.1450  
+## -2.0458  -0.6348  -0.4249  -0.2391   3.1870  
 ## 
 ## Coefficients:
 ##                   Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept)     -4.917e+00  1.972e-01 -24.931  &lt; 2e-16 ***
-## GenderMale      -5.565e-01  6.377e-02  -8.727  &lt; 2e-16 ***
-## Age              1.080e-01  3.812e-03  28.341  &lt; 2e-16 ***
-## Balance          4.215e-06  5.500e-07   7.663 1.82e-14 ***
-## NumOfProducts   -3.065e-01  6.021e-02  -5.091 3.56e-07 ***
-## IsActiveMember1 -9.221e-01  6.621e-02 -13.928  &lt; 2e-16 ***
+## (Intercept)     -4.952e+00  1.984e-01 -24.955  &lt; 2e-16 ***
+## GenderMale      -5.215e-01  6.389e-02  -8.162 3.30e-16 ***
+## Age              1.096e-01  3.830e-03  28.602  &lt; 2e-16 ***
+## Balance          3.964e-06  5.491e-07   7.219 5.24e-13 ***
+## NumOfProducts   -3.053e-01  6.009e-02  -5.081 3.75e-07 ***
+## IsActiveMember1 -9.601e-01  6.652e-02 -14.434  &lt; 2e-16 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
 ##     Null deviance: 7610.5  on 7653  degrees of freedom
-## Residual deviance: 6284.7  on 7648  degrees of freedom
-## AIC: 6296.7
+## Residual deviance: 6257.5  on 7648  degrees of freedom
+## AIC: 6269.5
 ## 
 ## Number of Fisher Scoring iterations: 5</code></pre>
 <p>The best model includes variables <em>Gender$Male</em>, <em>Age</em>, <em>Balance</em>, <em>NumOfproducts</em>, and <em>IsActiveMember1</em>. Notice that all the coefficients are 99.999% significant to predict the response variable <em>Exited</em>.</p>
 </div>
-<div id="e-test-bestmodel" class="section level4">
-<h4>E) Test bestmodel</h4>
+<div id="e-cut-off-value-and-test-bestmodel" class="section level4">
+<h4>E) Cut-off value and Test bestmodel</h4>
 <p>Here, we verify the performance results of the best model on the out-of-sample testing set.</p>
 <pre class="r"><code>library(PRROC)
 test.pred &lt;- predict(bestmodel,type = &quot;response&quot;, newdata = bank_churn_test)
 summary(test.pred)</code></pre>
-<pre><code>##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
-## 0.006281 0.070420 0.138968 0.198648 0.270479 0.877730</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+## 0.00623 0.07534 0.14158 0.20496 0.28871 0.89015</code></pre>
 <pre class="r"><code>bank_churn_test$prob &lt;- test.pred
 test.pred.default &lt;- factor(ifelse(bank_churn_test$prob&gt;=0.5,&quot;Yes&quot;,&quot;No&quot;))
 test.actual.default &lt;- factor(ifelse(bank_churn_test$Exited ==1,&quot;Yes&quot;,&quot;No&quot;))
 table(test.actual.default,test.pred.default)</code></pre>
 <pre><code>##                    test.pred.default
 ## test.actual.default   No  Yes
-##                 No  1482   54
-##                 Yes  274  105</code></pre>
+##                 No  1473   63
+##                 Yes  269  110</code></pre>
 <pre class="r"><code>test.conf &lt;- confusionMatrix(test.pred.default,test.actual.default,positive = &quot;Yes&quot;)
 #test.conf
 perform.fn &lt;- function(cutoff){
@@ -1049,15 +1049,25 @@ perform.fn &lt;- function(cutoff){
   out &lt;- t(as.matrix(c(sens,spec,acc)))
   colnames(out) &lt;- c(&quot;sensitivity&quot;,&quot;specificity&quot;, &quot;accuracy&quot;)
   return(out)
+  summary(test.pred)
 }
 s &lt;- seq(0.01,1, length = 100)
 OUT &lt;- matrix(0,100,3)
 for(i in 1:100){
   OUT[i,] = perform.fn(s[i])
 }
-diff &lt;- abs(OUT[,1]-OUT[,2])
+
+plot(s, OUT[,1], xlab = &quot;Cutoff&quot;, ylab = &quot;Sens/Spec/Acc&quot;, cex.lab = 1.5, cex.aux = 1.5, ylim =c(0,1), type = &quot;l&quot;, lwd =2, axes = FALSE, col =2)
+axis(1, seq(0,1, length = 5), seq(0,1, length = 5), cex.lab = 1.5)
+axis(2, seq(0,1, length = 5), seq(0,1, length = 5), cex.lab = 1.5)
+lines(s, OUT[,2], col = &quot;darkgreen&quot;, lwd = 2)
+lines(s, OUT[,3], col = 4, lwd = 2)
+box()
+legend(0.5, 1, col = c(2, &quot;darkgreen&quot;, 4, &quot;darkred&quot;), lwd = c(2,2,2,2), c(&quot;Sensitivity&quot;, &quot;Specificity&quot;,&quot;Accuracy&quot;))</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-59-1.png" width="672" /></p>
+<pre class="r"><code>diff &lt;- abs(OUT[,1]-OUT[,2])
 cutoff &lt;- s[which(diff ==min(diff))]
-cutoff #cutoff = 0.19</code></pre>
+cutoff </code></pre>
 <pre><code>## [1] 0.19</code></pre>
 <pre class="r"><code>test.cuttoff.default &lt;- factor(ifelse(test.pred&gt;=cutoff,&quot;Yes&quot;,&quot;No&quot;))
 conf.final &lt;- confusionMatrix(test.cuttoff.default,test.actual.default,positive = &quot;Yes&quot;)
@@ -1066,33 +1076,51 @@ conf.final</code></pre>
 ## 
 ##           Reference
 ## Prediction   No  Yes
-##        No  1100  105
-##        Yes  436  274
+##        No  1061  111
+##        Yes  475  268
 ##                                           
-##                Accuracy : 0.7175          
-##                  95% CI : (0.6967, 0.7376)
+##                Accuracy : 0.694           
+##                  95% CI : (0.6728, 0.7146)
 ##     No Information Rate : 0.8021          
 ##     P-Value [Acc &gt; NIR] : 1               
 ##                                           
-##                   Kappa : 0.3304          
+##                   Kappa : 0.2922          
 ##                                           
 ##  Mcnemar&#39;s Test P-Value : &lt;2e-16          
 ##                                           
-##             Sensitivity : 0.7230          
-##             Specificity : 0.7161          
-##          Pos Pred Value : 0.3859          
-##          Neg Pred Value : 0.9129          
+##             Sensitivity : 0.7071          
+##             Specificity : 0.6908          
+##          Pos Pred Value : 0.3607          
+##          Neg Pred Value : 0.9053          
 ##              Prevalence : 0.1979          
-##          Detection Rate : 0.1431          
-##    Detection Prevalence : 0.3708          
-##       Balanced Accuracy : 0.7196          
+##          Detection Rate : 0.1399          
+##    Detection Prevalence : 0.3880          
+##       Balanced Accuracy : 0.6989          
 ##                                           
 ##        &#39;Positive&#39; Class : Yes             
 ## </code></pre>
-<pre class="r"><code>roc.glm &lt;- roc.curve(test.actual.default, test.cuttoff.default,curve=TRUE)
+<pre class="r"><code>table(test.actual.default, test.cuttoff.default)</code></pre>
+<pre><code>##                    test.cuttoff.default
+## test.actual.default   No  Yes
+##                 No  1061  475
+##                 Yes  111  268</code></pre>
+<pre class="r"><code>acc &lt;- conf.final$overall[1]
+sens &lt;- conf.final$byClass[1]
+spec &lt;- conf.final$byClass[2]
+
+acc</code></pre>
+<pre><code>##  Accuracy 
+## 0.6939948</code></pre>
+<pre class="r"><code>sens</code></pre>
+<pre><code>## Sensitivity 
+##    0.707124</code></pre>
+<pre class="r"><code>spec</code></pre>
+<pre><code>## Specificity 
+##   0.6907552</code></pre>
+<pre class="r"><code>roc.glm &lt;- roc.curve(test.actual.default, test.cuttoff.default, curve = TRUE)
 plot(roc.glm)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-59-1.png" width="672" /></p>
-<p>Observe the confusion matrix shown above. In total, 1405 (out of 1915) customers were predicted correctly if they exited or not from the bank. In general, the performance of the best logistic regression model is acceptable in terms of accuracy (0.7337), specificity (0.7305), and sensitivity (0.7467). Unfortunately, in terms of ROC AUC score, the achieved performance is far from ideal, with a score of 0.4169.</p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-59-2.png" width="672" /></p>
+<p>Observe the confusion matrix shown above. In total, 1405 (out of 1915) customers were predicted correctly if they exited or not from the bank. In general, the performance of the best logistic regression model is acceptable in terms of accuracy (70%), specificity (70%), and sensitivity (70%) with a cut off value of 19% . Unfortunately, in terms of ROC AUC score, the achieved performance is far from ideal, with a score of 41%.</p>
 </div>
 </div>
 <div id="feature-engineering-modelling-with-the-tidymodel-ecosystem" class="section level1">
@@ -1145,16 +1173,16 @@ bank_churn_training_prep</code></pre>
 <pre><code>## # A tibble: 7,654 x 12
 ##    CreditScore    Age   Tenure Balance NumOfProducts EstimatedSalary Exited
 ##          &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt; &lt;fct&gt; 
-##  1      -0.438  0.370 -1.37      0.126        -0.945           0.214 0     
-##  2       0.510  0.143 -1.37     -1.22          0.878          -0.112 0     
-##  3       2.08   0.598 -1.03      0.794        -0.945          -0.369 0     
-##  4      -1.55   0.712 -0.339     1.06          0.878          -0.441 0     
-##  5      -1.27  -0.768  0.351     0.418         0.878          -0.350 0     
-##  6      -1.59  -1.57  -0.684    -1.22          0.878          -0.416 0     
-##  7      -1.81  -0.427  1.73     -1.22          0.878          -1.29  0     
-##  8      -1.05  -1.45   0.00572  -1.22          0.878           1.58  0     
-##  9      -0.157 -0.313  0.696    -1.22          0.878          -0.598 0     
-## 10      -0.354  0.826 -0.684     1.08          0.878          -0.626 0     
+##  1      -0.439  0.381 -1.40      0.130        -0.940           0.221 0     
+##  2       0.507  0.153 -1.40     -1.21          0.873          -0.105 0     
+##  3       2.08   0.609 -1.05      0.797        -0.940          -0.362 0     
+##  4      -1.55   0.724 -0.356     1.06          0.873          -0.434 0     
+##  5       0.351 -1.22  -1.05      0.943        -0.940          -0.490 0     
+##  6      -1.27  -0.761  0.337     0.421         0.873          -0.343 0     
+##  7      -1.59  -1.56  -0.703    -1.21          0.873          -0.409 0     
+##  8      -1.81  -0.418  1.72     -1.21          0.873          -1.28  0     
+##  9      -1.05  -1.45  -0.00951  -1.21          0.873           1.58  0     
+## 10      -0.158 -0.304  0.684    -1.21          0.873          -0.591 0     
 ## # ... with 7,644 more rows, and 5 more variables: Geography_Germany &lt;dbl&gt;,
 ## #   Geography_Spain &lt;dbl&gt;, Gender_Male &lt;dbl&gt;, HasCrCard_X1 &lt;dbl&gt;,
 ## #   IsActiveMember_X1 &lt;dbl&gt;</code></pre>
@@ -1164,18 +1192,18 @@ bank_churn_training_prep</code></pre>
   bake (new_data = bank_churn_test)
 bank_churn_test_prep</code></pre>
 <pre><code>## # A tibble: 1,915 x 12
-##    CreditScore     Age   Tenure Balance NumOfProducts EstimatedSalary Exited
-##          &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt; &lt;fct&gt; 
-##  1      -0.323  0.484  -1.03     -1.22         -0.945         0.0191  1     
-##  2       1.79   1.40    0.696    -1.22          0.878        -1.57    0     
-##  3       0.353 -1.22   -1.03      0.940        -0.945        -0.497   0     
-##  4      -1.05  -1.57    1.39     -1.22          0.878        -1.50    0     
-##  5       2.04   0.0288  0.00572  -1.22         -0.945         1.52    0     
-##  6      -0.792  0.598  -0.684     1.05         -0.945        -0.00114 0     
-##  7       0.749 -0.996   1.39     -1.22          0.878         0.728   0     
-##  8      -1.67  -0.768  -0.684     1.11         -0.945         0.241   0     
-##  9      -1.93   1.51    1.04      0.746        -0.945         1.41    1     
-## 10      -0.136  0.143   1.39      0.992        -0.945         0.303   1     
+##    CreditScore    Age Tenure Balance NumOfProducts EstimatedSalary Exited
+##          &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt; &lt;fct&gt; 
+##  1     -0.325   0.495 -1.05   -1.21         -0.940          0.0257 1     
+##  2     -0.0542  0.724  1.03    0.609         0.873          0.869  1     
+##  3      1.79    1.41   0.684  -1.21          0.873         -1.56   0     
+##  4      0.0290  2.32  -1.40    0.911        -0.940         -1.65   1     
+##  5      0.788  -1.56   0.337  -1.21          0.873         -0.786  0     
+##  6      1.10   -0.190 -1.05    0.978        -0.940          1.22   0     
+##  7     -0.616   0.153 -0.703  -1.21          2.69           0.707  1     
+##  8     -1.01    0.381  1.38    0.551         0.873         -0.313  0     
+##  9     -1.35    0.495  0.337  -1.21          0.873         -1.14   0     
+## 10     -1.82    0.838 -1.74    0.937        -0.940         -1.25   1     
 ## # ... with 1,905 more rows, and 5 more variables: Geography_Germany &lt;dbl&gt;,
 ## #   Geography_Spain &lt;dbl&gt;, Gender_Male &lt;dbl&gt;, HasCrCard_X1 &lt;dbl&gt;,
 ## #   IsActiveMember_X1 &lt;dbl&gt;</code></pre>
@@ -1184,11 +1212,11 @@ bank_churn_test_prep</code></pre>
 <div id="support-vector-machine-model" class="section level1">
 <h1>10. Support Vector Machine Model</h1>
 <p>In this section, we build our support vector machine model using the training dataset. This approach considers all independent variables and a linear kernel as parameter.</p>
-<pre class="r"><code>bank_churn_svm_model &lt;- svm(Exited ~., data = bank_churn_training_prep, type = &quot;C-classification&quot;, kernel = &quot;linear&quot;, scale = FALSE)
+<pre class="r"><code>bank_churn_svm_model &lt;- svm(Exited ~., data = bank_churn_training, type = &quot;C-classification&quot;, kernel = &quot;linear&quot;, scale = FALSE)
 bank_churn_svm_model</code></pre>
 <pre><code>## 
 ## Call:
-## svm(formula = Exited ~ ., data = bank_churn_training_prep, type = &quot;C-classification&quot;, 
+## svm(formula = Exited ~ ., data = bank_churn_training, type = &quot;C-classification&quot;, 
 ##     kernel = &quot;linear&quot;, scale = FALSE)
 ## 
 ## 
@@ -1197,52 +1225,101 @@ bank_churn_svm_model</code></pre>
 ##  SVM-Kernel:  linear 
 ##        cost:  1 
 ## 
-## Number of Support Vectors:  3229</code></pre>
+## Number of Support Vectors:  2211</code></pre>
 <p><strong>Training accuracy</strong></p>
-<pre class="r"><code>bank_churn_svm_pred_train &lt;- predict(bank_churn_svm_model, bank_churn_training_prep)
+<pre class="r"><code>bank_churn_svm_pred_train &lt;- predict(bank_churn_svm_model, bank_churn_training)
 mean(bank_churn_svm_pred_train == bank_churn_training_prep$Exited)</code></pre>
-<pre><code>## [1] 0.8023256</code></pre>
+<pre><code>## [1] 0.8011497</code></pre>
 <p>The SVM model achieved an in-sample accuracy of 80.23%.</p>
 <p><strong>Testing accuracy</strong></p>
-<pre class="r"><code>bank_churn_svm_pred_test &lt;- predict(bank_churn_svm_model, newdata = bank_churn_test_prep)
+<pre class="r"><code>bank_churn_svm_pred_test &lt;- predict(bank_churn_svm_model, newdata = bank_churn_test)
 mean(bank_churn_svm_pred_test == bank_churn_test_prep$Exited)</code></pre>
-<pre><code>## [1] 0.8020888</code></pre>
+<pre><code>## [1] 0.8010444</code></pre>
 <p>As expected, the out-of-sample performance of the SVM model is little bit lower than that of the in-sample performance. The average predicted accuracy in the test data was of 0.802.</p>
 <p><strong>Confusion Matrix</strong></p>
-<pre class="r"><code>confusionMatrix(bank_churn_svm_pred_test, bank_churn_test_prep$Exited )</code></pre>
+<pre class="r"><code>confusionMatrix(bank_churn_svm_pred_test, bank_churn_test$Exited )</code></pre>
 <pre><code>## Confusion Matrix and Statistics
 ## 
 ##           Reference
 ## Prediction    0    1
-##          0 1536  379
-##          1    0    0
+##          0 1497  342
+##          1   39   37
 ##                                           
-##                Accuracy : 0.8021          
-##                  95% CI : (0.7835, 0.8197)
+##                Accuracy : 0.801           
+##                  95% CI : (0.7824, 0.8187)
 ##     No Information Rate : 0.8021          
-##     P-Value [Acc &gt; NIR] : 0.5137          
+##     P-Value [Acc &gt; NIR] : 0.5592          
 ##                                           
-##                   Kappa : 0               
+##                   Kappa : 0.1034          
 ##                                           
 ##  Mcnemar&#39;s Test P-Value : &lt;2e-16          
 ##                                           
-##             Sensitivity : 1.0000          
-##             Specificity : 0.0000          
-##          Pos Pred Value : 0.8021          
-##          Neg Pred Value :    NaN          
-##              Prevalence : 0.8021          
-##          Detection Rate : 0.8021          
-##    Detection Prevalence : 1.0000          
-##       Balanced Accuracy : 0.5000          
+##             Sensitivity : 0.97461         
+##             Specificity : 0.09763         
+##          Pos Pred Value : 0.81403         
+##          Neg Pred Value : 0.48684         
+##              Prevalence : 0.80209         
+##          Detection Rate : 0.78172         
+##    Detection Prevalence : 0.96031         
+##       Balanced Accuracy : 0.53612         
 ##                                           
 ##        &#39;Positive&#39; Class : 0               
 ## </code></pre>
-<p>From the confusion matrix shown above, we can see that, in total, 1536 customers (out of 1915) were predicted correctly in that they exited the bank. This makes a sensitivity of 100%. On the contrary, the specificity was of 0%, lowering the overall accuracy to 0.8021.</p>
+<p>From the confusion matrix shown above, we can see that accuracy is 79%, sensitivity 97.2%, but very low specificity is 6.5%.</p>
+<div id="a-cut-off-value-and-test-bestmodel" class="section level4">
+<h4>A) Cut-off value and Test bestmodel</h4>
+<pre class="r"><code>library(PRROC)
+test.svm.pred &lt;- predict(bank_churn_svm_model,type = &quot;C-classification&quot;, newdata = bank_churn_test)
+summary(test.svm.pred)</code></pre>
+<pre><code>##    0    1 
+## 1839   76</code></pre>
+<pre class="r"><code>bank_churn_test$prob &lt;- test.svm.pred
+test.svm.pred.default &lt;- factor(ifelse(bank_churn_test$prob&gt;=0.5,&quot;Yes&quot;,&quot;No&quot;))
+test.svm.actual.default &lt;- factor(ifelse(bank_churn_test$Exited ==1,&quot;Yes&quot;,&quot;No&quot;))
+table(test.svm.pred.default, test.svm.actual.default)</code></pre>
+<pre><code>## &lt; table of extent 0 x 2 &gt;</code></pre>
+<pre class="r"><code>#test.conf
+perform.svm.fn &lt;- function(cutoff){
+  pred.svm.default &lt;- factor(ifelse(test.svm.pred&gt;=cutoff,&quot;Yes&quot;,&quot;No&quot;))
+
+  conf&lt;- confusionMatrix(test.svm.actual.default,pred.svm.default,positive = &quot;Yes&quot;)
+  acc&lt;- conf$overall[1]
+  sens&lt;- conf$byClass[1]
+  spec&lt;- conf$byClass[2]
+  out_svm&lt;- t(as.matrix(c(sens,spec,acc)))
+  colnames(out_svm) &lt;- c(&quot;sensitivity&quot;,&quot;specificity&quot;, &quot;accuracy&quot;)
+  return(out_svm)
+  summary(test.svm.pred)
+}
+s&lt;- seq(0.01,1, length = 100)
+out_svm&lt;- matrix(0,100,3)
+for(i in 1:100){
+  out_svm[i,] = perform.fn(s[i])
+}
+
+plot(s, out_svm[,1], xlab = &quot;Cutoff&quot;, ylab = &quot;Sens/Spec/Acc&quot;, cex.lab = 1.5, cex.aux = 1.5, ylim =c(0,1), type = &quot;l&quot;, lwd =2, axes = FALSE, col =2)
+axis(1, seq(0,1, length = 5), seq(0,1, length = 5), cex.lab = 1.5)
+axis(2, seq(0,1, length = 5), seq(0,1, length = 5), cex.lab = 1.5)
+lines(s, out_svm[,2], col = &quot;darkgreen&quot;, lwd = 2)
+lines(s, out_svm[,3], col = 4, lwd = 2)
+box()
+legend(0.5, 1, col = c(2, &quot;darkgreen&quot;, 4, &quot;darkred&quot;), lwd = c(2,2,2,2), c(&quot;Sensitivity&quot;, &quot;Specificity&quot;,&quot;Accuracy&quot;))</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-69-1.png" width="672" /></p>
+<pre class="r"><code>diff.svm &lt;- abs(out_svm[,1]-out_svm[,2])
+cutoff_svm&lt;- s[which(diff ==min(diff))]
+cutoff_svm</code></pre>
+<pre><code>## [1] 0.19</code></pre>
+<pre class="r"><code>test.svm.cuttoff.default &lt;- factor(ifelse(test.svm.pred&gt;=cutoff,&quot;Yes&quot;,&quot;No&quot;))
+
+
+table(test.svm.cuttoff.default, test.svm.actual.default)</code></pre>
+<pre><code>## &lt; table of extent 0 x 2 &gt;</code></pre>
 <p><strong>ROC Curve</strong></p>
 <pre class="r"><code>roc.svm &lt;- roc.curve(bank_churn_test_prep$Exited,bank_churn_svm_pred_test, curve=TRUE)
 plot(roc.svm)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-69-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-70-1.png" width="672" /></p>
 <p>Of course, the specificity performance largely affected the ROC AUC score, achieving a total of 0.5989.</p>
+</div>
 </div>
 <div id="logistic-regression-model-tidy-workflow-version" class="section level1">
 <h1>11. Logistic Regression Model (Tidy workflow version)</h1>
@@ -1257,21 +1334,21 @@ under the tidy ecosystem. The model is fitted using the training dataset, and al
 bank_churn_logistic_fit</code></pre>
 <pre><code>## parsnip model object
 ## 
-## Fit time:  81ms 
+## Fit time:  50ms 
 ## 
 ## Call:  stats::glm(formula = Exited ~ ., family = stats::binomial, data = data)
 ## 
 ## Coefficients:
 ##       (Intercept)        CreditScore                Age             Tenure  
-##          -1.20568           -0.05259            0.94595           -0.05296  
+##         -1.270313          -0.022731           0.954115          -0.063722  
 ##           Balance      NumOfProducts    EstimatedSalary  Geography_Germany  
-##           0.10956           -0.21026            0.02389            0.79951  
+##          0.074462          -0.214485           0.046716           0.865468  
 ##   Geography_Spain        Gender_Male       HasCrCard_X1  IsActiveMember_X1  
-##           0.04067           -0.53513           -0.02886           -0.92561  
+##          0.048698          -0.489362           0.005357          -0.954322  
 ## 
 ## Degrees of Freedom: 7653 Total (i.e. Null);  7642 Residual
 ## Null Deviance:       7611 
-## Residual Deviance: 6170  AIC: 6194</code></pre>
+## Residual Deviance: 6126  AIC: 6150</code></pre>
 <p>Observed that the selected independent variables are the same to those selected in Section 8.</p>
 <p><strong>Predicting outcome categories</strong></p>
 <pre class="r"><code>bank_churn_logistic_class_preds &lt;- predict (bank_churn_logistic_fit, new_data = bank_churn_test_prep, type =&quot;class&quot;)
@@ -1282,12 +1359,12 @@ bank_churn_logistic_class_preds</code></pre>
 ##  1 0          
 ##  2 0          
 ##  3 0          
-##  4 0          
+##  4 1          
 ##  5 0          
 ##  6 0          
 ##  7 0          
 ##  8 0          
-##  9 1          
+##  9 0          
 ## 10 0          
 ## # ... with 1,905 more rows</code></pre>
 <p>The above .pred class is the outcome of our results. That is if the customer will churn or not. The number o means churn and 1 means no churn.</p>
@@ -1297,16 +1374,16 @@ bank_churn_logistic_prob_preds</code></pre>
 <pre><code>## # A tibble: 1,915 x 2
 ##    .pred_0 .pred_1
 ##      &lt;dbl&gt;   &lt;dbl&gt;
-##  1   0.827  0.173 
-##  2   0.866  0.134 
-##  3   0.971  0.0286
-##  4   0.982  0.0185
-##  5   0.895  0.105 
-##  6   0.600  0.400 
-##  7   0.970  0.0300
-##  8   0.948  0.0520
-##  9   0.358  0.642 
-## 10   0.727  0.273 
+##  1   0.826  0.174 
+##  2   0.765  0.235 
+##  3   0.858  0.142 
+##  4   0.167  0.833 
+##  5   0.983  0.0169
+##  6   0.839  0.161 
+##  7   0.838  0.162 
+##  8   0.680  0.320 
+##  9   0.883  0.117 
+## 10   0.525  0.475 
 ## # ... with 1,905 more rows</code></pre>
 <p>The above prediction are the probabilities of outcome occurrences.</p>
 <p><strong>Combining results</strong></p>
@@ -1314,18 +1391,18 @@ bank_churn_logistic_prob_preds</code></pre>
   bind_cols(bank_churn_logistic_class_preds, bank_churn_logistic_prob_preds)
 bank_churn_logistic_results</code></pre>
 <pre><code>## # A tibble: 1,915 x 15
-##    CreditScore     Age   Tenure Balance NumOfProducts EstimatedSalary Exited
-##          &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt; &lt;fct&gt; 
-##  1      -0.323  0.484  -1.03     -1.22         -0.945         0.0191  1     
-##  2       1.79   1.40    0.696    -1.22          0.878        -1.57    0     
-##  3       0.353 -1.22   -1.03      0.940        -0.945        -0.497   0     
-##  4      -1.05  -1.57    1.39     -1.22          0.878        -1.50    0     
-##  5       2.04   0.0288  0.00572  -1.22         -0.945         1.52    0     
-##  6      -0.792  0.598  -0.684     1.05         -0.945        -0.00114 0     
-##  7       0.749 -0.996   1.39     -1.22          0.878         0.728   0     
-##  8      -1.67  -0.768  -0.684     1.11         -0.945         0.241   0     
-##  9      -1.93   1.51    1.04      0.746        -0.945         1.41    1     
-## 10      -0.136  0.143   1.39      0.992        -0.945         0.303   1     
+##    CreditScore    Age Tenure Balance NumOfProducts EstimatedSalary Exited
+##          &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt; &lt;fct&gt; 
+##  1     -0.325   0.495 -1.05   -1.21         -0.940          0.0257 1     
+##  2     -0.0542  0.724  1.03    0.609         0.873          0.869  1     
+##  3      1.79    1.41   0.684  -1.21          0.873         -1.56   0     
+##  4      0.0290  2.32  -1.40    0.911        -0.940         -1.65   1     
+##  5      0.788  -1.56   0.337  -1.21          0.873         -0.786  0     
+##  6      1.10   -0.190 -1.05    0.978        -0.940          1.22   0     
+##  7     -0.616   0.153 -0.703  -1.21          2.69           0.707  1     
+##  8     -1.01    0.381  1.38    0.551         0.873         -0.313  0     
+##  9     -1.35    0.495  0.337  -1.21          0.873         -1.14   0     
+## 10     -1.82    0.838 -1.74    0.937        -0.940         -1.25   1     
 ## # ... with 1,905 more rows, and 8 more variables: Geography_Germany &lt;dbl&gt;,
 ## #   Geography_Spain &lt;dbl&gt;, Gender_Male &lt;dbl&gt;, HasCrCard_X1 &lt;dbl&gt;,
 ## #   IsActiveMember_X1 &lt;dbl&gt;, .pred_class &lt;fct&gt;, .pred_0 &lt;dbl&gt;, .pred_1 &lt;dbl&gt;</code></pre>
@@ -1334,7 +1411,7 @@ bank_churn_logistic_results</code></pre>
 <pre class="r"><code>bank_churn_logistic_results %&gt;%
   conf_mat(truth = Exited, estimate = .pred_class) %&gt;%
   autoplot(type = &#39;heatmap&#39;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-75-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-76-1.png" width="672" /></p>
 <p><strong>Correct predictions of test set</strong>
 From the confusion matrix above, we observe that 1484 customers, who churned, were correctly classified (True Negatives). The number of True Positives is 120, all of these customers were loyal customer and did not churn.</p>
 <p><strong>Classification error of test set</strong>
@@ -1377,8 +1454,8 @@ bank_churn_logistic__wkfl_fit</code></pre>
 <pre><code>## # A tibble: 2 x 4
 ##   .metric  .estimator .estimate .config             
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-## 1 accuracy binary         0.841 Preprocessor1_Model1
-## 2 roc_auc  binary         0.804 Preprocessor1_Model1</code></pre>
+## 1 accuracy binary         0.827 Preprocessor1_Model1
+## 2 roc_auc  binary         0.788 Preprocessor1_Model1</code></pre>
 <p>The accuracy of the logistic regression model is 84.28% and roc-auc is 80.99%</p>
 <p><strong>collecting predictions</strong></p>
 <pre class="r"><code>bank_churn_logistic_wkfl_fit_results&lt;- bank_churn_logistic__wkfl_fit %&gt;%
@@ -1387,19 +1464,19 @@ bank_churn_logistic_wkfl_fit_results</code></pre>
 <pre><code>## # A tibble: 1,915 x 7
 ##    id               .pred_0 .pred_1  .row .pred_class Exited .config            
 ##    &lt;chr&gt;              &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt; &lt;fct&gt;       &lt;fct&gt;  &lt;chr&gt;              
-##  1 train/test split   0.827  0.173      1 0           1      Preprocessor1_Mode~
-##  2 train/test split   0.866  0.134      7 0           0      Preprocessor1_Mode~
-##  3 train/test split   0.971  0.0286     9 0           0      Preprocessor1_Mode~
-##  4 train/test split   0.982  0.0185    17 0           0      Preprocessor1_Mode~
-##  5 train/test split   0.895  0.105     24 0           0      Preprocessor1_Mode~
-##  6 train/test split   0.600  0.400     28 0           0      Preprocessor1_Mode~
-##  7 train/test split   0.970  0.0300    34 0           0      Preprocessor1_Mode~
-##  8 train/test split   0.948  0.0520    36 0           0      Preprocessor1_Mode~
-##  9 train/test split   0.358  0.642     41 1           1      Preprocessor1_Mode~
-## 10 train/test split   0.727  0.273     47 0           1      Preprocessor1_Mode~
+##  1 train/test split   0.826  0.174      1 0           1      Preprocessor1_Mode~
+##  2 train/test split   0.765  0.235      6 0           1      Preprocessor1_Mode~
+##  3 train/test split   0.858  0.142      7 0           0      Preprocessor1_Mode~
+##  4 train/test split   0.167  0.833     16 1           1      Preprocessor1_Mode~
+##  5 train/test split   0.983  0.0169    19 0           0      Preprocessor1_Mode~
+##  6 train/test split   0.839  0.161     26 0           0      Preprocessor1_Mode~
+##  7 train/test split   0.838  0.162     30 0           1      Preprocessor1_Mode~
+##  8 train/test split   0.680  0.320     32 0           0      Preprocessor1_Mode~
+##  9 train/test split   0.883  0.117     33 0           0      Preprocessor1_Mode~
+## 10 train/test split   0.525  0.475     35 0           1      Preprocessor1_Mode~
 ## # ... with 1,905 more rows</code></pre>
 <p><strong>Creating custom metrics</strong></p>
-<pre class="r"><code>bank_churn_logistic_metrics &lt;- metric_set(roc_auc,sens,spec,accuracy)
+<pre class="r"><code>bank_churn_logistic_metrics &lt;- metric_set(roc_auc,yardstick::sens,yardstick::spec,accuracy)
 bank_churn_logistic_metrics</code></pre>
 <pre><code>## # A tibble: 4 x 3
 ##   metric   class        direction
@@ -1414,14 +1491,580 @@ bank_churn_logistic_metrics</code></pre>
 <pre><code>## # A tibble: 4 x 3
 ##   .metric  .estimator .estimate
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt;
-## 1 sens     binary         0.967
-## 2 spec     binary         0.332
-## 3 accuracy binary         0.841
-## 4 roc_auc  binary         0.196</code></pre>
+## 1 sens     binary         0.960
+## 2 spec     binary         0.290
+## 3 accuracy binary         0.827
+## 4 roc_auc  binary         0.212</code></pre>
 <p>The table above shows the calculated metrics using logistic regression. The model achieved a sensitivity of 0.966 but a very low score in specificity (0.298), which largely affected its ROC AUC score (0.183).</p>
 </div>
 <div id="random-forest-models" class="section level1">
 <h1>12. Random Forest Models</h1>
+<pre><code>## ntree      OOB      1      2
+##     1:  21.39% 14.68% 49.35%
+##     2:  21.25% 13.07% 54.69%
+##     3:  20.90% 12.48% 55.15%
+##     4:  20.71% 12.27% 55.13%
+##     5:  19.81% 11.34% 54.50%
+##     6:  19.36% 10.58% 55.37%
+##     7:  19.15% 10.24% 55.78%
+##     8:  18.75%  9.85% 55.15%
+##     9:  18.22%  9.45% 53.94%
+##    10:  17.96%  9.03% 54.36%
+##    11:  17.59%  8.64% 54.01%
+##    12:  17.68%  8.70% 54.22%
+##    13:  17.11%  8.05% 53.95%
+##    14:  16.78%  7.73% 53.55%
+##    15:  17.14%  7.78% 55.17%
+##    16:  16.96%  7.53% 55.26%
+##    17:  16.78%  7.38% 54.93%
+##    18:  16.58%  7.15% 54.83%
+##    19:  16.39%  7.05% 54.30%
+##    20:  16.47%  7.00% 54.89%
+##    21:  16.23%  6.74% 54.73%
+##    22:  16.26%  6.73% 54.92%
+##    23:  16.02%  6.42% 54.99%
+##    24:  16.12%  6.45% 55.39%
+##    25:  15.85%  6.14% 55.25%
+##    26:  15.80%  6.14% 54.99%
+##    27:  15.92%  6.29% 54.99%
+##    28:  15.86%  6.22% 54.99%
+##    29:  15.90%  6.30% 54.86%
+##    30:  15.86%  6.14% 55.32%
+##    31:  15.70%  5.88% 55.58%
+##    32:  15.73%  6.12% 54.73%
+##    33:  15.86%  5.98% 55.98%
+##    34:  15.81%  5.96% 55.78%
+##    35:  15.68%  5.73% 56.05%
+##    36:  15.60%  5.65% 55.98%
+##    37:  15.52%  5.63% 55.65%
+##    38:  15.48%  5.62% 55.52%
+##    39:  15.36%  5.49% 55.45%
+##    40:  15.59%  5.50% 56.51%
+##    41:  15.44%  5.52% 55.72%
+##    42:  15.35%  5.49% 55.39%
+##    43:  15.21%  5.37% 55.12%
+##    44:  15.29%  5.37% 55.52%
+##    45:  15.31%  5.47% 55.25%
+##    46:  15.48%  5.63% 55.45%
+##    47:  15.33%  5.50% 55.19%
+##    48:  15.30%  5.44% 55.32%
+##    49:  15.34%  5.42% 55.58%
+##    50:  15.29%  5.31% 55.78%
+##    51:  15.19%  5.34% 55.19%
+##    52:  15.26%  5.26% 55.85%
+##    53:  15.18%  5.31% 55.25%
+##    54:  15.18%  5.29% 55.32%
+##    55:  15.22%  5.31% 55.45%
+##    56:  15.21%  5.36% 55.19%
+##    57:  15.08%  5.26% 54.92%
+##    58:  15.18%  5.28% 55.39%
+##    59:  15.16%  5.23% 55.45%
+##    60:  15.04%  5.19% 54.99%
+##    61:  15.04%  5.11% 55.32%
+##    62:  14.99%  5.05% 55.32%
+##    63:  14.92%  5.03% 55.06%
+##    64:  15.05%  5.11% 55.39%
+##    65:  15.06%  5.10% 55.52%
+##    66:  14.91%  5.02% 55.06%
+##    67:  14.88%  5.02% 54.92%
+##    68:  14.83%  5.03% 54.59%
+##    69:  14.88%  5.02% 54.92%
+##    70:  14.97%  5.06% 55.19%
+##    71:  14.89%  5.02% 54.99%
+##    72:  14.92%  4.97% 55.32%
+##    73:  14.91%  5.03% 54.99%
+##    74:  14.80%  4.92% 54.92%
+##    75:  14.84%  4.95% 54.99%
+##    76:  14.80%  4.90% 54.99%
+##    77:  14.79%  4.90% 54.92%
+##    78:  14.80%  4.90% 54.99%
+##    79:  14.76%  4.87% 54.92%
+##    80:  14.85%  4.92% 55.19%
+##    81:  14.91%  4.95% 55.32%
+##    82:  14.75%  4.84% 54.99%
+##    83:  14.87%  4.92% 55.25%
+##    84:  14.76%  4.84% 55.06%
+##    85:  14.76%  4.90% 54.79%
+##    86:  14.80%  4.90% 54.99%
+##    87:  14.75%  4.85% 54.92%
+##    88:  14.70%  4.80% 54.86%
+##    89:  14.67%  4.77% 54.86%
+##    90:  14.62%  4.79% 54.53%
+##    91:  14.59%  4.71% 54.73%
+##    92:  14.70%  4.77% 54.99%
+##    93:  14.72%  4.75% 55.19%
+##    94:  14.70%  4.75% 55.06%
+##    95:  14.67%  4.66% 55.32%
+##    96:  14.67%  4.71% 55.12%
+##    97:  14.63%  4.71% 54.92%
+##    98:  14.62%  4.77% 54.59%
+##    99:  14.62%  4.69% 54.92%
+##   100:  14.66%  4.82% 54.59%
+##   101:  14.69%  4.85% 54.59%
+##   102:  14.67%  4.80% 54.73%
+##   103:  14.66%  4.72% 54.99%
+##   104:  14.70%  4.77% 54.99%
+##   105:  14.72%  4.71% 55.39%
+##   106:  14.72%  4.69% 55.45%
+##   107:  14.70%  4.67% 55.39%
+##   108:  14.67%  4.64% 55.39%
+##   109:  14.66%  4.61% 55.45%
+##   110:  14.63%  4.58% 55.45%
+##   111:  14.65%  4.56% 55.58%
+##   112:  14.65%  4.58% 55.52%
+##   113:  14.59%  4.54% 55.39%
+##   114:  14.61%  4.56% 55.39%
+##   115:  14.62%  4.58% 55.39%
+##   116:  14.72%  4.67% 55.52%
+##   117:  14.58%  4.56% 55.25%
+##   118:  14.59%  4.56% 55.32%
+##   119:  14.63%  4.54% 55.58%
+##   120:  14.57%  4.51% 55.39%
+##   121:  14.69%  4.62% 55.52%
+##   122:  14.63%  4.59% 55.39%
+##   123:  14.65%  4.61% 55.39%
+##   124:  14.65%  4.58% 55.52%
+##   125:  14.65%  4.58% 55.52%
+##   126:  14.61%  4.54% 55.45%
+##   127:  14.61%  4.54% 55.45%
+##   128:  14.65%  4.58% 55.52%
+##   129:  14.52%  4.51% 55.12%
+##   130:  14.58%  4.58% 55.19%
+##   131:  14.62%  4.62% 55.19%
+##   132:  14.65%  4.61% 55.39%
+##   133:  14.62%  4.59% 55.32%
+##   134:  14.55%  4.54% 55.19%
+##   135:  14.52%  4.54% 54.99%
+##   136:  14.61%  4.56% 55.39%
+##   137:  14.63%  4.61% 55.32%
+##   138:  14.70%  4.69% 55.32%
+##   139:  14.74%  4.66% 55.65%
+##   140:  14.76%  4.67% 55.72%
+##   141:  14.79%  4.69% 55.78%
+##   142:  14.67%  4.64% 55.39%
+##   143:  14.71%  4.66% 55.52%
+##   144:  14.63%  4.62% 55.25%
+##   145:  14.59%  4.56% 55.32%
+##   146:  14.72%  4.69% 55.45%
+##   147:  14.63%  4.59% 55.39%
+##   148:  14.59%  4.59% 55.19%
+##   149:  14.70%  4.69% 55.32%
+##   150:  14.59%  4.61% 55.12%
+##   151:  14.69%  4.67% 55.32%
+##   152:  14.55%  4.58% 55.06%
+##   153:  14.58%  4.61% 55.06%
+##   154:  14.55%  4.56% 55.12%
+##   155:  14.58%  4.59% 55.12%
+##   156:  14.55%  4.58% 55.06%
+##   157:  14.57%  4.54% 55.25%
+##   158:  14.57%  4.58% 55.12%
+##   159:  14.71%  4.67% 55.45%
+##   160:  14.62%  4.61% 55.25%
+##   161:  14.57%  4.58% 55.12%
+##   162:  14.57%  4.54% 55.25%
+##   163:  14.61%  4.58% 55.32%
+##   164:  14.58%  4.56% 55.25%
+##   165:  14.66%  4.58% 55.58%
+##   166:  14.63%  4.58% 55.45%
+##   167:  14.65%  4.59% 55.45%
+##   168:  14.53%  4.51% 55.19%
+##   169:  14.53%  4.46% 55.39%
+##   170:  14.55%  4.51% 55.32%
+##   171:  14.57%  4.51% 55.39%
+##   172:  14.61%  4.53% 55.52%
+##   173:  14.57%  4.54% 55.25%
+##   174:  14.53%  4.51% 55.19%
+##   175:  14.57%  4.56% 55.19%
+##   176:  14.53%  4.51% 55.19%
+##   177:  14.46%  4.48% 54.99%
+##   178:  14.45%  4.46% 54.99%
+##   179:  14.52%  4.51% 55.12%
+##   180:  14.52%  4.45% 55.39%
+##   181:  14.66%  4.54% 55.72%
+##   182:  14.59%  4.51% 55.52%
+##   183:  14.62%  4.53% 55.58%
+##   184:  14.63%  4.56% 55.52%
+##   185:  14.61%  4.51% 55.58%
+##   186:  14.58%  4.51% 55.45%
+##   187:  14.65%  4.53% 55.72%
+##   188:  14.61%  4.48% 55.72%
+##   189:  14.54%  4.45% 55.52%
+##   190:  14.61%  4.54% 55.45%
+##   191:  14.67%  4.53% 55.85%
+##   192:  14.54%  4.51% 55.25%
+##   193:  14.61%  4.56% 55.39%
+##   194:  14.58%  4.56% 55.25%
+##   195:  14.58%  4.53% 55.39%
+##   196:  14.55%  4.53% 55.25%
+##   197:  14.58%  4.56% 55.25%
+##   198:  14.57%  4.54% 55.25%
+##   199:  14.59%  4.56% 55.32%
+##   200:  14.53%  4.53% 55.12%
+##   201:  14.57%  4.53% 55.32%
+##   202:  14.53%  4.53% 55.12%
+##   203:  14.59%  4.56% 55.32%
+##   204:  14.62%  4.59% 55.32%
+##   205:  14.55%  4.56% 55.12%
+##   206:  14.52%  4.53% 55.06%
+##   207:  14.54%  4.59% 54.92%
+##   208:  14.53%  4.56% 54.99%
+##   209:  14.57%  4.56% 55.19%
+##   210:  14.54%  4.56% 55.06%
+##   211:  14.55%  4.59% 54.99%
+##   212:  14.58%  4.61% 55.06%
+##   213:  14.54%  4.56% 55.06%
+##   214:  14.46%  4.51% 54.86%
+##   215:  14.54%  4.62% 54.79%
+##   216:  14.52%  4.59% 54.79%
+##   217:  14.57%  4.62% 54.92%
+##   218:  14.54%  4.64% 54.73%
+##   219:  14.53%  4.59% 54.86%
+##   220:  14.54%  4.59% 54.92%
+##   221:  14.50%  4.56% 54.86%
+##   222:  14.53%  4.58% 54.92%
+##   223:  14.49%  4.51% 54.99%
+##   224:  14.55%  4.54% 55.19%
+##   225:  14.59%  4.59% 55.19%
+##   226:  14.55%  4.53% 55.25%
+##   227:  14.52%  4.51% 55.12%
+##   228:  14.49%  4.53% 54.92%
+##   229:  14.55%  4.58% 55.06%
+##   230:  14.62%  4.58% 55.39%
+##   231:  14.61%  4.58% 55.32%
+##   232:  14.62%  4.59% 55.32%
+##   233:  14.57%  4.58% 55.12%
+##   234:  14.57%  4.56% 55.19%
+##   235:  14.57%  4.51% 55.39%
+##   236:  14.59%  4.56% 55.32%
+##   237:  14.61%  4.54% 55.45%
+##   238:  14.62%  4.56% 55.45%
+##   239:  14.67%  4.61% 55.52%
+##   240:  14.61%  4.56% 55.39%
+##   241:  14.63%  4.54% 55.58%
+##   242:  14.62%  4.54% 55.52%
+##   243:  14.63%  4.56% 55.52%
+##   244:  14.63%  4.56% 55.52%
+##   245:  14.59%  4.49% 55.58%
+##   246:  14.61%  4.51% 55.58%
+##   247:  14.59%  4.53% 55.45%
+##   248:  14.59%  4.49% 55.58%
+##   249:  14.66%  4.58% 55.58%
+##   250:  14.63%  4.53% 55.65%
+##   251:  14.58%  4.49% 55.52%
+##   252:  14.55%  4.51% 55.32%
+##   253:  14.58%  4.53% 55.39%
+##   254:  14.59%  4.49% 55.58%
+##   255:  14.59%  4.48% 55.65%
+##   256:  14.63%  4.54% 55.58%
+##   257:  14.62%  4.53% 55.58%
+##   258:  14.57%  4.48% 55.52%
+##   259:  14.59%  4.51% 55.52%
+##   260:  14.62%  4.51% 55.65%
+##   261:  14.63%  4.49% 55.78%
+##   262:  14.69%  4.54% 55.85%
+##   263:  14.62%  4.49% 55.72%
+##   264:  14.63%  4.49% 55.78%
+##   265:  14.61%  4.46% 55.78%
+##   266:  14.62%  4.46% 55.85%
+##   267:  14.59%  4.43% 55.85%
+##   268:  14.61%  4.46% 55.78%
+##   269:  14.62%  4.46% 55.85%
+##   270:  14.61%  4.46% 55.78%
+##   271:  14.59%  4.41% 55.92%
+##   272:  14.63%  4.46% 55.92%
+##   273:  14.67%  4.51% 55.92%
+##   274:  14.61%  4.45% 55.85%
+##   275:  14.61%  4.48% 55.72%
+##   276:  14.62%  4.45% 55.92%
+##   277:  14.74%  4.54% 56.11%
+##   278:  14.70%  4.56% 55.85%
+##   279:  14.70%  4.54% 55.92%
+##   280:  14.76%  4.56% 56.18%
+##   281:  14.71%  4.49% 56.18%
+##   282:  14.74%  4.51% 56.25%
+##   283:  14.72%  4.51% 56.18%
+##   284:  14.74%  4.49% 56.31%
+##   285:  14.75%  4.54% 56.18%
+##   286:  14.76%  4.56% 56.18%
+##   287:  14.74%  4.51% 56.25%
+##   288:  14.79%  4.54% 56.38%
+##   289:  14.76%  4.54% 56.25%
+##   290:  14.74%  4.56% 56.05%
+##   291:  14.72%  4.54% 56.05%
+##   292:  14.72%  4.59% 55.85%
+##   293:  14.72%  4.53% 56.11%
+##   294:  14.69%  4.53% 55.92%
+##   295:  14.72%  4.56% 55.98%
+##   296:  14.71%  4.51% 56.11%
+##   297:  14.74%  4.51% 56.25%
+##   298:  14.71%  4.54% 55.98%
+##   299:  14.71%  4.51% 56.11%
+##   300:  14.69%  4.51% 55.98%
+##   301:  14.70%  4.49% 56.11%
+##   302:  14.66%  4.46% 56.05%
+##   303:  14.65%  4.46% 55.98%
+##   304:  14.66%  4.51% 55.85%
+##   305:  14.66%  4.49% 55.92%
+##   306:  14.66%  4.48% 55.98%
+##   307:  14.63%  4.48% 55.85%
+##   308:  14.67%  4.51% 55.92%
+##   309:  14.63%  4.49% 55.78%
+##   310:  14.66%  4.48% 55.98%
+##   311:  14.69%  4.49% 56.05%
+##   312:  14.63%  4.46% 55.92%
+##   313:  14.69%  4.46% 56.18%
+##   314:  14.62%  4.43% 55.98%
+##   315:  14.65%  4.45% 56.05%
+##   316:  14.62%  4.40% 56.11%
+##   317:  14.65%  4.45% 56.05%
+##   318:  14.67%  4.45% 56.18%
+##   319:  14.66%  4.45% 56.11%
+##   320:  14.62%  4.38% 56.18%
+##   321:  14.59%  4.40% 55.98%
+##   322:  14.61%  4.38% 56.11%
+##   323:  14.63%  4.40% 56.18%
+##   324:  14.62%  4.36% 56.25%
+##   325:  14.62%  4.40% 56.11%
+##   326:  14.65%  4.41% 56.18%
+##   327:  14.65%  4.40% 56.25%
+##   328:  14.63%  4.40% 56.18%
+##   329:  14.61%  4.38% 56.11%
+##   330:  14.62%  4.35% 56.31%
+##   331:  14.65%  4.40% 56.25%
+##   332:  14.67%  4.40% 56.38%
+##   333:  14.71%  4.45% 56.38%
+##   334:  14.71%  4.43% 56.44%
+##   335:  14.70%  4.41% 56.44%
+##   336:  14.66%  4.43% 56.18%
+##   337:  14.66%  4.41% 56.25%
+##   338:  14.63%  4.40% 56.18%
+##   339:  14.62%  4.40% 56.11%
+##   340:  14.65%  4.45% 56.05%
+##   341:  14.58%  4.36% 56.05%
+##   342:  14.62%  4.40% 56.11%
+##   343:  14.58%  4.38% 55.98%
+##   344:  14.63%  4.40% 56.18%
+##   345:  14.62%  4.36% 56.25%
+##   346:  14.70%  4.43% 56.38%
+##   347:  14.72%  4.41% 56.58%
+##   348:  14.70%  4.41% 56.44%
+##   349:  14.72%  4.43% 56.51%
+##   350:  14.63%  4.40% 56.18%
+##   351:  14.70%  4.43% 56.38%
+##   352:  14.70%  4.45% 56.31%
+##   353:  14.67%  4.45% 56.18%
+##   354:  14.65%  4.41% 56.18%
+##   355:  14.61%  4.38% 56.11%
+##   356:  14.58%  4.36% 56.05%
+##   357:  14.61%  4.36% 56.18%
+##   358:  14.62%  4.36% 56.25%
+##   359:  14.58%  4.35% 56.11%
+##   360:  14.61%  4.36% 56.18%
+##   361:  14.53%  4.32% 55.98%
+##   362:  14.55%  4.35% 55.98%
+##   363:  14.59%  4.35% 56.18%
+##   364:  14.52%  4.33% 55.85%
+##   365:  14.58%  4.38% 55.98%
+##   366:  14.57%  4.38% 55.92%
+##   367:  14.58%  4.38% 55.98%
+##   368:  14.53%  4.38% 55.72%
+##   369:  14.54%  4.36% 55.85%
+##   370:  14.53%  4.36% 55.78%
+##   371:  14.58%  4.36% 56.05%
+##   372:  14.58%  4.40% 55.92%
+##   373:  14.58%  4.38% 55.98%
+##   374:  14.54%  4.35% 55.92%
+##   375:  14.54%  4.36% 55.85%
+##   376:  14.55%  4.38% 55.85%
+##   377:  14.58%  4.36% 56.05%
+##   378:  14.50%  4.30% 55.92%
+##   379:  14.55%  4.33% 56.05%
+##   380:  14.55%  4.35% 55.98%
+##   381:  14.49%  4.28% 55.92%
+##   382:  14.49%  4.28% 55.92%
+##   383:  14.50%  4.27% 56.05%
+##   384:  14.50%  4.28% 55.98%
+##   385:  14.50%  4.30% 55.92%
+##   386:  14.49%  4.30% 55.85%
+##   387:  14.58%  4.35% 56.11%
+##   388:  14.58%  4.35% 56.11%
+##   389:  14.57%  4.38% 55.92%
+##   390:  14.49%  4.28% 55.92%
+##   391:  14.54%  4.35% 55.92%
+##   392:  14.55%  4.35% 55.98%
+##   393:  14.58%  4.38% 55.98%
+##   394:  14.54%  4.35% 55.92%
+##   395:  14.55%  4.35% 55.98%
+##   396:  14.58%  4.38% 55.98%
+##   397:  14.57%  4.38% 55.92%
+##   398:  14.54%  4.36% 55.85%
+##   399:  14.53%  4.36% 55.78%
+##   400:  14.61%  4.43% 55.92%
+##   401:  14.57%  4.40% 55.85%
+##   402:  14.58%  4.41% 55.85%
+##   403:  14.55%  4.41% 55.72%
+##   404:  14.55%  4.40% 55.78%
+##   405:  14.54%  4.40% 55.72%
+##   406:  14.50%  4.38% 55.58%
+##   407:  14.53%  4.38% 55.72%
+##   408:  14.53%  4.38% 55.72%
+##   409:  14.54%  4.41% 55.65%
+##   410:  14.57%  4.41% 55.78%
+##   411:  14.54%  4.43% 55.58%
+##   412:  14.50%  4.40% 55.52%
+##   413:  14.49%  4.38% 55.52%
+##   414:  14.53%  4.38% 55.72%
+##   415:  14.57%  4.43% 55.72%
+##   416:  14.54%  4.43% 55.58%
+##   417:  14.53%  4.43% 55.52%
+##   418:  14.53%  4.41% 55.58%
+##   419:  14.54%  4.38% 55.78%
+##   420:  14.52%  4.40% 55.58%
+##   421:  14.52%  4.38% 55.65%
+##   422:  14.57%  4.43% 55.72%
+##   423:  14.55%  4.43% 55.65%
+##   424:  14.53%  4.41% 55.58%
+##   425:  14.55%  4.40% 55.78%
+##   426:  14.57%  4.43% 55.72%
+##   427:  14.53%  4.41% 55.58%
+##   428:  14.57%  4.41% 55.78%
+##   429:  14.57%  4.40% 55.85%
+##   430:  14.52%  4.33% 55.85%
+##   431:  14.50%  4.33% 55.78%
+##   432:  14.53%  4.38% 55.72%
+##   433:  14.53%  4.36% 55.78%
+##   434:  14.54%  4.36% 55.85%
+##   435:  14.53%  4.35% 55.85%
+##   436:  14.49%  4.32% 55.78%
+##   437:  14.52%  4.33% 55.85%
+##   438:  14.49%  4.32% 55.78%
+##   439:  14.54%  4.35% 55.92%
+##   440:  14.57%  4.38% 55.92%
+##   441:  14.57%  4.38% 55.92%
+##   442:  14.62%  4.41% 56.05%
+##   443:  14.65%  4.41% 56.18%
+##   444:  14.57%  4.36% 55.98%
+##   445:  14.58%  4.40% 55.92%
+##   446:  14.58%  4.40% 55.92%
+##   447:  14.57%  4.35% 56.05%
+##   448:  14.55%  4.35% 55.98%
+##   449:  14.49%  4.32% 55.78%
+##   450:  14.58%  4.40% 55.92%
+##   451:  14.53%  4.36% 55.78%
+##   452:  14.58%  4.38% 55.98%
+##   453:  14.59%  4.35% 56.18%
+##   454:  14.57%  4.36% 55.98%
+##   455:  14.55%  4.36% 55.92%
+##   456:  14.55%  4.38% 55.85%
+##   457:  14.52%  4.30% 55.98%
+##   458:  14.53%  4.33% 55.92%
+##   459:  14.57%  4.40% 55.85%
+##   460:  14.53%  4.36% 55.78%
+##   461:  14.49%  4.32% 55.78%
+##   462:  14.50%  4.33% 55.78%
+##   463:  14.48%  4.30% 55.78%
+##   464:  14.49%  4.33% 55.72%
+##   465:  14.49%  4.33% 55.72%
+##   466:  14.54%  4.38% 55.78%
+##   467:  14.54%  4.38% 55.78%
+##   468:  14.53%  4.36% 55.78%
+##   469:  14.49%  4.36% 55.58%
+##   470:  14.46%  4.32% 55.65%
+##   471:  14.46%  4.32% 55.65%
+##   472:  14.45%  4.30% 55.65%
+##   473:  14.48%  4.33% 55.65%
+##   474:  14.49%  4.28% 55.92%
+##   475:  14.49%  4.32% 55.78%
+##   476:  14.52%  4.33% 55.85%
+##   477:  14.49%  4.32% 55.78%
+##   478:  14.52%  4.33% 55.85%
+##   479:  14.53%  4.36% 55.78%
+##   480:  14.52%  4.35% 55.78%
+##   481:  14.53%  4.35% 55.85%
+##   482:  14.54%  4.33% 55.98%
+##   483:  14.52%  4.32% 55.92%
+##   484:  14.53%  4.33% 55.92%
+##   485:  14.50%  4.30% 55.92%
+##   486:  14.54%  4.35% 55.92%
+##   487:  14.55%  4.35% 55.98%
+##   488:  14.53%  4.35% 55.85%
+##   489:  14.50%  4.32% 55.85%
+##   490:  14.54%  4.32% 56.05%
+##   491:  14.53%  4.32% 55.98%
+##   492:  14.55%  4.33% 56.05%
+##   493:  14.54%  4.30% 56.11%
+##   494:  14.50%  4.30% 55.92%
+##   495:  14.45%  4.25% 55.85%
+##   496:  14.45%  4.23% 55.92%
+##   497:  14.45%  4.23% 55.92%
+##   498:  14.53%  4.28% 56.11%
+##   499:  14.53%  4.28% 56.11%
+##   500:  14.54%  4.30% 56.11%</code></pre>
+<div id="a-cut-off-value-and-test-bestmodel-1" class="section level4">
+<h4>A) Cut-off value and Test bestmodel</h4>
+<pre class="r"><code>library(PRROC)
+test.rf.pred &lt;- predict(rf,type = &quot;prob&quot;, newdata = bank_churn_test)
+test_cutoff_default_rf &lt;- factor(ifelse(test.rf.pred[,2]&gt;=0.5, &quot;Yes&quot;, &quot;No&quot;))
+
+
+table(bank_churn_test$Exited, test_cutoff_default_rf )</code></pre>
+<pre><code>##    test_cutoff_default_rf
+##       No  Yes
+##   0 1473   63
+##   1  206  173</code></pre>
+<pre class="r"><code>#test.conf
+perform.fn_rf &lt;- function(cutoff){
+  predicted_response_rf &lt;- as.factor(ifelse(test.rf.pred[,2]&gt;=cutoff,&quot;Yes&quot;,&quot;No&quot;))
+  conf_rf&lt;- confusionMatrix(predicted_response_rf,test_cutoff_default_rf,positive = &quot;Yes&quot;)
+  
+  acc &lt;- conf_rf$overall[1]
+  sens &lt;- conf_rf$byClass[1]
+  spec &lt;- conf_rf$byClass[2]
+  out_rf &lt;- t(as.matrix(c(sens,spec,acc)))
+  colnames(out_rf) &lt;- c(&quot;sensitivity&quot;,&quot;specificity&quot;, &quot;accuracy&quot;)
+  return(out_rf)
+ 
+}
+s &lt;- seq(0.01,1, length = 100)
+out_rf &lt;- matrix(0,100,3)
+for(i in 1:100){
+  out_rf[i,] = perform.fn_rf(s[i])
+}
+
+plot(s, out_rf[,1], xlab = &quot;Cutoff&quot;, ylab = &quot;Sens/Spec/Acc&quot;, cex.lab = 1.5, cex.aux = 1.5, ylim =c(0,1), type = &quot;l&quot;, lwd =2, axes = FALSE, col =2)
+axis(1, seq(0,1, length = 5), seq(0,1, length = 5), cex.lab = 1.5)
+axis(2, seq(0,1, length = 5), seq(0,1, length = 5), cex.lab = 1.5)
+lines(s, out_rf[,2], col = &quot;darkgreen&quot;, lwd = 2)
+lines(s, out_rf[,3], col = 4, lwd = 2)
+box()
+legend(0.5, 1, col = c(2, &quot;darkgreen&quot;, 4, &quot;darkred&quot;), lwd = c(2,2,2,2), c(&quot;Sensitivity&quot;, &quot;Specificity&quot;,&quot;Accuracy&quot;))</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-84-1.png" width="672" /></p>
+<pre class="r"><code>diff &lt;- abs(out_rf[,1]-out_rf[,2])
+cutoff_rf &lt;- s[which(diff ==min(diff))]
+cutoff_rf</code></pre>
+<pre><code>## [1] 0.5</code></pre>
+<pre class="r"><code>predicted_response_rf_new &lt;- factor(ifelse(test.rf.pred[,2]&gt;=cutoff_rf,&quot;Yes&quot;,&quot;No&quot;))
+confusion_matrix_rf_new&lt;- confusionMatrix(predicted_response_rf_new,test_cutoff_default_rf,positive = &quot;Yes&quot;)
+
+acc &lt;- confusion_matrix_rf_new$overall[1]
+sens &lt;- confusion_matrix_rf_new$byClass[1]
+spec &lt;- confusion_matrix_rf_new$byClass[2]
+
+acc</code></pre>
+<pre><code>## Accuracy 
+##        1</code></pre>
+<pre class="r"><code>sens</code></pre>
+<pre><code>## Sensitivity 
+##           1</code></pre>
+<pre class="r"><code>spec</code></pre>
+<pre><code>## Specificity 
+##           1</code></pre>
+<p>The cut-off value is 50%.The accuracy, sensitivity and specificity are 1. This is the best results compared with logistic regression and support vector machine.</p>
+<p><strong>Roc curve</strong></p>
+<pre class="r"><code>roc.rf1 &lt;- roc.curve(test.actual.default, test_cutoff_default_rf, curve = TRUE)
+plot(roc.rf1)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-85-1.png" width="672" />
+The roc-curve of random forest model is 53.2%</p>
 <p>In this section we develop a Random Forest Model for the prediction of customer churn. The parameters used were the following. The number of trees was set to 100, the smallest node size allowed was set to 10, and the number of predictors seen at each node was set to 4.</p>
 <pre class="r"><code>bank_churn_rf_model&lt;- rand_forest(mtry =4,trees = 100, min_n =10) %&gt;%
   set_engine(&#39;ranger&#39;) %&gt;%
@@ -1432,7 +2075,7 @@ bank_churn_logistic_metrics</code></pre>
 bank_churn_fit_rf</code></pre>
 <pre><code>## parsnip model object
 ## 
-## Fit time:  1.6s 
+## Fit time:  1s 
 ## Ranger result
 ## 
 ## Call:
@@ -1446,7 +2089,7 @@ bank_churn_fit_rf</code></pre>
 ## Target node size:                 10 
 ## Variable importance mode:         none 
 ## Splitrule:                        gini 
-## OOB prediction error (Brier s.):  0.1068385</code></pre>
+## OOB prediction error (Brier s.):  0.1061698</code></pre>
 <p>We considered all independent variables for model fitting.</p>
 <p><strong>Predicting outcome variables</strong></p>
 <pre class="r"><code>bank_churn_class_preds_rf &lt;- predict(bank_churn_fit_rf, new_data = bank_churn_test_prep, type = &quot;class&quot;)
@@ -1457,12 +2100,12 @@ bank_churn_class_preds_rf</code></pre>
 ##  1 0          
 ##  2 0          
 ##  3 0          
-##  4 0          
+##  4 1          
 ##  5 0          
 ##  6 0          
-##  7 0          
+##  7 1          
 ##  8 0          
-##  9 1          
+##  9 0          
 ## 10 0          
 ## # ... with 1,905 more rows</code></pre>
 <p>The table above shows a sample of predicted outcomes using the independent set.</p>
@@ -1472,16 +2115,16 @@ bank_churn_prob_preds_rf</code></pre>
 <pre><code>## # A tibble: 1,915 x 2
 ##    .pred_0 .pred_1
 ##      &lt;dbl&gt;   &lt;dbl&gt;
-##  1   0.732  0.268 
-##  2   0.902  0.0981
-##  3   0.957  0.0425
-##  4   0.912  0.0883
-##  5   0.833  0.167 
-##  6   0.662  0.338 
-##  7   0.988  0.0125
-##  8   0.957  0.0428
-##  9   0.287  0.713 
-## 10   0.638  0.362 
+##  1   0.726  0.274 
+##  2   0.835  0.165 
+##  3   0.870  0.130 
+##  4   0.202  0.798 
+##  5   0.968  0.0320
+##  6   0.701  0.299 
+##  7   0.298  0.702 
+##  8   0.851  0.149 
+##  9   0.964  0.0360
+## 10   0.583  0.417 
 ## # ... with 1,905 more rows</code></pre>
 <p>The table above shows the corresponding predicted probabilities using the test data set.</p>
 <p><strong>Combining results</strong></p>
@@ -1489,18 +2132,18 @@ bank_churn_prob_preds_rf</code></pre>
   bind_cols(bank_churn_class_preds_rf, bank_churn_prob_preds_rf)
 bank_churn_results_rf</code></pre>
 <pre><code>## # A tibble: 1,915 x 15
-##    CreditScore     Age   Tenure Balance NumOfProducts EstimatedSalary Exited
-##          &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt; &lt;fct&gt; 
-##  1      -0.323  0.484  -1.03     -1.22         -0.945         0.0191  1     
-##  2       1.79   1.40    0.696    -1.22          0.878        -1.57    0     
-##  3       0.353 -1.22   -1.03      0.940        -0.945        -0.497   0     
-##  4      -1.05  -1.57    1.39     -1.22          0.878        -1.50    0     
-##  5       2.04   0.0288  0.00572  -1.22         -0.945         1.52    0     
-##  6      -0.792  0.598  -0.684     1.05         -0.945        -0.00114 0     
-##  7       0.749 -0.996   1.39     -1.22          0.878         0.728   0     
-##  8      -1.67  -0.768  -0.684     1.11         -0.945         0.241   0     
-##  9      -1.93   1.51    1.04      0.746        -0.945         1.41    1     
-## 10      -0.136  0.143   1.39      0.992        -0.945         0.303   1     
+##    CreditScore    Age Tenure Balance NumOfProducts EstimatedSalary Exited
+##          &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt; &lt;fct&gt; 
+##  1     -0.325   0.495 -1.05   -1.21         -0.940          0.0257 1     
+##  2     -0.0542  0.724  1.03    0.609         0.873          0.869  1     
+##  3      1.79    1.41   0.684  -1.21          0.873         -1.56   0     
+##  4      0.0290  2.32  -1.40    0.911        -0.940         -1.65   1     
+##  5      0.788  -1.56   0.337  -1.21          0.873         -0.786  0     
+##  6      1.10   -0.190 -1.05    0.978        -0.940          1.22   0     
+##  7     -0.616   0.153 -0.703  -1.21          2.69           0.707  1     
+##  8     -1.01    0.381  1.38    0.551         0.873         -0.313  0     
+##  9     -1.35    0.495  0.337  -1.21          0.873         -1.14   0     
+## 10     -1.82    0.838 -1.74    0.937        -0.940         -1.25   1     
 ## # ... with 1,905 more rows, and 8 more variables: Geography_Germany &lt;dbl&gt;,
 ## #   Geography_Spain &lt;dbl&gt;, Gender_Male &lt;dbl&gt;, HasCrCard_X1 &lt;dbl&gt;,
 ## #   IsActiveMember_X1 &lt;dbl&gt;, .pred_class &lt;fct&gt;, .pred_0 &lt;dbl&gt;, .pred_1 &lt;dbl&gt;</code></pre>
@@ -1509,11 +2152,11 @@ bank_churn_results_rf</code></pre>
 <pre class="r"><code>bank_churn_results_rf %&gt;%
   conf_mat(truth = Exited, estimate = .pred_class) %&gt;%
 autoplot(type = &#39;heatmap&#39;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-87-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-91-1.png" width="672" /></p>
 <p><strong>Correct predictions of test set</strong>
-The total of True Negatives is 1472, that is, the number of customers who churned. True positive is 170 people, who was a loyal customer and did not churn.</p>
+The total of True Negatives is 1463, that is, the number of customers who churned. True positive is 177 people, who was a loyal customer and did not churn.</p>
 <p><strong>Classification error of test set</strong>
-In total, 64 people were predicted as not churned, but actually churned (False Positives). Also, 209 people were predicted as churned, but actually did not churn and were loyal to bank (False Negatives).</p>
+In total, 73 people were predicted as not churned, but actually churned (False Positives). Also, 204 people were predicted as churned, but actually did not churn and were loyal to bank (False Negatives).</p>
 <p><strong>Combining models and recipe</strong></p>
 <pre class="r"><code>bank_churn_wkfl_rf&lt;- workflow() %&gt;%
   add_model(bank_churn_rf_model) %&gt;%
@@ -1548,9 +2191,9 @@ bank_churn_wkfl_fit_rf %&gt;%
 <pre><code>## # A tibble: 2 x 4
 ##   .metric  .estimator .estimate .config             
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-## 1 accuracy binary         0.862 Preprocessor1_Model1
-## 2 roc_auc  binary         0.854 Preprocessor1_Model1</code></pre>
-<p>** Performance comparison among RF, LG, and SVM models **</p>
+## 1 accuracy binary         0.863 Preprocessor1_Model1
+## 2 roc_auc  binary         0.846 Preprocessor1_Model1</code></pre>
+<p><strong>Performance comparison among RF, LG, and SVM models</strong></p>
 <p>The table above shows some performance metrics of the RF model on the testing set. RF model achieved an accuracy of 85.37% and a ROC AUC score of 85.48%. Compared to the Logistic Regression Model, which obtained an accuracy of 83.4% and a ROC AUC score of 81.7%, it is clear that RF model slightly outperformed it in both metrics. Also, we can see that RF model achieves a much better performance than SVM model, since the latter model reported an accuracy of 80.21% and a ROC AUC score of 59.89%.
 For this reason, we selected RF model for further refinements.</p>
 <p><strong>Collecting predictions</strong></p>
@@ -1560,33 +2203,34 @@ bank_churn_wkfl_preds_rf</code></pre>
 <pre><code>## # A tibble: 1,915 x 7
 ##    id               .pred_0 .pred_1  .row .pred_class Exited .config            
 ##    &lt;chr&gt;              &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt; &lt;fct&gt;       &lt;fct&gt;  &lt;chr&gt;              
-##  1 train/test split   0.682 0.318       1 0           1      Preprocessor1_Mode~
-##  2 train/test split   0.859 0.141       7 0           0      Preprocessor1_Mode~
-##  3 train/test split   0.963 0.0370      9 0           0      Preprocessor1_Mode~
-##  4 train/test split   0.930 0.0705     17 0           0      Preprocessor1_Mode~
-##  5 train/test split   0.859 0.141      24 0           0      Preprocessor1_Mode~
-##  6 train/test split   0.653 0.347      28 0           0      Preprocessor1_Mode~
-##  7 train/test split   0.994 0.00629    34 0           0      Preprocessor1_Mode~
-##  8 train/test split   0.966 0.0345     36 0           0      Preprocessor1_Mode~
-##  9 train/test split   0.288 0.712      41 1           1      Preprocessor1_Mode~
-## 10 train/test split   0.660 0.340      47 0           1      Preprocessor1_Mode~
+##  1 train/test split   0.737  0.263      1 0           1      Preprocessor1_Mode~
+##  2 train/test split   0.898  0.102      6 0           1      Preprocessor1_Mode~
+##  3 train/test split   0.912  0.0882     7 0           0      Preprocessor1_Mode~
+##  4 train/test split   0.197  0.803     16 1           1      Preprocessor1_Mode~
+##  5 train/test split   0.986  0.0135    19 0           0      Preprocessor1_Mode~
+##  6 train/test split   0.744  0.256     26 0           0      Preprocessor1_Mode~
+##  7 train/test split   0.321  0.679     30 1           1      Preprocessor1_Mode~
+##  8 train/test split   0.858  0.142     32 0           0      Preprocessor1_Mode~
+##  9 train/test split   0.977  0.0230    33 0           0      Preprocessor1_Mode~
+## 10 train/test split   0.516  0.484     35 0           1      Preprocessor1_Mode~
 ## # ... with 1,905 more rows</code></pre>
 <p><strong>Confusion matrix</strong></p>
 <pre class="r"><code>conf_mat(bank_churn_wkfl_preds_rf, truth = Exited, estimate = .pred_class) %&gt;%
   autoplot(type = &#39;heatmap&#39;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-91-1.png" width="672" />
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-95-1.png" width="672" />
 We could observe a slight reduction in both False Positives and False Negatives.</p>
 <p><strong>Exploring custom metrics</strong></p>
-<pre class="r"><code>bank_churn_metrics_rf &lt;- metric_set(roc_auc, sens, spec, accuracy)
+<pre class="r"><code>bank_churn_metrics_rf &lt;- metric_set(roc_auc, yardstick::sens, yardstick::spec, accuracy)
 bank_churn_wkfl_preds_rf %&gt;%
 bank_churn_metrics_rf(truth = Exited, estimate = .pred_class, .pred_1)</code></pre>
 <pre><code>## # A tibble: 4 x 3
 ##   .metric  .estimator .estimate
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt;
-## 1 sens     binary         0.962
-## 2 spec     binary         0.456
-## 3 accuracy binary         0.862
-## 4 roc_auc  binary         0.146</code></pre>
+## 1 sens     binary         0.958
+## 2 spec     binary         0.478
+## 3 accuracy binary         0.863
+## 4 roc_auc  binary         0.154</code></pre>
+</div>
 </div>
 <div id="creating-k-fold-cross-validation" class="section level1">
 <h1>13. Creating <em>k</em>-Fold Cross Validation</h1>
@@ -1616,10 +2260,10 @@ bank_churn_rs_fit_rf %&gt;%
 <pre><code>## # A tibble: 4 x 6
 ##   .metric  .estimator  mean     n std_err .config             
 ##   &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
-## 1 accuracy binary     0.861    10 0.00216 Preprocessor1_Model1
-## 2 roc_auc  binary     0.843    10 0.00545 Preprocessor1_Model1
-## 3 sens     binary     0.963    10 0.00249 Preprocessor1_Model1
-## 4 spec     binary     0.448    10 0.0109  Preprocessor1_Model1</code></pre>
+## 1 accuracy binary     0.862    10 0.00345 Preprocessor1_Model1
+## 2 roc_auc  binary     0.852    10 0.00611 Preprocessor1_Model1
+## 3 sens     binary     0.963    10 0.00293 Preprocessor1_Model1
+## 4 spec     binary     0.452    10 0.00875 Preprocessor1_Model1</code></pre>
 <p>The cross-validation training resulted in an average accuracy of 0.861, an average sensitivity of 0.447, an average specificity of 0.447, and an average ROC AUC score of 0.848.</p>
 <p><strong>Detailed cross_validation results</strong></p>
 <pre class="r"><code>bank_churn_rs_metrics_rf &lt;-bank_churn_rs_fit_rf %&gt;%
@@ -1628,16 +2272,16 @@ bank_churn_rs_metrics_rf </code></pre>
 <pre><code>## # A tibble: 40 x 5
 ##    id     .metric  .estimator .estimate .config             
 ##    &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-##  1 Fold01 sens     binary         0.950 Preprocessor1_Model1
-##  2 Fold01 spec     binary         0.474 Preprocessor1_Model1
-##  3 Fold01 accuracy binary         0.855 Preprocessor1_Model1
-##  4 Fold01 roc_auc  binary         0.832 Preprocessor1_Model1
-##  5 Fold02 sens     binary         0.959 Preprocessor1_Model1
-##  6 Fold02 spec     binary         0.493 Preprocessor1_Model1
-##  7 Fold02 accuracy binary         0.867 Preprocessor1_Model1
-##  8 Fold02 roc_auc  binary         0.857 Preprocessor1_Model1
-##  9 Fold03 sens     binary         0.969 Preprocessor1_Model1
-## 10 Fold03 spec     binary         0.447 Preprocessor1_Model1
+##  1 Fold01 sens     binary         0.971 Preprocessor1_Model1
+##  2 Fold01 spec     binary         0.454 Preprocessor1_Model1
+##  3 Fold01 accuracy binary         0.868 Preprocessor1_Model1
+##  4 Fold01 roc_auc  binary         0.862 Preprocessor1_Model1
+##  5 Fold02 sens     binary         0.951 Preprocessor1_Model1
+##  6 Fold02 spec     binary         0.414 Preprocessor1_Model1
+##  7 Fold02 accuracy binary         0.845 Preprocessor1_Model1
+##  8 Fold02 roc_auc  binary         0.832 Preprocessor1_Model1
+##  9 Fold03 sens     binary         0.977 Preprocessor1_Model1
+## 10 Fold03 spec     binary         0.5   Preprocessor1_Model1
 ## # ... with 30 more rows</code></pre>
 <p><strong>Summarizing cross validation results</strong></p>
 <pre class="r"><code>bank_churn_rs_metrics_rf %&gt;%
@@ -1646,8 +2290,8 @@ bank_churn_rs_metrics_rf </code></pre>
             median = median(.estimate),
             max = max(.estimate),
             sd = sd(.estimate))</code></pre>
-<pre><code>##        min    median       max        sd
-## 1 0.397351 0.8559441 0.9739414 0.1996793</code></pre>
+<pre><code>##         min    median       max        sd
+## 1 0.4144737 0.8568627 0.9771987 0.1987805</code></pre>
 </div>
 <div id="hyper-parameter-tuning" class="section level1">
 <h1>14. Hyper Parameter Tuning</h1>
@@ -1727,16 +2371,16 @@ bank_churn_tune_wkfl_rf</code></pre>
 <pre><code>## # A tibble: 40 x 9
 ##     mtry trees min_n .metric  .estimator  mean     n std_err .config            
 ##    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;              
-##  1     6   374    30 accuracy binary     0.862    10 0.00224 Preprocessor1_Mode~
-##  2     6   374    30 roc_auc  binary     0.849    10 0.00507 Preprocessor1_Mode~
-##  3     6   374    30 sens     binary     0.964    10 0.00216 Preprocessor1_Mode~
-##  4     6   374    30 spec     binary     0.449    10 0.0109  Preprocessor1_Mode~
-##  5     6  1474    21 accuracy binary     0.863    10 0.00165 Preprocessor1_Mode~
-##  6     6  1474    21 roc_auc  binary     0.848    10 0.00513 Preprocessor1_Mode~
-##  7     6  1474    21 sens     binary     0.963    10 0.00208 Preprocessor1_Mode~
-##  8     6  1474    21 spec     binary     0.458    10 0.0119  Preprocessor1_Mode~
-##  9    10  1621    33 accuracy binary     0.863    10 0.00179 Preprocessor1_Mode~
-## 10    10  1621    33 roc_auc  binary     0.845    10 0.00523 Preprocessor1_Mode~
+##  1     6   374    30 accuracy binary     0.863    10 0.00311 Preprocessor1_Mode~
+##  2     6   374    30 roc_auc  binary     0.853    10 0.00626 Preprocessor1_Mode~
+##  3     6   374    30 sens     binary     0.962    10 0.00307 Preprocessor1_Mode~
+##  4     6   374    30 spec     binary     0.463    10 0.00917 Preprocessor1_Mode~
+##  5     6  1474    21 accuracy binary     0.863    10 0.00271 Preprocessor1_Mode~
+##  6     6  1474    21 roc_auc  binary     0.853    10 0.00630 Preprocessor1_Mode~
+##  7     6  1474    21 sens     binary     0.961    10 0.00236 Preprocessor1_Mode~
+##  8     6  1474    21 spec     binary     0.467    10 0.00946 Preprocessor1_Mode~
+##  9    10  1621    33 accuracy binary     0.862    10 0.00284 Preprocessor1_Mode~
+## 10    10  1621    33 roc_auc  binary     0.849    10 0.00621 Preprocessor1_Mode~
 ## # ... with 30 more rows</code></pre>
 <p>The table above shows a sample of the different combinations tested during the process.</p>
 <p><strong>Detailed tuning results</strong></p>
@@ -1745,16 +2389,16 @@ bank_churn_tune_wkfl_rf</code></pre>
 <pre><code>## # A tibble: 400 x 8
 ##    id      mtry trees min_n .metric  .estimator .estimate .config              
 ##    &lt;chr&gt;  &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;                
-##  1 Fold01     6   374    30 sens     binary         0.959 Preprocessor1_Model01
-##  2 Fold01     6   374    30 spec     binary         0.467 Preprocessor1_Model01
-##  3 Fold01     6   374    30 accuracy binary         0.862 Preprocessor1_Model01
-##  4 Fold01     6   374    30 roc_auc  binary         0.842 Preprocessor1_Model01
-##  5 Fold02     6   374    30 sens     binary         0.959 Preprocessor1_Model01
-##  6 Fold02     6   374    30 spec     binary         0.493 Preprocessor1_Model01
-##  7 Fold02     6   374    30 accuracy binary         0.867 Preprocessor1_Model01
-##  8 Fold02     6   374    30 roc_auc  binary         0.850 Preprocessor1_Model01
-##  9 Fold03     6   374    30 sens     binary         0.969 Preprocessor1_Model01
-## 10 Fold03     6   374    30 spec     binary         0.434 Preprocessor1_Model01
+##  1 Fold01     6   374    30 sens     binary         0.976 Preprocessor1_Model01
+##  2 Fold01     6   374    30 spec     binary         0.474 Preprocessor1_Model01
+##  3 Fold01     6   374    30 accuracy binary         0.876 Preprocessor1_Model01
+##  4 Fold01     6   374    30 roc_auc  binary         0.866 Preprocessor1_Model01
+##  5 Fold02     6   374    30 sens     binary         0.950 Preprocessor1_Model01
+##  6 Fold02     6   374    30 spec     binary         0.447 Preprocessor1_Model01
+##  7 Fold02     6   374    30 accuracy binary         0.850 Preprocessor1_Model01
+##  8 Fold02     6   374    30 roc_auc  binary         0.832 Preprocessor1_Model01
+##  9 Fold03     6   374    30 sens     binary         0.977 Preprocessor1_Model01
+## 10 Fold03     6   374    30 spec     binary         0.487 Preprocessor1_Model01
 ## # ... with 390 more rows</code></pre>
 <p><strong>Exploring tuning results</strong></p>
 <pre class="r"><code>bank_churn_rf_tuning %&gt;%
@@ -1765,7 +2409,7 @@ bank_churn_tune_wkfl_rf</code></pre>
              median_roc_auc = median(.estimate),
              max_roc_auc = max(.estimate))</code></pre>
 <pre><code>##   min_roc_auc median_roc_auc max_roc_auc
-## 1   0.8111612       0.847639   0.8787885</code></pre>
+## 1   0.8059301       0.852347    0.884622</code></pre>
 <p>As mentioned earlier, optimal RF parameters were selected based on their ROC AUC score. The minimum ROC AUC score found during the process was of 0.791, the median was of 0.849, and the maximum score was of 0.876.</p>
 <p><strong>Viewing the best performing model</strong></p>
 <pre class="r"><code>bank_churn_rf_tuning %&gt;%
@@ -1773,11 +2417,11 @@ bank_churn_tune_wkfl_rf</code></pre>
 <pre><code>## # A tibble: 5 x 9
 ##    mtry trees min_n .metric .estimator  mean     n std_err .config              
 ##   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;                
-## 1     4   839    37 roc_auc binary     0.852    10 0.00490 Preprocessor1_Model06
-## 2     3   427    17 roc_auc binary     0.852    10 0.00459 Preprocessor1_Model05
-## 3     3  1969    11 roc_auc binary     0.850    10 0.00469 Preprocessor1_Model07
-## 4     6   374    30 roc_auc binary     0.849    10 0.00507 Preprocessor1_Model01
-## 5     6  1474    21 roc_auc binary     0.848    10 0.00513 Preprocessor1_Model02</code></pre>
+## 1     4   839    37 roc_auc binary     0.856    10 0.00632 Preprocessor1_Model06
+## 2     3  1969    11 roc_auc binary     0.856    10 0.00611 Preprocessor1_Model07
+## 3     3   427    17 roc_auc binary     0.856    10 0.00615 Preprocessor1_Model05
+## 4     6   374    30 roc_auc binary     0.853    10 0.00626 Preprocessor1_Model01
+## 5     6  1474    21 roc_auc binary     0.853    10 0.00630 Preprocessor1_Model02</code></pre>
 <p>The best parameter set for the RF model was <em>mtry</em> = 4, <em>trees</em> = 839, and <em>min_n</em> = 37, with an average ROC AUC score of 0.852 and a standard deviation of 0.00620. The best model is Preprocessor1_Model06.</p>
 </div>
 <div id="best-model-selection-with-parameter" class="section level1">
@@ -1823,9 +2467,9 @@ bank_churn_final_fit_rf %&gt;%
 <pre><code>## # A tibble: 2 x 4
 ##   .metric  .estimator .estimate .config             
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-## 1 accuracy binary         0.861 Preprocessor1_Model1
-## 2 roc_auc  binary         0.861 Preprocessor1_Model1</code></pre>
-<p>We can see above that accuracy and ROC AUC score (85.9% &amp; 86.8%, respectively) are improved compared to the model without tuning.</p>
+## 1 accuracy binary         0.864 Preprocessor1_Model1
+## 2 roc_auc  binary         0.856 Preprocessor1_Model1</code></pre>
+<p>We can see above that accuracy and ROC AUC score (86.3% &amp; 85.3%, respectively) are improved compared to the model without tuning.</p>
 <p><strong>collecting predictions</strong></p>
 <pre class="r"><code>bank_churn_prediction_rf&lt;- bank_churn_final_fit_rf %&gt;%
   collect_predictions()
@@ -1833,40 +2477,48 @@ bank_churn_prediction_rf</code></pre>
 <pre><code>## # A tibble: 1,915 x 7
 ##    id               .pred_0 .pred_1  .row .pred_class Exited .config            
 ##    &lt;chr&gt;              &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt; &lt;fct&gt;       &lt;fct&gt;  &lt;chr&gt;              
-##  1 train/test split   0.732  0.268      1 0           1      Preprocessor1_Mode~
-##  2 train/test split   0.879  0.121      7 0           0      Preprocessor1_Mode~
-##  3 train/test split   0.963  0.0369     9 0           0      Preprocessor1_Mode~
-##  4 train/test split   0.948  0.0516    17 0           0      Preprocessor1_Mode~
-##  5 train/test split   0.860  0.140     24 0           0      Preprocessor1_Mode~
-##  6 train/test split   0.617  0.383     28 0           0      Preprocessor1_Mode~
-##  7 train/test split   0.985  0.0147    34 0           0      Preprocessor1_Mode~
-##  8 train/test split   0.947  0.0528    36 0           0      Preprocessor1_Mode~
-##  9 train/test split   0.342  0.658     41 1           1      Preprocessor1_Mode~
-## 10 train/test split   0.656  0.344     47 0           1      Preprocessor1_Mode~
+##  1 train/test split   0.733  0.267      1 0           1      Preprocessor1_Mode~
+##  2 train/test split   0.865  0.135      6 0           1      Preprocessor1_Mode~
+##  3 train/test split   0.893  0.107      7 0           0      Preprocessor1_Mode~
+##  4 train/test split   0.138  0.862     16 1           1      Preprocessor1_Mode~
+##  5 train/test split   0.976  0.0243    19 0           0      Preprocessor1_Mode~
+##  6 train/test split   0.737  0.263     26 0           0      Preprocessor1_Mode~
+##  7 train/test split   0.338  0.662     30 1           1      Preprocessor1_Mode~
+##  8 train/test split   0.862  0.138     32 0           0      Preprocessor1_Mode~
+##  9 train/test split   0.955  0.0446    33 0           0      Preprocessor1_Mode~
+## 10 train/test split   0.536  0.464     35 0           1      Preprocessor1_Mode~
 ## # ... with 1,905 more rows</code></pre>
 <p><strong>Confusion Matrix</strong></p>
 <pre class="r"><code>conf_mat(bank_churn_prediction_rf, truth = Exited, estimate = .pred_class) %&gt;%
   autoplot(type = &#39;heatmap&#39;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-109-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-113-1.png" width="672" /></p>
 <p><strong>Correct predictions of test set</strong>
-The number of True Negatives is 1485 customers, who churned. Furthermore, the number of True Positives is 160 people, who were loyal customers and did not churn.</p>
+The number of True Negatives is 1482 customers, who churned. Furthermore, the number of True Positives is 171 people, who were loyal customers and did not churn.</p>
 <p><strong>Classification error of test set</strong>
-The number of False Positives is 51 customers, who were predicted as not churned but actually churned. Also, the number of False Negatives is 198. Such customers were predicted as churned but actually did not churn and remained loyal to the bank.</p>
+The number of False Positives is 54 customers, who were predicted as not churned but actually churned. Also, the number of False Negatives is 208. Such customers were predicted as churned but actually did not churn and remained loyal to the bank.</p>
 <p>Almost 80% of the customers churned</p>
 <p><strong>ROC Curve</strong></p>
 <pre class="r"><code>roc.rf &lt;- roc.curve(bank_churn_test_prep$Exited, bank_churn_prediction_rf$.pred_class, curve=TRUE)
 plot(roc.rf)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-110-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-114-1.png" width="672" />
+The roc-auc has improved and now is 54%</p>
 </div>
 <div id="model-comparison" class="section level1">
 <h1>16. Model Comparison</h1>
 <p>The ROC curves for the Random Forest, Support Vector Machine, and Logistic Regression Models are presented below. Among all models, Logistic Regression achieved the worst performance. The performance of Random Forest and SVM resulted similar in this regard, but when considering the other metrics, RF outperforms SVM.</p>
+<div id="a-roc-curve-plot-of-random-forest-model" class="section level4">
+<h4>A) ROC curve plot of random forest model</h4>
 <pre class="r"><code>plot(roc.rf)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-111-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-115-1.png" width="672" />
+#### B) ROC curve plot of SVM model</p>
 <pre class="r"><code>plot(roc.svm)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-111-2.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-116-1.png" width="672" /></p>
+</div>
+<div id="c-roc-curve-plot-of-logistic-model" class="section level4">
+<h4>C) ROC curve plot of logistic model</h4>
 <pre class="r"><code>plot(roc.glm)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-111-3.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-117-1.png" width="672" /></p>
+</div>
 </div>
 <div id="observations-and-comments" class="section level1">
 <h1>17. Observations and Comments</h1>
@@ -1875,7 +2527,7 @@ plot(roc.rf)</code></pre>
 <li><p>The character integer variables were assigned as factors.</p></li>
 <li><p>stepAIC backward regression and boot strapping were used to select the best model.</p></li>
 <li><p>Almost 80% of the customers churned and only 20% of the customers were loyal and stayed with the bank.</p></li>
-<li><p>The accuracy and ROC AUC score is better in Random Forest model compared to Logistic Regression and Support Vector Machine.</p></li>
+<li><p>The accuracy, sensitivity and specificity are better in Random Forest model compared to Logistic Regression and Support Vector Machine though ROC AUC score is slightly better in SVM model.</p></li>
 <li><p>Variables such as <em>Age</em>, <em>CreditScore</em>, <em>NumOfProducts</em> had some outliers and were removed from the data before further processing in model.</p></li>
 <li><p>We performed univariate analysis, bivariate analysis, bootstrapping, stepAIC, feature engineering, cross validation, hyper parameter tuning, random forest model, support vector machine, and logistic regression model on banking churn data set.</p></li>
 <li><p>When we did bivariate analysis on independent and dependent variables. Only the best model variables such as <em>Gender</em>, <em>Age</em>, <em>Balance</em>, <em>NumOfProducts</em> and <em>IsActiveMember</em> came as 99.9% significant and other variables are not fully significant. The same significant variables turned to a best model predictors as well for a whole model.</p></li>
